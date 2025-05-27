@@ -1,34 +1,36 @@
-import { getPostBySlug, getAllPosts } from '@/utils/posts';
-import Head from 'next/head';
-import PageWrapper from '@/components/page-wrapper';
+// app/blog/[slug]/page.jsx
+import { createClient } from '@supabase/supabase-js'
+import { notFound } from 'next/navigation'
 
-export default async function Page({ params }) {
-  const post = getPostBySlug(params.slug);
-  
-  if (!post) {
-    return <div>Post not found</div>;
+// Create Supabase client (Server Component safe)
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+)
+
+export default async function BlogPostPage({ params }) {
+  const { slug } = params
+
+  const { data: post, error } = await supabase
+    .from('posts')
+    .select('*')
+    .eq('slug', slug)
+    .eq('published', true)
+    .single()
+
+  if (error || !post) {
+    return notFound()
   }
 
   return (
-    <>
-      <Head>
-        <title>{post.title} | Digital Marketing Wiki</title>
-      </Head>
-      <PageWrapper title={post.title} subtitle="Explore insights and tactics from our expert team." color="blog">
-        <article className="prose prose-lg max-w-3xl mx-auto text-gray-800">
-          <p className="text-gray-600 text-base italic mb-6">Last updated on {new Date().toLocaleDateString()}</p>
-          <div className="space-y-6">
-            {post.content.split('\n\n').map((paragraph, i) => (
-              <p key={i}>{paragraph}</p>
-            ))}
-          </div>
-        </article>
-      </PageWrapper>
-    </>
-  );
-}
-
-export async function generateStaticParams() {
-  const posts = getAllPosts();
-  return posts.map(post => ({ slug: post.slug }));
+    <article className="max-w-3xl mx-auto px-4 py-10">
+      <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
+      <p className="text-gray-500 text-sm mb-6">
+        {new Date(post.created_at).toLocaleDateString()}
+      </p>
+      <div className="prose prose-lg text-gray-900">
+        {post.content}
+      </div>
+    </article>
+  )
 }
