@@ -23,7 +23,8 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-simple-typewriter": "^5.0.1",
-    "react-typed": "^2.0.12"
+    "react-typed": "^2.0.12",
+    "swr": "^2.3.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
