@@ -17,7 +17,7 @@ export default function Header() {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
-console.log(pathname)
+
   return (
     <header
       className={`fixed w-full z-50 transition-colors duration-300 ${
