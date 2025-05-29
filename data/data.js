@@ -9,6 +9,36 @@ export const categories = [
   "Small Business",
 ];
 
+export const promoSections = [
+  {
+    heading: "Results-Driven Website Design",
+    subheading: "Get a beautiful website that wins customers.",
+    description:
+      "Elevate your business with a trusted website that your customers will love. Our award-winning website designers will represent your brand in the best possible way. Your website will load extremely fast and look great on all devices.",
+    stat: "900+",
+    statCaption: "Successful websites launched by our team since 2011",
+    imageSrc: "/get-a-beautiful-website-that-wins-customers.webp",
+  },
+  {
+    heading: "Email & SMS Marketing",
+    subheading: "Convert visitors into loyal customers.",
+    description:
+      "Unleash your brand’s potential by maximizing the likelihood that visitors take desired actions. Turn prospects to customers. Customers to frequent purchasers. We multiply your returns with email, SMS & more.",
+    imageSrc: "/convert-visitors-into-loyal-customers.webp",
+    reverse: true,
+  },
+  {
+    heading: "Proven Organic SEO",
+    subheading: "Drive more organic traffic to your website.",
+    description:
+      "Get more qualified traffic on the search terms that matter most to your business. We achieve measurable results by working on every variable that impacts SERPs. Trust our proven track record to maximize your visibility online. Set your business up for long-term success.",
+    stat: "200%",
+    statCaption:
+      "Most of our SEO campaigns double their traffic within 6 months",
+    imageSrc: "/drive-more-organic-traffic-to-your-website.webp",
+  },
+];
+
 export const results = [
   {
     category: "Home Services",
