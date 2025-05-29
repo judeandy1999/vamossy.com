@@ -3,6 +3,9 @@ import Hero from "@/components/hero";
 import MarketingFeatures from "@/components/marketing-features";
 import NeedHelp from "@/components/ui/need-help";
 import OurStory from "@/components/our-story";
+import RemarkableResults from "@/components/remarkable-results";
+import TeamSection from "@/components/team-section";
+import Footer from "@/components/footer";
 
 export default function Home() {
     return (
@@ -11,6 +14,9 @@ export default function Home() {
         <Hero />
         <MarketingFeatures />
         <OurStory />
+        <RemarkableResults />
+        <TeamSection />
+        <Footer />
       </>
     );
 }
