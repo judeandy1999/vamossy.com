@@ -1,6 +1,7 @@
 'use client';
 import { Typewriter } from "react-simple-typewriter";
 import { motion } from 'framer-motion';
+import Button from './ui/button';
 
 export default function Hero() {
   const h1Variants = {
@@ -77,13 +78,11 @@ export default function Hero() {
             delaySpeed={2000}
           />
         </motion.h4>
-        <motion.a
-          href="#contact"
-          className="text-[20px] mt-6 inline-block bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-8 py-3 rounded-full transition"
+        <motion.div
           variants={buttonVariants}
         >
-          Book a Free Strategy Call
-        </motion.a>
+          <Button title="Book a free strategy call" href="/"/>
+        </motion.div>
       </motion.div>
     </section>
   );
