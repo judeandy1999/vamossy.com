@@ -1,75 +1,52 @@
 // components/DigitalMarketingServices.jsx
-
-const services = [
-  {
-    title: "Web Design",
-    icon: "💻",
-    items: [
-      "WordPress Design",
-      "Magento Design",
-      "Shopify Design",
-      "Custom Development",
-      "Site Maintenance",
-    ],
-    link: "More Web Design",
-  },
-  {
-    title: "Pay Per Click Advertising",
-    icon: "💰",
-    items: [
-      "Google Ads",
-      "Facebook Ads",
-      "Ecommerce",
-      "Remarketing",
-      "Landing Pages",
-    ],
-    link: "More Pay Per Click",
-  },
-  {
-    title: "Search Engine Optimization",
-    icon: "📈",
-    items: [
-      "Local SEO",
-      "Ecommerce SEO",
-      "National SEO",
-      "Blogging",
-      "Technical SEO Audit",
-      "Franchise SEO",
-    ],
-    link: "More Organic SEO",
-  },
-  {
-    title: "Email & SMS Marketing",
-    icon: "📧",
-    items: [
-      "Marketing Automation",
-      "Email Newsletters",
-      "Klaviyo Experts",
-      "Mailchimp Experts",
-      "SMS Marketing",
-    ],
-    link: "More Email Marketing",
-  },
-  {
-    title: "Social Media Marketing",
-    icon: "📱",
-    items: [
-      "Facebook & IG",
-      "Twitter Management",
-      "LinkedIn Management",
-      "Video & TikTok",
-      "Influencer Marketing",
-    ],
-    link: "More Social Media",
-  },
-];
+'use client';
+import { motion } from "framer-motion";
+import { services } from "@/data/data";
 
 export default function DigitalMarketingServices() {
+  const titleVariants = {
+    hidden: { opacity: 0, y: -80 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 1.5,
+        ease: "easeOut",
+      },
+    },
+  };
+
+  const featuresVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 1.2,
+        ease: "easeOut",
+      },
+    },
+  };
+
   return (
     <section className="bg-[#02355A] text-white py-20">
       <div className="max-w-7xl mx-auto px-4 text-center">
-        <h2 className="text-[68px] mb-12">Digital Marketing Services</h2>
-        <div className="grid md:grid-cols-5 gap-6">
+        <motion.h2 
+          className="text-[68px] mb-12"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: false, amount: 0.5 }}
+          variants={titleVariants}
+        >
+          Digital Marketing Services
+        </motion.h2>
+        <motion.div 
+          className="grid md:grid-cols-5 gap-6"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: false, amount: 0.5 }}
+          variants={featuresVariants}
+        >
           {services.map((service, index) => (
             <div
               key={index}
@@ -96,7 +73,7 @@ export default function DigitalMarketingServices() {
               </div>
             </div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
