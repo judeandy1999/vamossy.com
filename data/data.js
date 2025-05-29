@@ -128,7 +128,7 @@ export const navItems = [
   { name: "Our Work", href: "/our-work" },
   { name: "Pricing", href: "/pricing" },
   { name: "Contact", href: "/contact" },
-  { name: "Wiki", href: "/blog" },
+  { name: "Wiki", href: "/articles" },
 ];
 
 export const services = [
