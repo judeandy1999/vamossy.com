@@ -38,7 +38,6 @@ export default function MarketingFeatures() {
       transition: {
         duration: 1.5,
         ease: "easeOut",
-        delay: 0.5,
       },
     },
   };
@@ -59,7 +58,7 @@ export default function MarketingFeatures() {
     <section className="min-h-[60vh] flex items-center bg-black text-white py-16">
       <div className="max-w-6xl mx-auto text-center">
         <motion.h2
-          className="text-[58px] font-semibold mb-12"
+          className="text-[78px] font-semibold mb-12"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: false, amount: 0.5 }}
