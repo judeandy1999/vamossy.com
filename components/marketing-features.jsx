@@ -1,34 +1,8 @@
 'use client';
 import { motion } from "framer-motion";
+import { features } from "@/data/data";
 
 export default function MarketingFeatures() {
-  const features = [
-    {
-      icon: "/icons/web-design.svg",
-      title: "Web Design",
-      description: "Create a brand and communicate your value.",
-    },
-    {
-      icon: "/icons/seo.svg",
-      title: "SEO",
-      description: "Find new clients organically and grow a foundation for tomorrow.",
-    },
-    {
-      icon: "/icons/ppc.svg",
-      title: "PPC",
-      description: "Put your business in front of the right people today.",
-    },
-    {
-      icon: "/icons/email-sms.svg",
-      title: "Email & SMS",
-      description: "Get more out of your current website visitors.",
-    },
-    {
-      icon: "/icons/social-media.svg",
-      title: "Social Media",
-      description: "Increase awareness by engaging with your audience.",
-    },
-  ];
 
   const titleVariants = {
     hidden: { opacity: 0, y: -80 },

@@ -124,10 +124,101 @@ export const footerLinks = [
 ];
 
 export const navItems = [
-  { name: "Home", href: "/" },
   { name: "Services", href: "/services" },
   { name: "Our Work", href: "/our-work" },
   { name: "Pricing", href: "/pricing" },
   { name: "Contact", href: "/contact" },
   { name: "Wiki", href: "/blog" },
+];
+
+export const services = [
+  {
+    title: "Web Design",
+    icon: "💻",
+    items: [
+      "WordPress Design",
+      "Magento Design",
+      "Shopify Design",
+      "Custom Development",
+      "Site Maintenance",
+    ],
+    link: "More Web Design",
+  },
+  {
+    title: "Pay Per Click Advertising",
+    icon: "💰",
+    items: [
+      "Google Ads",
+      "Facebook Ads",
+      "Ecommerce",
+      "Remarketing",
+      "Landing Pages",
+    ],
+    link: "More Pay Per Click",
+  },
+  {
+    title: "Search Engine Optimization",
+    icon: "📈",
+    items: [
+      "Local SEO",
+      "Ecommerce SEO",
+      "National SEO",
+      "Blogging",
+      "Technical SEO Audit",
+      "Franchise SEO",
+    ],
+    link: "More Organic SEO",
+  },
+  {
+    title: "Email & SMS Marketing",
+    icon: "📧",
+    items: [
+      "Marketing Automation",
+      "Email Newsletters",
+      "Klaviyo Experts",
+      "Mailchimp Experts",
+      "SMS Marketing",
+    ],
+    link: "More Email Marketing",
+  },
+  {
+    title: "Social Media Marketing",
+    icon: "📱",
+    items: [
+      "Facebook & IG",
+      "Twitter Management",
+      "LinkedIn Management",
+      "Video & TikTok",
+      "Influencer Marketing",
+    ],
+    link: "More Social Media",
+  },
+];
+
+export const features = [
+  {
+    icon: "/icons/web-design.svg",
+    title: "Web Design",
+    description: "Create a brand and communicate your value.",
+  },
+  {
+    icon: "/icons/seo.svg",
+    title: "SEO",
+    description: "Find new clients organically and grow a foundation for tomorrow.",
+  },
+  {
+    icon: "/icons/ppc.svg",
+    title: "PPC",
+    description: "Put your business in front of the right people today.",
+  },
+  {
+    icon: "/icons/email-sms.svg",
+    title: "Email & SMS",
+    description: "Get more out of your current website visitors.",
+  },
+  {
+    icon: "/icons/social-media.svg",
+    title: "Social Media",
+    description: "Increase awareness by engaging with your audience.",
+  },
 ];
