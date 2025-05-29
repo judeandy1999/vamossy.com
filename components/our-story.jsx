@@ -27,7 +27,7 @@ export default function OurStory() {
   };
 
   return (
-    <section className="px-6 py-16 bg-white">
+    <section className="px-16 py-16 bg-white">
       <div className="flex gap-12">
         {/* Left Section: Video */}
         <motion.div
