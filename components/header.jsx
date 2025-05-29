@@ -3,20 +3,12 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation';
+import { navItems } from '@/data/data';
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
 
-  const pathname = usePathname(); // Correctly use `usePathname` for the current route
-  const navItems = [
-    { name: 'Home', href: '/' },
-    { name: 'About', href: '/about' },
-    { name: 'Services', href: '/services' },
-    { name: 'Our Work', href: '/our-work' },
-    { name: 'Pricing', href: '/pricing' },
-    { name: 'Contact', href: '/contact' },
-    { name: 'Wiki', href: '/blog' },
-  ];
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,8 +24,7 @@ export default function Header() {
         isScrolled ? 'bg-black shadow-md' : 'bg-transparent'
       }`}
     >
-      <nav className="max-w-7xl mx-auto flex items-center justify-between px-2 py-8 text-white">
-        {/* Logo */}
+      <nav className="mx-auto flex items-center justify-between px-24 py-8 text-white">
         <Link href="/" className="text-xl font-bold flex items-center">
           {/* <img src="/logo.png" alt="Logo" className="h-6 w-auto mr-2" /> */}
           <span className="text-4xl text-white">
@@ -41,7 +32,6 @@ export default function Header() {
           </span>
         </Link>
 
-        {/* Navigation Links */}
         <ul className="flex space-x-8 font-medium">
           {navItems.map((item) => (
               <Link
