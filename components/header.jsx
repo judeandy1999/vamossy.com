@@ -21,7 +21,7 @@ export default function Header() {
   return (
     <header
       className={`fixed w-full z-50 transition-colors duration-300 ${
-        isScrolled ? 'bg-black shadow-md' : 'bg-transparent'
+        pathname !== '/' ? 'bg-black shadow-md' : isScrolled ? 'bg-black shadow-md' : 'bg-transparent'
       }`}
     >
       <nav className="mx-auto flex items-center justify-between px-24 py-8 text-white">

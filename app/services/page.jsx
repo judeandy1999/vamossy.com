@@ -1,17 +1,26 @@
-import { services } from '../../data/services';
-import PageWrapper from '@/components/page-wrapper';
+import ServicesHero from '@/components/services-hero';
+import NeedHelp from '@/components/ui/need-help';
+import Footer from '@/components/footer';
+import AwardsSection from '@/components/awards-section';
+import DigitalMarketingServices from '@/components/digital-marketing-services';
+import ServicesPromoSection from '@/components/services-promo-section';
+import { promoSections } from "@/data/data";
+import TrustedBySection from '@/components/trustedby-section';
 
 export default function Page() {
+  
   return (
-    <PageWrapper title="Our Services" subtitle="Explore the range of services we offer to help your business succeed in the digital landscape." color="services">
-      <div className="grid md:grid-cols-3 gap-8">
-        {services.map(service => (
-          <div key={service.id} className="bg-white shadow-md rounded-xl p-6 hover:shadow-xl transition">
-            <h2 className="text-xl font-semibold mb-2 text-black-600">{service.title}</h2>
-            <p className="text-gray-600">{service.description}</p>
-          </div>
-        ))}
-      </div>
-    </PageWrapper>
+    <div className='pt-12'>
+      <NeedHelp/>
+      <ServicesHero />
+      <AwardsSection />
+      <DigitalMarketingServices />
+      {promoSections.map((section, index) => (
+        <ServicesPromoSection key={index} {...section} />
+      ))}
+      <TrustedBySection />
+
+      <Footer />
+    </div>
   );
 }
