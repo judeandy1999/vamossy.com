@@ -6,7 +6,7 @@ export default function BottomFooter() {
         <div className="flex items-center space-x-2">
           {/* <img src="/logo-lightbulb.svg" alt="Logo" className="h-6 w-auto" /> */}
           <span className="text-xl font-bold">
-            smart<span className="text-yellow-400">sites</span>
+            Brand<span className="text-yellow-400">Name</span>
           </span>
         </div>
 
