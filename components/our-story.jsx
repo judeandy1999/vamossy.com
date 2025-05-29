@@ -29,7 +29,6 @@ export default function OurStory() {
   return (
     <section className="px-16 py-16 bg-white">
       <div className="flex gap-12">
-        {/* Left Section: Video */}
         <motion.div
           className="flex-shrink-0 w-full md:w-1/2"
           initial="hidden"
@@ -47,7 +46,6 @@ export default function OurStory() {
           />
         </motion.div>
 
-        {/* Right Section: Text */}
         <motion.div
           className="w-full md:w-1/2 space-y-6"
           initial="hidden"
@@ -55,7 +53,7 @@ export default function OurStory() {
           viewport={{ once: false, amount: 0.5 }}
           variants={rightVariants}
         >
-          <h2 className="text-[58px] font-semibold text-gray-800">Our Story</h2>
+          <h2 className="text-[78px] font-semibold text-gray-800">Our Story</h2>
           <p className="text-[20px] text-gray-600 leading-relaxed">
             SmartSites was founded by brothers Alex and Michael Melen, who grew up with a passion for all things digital. With an innovative vision and a lot of hard work, SmartSites quickly became one of America’s fastest growing companies.
           </p>
