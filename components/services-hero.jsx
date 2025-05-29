@@ -1,11 +1,44 @@
+'use client';
 import Image from "next/image";
+import { delay, motion } from 'framer-motion';
 
 export default function ServicesHero() {
+
+  const leftSectionVariants = {
+    hidden: { opacity: 0, y: -50 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 1,
+        ease: 'easeOut',
+      },
+    },
+  };
+
+  const rightSectionVariants = {
+    hidden: { opacity: 0, },
+    visible: {
+      opacity: 1,
+      transition: {
+        duration: 1.5,
+        ease: 'easeOut',
+        delay: 0.5,
+      },
+    },
+  };
+
   return (
     <section className="mt-12 relative bg-[#02355A] text-white p-16">
-      <div className="mx-auto justify-center flex flex-col md:flex-row items-center gap-12 py-16 relative">
+      <div className="mx-auto justify-center flex flex-col md:flex-row items-center gap-12 py-24 relative">
         {/* Left Section: Text Content */}
-        <div className="w-[60%] space-y-2 z-10">
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: false, amount: 0.5 }}
+          variants={leftSectionVariants}
+          className="w-[60%] space-y-2 z-10"
+        >
           <p className="text-yellow-400 text-[20px] font-semibold">
             Grow Your Business With Scalable Digital Marketing
           </p>
@@ -17,11 +50,17 @@ export default function ServicesHero() {
             offers proven strategies & reliable execution to exceed your marketing
             goals.
           </p>
-        </div>
+        </motion.div>
 
         {/* Right Section: Image */}
-        <div className="w-[40%]">
-          <div className="absolute w-[750px] h-[750px] left-[50%] top-[1rem]">
+        <motion.div 
+          className="w-[40%]"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: false, amount: 0.5 }}
+          variants={rightSectionVariants}
+        >
+          <div className="absolute w-[750px] h-[750px] left-[50%] top-[4.5rem]">
             <Image
               width={1200}
               height={1200}
@@ -30,7 +69,7 @@ export default function ServicesHero() {
               className="w-full h-auto"
             />
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
