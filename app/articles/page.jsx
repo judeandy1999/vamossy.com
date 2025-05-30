@@ -27,14 +27,14 @@ export default function BlogPage() {
         ))}
       </ul>
 
-      {/* {!isReachingEnd && (
+      {!isReachingEnd && (
         <button
           onClick={loadMore}
-          className="mt-8 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          className="cursor-pointer mt-8 text-gray-600 hover:text-blue-700"
         >
-          Load More
+          Load More..
         </button>
-      )} */}
+      )}
 
       {loading && <p className="text-center mt-4">Loading...</p>}
     </div>
