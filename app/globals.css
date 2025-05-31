@@ -18,7 +18,7 @@ body {
   overflow: scroll;
   max-height: 50vh;
   padding-top: 1rem;
-  position: unset;
+  position: unset !important;
 }
 
 .ProseMirror::before {
