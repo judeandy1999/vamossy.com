@@ -52,12 +52,12 @@ export default function RichTextEditor({ content, onContentChange }) {
 
   return (
     <div className='relative'>
-      <div className='absolute right-0 -top-0 w-full'>
+      <div className='absolute right-0 top-2 w-[99%] p-2 py-0'>
         <EditorToolbar editor={editor} />
       </div>
       <EditorContent
         editor={editor}
-        className="border z-5 pt-13 p-4 min-h-[400px] rounded bg-white shadow focus:outline-none flex flex-col"
+        className="relative border border-gray-400 h-[60vh] z-5 pt-13 p-4 min-h-[400px] rounded bg-white shadow focus:outline-none flex flex-col"
       />
     </div>
   );

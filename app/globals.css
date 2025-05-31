@@ -15,8 +15,22 @@ body {
   flex: 1;
   min-height: 100%;
   outline: none;
-  border-top: 2px solid #e5e7eb; /* Light gray border */
+  overflow: scroll;
+  max-height: 50vh;
+  padding-top: 1rem;
+  position: unset;
 }
+
+.ProseMirror::before {
+  content: '';
+  position: absolute;
+  top: 55px;
+  left: 0px;
+  right: 0px;
+  height: 1px;
+  background-color: oklch(70.7% 0.022 261.325);
+}
+
 .ProseMirror p {
   padding-top: 1rem;
 }
