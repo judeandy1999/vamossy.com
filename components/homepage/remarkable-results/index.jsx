@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import Button from "./ui/button";
-import ResultItem from "./ui/result-item";
+import Button from "../../ui/button";
+import ResultItem from "./result-item";
 import { categories, results } from "@/data/data";
 
 export default function RemarkableResults() {

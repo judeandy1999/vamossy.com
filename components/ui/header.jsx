@@ -7,6 +7,11 @@ import { navItems } from '@/data/data';
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const pathname = usePathname();
 
@@ -33,7 +38,7 @@ export default function Header() {
         </Link>
 
         <ul className="flex space-x-8 font-medium">
-          {navItems.map((item) => (
+          {isClient && navItems.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}

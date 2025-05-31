@@ -1,6 +1,6 @@
 'use client';
 import Image from "next/image";
-import { delay, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 export default function ServicesHero() {
 

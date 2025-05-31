@@ -1,7 +1,7 @@
 'use client';
 import { Typewriter } from "react-simple-typewriter";
 import { motion } from 'framer-motion';
-import Button from './ui/button';
+import Button from '@/components/ui/button';
 
 export default function Hero() {
   const h1Variants = {

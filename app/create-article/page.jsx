@@ -1,70 +1,63 @@
-// app/articles/create/page.jsx
+// app/create-article/page.jsx
 'use client';
 
-import { useEditor, EditorContent } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import Table from '@tiptap/extension-table';
-import TableRow from '@tiptap/extension-table-row';
-import TableCell from '@tiptap/extension-table-cell';
-import TableHeader from '@tiptap/extension-table-header';
 import { useState } from 'react';
 import DOMPurify from 'dompurify';
 import { supabase } from '@/utils/client';
+import RichTextEditor from '@/components/rich-text-editor';
 
-export default function CreateArticlePage() {
-  const editor = useEditor({
-    extensions: [
-      StarterKit,
-      Table.configure({ resizable: true }),
-      TableRow,
-      TableHeader,
-      TableCell,
-    ],
-    content: '<h2>New Article</h2><p>Start writing...</p>',
-  });
-
+export default function Page() {
   const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
   const [status, setStatus] = useState(null);
 
   const saveArticle = async () => {
-    const rawHtml = editor.getHTML();
-    const html = DOMPurify.sanitize(rawHtml);
+    if (!content.trim()) {
+      setStatus('Content cannot be empty!');
+      return;
+    }
 
-    // Extract a plain-text preview from the HTML (first 150 chars)
+    const html = DOMPurify.sanitize(content);
     const tempElement = document.createElement('div');
     tempElement.innerHTML = html;
     const preview = tempElement.innerText.slice(0, 150);
 
-    const { error } = await supabase.from('articles').insert({
-      content: html,
-      preview,
-      title: title || 'Untitled Article'
-    });
+    const { error } = await supabase.from('articles').insert([
+      { title: title || 'Untitled Article', preview, content: html },
+    ]);
 
-    if (error) setStatus('Error saving article');
-    else setStatus('Article saved successfully!');
+    if (error) {
+      console.error('Error saving article:', error.message);
+      setStatus('❌ Error saving article');
+    } else {
+      setStatus('✅ Article saved successfully!');
+      setTitle('');
+      setContent('');
+    }
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 pt-32">
-      <h1 className="text-3xl font-bold mb-4">Create New Article</h1>
+    <div className="max-w-3xl mx-auto p-4 pt-32">
+      <h1 className="text-2xl font-bold mb-4">Create New Article</h1>
+
       <input
         type="text"
+        placeholder="Article Title"
         value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        placeholder="Enter article title"
-        className="w-full border border-gray-300 rounded px-3 py-2 mb-4"
+        onChange={e => setTitle(e.target.value)}
+        className="w-full mb-4 p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
       />
-      <div className="border p-4 rounded bg-white">
-        <EditorContent editor={editor} className="prose max-w-none" />
-      </div>
+
+      <RichTextEditor content={content} onContentChange={setContent} />
+
       <button
-        className="mt-4 px-6 py-2 bg-blue-600 text-white rounded"
         onClick={saveArticle}
+        className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
       >
         Save Article
       </button>
-      {status && <p className="mt-2 text-sm text-gray-700">{status}</p>}
+
+      {status && <p className="mt-2 text-sm text-gray-600">{status}</p>}
     </div>
   );
 }
