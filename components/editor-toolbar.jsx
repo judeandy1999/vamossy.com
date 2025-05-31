@@ -80,23 +80,23 @@ export default function EditorToolbar({ editor }) {
             placeholder="Enter URL"
             value={linkUrl}
             onChange={(e) => setLinkUrl(e.target.value)}
-            className="flex-1 p-2 focus:outline-none mt-2 animate-fade-in"
+            className="flex-1 p-2 focus:outline-none animate-fade-in"
           />
           <button
             onClick={applyLink}
-            className="p-2 pt-4 rounded hover:bg-green-100 focus:bg-green-200 transition-colors"
+            className="p-2 rounded hover:bg-green-100 focus:bg-green-200 transition-colors"
           >
             <Check size={18} className="text-green-600" />
           </button>
           <button
             onClick={() => setShowLinkInput(false)}
-            className="p-2 pt-4 rounded hover:bg-red-100 focus:bg-red-200 transition-colors"
+            className="p-2 rounded hover:bg-red-100 focus:bg-red-200 transition-colors"
           >
             <X size={18} className="text-red-600" />
           </button>
         </div>
       ) : (
-        <div className="flex z-10 items-end justify-between flex-wrap gap-2 p-2 border bg-white shadow mb-4 sticky top-0 z-10 animate-fade-in">
+        <div className="flex z-10 items-end justify-between flex-wrap gap-2 p-1 rounded-t-sm bg-white sticky top-2 z-10 animate-fade-in">
           <div className='flex gap-1'>
             <ToolbarButton
               onClick={() => adjustFontSize(-2)}
@@ -110,11 +110,12 @@ export default function EditorToolbar({ editor }) {
               iconSize={20}
               label="Larger Font"
             />
+            <div className="border-l border-[1px] border-gray-300 h-9" />
             <ToolbarButton onClick={() => editor.chain().focus().toggleBold().run()} icon={Bold} label="Bold" isActive={editor.isActive('bold')} />
             <ToolbarButton onClick={() => editor.chain().focus().toggleItalic().run()} icon={Italic} label="Italic" isActive={editor.isActive('italic')} />
             <ToolbarButton onClick={() => editor.chain().focus().toggleUnderline().run()} icon={Underline} label="Underline" isActive={editor.isActive('underline')} />
             <ToolbarButton onClick={() => editor.chain().focus().toggleStrike().run()} icon={Strikethrough} label="Strikethrough" isActive={editor.isActive('strike')} />
-            {/* Dropdown for Lists */}
+            <div className="border-l border-[1px] border-gray-300 h-9" />
             <div className="relative">
               <ToolbarButton
                 onClick={() => setShowListDropdown(!showListDropdown)}
@@ -152,6 +153,7 @@ export default function EditorToolbar({ editor }) {
             <ToolbarButton onClick={() => editor.chain().focus().toggleBlockquote().run()} icon={TextQuote} label="Blockquote" />
             <ToolbarButton onClick={() => editor.chain().focus().toggleCode().run()} icon={Code} label="Inline Code" />
             <ToolbarButton onClick={() => editor.chain().focus().toggleCodeBlock().run()} icon={FileCode2} label="Code Block" />
+            <div className="border-l border-[1px] border-gray-300 h-9" />
             <ToolbarButton
               onClick={handleLinkButtonClick}
               icon={LinkIcon}
