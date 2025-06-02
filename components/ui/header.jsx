@@ -4,10 +4,12 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation';
 import { navItems } from '@/data/data';
+import { signOut, useSession } from 'next-auth/react';
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isClient, setIsClient] = useState(false);
+  const { data: session } = useSession();
 
   useEffect(() => {
     setIsClient(true);
@@ -26,7 +28,7 @@ export default function Header() {
   return (
     <header
       className={`fixed w-full z-50 transition-colors duration-300 ${
-        pathname !== '/' ? 'bg-black shadow-md' : isScrolled ? 'bg-black shadow-md' : 'bg-transparent'
+        pathname !== '/' ? 'bg-black shadow-md' : isScrolled ? 'bg-black shadow-md' : '!bg-transparent'
       }`}
     >
       <nav className="mx-auto flex items-center justify-between px-24 py-8 text-white">
@@ -38,7 +40,8 @@ export default function Header() {
         </Link>
 
         <ul className="flex space-x-8 font-medium">
-          {isClient && navItems.map((item) => (
+
+          {(isClient && !session) && navItems.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
@@ -49,6 +52,15 @@ export default function Header() {
                 {item.name}
               </Link>
             ))}
+
+          {session && (
+            <button
+              onClick={() => signOut()}
+              className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition-colors"
+            >
+              Log out
+            </button>
+          )}
         </ul>
       </nav>
     </header>
