@@ -32,7 +32,6 @@ export default function Page() {
     ]);
 
     if (error) {
-      console.error('Error saving article:', error.message);
       setSavingStatus('❌ Error saving article');
     } else {
       setSavingStatus('✅ Article saved successfully!');
