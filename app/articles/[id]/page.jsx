@@ -3,11 +3,11 @@
 import { use } from 'react';
 import { useArticleMeta } from '@/hooks/useArticleMeta';
 import { useArticleContent } from '@/hooks/useArticleContent';
-import { useAllArticles } from '@/hooks/useAllArticles';
+// import { useAllArticles } from '@/hooks/useAllArticles';
 
 export default function ArticlePage(props) {
   const params = use(props.params);
-  const { articles, loading, error, loadMore, isReachingEnd } = useAllArticles();
+  // const { articles, loading, error, loadMore, isReachingEnd } = useAllArticles();
   const { data: meta, isLoading: loadingMeta, error: errorMeta } = useArticleMeta(params.id);
   const { data: full, isLoading: loadingContent } = useArticleContent(params.id);
 
@@ -15,9 +15,9 @@ export default function ArticlePage(props) {
   if (errorMeta) return <p>Error loading article.</p>;
 
   return (
-    <div className="flex justify-between gap-24 px-24">
-      <article className="px-24 py-10 pt-32">
-        <h1 className="text-[48px] font-semibold mb-6">{meta.title}</h1>
+    <div className="bg-white flex flex-col justify-between">
+      <article className="article px-2 md:px-24 lg:px-48 sm:px-0 py-10 pt-32">
+        <h1 className="text-[20px] md:text-[48px] font-semibold mb-6">{meta.title}</h1>
         <p className="text-sm text-gray-600 mt-1">
           {new Date(meta.created_at).toLocaleDateString()}
         </p>
@@ -31,11 +31,11 @@ export default function ArticlePage(props) {
           />
         )}
       </article>
-      <div className="flex flex-col max-w-[20%] px-4 py-10 pt-32">
+      {/* <div className="flex flex-col px-4 py-10 pt-32">
         <h1 className="text-3xl font-semibold mb-6">Related Article</h1>
-        <ul className="space-y-6">
+        <ul className="flex space-y-6">
           {articles.map(article => (
-            <li key={article.id} className="border-b pb-4">
+            <li key={article.id} className="min-w-[15rem]">
               <a
                 href={`/articles/${article.id}`}
                 className="text-xl font-semibold text-blue-600 hover:underline"
@@ -51,7 +51,7 @@ export default function ArticlePage(props) {
         </ul>
 
         {loading && <p className="text-center mt-4">Loading...</p>}
-      </div>
+      </div> */}
     </div>
   );
 }
