@@ -10,7 +10,7 @@ import TrustedBySection from '@/components/services/trustedby-section';
 export default function Page() {
   
   return (
-    <div className='pt-12'>
+    <div>
       <NeedHelp/>
       <ServicesHero />
       <AwardsSection />

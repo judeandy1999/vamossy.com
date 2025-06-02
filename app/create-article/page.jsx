@@ -1,20 +1,24 @@
 // app/create-article/page.jsx
 'use client';
 
+import { useSession, signIn } from 'next-auth/react';
 import { useState } from 'react';
 import DOMPurify from 'dompurify';
 import { supabase } from '@/utils/client';
 import RichTextEditor from '@/components/rich-text-editor';
 import { Save } from 'lucide-react';
+import Spinner from '@/components/ui/spinner';
 
 export default function Page() {
+  const { data: session, status } = useSession();
+
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [status, setStatus] = useState(null);
+  const [savingStatus, setSavingStatus] = useState(null);
 
   const saveArticle = async () => {
     if (!content.trim()) {
-      setStatus('Content cannot be empty!');
+      setSavingStatus('Content cannot be empty!');
       return;
     }
 
@@ -28,39 +32,49 @@ export default function Page() {
     ]);
 
     if (error) {
-      console.error('Error saving article:', error.message);
-      setStatus('❌ Error saving article');
+      setSavingStatus('❌ Error saving article');
     } else {
-      setStatus('✅ Article saved successfully!');
+      setSavingStatus('✅ Article saved successfully!');
       setTitle('');
       setContent('');
     }
   };
 
+  if (status === 'loading') {
+    return <Spinner />;
+  }
+
+  if (!session) {
+    signIn();
+    return <Spinner />;
+  }
+
   return (
-    <div className="mx-24 p-4 pt-32">
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-[48px] font-light">Create New Article</h1>
-        <button
-          onClick={saveArticle}
-          className="flex items-center gap-2 bg-[#02355A] text-white font-semibold px-6 py-3 rounded-full shadow-md hover:bg-gray-600 transition-colors"
-        >
-          <Save size={20} />
-          <span>SAVE CHANGES</span>
-        </button>
+    <div className="bg-white">
+      <div className="mx-24 p-4 pt-32">
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-[48px] font-light">Create New Article</h1>
+          <button
+            onClick={saveArticle}
+            className="flex items-center gap-2 bg-[#02355A] text-white font-semibold px-6 py-3 rounded-full shadow-md hover:bg-gray-600 transition-colors"
+          >
+            <Save size={20} />
+            <span>SAVE CHANGES</span>
+          </button>
+        </div>
+    
+        <input
+          type="text"
+          placeholder="Article Title"
+          value={title}
+          onChange={e => setTitle(e.target.value)}
+          className="w-1/2 mb-4 p-3 border-gray-400 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+        />
+    
+        <RichTextEditor content={content} onContentChange={setContent} />
+    
+        {savingStatus && <p className="mt-2 text-sm text-gray-600">{savingStatus}</p>}
       </div>
-  
-      <input
-        type="text"
-        placeholder="Article Title"
-        value={title}
-        onChange={e => setTitle(e.target.value)}
-        className="w-1/2 mb-4 p-3 border-gray-400 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-      />
-  
-      <RichTextEditor content={content} onContentChange={setContent} />
-  
-      {status && <p className="mt-2 text-sm text-gray-600">{status}</p>}
     </div>
   );
 }

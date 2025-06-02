@@ -1,6 +1,7 @@
 import "./globals.css";
 import localFont from 'next/font/local';
 import Header from "@/components/ui/header";
+import SessionProviderWrapper from "./session-provider";
 
 export const metadata = {
   title: "Create Next App",
@@ -35,9 +36,13 @@ const proximaNova = localFont({
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={proximaNova.className}>
-      <body className={proximaNova.className}>
-        <Header />
-        {children}
+      <body className={`${proximaNova.className}`}>
+        <SessionProviderWrapper>
+          <Header />
+          <div className="bg-[#333] pt-8">
+            {children}
+          </div>
+        </SessionProviderWrapper>
       </body>
     </html>
   );
