@@ -31,7 +31,7 @@ export default function Page() {
       setTitle('');
       setContent('');
     }
-  }, [selectedArticle]);
+  }, [selectedArticle?.id]);
 
   const saveArticle = async () => {
     if (!title.trim() || !content.trim()) {
@@ -98,7 +98,6 @@ export default function Page() {
       console.error('Failed to delete article:', error.message);
     }
   };
-  
 
   useEffect(() => {
     if (newlyCreatedId) {
@@ -196,7 +195,7 @@ export default function Page() {
           onChange={(e) => setTitle(e.target.value)}
         />
 
-        <RichTextEditor content={content} onContentChange={setContent} />
+        <RichTextEditor selectedArticle={selectedArticle?.id} key={selectedArticle?.id || 'new'} content={content} onContentChange={setContent} />
 
         {savingStatus && <p className="mt-2 text-sm text-gray-600">{savingStatus}</p>}
       </div>
