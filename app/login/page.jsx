@@ -1,9 +1,23 @@
 'use client';
 
-import { signIn } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { FcGoogle } from 'react-icons/fc';
+import Spinner from '@/components/ui/spinner';
+import { redirect } from 'next/navigation';
 
 export default function LoginPage() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === 'authenticated') {
+      redirect('/create-article');
+    }
+  }, [status, router]);
+
+  if (status === 'loading') return <Spinner />;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 font-sans">
