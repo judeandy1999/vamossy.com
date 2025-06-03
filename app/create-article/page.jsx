@@ -7,7 +7,7 @@ import { useAllArticles } from '@/hooks/useAllArticles';
 import RichTextEditor from '@/components/rich-text-editor';
 import { Save } from 'lucide-react';
 import Spinner from '@/components/ui/spinner';
-import { FilePlus, Trash } from 'lucide-react';
+import Sidebar from '@/components/editor-sidebar';
 import { createArticle, updateArticle, deleteArticle } from '@/utils/articles';
 
 export default function Page() {
@@ -20,9 +20,10 @@ export default function Page() {
   const [savingStatus, setSavingStatus] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const [newlyCreatedId, setNewlyCreatedId] = useState(null);
+  const [contentChanged, setContentChanged] = useState(false);
 
   const isEditing = !!selectedArticle;
-
+  
   useEffect(() => {
     if (selectedArticle) {
       setTitle(selectedArticle.title);
@@ -68,15 +69,17 @@ export default function Page() {
           content: html,
           user_email: session.user.email,
         });
-        setTitle('');
-        setContent('');
         setNewlyCreatedId(newArticle.id);
         setSavingStatus('Article created!');
         addNewArticle({
           ...newArticle,
           created_at: new Date().toISOString(),
         });
+        setSelectedArticle(null);
+        setTitle('');
+        setContent('');
       }
+      setContentChanged(!contentChanged);
     } catch (error) {
       console.error('Error saving article:', error.message);
       setSavingStatus('Failed to save article!');
@@ -110,6 +113,7 @@ export default function Page() {
     setSelectedArticle(null);
     setTitle('');
     setContent('');
+    setContentChanged(!contentChanged);
   };
 
   if (status === 'loading') return <Spinner />;
@@ -120,66 +124,28 @@ export default function Page() {
 
   return (
     <div className="pt-16 flex h-screen">
-      <div className="w-64 bg-gray-100 p-4 overflow-y-auto border-r">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold">Articles</h2>
-          <button
-            onClick={startNewArticle}
-            className="flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 text-white rounded px-2 py-1 w-auto"
-          >
-            <FilePlus size={16} /> New Article
-          </button>
-        </div>
-        {loading ? (
-          <Spinner />
-        ) : error ? (
-          <p className="text-red-500">Failed to load articles</p>
-        ) : (
-          <ul className="space-y-2">
-            {articles.map((article) => (
-              <li
-                key={article.id}
-                className={`flex justify-between cursor-pointer p-2 rounded hover:bg-gray-200 transition-all duration-300 ${
-                  selectedArticle?.id === article.id ? 'bg-gray-300' : ''
-                } ${String(article.id) === String(newlyCreatedId) ? 'animate-popIn' : ''}`}
-                onClick={() => setSelectedArticle(article)}
-              >
-                <div>
-                  <h3 className="font-medium">{article.title}</h3>
-                  <p className="text-xs text-gray-600">
-                    {new Date(article.created_at).toLocaleString()}
-                  </p>
-                </div>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDelete(article.id);
-                  }}
-                  className="text-red-500 hover:text-red-700 text-xs"
-                >
-                  <Trash size={16} />
-                </button>
-              </li>
-            ))}
-            {!isReachingEnd && (
-              <button
-                onClick={loadMore}
-                className="mt-4 text-gray-600 hover:text-blue-400 text-sm rounded px-2 py-1"
-              >
-                Load More...
-              </button>
-            )}
-          </ul>
-        )}
-      </div>
+      {/* sidebar */}
+      <Sidebar
+        articles={articles}
+        loading={loading}
+        isReachingEnd={isReachingEnd}
+        loadMore={loadMore}
+        startNewArticle={startNewArticle}
+        setSelectedArticle={setSelectedArticle}
+        selectedArticleId={selectedArticle?.id}
+        handleDelete={handleDelete}
+        error={error}
+        newlyCreatedId={newlyCreatedId}
+      />
 
+      {/* Content Editor*/}
       <div className="bg-white flex-1 p-6 overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold">{isEditing ? 'Edit Article' : 'New Article'}</h1>
           <button
             onClick={saveArticle}
-            disabled={isSaving}
-            className={`flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white rounded px-4 py-2 ${
+            disabled={isSaving || !title.trim() || !content.trim()}
+            className={`disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white rounded px-4 py-2 ${
               isSaving ? 'cursor-wait' : ''
             }`}
           >
@@ -195,7 +161,7 @@ export default function Page() {
           onChange={(e) => setTitle(e.target.value)}
         />
 
-        <RichTextEditor selectedArticle={selectedArticle?.id} key={selectedArticle?.id || 'new'} content={content} onContentChange={setContent} />
+        <RichTextEditor contentChanged={contentChanged} selectedArticle={selectedArticle?.id} key={selectedArticle?.id || 'new'} content={content} onContentChange={setContent} />
 
         {savingStatus && <p className="mt-2 text-sm text-gray-600">{savingStatus}</p>}
       </div>
