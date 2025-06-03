@@ -13,7 +13,7 @@ import EditorToolbar from './editor-toolbar';
 import Underline from '@tiptap/extension-underline';
 import TextAlign from '@tiptap/extension-text-align';
 
-export default function RichTextEditor({ selectedAritcle, content, onContentChange }) {
+export default function RichTextEditor({ contentChanged, selectedAritcle, content, onContentChange }) {
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -52,7 +52,7 @@ export default function RichTextEditor({ selectedAritcle, content, onContentChan
     if (editor) {
       editor.commands.setContent(content);
     }
-  }, [selectedAritcle, editor]);  
+  }, [contentChanged,selectedAritcle, editor]);
 
   return (
     <div className='relative'>
