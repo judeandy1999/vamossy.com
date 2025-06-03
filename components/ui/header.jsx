@@ -10,12 +10,11 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isClient, setIsClient] = useState(false);
   const { data: session } = useSession();
+  const pathname = usePathname();
 
   useEffect(() => {
     setIsClient(true);
   }, []);
-
-  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -41,7 +40,7 @@ export default function Header() {
 
         <ul className="flex space-x-8 font-medium">
 
-          {(isClient && !session) && navItems.map((item) => (
+          {(isClient && pathname !== '/create-article') && navItems.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}

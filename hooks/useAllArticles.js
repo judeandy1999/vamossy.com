@@ -3,7 +3,7 @@
 import useSWRInfinite from 'swr/infinite';
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
-const PAGE_SIZE = 5;
+const PAGE_SIZE = 10;
 
 export const getAllArticlesKey = (pageIndex, previousPageData) => {
   if (previousPageData && !previousPageData.length) return null;
@@ -38,7 +38,7 @@ export function useAllArticles() {
     }, false);
   };
 
-  const deleteArticleFromSidebar = (id) => {
+  const deleteArticleFromSidebar = async (id) => {
     mutate((pages) => {
       if (!pages) return [];
       const updatedPages = pages.map((page) =>
@@ -46,6 +46,9 @@ export function useAllArticles() {
       );
       return updatedPages;
     }, false);
+  
+    // Force re-fetch so any "hidden" articles on the server are pulled in
+    await mutate();
   };
 
   return {
