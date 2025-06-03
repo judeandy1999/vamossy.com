@@ -23,7 +23,6 @@ export default function Page() {
 
   const isEditing = !!selectedArticle;
 
-  console.log('Selected Article:', selectedArticle);
   useEffect(() => {
     if (selectedArticle) {
       setTitle(selectedArticle.title);
