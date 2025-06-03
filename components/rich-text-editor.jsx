@@ -1,4 +1,3 @@
-// components/RichTextEditor.jsx
 'use client';
 
 import { useEditor, EditorContent } from '@tiptap/react';
@@ -15,7 +14,6 @@ import Underline from '@tiptap/extension-underline';
 import TextAlign from '@tiptap/extension-text-align';
 
 export default function RichTextEditor({ content, onContentChange }) {
-
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -49,6 +47,12 @@ export default function RichTextEditor({ content, onContentChange }) {
       onContentChange(html);
     },
   });
+
+  useEffect(() => {
+    if (editor) {
+      editor.commands.setContent(content);
+    }
+  }, [content, editor]);  
 
   return (
     <div className='relative'>
