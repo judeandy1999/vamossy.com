@@ -2,11 +2,11 @@ import { supabase } from '@/utils/client';
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
-    const { title, preview, content, user_email } = req.body;
+    const { title, preview, content, user_email, wiki, tab } = req.body;
 
     const { data, error } = await supabase
       .from('articles')
-      .insert([{ title, preview, content, user_email }])
+      .insert([{ title, preview, content, user_email, wiki, tab }])
       .select()
       .single();
 
