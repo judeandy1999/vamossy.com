@@ -57,6 +57,10 @@ body {
   margin-bottom: 1rem;
 }
 
+.article table p {
+  margin-bottom: 0.5rem;
+}
+
 .article ul p {
   margin-bottom: 0;
 }

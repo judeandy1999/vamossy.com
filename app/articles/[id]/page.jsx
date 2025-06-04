@@ -1,57 +1,90 @@
 'use client';
 
-import { use } from 'react';
+import { useState, useEffect } from 'react';
 import { useArticleMeta } from '@/hooks/useArticleMeta';
 import { useArticleContent } from '@/hooks/useArticleContent';
-// import { useAllArticles } from '@/hooks/useAllArticles';
+import Spinner from '@/components/ui/spinner';
+import { use } from 'react';
 
 export default function ArticlePage(props) {
   const params = use(props.params);
-  // const { articles, loading, error, loadMore, isReachingEnd } = useAllArticles();
   const { data: meta, isLoading: loadingMeta, error: errorMeta } = useArticleMeta(params.id);
   const { data: full, isLoading: loadingContent } = useArticleContent(params.id);
 
-  if (loadingMeta) return <p>Loading metadata...</p>;
-  if (errorMeta) return <p>Error loading article.</p>;
+  const [activeTab, setActiveTab] = useState(null);
+
+  useEffect(() => {
+    if (meta?.has_tabs && full?.tabs) {
+      const firstTabId = Object.keys(full.tabs)[0];
+      setActiveTab(firstTabId);
+    }
+  }, [meta?.has_tabs, full?.tabs]);
+
+  if (loadingMeta) {
+    return <Spinner />
+  }
+
+  if (errorMeta) {
+    return (
+      <div className="flex justify-center items-center h-screen text-red-500">
+        Failed to load article. Please try again.
+      </div>
+    );
+  }
+
+  const hasTabs = meta?.has_tabs && full?.tabs;
 
   return (
-    <div className="bg-white flex flex-col justify-between">
-      <article className="article px-2 md:px-24 lg:px-48 sm:px-0 py-10 pt-32">
-        <h1 className="text-[20px] md:text-[48px] font-semibold mb-6">{meta.title}</h1>
-        <p className="text-sm text-gray-600 mt-1">
-          {new Date(meta.created_at).toLocaleDateString()}
+    <div className="pt-12 bg-gray-50 min-h-screen flex flex-col items-center">
+      <article className="article w-full max-w-4xl bg-white shadow rounded-lg p-6 mt-24 mb-12">
+        <h1 className="text-3xl md:text-5xl font-bold text-slate-800 mb-4">{meta.title}</h1>
+        <p className="text-sm text-gray-500 mb-8">
+          {new Date(meta.created_at).toLocaleString([], {
+            dateStyle: 'medium',
+            timeStyle: 'short',
+            hour12: true
+          })}
         </p>
 
         {loadingContent ? (
-          <p className="mt-6 text-gray-500">Loading content...</p>
+          <div className="flex justify-center items-center my-12 text-teal-600">
+            <Spinner />
+          </div>
+        ) : hasTabs ? (
+          <div>
+            {/* Tabs Navigation */}
+            <div className="flex gap-2 sm:gap-4 border-b border-gray-200 mb-6">
+              {Object.entries(full.tabs).map(([tabId, tabContent]) => (
+                <button
+                  key={tabId}
+                  onClick={() => setActiveTab(tabId)}
+                  className={`cursor-pointer px-4 py-2 text-sm font-medium rounded-t transition focus:outline-none ${
+                    activeTab === tabId
+                      ? 'bg-slate-100 text-slate-700 border-b-2 border-slate-500'
+                      : 'text-gray-500 hover:text-slate-600'
+                  }`}
+                >
+                  {tabContent.name}
+                </button>
+              ))}
+            </div>
+
+            {/* Tab Content */}
+            <div className="prose prose-lg max-w-none text-gray-800 leading-relaxed">
+              {activeTab ? (
+                <div dangerouslySetInnerHTML={{ __html: full.tabs[activeTab].content }} />
+              ) : (
+                <p className="text-gray-500">Select a tab to view its content.</p>
+              )}
+            </div>
+          </div>
         ) : (
           <div
-            className="prose prose-lg text-gray-900"
+            className="prose prose-lg max-w-none text-gray-800 leading-relaxed"
             dangerouslySetInnerHTML={{ __html: full?.content }}
           />
         )}
       </article>
-      {/* <div className="flex flex-col px-4 py-10 pt-32">
-        <h1 className="text-3xl font-semibold mb-6">Related Article</h1>
-        <ul className="flex space-y-6">
-          {articles.map(article => (
-            <li key={article.id} className="min-w-[15rem]">
-              <a
-                href={`/articles/${article.id}`}
-                className="text-xl font-semibold text-blue-600 hover:underline"
-              >
-                {article.title}
-              </a>
-              <p className="text-sm text-gray-600 mt-1">
-                {new Date(article.created_at).toLocaleDateString()}
-              </p>
-              <p className="text-gray-800 mt-2 line-clamp-2">{article.preview}</p>
-            </li>
-          ))}
-        </ul>
-
-        {loading && <p className="text-center mt-4">Loading...</p>}
-      </div> */}
     </div>
   );
 }

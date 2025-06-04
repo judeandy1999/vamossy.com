@@ -2,19 +2,42 @@ import { supabase } from '@/utils/client';
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
-    const { title, preview, content, user_email, wiki, tab } = req.body;
+    const { title, content, wiki_id, has_tabs, tabs } = req.body;
 
-    const { data, error } = await supabase
-      .from('articles')
-      .insert([{ title, preview, content, user_email, wiki, tab }])
-      .select()
-      .single();
+    try {
+      // Insert the article into the `articles` table
+      const { data: article, error: articleError } = await supabase
+        .from('articles')
+        .insert([{ title, content, wiki_id, has_tabs }])
+        .select()
+        .single();
 
-    if (error) {
+      if (articleError) {
+        throw new Error(`Failed to create article: ${articleError.message}`);
+      }
+
+      // If the article has tabs, insert them into the `article_tabs` table
+      if (has_tabs && tabs && Object.keys(tabs).length > 0) {
+        const tabEntries = Object.entries(tabs).map(([tabId, tabContent]) => ({
+          article_id: article.id, // Link the tab to the article
+          tab_id: Number(tabId), // Tab ID from `tab_options`
+          content: tabContent,
+        }));
+
+        const { error: tabsError } = await supabase
+          .from('article_tabs')
+          .insert(tabEntries);
+
+        if (tabsError) {
+          throw new Error(`Failed to create article tabs: ${tabsError.message}`);
+        }
+      }
+
+      return res.status(200).json(article);
+    } catch (error) {
+      console.error(error.message);
       return res.status(500).json({ error: error.message });
     }
-
-    return res.status(200).json(data);
   }
 
   res.setHeader('Allow', ['POST']);
