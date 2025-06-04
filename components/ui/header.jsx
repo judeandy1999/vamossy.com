@@ -39,8 +39,7 @@ export default function Header() {
         </Link>
 
         <ul className="flex space-x-8 font-medium">
-
-          {(isClient && pathname !== '/create-article') && navItems.map((item) => (
+          {(isClient && !(pathname === '/create-article' || pathname === '/options')) && navItems.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
@@ -53,12 +52,32 @@ export default function Header() {
             ))}
 
           {session && (
-            <button
-              onClick={() => signOut()}
-              className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition-colors"
-            >
-              Log out
-            </button>
+            <>
+              <Link
+                key={'create-article'}
+                href='/create-article'
+                className={`text-3xl
+                  ${pathname === '/create-article' ? 'text-yellow-400' : 'text-white hover:text-yellow-400'}
+                  `
+                }>
+                Create Article
+              </Link>
+              <Link
+                key={'options'}
+                href='/options'
+                className={`text-3xl
+                  ${pathname === '/options' ? 'text-yellow-400' : 'text-white hover:text-yellow-400'}
+                  `
+                }>
+                Options
+              </Link>
+              <button
+                onClick={() => signOut()}
+                className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition-colors"
+              >
+                Log out
+              </button>
+            </>
           )}
         </ul>
       </nav>
