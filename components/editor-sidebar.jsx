@@ -1,6 +1,7 @@
-
-import { FilePlus, Trash } from 'lucide-react';
+import { useState } from 'react';
+import { FilePlus, Trash, Loader2 } from 'lucide-react';
 import Spinner from '@/components/ui/spinner';
+import Modal from '@/components/ui/modal';
 
 export default function EditorSidebar({
   articles,
@@ -9,49 +10,74 @@ export default function EditorSidebar({
   loadMore,
   startNewArticle,
   setSelectedArticle,
-  selectedArticle,
+  selectedArticleId,
   handleDelete,
   error,
   newlyCreatedId,
 }) {
-  
-    return (
-      <div className="w-64 bg-gray-100 p-4 overflow-y-auto border-r">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold">Articles</h2>
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [targetArticle, setTargetArticle] = useState(null);
+
+  const openModal = (article) => {
+    setTargetArticle(article);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setTargetArticle(null);
+  };
+
+  const confirmDelete = () => {
+    if (targetArticle) {
+      handleDelete(targetArticle.id);
+    }
+    closeModal();
+  };
+
+  return (
+    <div className="w-64 bg-gray-50 border-r border-gray-200 flex flex-col p-4 overflow-y-auto">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-lg font-semibold text-slate-800">Articles</h2>
         <button
           onClick={startNewArticle}
-          className="flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 text-white rounded px-2 py-1 w-auto"
+          className="cursor-pointer flex items-center gap-1 bg-slate-600 hover:bg-slate-700 text-white rounded px-2 py-1 text-sm transition"
         >
-          <FilePlus size={16} /> New Article
+          <FilePlus size={16} /> New
         </button>
       </div>
+
+      {/* Loading & Error */}
       {loading ? (
-        <Spinner />
+        <div className="flex justify-center py-8 text-slate-500">
+          <Loader2 className="animate-spin" />
+        </div>
       ) : error ? (
-        <p className="text-red-500">Failed to load articles</p>
+        <p className="text-red-500 text-sm">Failed to load articles</p>
       ) : (
-        <ul className="space-y-2">
+        <ul className="flex-1 space-y-2">
           {articles.map((article, index) => (
             <li
               key={`${article?.id}-${index}`}
-              className={`flex justify-between cursor-pointer p-2 rounded hover:bg-gray-200 transition-all duration-300 ${
-                selectedArticle?.id === article?.id ? 'bg-gray-300' : ''
+              className={`flex justify-between items-start cursor-pointer p-2 rounded hover:bg-slate-200 transition ${
+                selectedArticleId === article?.id ? 'bg-slate-200' : ''
               } ${String(article?.id) === String(newlyCreatedId) ? 'animate-popIn' : ''}`}
               onClick={() => setSelectedArticle(article)}
             >
-              <div>
-                <h3 className="font-medium">{article?.title}</h3>
-                <p className="text-xs text-gray-600">
-                  {new Date(article?.created_at).toLocaleString()}
+              <div className="flex-1 overflow-auto">
+                <p>{selectedArticleId}{article?.id}</p>
+                <h3 className="whitespace-normal text-sm font-medium text-slate-800 truncate">{article?.title}</h3>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  {new Date(article?.created_at).toLocaleString([], { dateStyle: 'short', timeStyle: 'short', hour12: true })}
                 </p>
               </div>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleDelete(article?.id);
+                  openModal(article);
                 }}
-                className="text-red-500 hover:text-red-700 text-xs"
+                className="text-red-500 hover:text-red-600 transition"
               >
                 <Trash size={16} />
               </button>
@@ -60,13 +86,21 @@ export default function EditorSidebar({
           {!isReachingEnd && (
             <button
               onClick={loadMore}
-              className="mt-4 text-gray-600 hover:text-blue-400 text-sm rounded px-2 py-1"
+              className="mt-4 w-full text-slate-600 hover:text-slate-800 text-xs rounded py-1 transition"
             >
               Load More...
             </button>
           )}
         </ul>
       )}
+
+      {/* Deletion Modal */}
+      <Modal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        onConfirm={confirmDelete}
+        target={{ type: 'article', name: targetArticle?.title }}
+      />
     </div>
-    );
+  );
 }
