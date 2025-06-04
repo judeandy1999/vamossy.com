@@ -1,40 +1,63 @@
 import { useState } from 'react';
 import RichTextEditor from '@/components/rich-text-editor';
+import { Plus, Minus } from 'lucide-react';
 
-export default function CollapsibleTabs({ currentTabOptions, tabContents, handleTabContentChange, contentChanged, selectedArticle }) {
+export default function CollapsibleTabs({
+  currentTabOptions,
+  tabContents,
+  handleTabContentChange,
+  contentChanged,
+  selectedArticle
+}) {
+  const [expandedTabs, setExpandedTabs] = useState(() =>
+    Object.keys(currentTabOptions).reduce((acc, key) => {
+      acc[key] = false;
+      return acc;
+    }, {})
+  );
+
+  const toggleTab = (key) => {
+    setExpandedTabs((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
+
   return (
     <div className="space-y-4">
-      {Object.entries(currentTabOptions).map(([key, label]) => {
-        const [isExpanded, setIsExpanded] = useState(true); // State to track if the tab is expanded
-
-        return (
-          <div key={key}>
-            {/* Tab Header */}
-            <div
-              className="flex items-center justify-between cursor-pointer bg-gray-100 p-2 rounded"
-              onClick={() => setIsExpanded(!isExpanded)} // Toggle expand/collapse
-            >
-              <h3 className="text-lg font-medium">{label}</h3>
-              <span className="text-gray-500">
-                {isExpanded ? 'Collapse' : 'Expand'}
-              </span>
-            </div>
-
-            {/* Tab Content (Editor) */}
-            {isExpanded && (
-              <div className="mt-2">
-                <RichTextEditor
-                  contentChanged={contentChanged}
-                  selectedArticle={selectedArticle?.id}
-                  key={`tab-${key}`}
-                  content={tabContents[key] || ''}
-                  onContentChange={(content) => handleTabContentChange(key, content)}
-                />
-              </div>
-            )}
+      {Object.entries(currentTabOptions).map(([key, label]) => (
+        <div key={key} className="rounded shadow bg-white">
+          {/* Tab Header */}
+          <div
+            className={`flex items-center justify-between cursor-pointer p-3 ${
+              expandedTabs[key] ? 'bg-slate-200' : 'bg-slate-100'
+            } hover:bg-slate-200 transition rounded-t`}
+            onClick={() => toggleTab(key)}
+          >
+            <h3 className="text-sm font-semibold text-slate-800">{label}</h3>
+            <span className="text-slate-600">
+              {expandedTabs[key] ? (
+                <Minus size={18} />
+              ) : (
+                <Plus size={18} />
+              )}
+            </span>
           </div>
-        );
-      })}
+
+          {/* Tab Content */}
+          {expandedTabs[key] && (
+            <div className="p-3 bg-white rounded-b">
+              <RichTextEditor
+                contentChanged={contentChanged}
+                selectedArticle={selectedArticle?.id}
+                key={`tab-${key}`}
+                content={tabContents[key] || ''}
+                onContentChange={(content) => handleTabContentChange(key, content)}
+              />
+            </div>
+          )}
+        </div>
+      ))}
     </div>
   );
 }
