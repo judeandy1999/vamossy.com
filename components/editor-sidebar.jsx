@@ -66,7 +66,6 @@ export default function EditorSidebar({
               onClick={() => setSelectedArticle(article)}
             >
               <div className="flex-1 overflow-auto">
-                <p>{selectedArticleId}{article?.id}</p>
                 <h3 className="whitespace-normal text-sm font-medium text-slate-800 truncate">{article?.title}</h3>
                 <p className="text-xs text-gray-500 mt-0.5">
                   {new Date(article?.created_at).toLocaleString([], { dateStyle: 'short', timeStyle: 'short', hour12: true })}
