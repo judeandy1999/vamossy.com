@@ -2,6 +2,7 @@ import "./globals.css";
 import localFont from 'next/font/local';
 import Header from "@/components/ui/header";
 import SessionProviderWrapper from "./session-provider";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 export const metadata = {
   title: "Create Next App",
@@ -41,6 +42,7 @@ export default function RootLayout({ children }) {
           <Header />
           <div className="bg-[#333] pt-8">
             {children}
+            <SpeedInsights />
           </div>
         </SessionProviderWrapper>
       </body>
