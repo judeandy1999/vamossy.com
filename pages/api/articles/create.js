@@ -5,7 +5,6 @@ export default async function handler(req, res) {
     const { title, content, wiki_id, has_tabs, tabs } = req.body;
 
     try {
-      // Insert the article into the `articles` table
       const { data: article, error: articleError } = await supabase
         .from('articles')
         .insert([{ title, content, wiki_id, has_tabs }])
@@ -16,11 +15,10 @@ export default async function handler(req, res) {
         throw new Error(`Failed to create article: ${articleError.message}`);
       }
 
-      // If the article has tabs, insert them into the `article_tabs` table
       if (has_tabs && tabs && Object.keys(tabs).length > 0) {
         const tabEntries = Object.entries(tabs).map(([tabId, tabContent]) => ({
-          article_id: article.id, // Link the tab to the article
-          tab_id: Number(tabId), // Tab ID from `tab_options`
+          article_id: article.id,
+          tab_id: Number(tabId),
           content: tabContent,
         }));
 

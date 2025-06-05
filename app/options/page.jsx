@@ -27,6 +27,7 @@ export default function Page() {
   const [tabError, setTabError] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState({ type: '', id: null });
+  const [deleting, setDeleting] = useState(false);
 
   const handleAddWiki = async () => {
     if (!newWiki.name.trim()) {
@@ -63,14 +64,21 @@ export default function Page() {
   };
 
   const confirmDelete = async () => {
-    if (deleteTarget.type === 'wiki') {
-      await deleteWiki(deleteTarget.id);
-      if (selectedWiki === deleteTarget.id) setSelectedWiki(null);
-    } else if (deleteTarget.type === 'tab') {
-      await deleteTab(deleteTarget.id, selectedWiki);
+    setDeleting(true); // Start loading animation
+    try {
+      if (deleteTarget.type === 'wiki') {
+        await deleteWiki(deleteTarget.id);
+        if (selectedWiki === deleteTarget.id) setSelectedWiki(null);
+      } else if (deleteTarget.type === 'tab') {
+        await deleteTab(deleteTarget.id, selectedWiki);
+      }
+      setIsModalOpen(false);
+      setDeleteTarget({ type: '', id: null });
+    } catch (error) {
+      console.error('Error deleting:', error);
+    } finally {
+      setDeleting(false); // Stop loading animation
     }
-    setIsModalOpen(false);
-    setDeleteTarget({ type: '', id: null });
   };
 
   if (status === 'loading' || loading) {
@@ -97,6 +105,7 @@ export default function Page() {
         onClose={() => setIsModalOpen(false)}
         onConfirm={confirmDelete}
         target={deleteTarget}
+        isLoading={deleting}
       />
 
       <div className="max-w-6xl mx-auto px-4 text-slate-800">

@@ -17,7 +17,34 @@ export default async function handler(req, res) {
 
       const tabIds = tabs.map((tab) => tab.id);
 
-      // Step 2: Delete all articles associated with the tabs in `article_tabs`
+      // Step 2: Fetch all article IDs associated with the tabs
+      let articleIds = [];
+      if (tabIds.length > 0) {
+        const { data: articles, error: fetchArticlesError } = await supabase
+          .from('article_tabs')
+          .select('article_id')
+          .in('tab_id', tabIds);
+
+        if (fetchArticlesError) {
+          throw new Error(`Failed to fetch articles associated with tabs for wiki ${id}: ${fetchArticlesError.message}`);
+        }
+
+        articleIds = articles.map((article) => article.article_id);
+      }
+
+      // Step 3: Delete all articles associated with the tabs
+      if (articleIds.length > 0) {
+        const { error: articlesError } = await supabase
+          .from('articles')
+          .delete()
+          .in('id', articleIds);
+
+        if (articlesError) {
+          throw new Error(`Failed to delete articles for wiki ${id}: ${articlesError.message}`);
+        }
+      }
+
+      // Step 4: Delete all articles associated with the tabs in `article_tabs`
       if (tabIds.length > 0) {
         const { error: articleTabsError } = await supabase
           .from('article_tabs')
@@ -29,7 +56,7 @@ export default async function handler(req, res) {
         }
       }
 
-      // Step 3: Delete all tabs associated with the wiki
+      // Step 5: Delete all tabs associated with the wiki
       const { error: tabError } = await supabase
         .from('tab_options')
         .delete()
@@ -39,7 +66,7 @@ export default async function handler(req, res) {
         throw new Error(`Failed to delete tabs for wiki ${id}: ${tabError.message}`);
       }
 
-      // Step 4: Delete the wiki
+      // Step 6: Delete the wiki
       const { error: wikiError } = await supabase
         .from('wiki_options')
         .delete()

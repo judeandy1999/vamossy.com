@@ -5,7 +5,6 @@ export default async function handler(req, res) {
     if (req.method === 'GET') {
       const { wiki_id } = req.query;
 
-      // Fetch all tabs if no wiki_id is provided
       const query = supabase.from('tab_options').select('*');
       if (wiki_id) {
         query.eq('wiki_id', wiki_id);

@@ -17,6 +17,7 @@ export default function EditorSidebar({
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [targetArticle, setTargetArticle] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   const openModal = (article) => {
     setTargetArticle(article);
@@ -28,11 +29,18 @@ export default function EditorSidebar({
     setTargetArticle(null);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (targetArticle) {
-      handleDelete(targetArticle.id);
+      setDeleting(true);
+      try {
+        await handleDelete(targetArticle.id);
+        closeModal();
+      } catch (error) {
+        console.error('Error deleting article:', error);
+      } finally {
+        setDeleting(false);
+      }
     }
-    closeModal();
   };
 
   return (
@@ -99,6 +107,7 @@ export default function EditorSidebar({
         onClose={closeModal}
         onConfirm={confirmDelete}
         target={{ type: 'article', name: targetArticle?.title }}
+        isLoading={deleting}
       />
     </div>
   );

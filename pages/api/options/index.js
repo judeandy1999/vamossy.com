@@ -7,32 +7,30 @@ export default async function handler(req, res) {
       return;
     }
 
-    const { data: wikiData, error: wikiError } = await supabase
+    // Fetch all options in a single query
+    const { data: optionsData, error: optionsError } = await supabase
       .from('options')
-      .select('id, value')
-      .eq('type', 1);
+      .select('id, value, type, category_id');
 
-    if (wikiError) throw wikiError;
+    if (optionsError) throw optionsError;
 
-    const wikiOptions = wikiData.reduce((acc, item) => {
-      acc[item.id] = item.value;
-      return acc;
-    }, {});
+    // Split the data into wikiOptions and tabOptionsMap
+    const wikiOptions = {};
+    const tabOptionsMap = {};
 
-    // Fetch tab options
-    const { data: tabData, error: tabError } = await supabase
-      .from('options')
-      .select('category_id, value')
-      .eq('type', 2);
-
-    if (tabError) throw tabError;
-
-    const tabOptionsMap = tabData.reduce((acc, item) => {
-      if (!acc[item.category_id]) acc[item.category_id] = {};
-      const tabCount = Object.keys(acc[item.category_id]).length + 1;
-      acc[item.category_id][tabCount] = item.value;
-      return acc;
-    }, {});
+    optionsData.forEach((item) => {
+      if (item.type === 1) {
+        // Wiki options
+        wikiOptions[item.id] = item.value;
+      } else if (item.type === 2) {
+        // Tab options
+        if (!tabOptionsMap[item.category_id]) {
+          tabOptionsMap[item.category_id] = {};
+        }
+        const tabCount = Object.keys(tabOptionsMap[item.category_id]).length + 1;
+        tabOptionsMap[item.category_id][tabCount] = item.value;
+      }
+    });
 
     // Respond with both options
     res.status(200).json({ wikiOptions, tabOptionsMap });
