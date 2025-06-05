@@ -21,6 +21,7 @@ export default function Page() {
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [initialContent, setInitialContent] = useState('');
   const [savingStatus, setSavingStatus] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const [newlyCreatedId, setNewlyCreatedId] = useState(null);
@@ -28,7 +29,7 @@ export default function Page() {
   const [wikiCategory, setWikiCategory] = useState(0);
   const [hasTabs, setHasTabs] = useState(false);
 
-  const { tabContents, setTabContents, loading: tabsLoading } = useArticleTabs(selectedArticle?.id);
+  const { initialTabContents, tabContents, setTabContents, loading: tabsLoading } = useArticleTabs(selectedArticle?.id);
 
   const isEditing = !!selectedArticle;
 
@@ -44,6 +45,7 @@ export default function Page() {
       } else {
         setHasTabs(false);
         setContent(content);
+        setInitialContent(content);
       }
     } else {
       refreshContent();
@@ -55,6 +57,7 @@ export default function Page() {
     setContent('');
     setWikiCategory(0);
     setHasTabs(false);
+    setInitialContent('');
   };
 
   const saveArticle = async () => {
@@ -82,6 +85,7 @@ export default function Page() {
           ...updatedArticle,
           updated_at: new Date().toISOString(),
         });
+        setSelectedArticle(null);
       } else {
         const newArticle = await createArticle({
           title,
@@ -231,6 +235,7 @@ export default function Page() {
             <CollapsibleTabs
               currentTabOptions={wikiCategory ? tabOptionsMap[wikiCategory] || {} : {}}
               tabContents={tabContents}
+              initialTabContents={initialTabContents}
               handleTabContentChange={handleTabContentChange}
               contentChanged={contentChanged}
               selectedArticle={selectedArticle}
@@ -243,6 +248,7 @@ export default function Page() {
               selectedArticle={selectedArticle?.id}
               key={selectedArticle?.id || 'new'}
               content={content}
+              initialContent={initialContent}
               onContentChange={setContent}
             />
           )}
