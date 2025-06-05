@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 
 export const useArticleTabs = (articleId) => {
   const [tabContents, setTabContents] = useState({});
+  const [initialTabContents, setInitialTabContents] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -9,6 +10,7 @@ export const useArticleTabs = (articleId) => {
     const fetchTabContents = async () => {
       if (!articleId) {
         setTabContents({});
+        setInitialTabContents({});
         return;
       }
 
@@ -26,6 +28,7 @@ export const useArticleTabs = (articleId) => {
           return acc;
         }, {});
         setTabContents(formattedTabs);
+        setInitialTabContents(formattedTabs);
       } catch (error) {
         console.error('Error fetching tab contents:', error.message);
         setError(error.message);
@@ -37,5 +40,5 @@ export const useArticleTabs = (articleId) => {
     fetchTabContents();
   }, [articleId]);
 
-  return { tabContents, setTabContents, loading, error };
+  return { initialTabContents, tabContents, setTabContents, loading, error };
 };
