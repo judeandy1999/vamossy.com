@@ -1,6 +1,8 @@
 import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 
+const allowedEmails = ['apitesting1999@gmail.com'];
+
 const handler = NextAuth({
   providers: [
     GoogleProvider({
@@ -13,6 +15,14 @@ const handler = NextAuth({
     signIn: '/login',
   },
   callbacks: {
+    async signIn({ user }) {
+
+      if (allowedEmails.includes(user.email)) {
+        return true;
+      }
+
+      return false;
+    },
     async jwt({ token, account }) {
       if (account) {
         token.accessToken = account.access_token;
