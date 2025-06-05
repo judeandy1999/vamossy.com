@@ -36,7 +36,7 @@ export default function ArticlePage(props) {
 
   return (
     <div className="pt-12 bg-gray-50 min-h-screen flex flex-col items-center">
-      <article className="article w-full max-w-4xl bg-white shadow rounded-lg p-6 mt-24 mb-12">
+      <article className="article-container w-full max-w-4xl bg-white shadow rounded-lg py-8 px-12 mt-24 mb-12">
         <h1 className="text-3xl md:text-5xl font-bold text-slate-800 mb-4">{meta.title}</h1>
         <p className="text-sm text-gray-500 mb-8">
           {new Date(meta.created_at).toLocaleString([], {
@@ -70,7 +70,7 @@ export default function ArticlePage(props) {
             </div>
 
             {/* Tab Content */}
-            <div className="prose prose-lg max-w-none text-gray-800 leading-relaxed">
+            <div className="max-w-none text-gray-800 leading-relaxed">
               {activeTab ? (
                 <div dangerouslySetInnerHTML={{ __html: full.tabs[activeTab].content }} />
               ) : (
@@ -80,7 +80,7 @@ export default function ArticlePage(props) {
           </div>
         ) : (
           <div
-            className="prose prose-lg max-w-none text-gray-800 leading-relaxed"
+            className="max-w-none text-gray-800 leading-relaxed"
             dangerouslySetInnerHTML={{ __html: full?.content }}
           />
         )}
