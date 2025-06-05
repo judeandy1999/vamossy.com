@@ -1,68 +1,55 @@
 'use client';
 
-import { useEditor, EditorContent } from '@tiptap/react';
-import { useEffect, useState } from 'react';
-import StarterKit from '@tiptap/starter-kit';
-import Table from '@tiptap/extension-table';
-import TableRow from '@tiptap/extension-table-row';
-import TableCell from '@tiptap/extension-table-cell';
-import TableHeader from '@tiptap/extension-table-header';
-import Link from '@tiptap/extension-link';
-import TextStyle from '@tiptap/extension-text-style';
-import EditorToolbar from './editor-toolbar';
-import Underline from '@tiptap/extension-underline';
-import TextAlign from '@tiptap/extension-text-align';
+import { useRef, useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
+import Spinner from './ui/spinner';
 
-export default function RichTextEditor({ contentChanged, selectedArticle, content, onContentChange }) {
-  const editor = useEditor({
-    extensions: [
-      StarterKit,
-      Underline,
-      Table.configure({ resizable: true }),
-      TableRow,
-      TableHeader,
-      TableCell,
-      Link.configure({ openOnClick: false }),
-      TextAlign.configure({
-        types: ['heading', 'paragraph'],
-      }),
-      TextStyle.extend({
-        addAttributes() {
-          return {
-            fontSize: {
-              default: null,
-              parseHTML: element => element.style.fontSize || null,
-              renderHTML: attributes => {
-                if (!attributes.fontSize) return {};
-                return { style: `font-size: ${attributes.fontSize}` };
-              },
-            },
-          };
-        },
-      }),
-    ],
-    content: content || '',
-    onUpdate: ({ editor }) => {
-      const html = editor.getHTML();
-      onContentChange(html);
-    },
-  });
+const Editor = dynamic(() => import('@tinymce/tinymce-react').then((mod) => mod.Editor), { ssr: false });
+
+export default function RichTextEditor({ contentChanged, selectedArticle, content, initialContent, onContentChange }) {
+  const editorRef = useRef(null);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    if (editor) {
-      editor.commands.setContent(content || '');
+    if (typeof window !== 'undefined' && !loaded) {
+      const script = document.createElement('script');
+      script.src = '/tinymce/tinymce.min.js';
+      script.onload = () => setLoaded(true);
+      document.head.appendChild(script);
     }
-  }, [contentChanged, selectedArticle, editor]);
+  }, [loaded]);
+
+  useEffect(() => {
+    if (editorRef.current) {
+      editorRef.current.setContent(content || '');
+    }
+  }, [contentChanged, selectedArticle]);
+
+  if (!loaded) return <Spinner />;
 
   return (
-    <div className='relative'>
-      <div className='absolute right-0 top-2 w-[99%] p-2 py-0'>
-        <EditorToolbar editor={editor} />
-      </div>
-      <EditorContent
-        editor={editor}
-        className="relative border border-gray-400 h-[60vh] z-5 pt-13 p-4 min-h-[400px] rounded bg-white shadow focus:outline-none flex flex-col"
-      />
-    </div>
+    <Editor
+      init={{
+        height: 470,
+        menubar: true,
+        plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
+        toolbar:
+          'undo redo | formatselect | bold italic underline strikethrough | ' +
+          'alignleft aligncenter alignright alignjustify | ' +
+          'bullist numlist outdent indent | link image media table | ' +
+          'removeformat',
+        content_style: `
+          body { font-family:Helvetica,Arial,sans-serif; font-size:14px; }
+          table, th, td { border: 1px solid #ddd; border-collapse: collapse; }
+          th, td { padding: 8px; }
+        `,
+        paste_retain_style_properties: "all",
+        paste_webkit_styles: "all",
+        paste_merge_formats: true,
+      }}
+      initialValue={initialContent || ''}
+      onEditorChange={(newContent) => onContentChange(newContent)}
+      onInit={(evt, editor) => (editorRef.current = editor)}
+    />
   );
-};
+}
