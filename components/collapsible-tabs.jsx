@@ -5,6 +5,7 @@ import { Plus, Minus } from 'lucide-react';
 export default function CollapsibleTabs({
   currentTabOptions,
   tabContents,
+  initialTabContents,
   handleTabContentChange,
   contentChanged,
   selectedArticle
@@ -45,17 +46,20 @@ export default function CollapsibleTabs({
           </div>
 
           {/* Tab Content */}
-          {expandedTabs[key] && (
-            <div className="p-3 bg-white rounded-b">
-              <RichTextEditor
-                contentChanged={contentChanged}
-                selectedArticle={selectedArticle?.id}
-                key={`tab-${key}`}
-                content={tabContents[key] || ''}
-                onContentChange={(content) => handleTabContentChange(key, content)}
-              />
-            </div>
-          )}
+          <div
+            className={`p-3 bg-white rounded-b ${
+              expandedTabs[key] ? 'block' : 'hidden'
+            }`}
+          >
+            <RichTextEditor
+              contentChanged={contentChanged}
+              selectedArticle={selectedArticle?.id}
+              key={`tab-${key}`}
+              content={tabContents[key] || ''}
+              initialContent={initialTabContents[key] || ''}
+              onContentChange={(content) => handleTabContentChange(key, content)}
+            />
+          </div>
         </div>
       ))}
     </div>
