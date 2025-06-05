@@ -33,9 +33,9 @@ export default async function handler(req, res) {
     });
 
     // Respond with both options
-    res.status(200).json({ wikiOptions, tabOptionsMap });
+    return res.status(200).json({ wikiOptions, tabOptionsMap });
   } catch (error) {
     console.error('Error fetching options:', error.message);
-    res.status(500).json({ error: 'Failed to fetch options' });
+    return res.status(500).json({ error: 'Failed to fetch options' });
   }
 }
