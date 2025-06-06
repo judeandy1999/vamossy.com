@@ -18,8 +18,9 @@ export const useOptions = () => {
 
         // Fetch tab options
         const tabResponse = await fetch('/api/tab-options');
-        const tabData = await tabResponse.json();
+        const tabJson = await tabResponse.json();
         if (!tabResponse.ok) throw new Error(tabData.error || 'Failed to fetch tab options');
+        const tabData = tabJson.data || []; 
 
         // Format wiki options
         const formattedWikiOptions = wikiData.reduce((acc, wiki) => {
@@ -69,7 +70,8 @@ export const useOptions = () => {
         body: JSON.stringify(newTab),
       });
       if (!response.ok) throw new Error('Failed to add tab');
-      const addedTab = await response.json();
+      const addedTabJson = await response.json();
+      const addedTab = addedTabJson.data || [];
       setTabOptionsMap((prev) => ({
         ...prev,
         [newTab.wiki_id]: {
