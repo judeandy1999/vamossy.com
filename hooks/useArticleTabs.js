@@ -18,7 +18,11 @@ export const useArticleTabs = (articleId) => {
       setError(null);
 
       try {
-        const response = await fetch(`/api/tab-articles?id=${articleId}`);
+        const response = await fetch(`/api/tab-articles?id=${articleId}`, {
+            headers: {
+              'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
+            },
+          });
         if (!response.ok) {
           throw new Error('Failed to fetch tab contents');
         }

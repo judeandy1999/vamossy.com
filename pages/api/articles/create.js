@@ -1,6 +1,9 @@
 import { supabase } from '@/utils/client';
+import { authenticate } from '@/lib/authMiddleware';
 
 export default async function handler(req, res) {
+  if (!authenticate(req, res)) return;
+
   if (req.method === 'POST') {
     const { title, content, wiki_id, has_tabs, tabs } = req.body;
 

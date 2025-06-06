@@ -3,7 +3,7 @@ import GoogleProvider from 'next-auth/providers/google';
 
 const allowedEmails = (process.env.ALLOWED_EMAILS).split(',');
 
-const handler = NextAuth({
+export const authOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
@@ -16,11 +16,9 @@ const handler = NextAuth({
   },
   callbacks: {
     async signIn({ user }) {
-
       if (allowedEmails.includes(user.email)) {
         return true;
       }
-
       return false;
     },
     async jwt({ token, account }) {
@@ -34,6 +32,6 @@ const handler = NextAuth({
       return session;
     },
   },
-});
+};
 
-export default handler;
+export default NextAuth(authOptions);

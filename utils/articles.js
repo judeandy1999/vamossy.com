@@ -1,7 +1,10 @@
 export async function createArticle(newArticle) {
   const res = await fetch('/api/articles/create', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
+    },
     body: JSON.stringify(newArticle),
   });
 
@@ -15,7 +18,10 @@ export async function createArticle(newArticle) {
 export async function updateArticle(updatedArticle) {
   const res = await fetch(`/api/articles/${updatedArticle.id}`, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
+    },
     body: JSON.stringify(updatedArticle),
   });
 
@@ -29,6 +35,9 @@ export async function updateArticle(updatedArticle) {
 export async function deleteArticle(id) {
   const res = await fetch(`/api/articles/${id}`, {
     method: 'DELETE',
+    headers: {
+      'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
+    },
   });
 
   if (!res.ok) {

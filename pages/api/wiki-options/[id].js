@@ -1,6 +1,9 @@
 import { supabase } from '@/utils/client';
+import { authenticate } from '@/lib/authMiddleware';
 
 export default async function handler(req, res) {
+  if (!authenticate(req, res)) return;
+  
   const { id } = req.query;
 
   if (req.method === 'DELETE') {
