@@ -46,8 +46,7 @@ export function useAllArticles() {
       );
       return updatedPages;
     }, false);
-  
-    // Force re-fetch so any "hidden" articles on the server are pulled in
+
     await mutate();
   };
 
