@@ -6,14 +6,12 @@ export default async function handler(req, res) {
       return res.status(405).json({ error: 'Method Not Allowed' });
     }
 
-    // Fetch all options in a single query
     const { data: optionsData, error: optionsError } = await supabase
       .from('options')
       .select('id, value, type, category_id');
 
     if (optionsError) throw optionsError;
 
-    // Split the data into wikiOptions and tabOptionsMap
     const wikiOptions = {};
     const tabOptionsMap = {};
 
@@ -31,10 +29,20 @@ export default async function handler(req, res) {
       }
     });
 
-    // Respond with both options
-    return res.status(200).json({ wikiOptions, tabOptionsMap });
+    res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=30');
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        wikiOptions,
+        tabOptionsMap,
+      },
+    });
   } catch (error) {
-    console.error('Error fetching options:', error.message);
-    return res.status(500).json({ error: 'Failed to fetch options' });
+    return res.status(500).json({
+      success: false,
+      error: 'Failed to fetch options',
+      details: error.message,
+    });
   }
 }
