@@ -40,7 +40,7 @@ export default function RootLayout({ children }) {
       <body className={`${proximaNova.className}`}>
         <SessionProviderWrapper>
           <Header />
-          <div className="bg-[#333] pt-8">
+          <div className="height-[100vh] bg-[#333] pt-8">
             {children}
             <SpeedInsights />
           </div>
