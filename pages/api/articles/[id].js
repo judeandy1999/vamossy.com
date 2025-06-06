@@ -1,4 +1,3 @@
-// /pages/api/articles/[id].js
 import { supabase } from '@/utils/client';
 
 export default async function handler(req, res) {
