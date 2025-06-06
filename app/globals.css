@@ -29,10 +29,36 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
 .article-container{
 
  td {
     padding: 0 0.5rem;
+  }
+
+  a {
+    color: #1a0dab;
+    text-decoration: none;
+  }
+
+  pre {
+    background-color: #cecece;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    overflow-x: auto;
+  }
+
+  button {
+    background-color: #1a0dab;
+    color: white;
+    border: none;
+    padding: 0 0.5rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #1669c1;
+    }
   }
 
   ul, ol {

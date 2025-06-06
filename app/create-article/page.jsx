@@ -163,7 +163,7 @@ export default function Page() {
   }
 
   return (
-    <div className="pt-16 flex h-screen bg-gray-50">
+    <div className="pt-18 flex h-[85%] bg-gray-50">
       {/* Sidebar */}
       <Sidebar
         articles={articles}
