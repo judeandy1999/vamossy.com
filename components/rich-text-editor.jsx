@@ -32,11 +32,11 @@ export default function RichTextEditor({ contentChanged, selectedArticle, conten
       init={{
         height: 470,
         menubar: true,
-        plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
+        plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount code',
         toolbar:
           'undo redo | formatselect | bold italic underline strikethrough | ' +
           'alignleft aligncenter alignright alignjustify | ' +
-          'bullist numlist outdent indent | link image media table | ' +
+          'bullist numlist outdent indent | link image media table | code' +
           'removeformat',
         content_style: `
           body { font-family:Helvetica,Arial,sans-serif; font-size:14px; }
@@ -46,6 +46,8 @@ export default function RichTextEditor({ contentChanged, selectedArticle, conten
         paste_retain_style_properties: "all",
         paste_webkit_styles: "all",
         paste_merge_formats: true,
+        valid_elements: '*[*]',
+        extended_valid_elements: '*[*]',
       }}
       initialValue={initialContent || ''}
       onEditorChange={(newContent) => onContentChange(newContent)}
