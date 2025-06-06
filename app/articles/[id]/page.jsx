@@ -80,7 +80,7 @@ export default function ArticlePage(props) {
           </div>
         ) : (
           <div
-            className="max-w-none text-gray-800 leading-relaxed"
+            className="article-container max-w-none text-gray-800 leading-relaxed"
             dangerouslySetInnerHTML={{ __html: full?.content }}
           />
         )}
