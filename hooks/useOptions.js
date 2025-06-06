@@ -12,12 +12,20 @@ export const useOptions = () => {
         setLoading(true);
 
         // Fetch wiki options
-        const wikiResponse = await fetch('/api/wiki-options');
+        const wikiResponse = await fetch('/api/wiki-options', {
+          headers: {
+            'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
+          },
+        });
         const wikiData = await wikiResponse.json();
         if (!wikiResponse.ok) throw new Error(wikiData.error || 'Failed to fetch wiki options');
 
         // Fetch tab options
-        const tabResponse = await fetch('/api/tab-options');
+        const tabResponse = await fetch('/api/tab-options', {
+          headers: {
+            'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
+          },
+        });
         const tabJson = await tabResponse.json();
         if (!tabResponse.ok) throw new Error(tabData.error || 'Failed to fetch tab options');
         const tabData = tabJson.data || []; 
@@ -51,7 +59,10 @@ export const useOptions = () => {
     try {
       const response = await fetch('/api/wiki-options', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
+        },
         body: JSON.stringify(newWiki),
       });
       if (!response.ok) throw new Error('Failed to add wiki');
@@ -66,7 +77,10 @@ export const useOptions = () => {
     try {
       const response = await fetch('/api/tab-options', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
+        },
         body: JSON.stringify(newTab),
       });
       if (!response.ok) throw new Error('Failed to add tab');
@@ -88,6 +102,9 @@ export const useOptions = () => {
     try {
       const response = await fetch(`/api/wiki-options/${wikiId}`, {
         method: 'DELETE',
+        headers: {
+          'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
+        },
       });
   
       if (!response.ok) {
@@ -114,6 +131,9 @@ export const useOptions = () => {
     try {
       const response = await fetch(`/api/tab-options/${tabId}`, {
         method: 'DELETE',
+        headers: {
+          'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
+        },
       });
       if (!response.ok) throw new Error('Failed to delete tab');
       setTabOptionsMap((prev) => ({
