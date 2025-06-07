@@ -55,6 +55,15 @@ export default function Header() {
           {(session && role === 'admin') && (
             <>
               <Link
+                key={'dashboard'}
+                href='/user-dashboard'
+                className={`text-3xl
+                  ${pathname === '/create-article' ? 'text-yellow-400' : 'text-white hover:text-yellow-400'}
+                  `
+                }>
+                Dashboard
+              </Link>
+              <Link
                 key={'create-article'}
                 href='/create-article'
                 className={`text-3xl
