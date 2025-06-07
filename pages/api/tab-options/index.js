@@ -1,6 +1,7 @@
 import { supabase } from '@/utils/client';
 import { z } from 'zod';
 import { authenticate } from '@/lib/authMiddleware';
+import { verifySupabaseAuth } from '@/utils/verifySupabaseAuth';
 
 const TabSchema = z.object({
   wiki_id: z.number(),
@@ -16,9 +17,15 @@ const UpdateTabSchema = z.object({
 
 export default async function handler(req, res) {
   if (!authenticate(req, res)) return;
+  if (req.method !== 'GET') {
+    const { user, error } = await verifySupabaseAuth(req);
+
+    if (error) {
+      return res.status(401).json({ error });
+    }
+  }
 
   try {
-
     if (req.method === 'GET') {
       const { wiki_id } = req.query;
 
