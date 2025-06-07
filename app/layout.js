@@ -1,7 +1,6 @@
 import "./globals.css";
 import localFont from 'next/font/local';
 import Header from "@/components/ui/header";
-import SessionProviderWrapper from "./session-provider";
 import { SpeedInsights } from "@vercel/speed-insights/next"
 
 export const metadata = {
@@ -38,13 +37,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={proximaNova.className}>
       <body className={`${proximaNova.className}`}>
-        <SessionProviderWrapper>
           <Header />
           <div className="height-[100vh] bg-[#333] pt-8">
             {children}
             <SpeedInsights />
           </div>
-        </SessionProviderWrapper>
       </body>
     </html>
   );
