@@ -58,7 +58,7 @@ export default function Header() {
                 key={'dashboard'}
                 href='/user-dashboard'
                 className={`text-3xl
-                  ${pathname === '/create-article' ? 'text-yellow-400' : 'text-white hover:text-yellow-400'}
+                  ${pathname === '/user-dashboard' ? 'text-yellow-400' : 'text-white hover:text-yellow-400'}
                   `
                 }>
                 Dashboard
