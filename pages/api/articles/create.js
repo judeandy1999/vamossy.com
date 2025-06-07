@@ -1,16 +1,24 @@
 import { supabase } from '@/utils/client';
 import { authenticate } from '@/lib/authMiddleware';
+import { verifySupabaseAuth } from '@/utils/verifySupabaseAuth';
 
 export default async function handler(req, res) {
   if (!authenticate(req, res)) return;
+  if (req.method !== 'GET') {
+    const { user, error } = await verifySupabaseAuth(req);
+
+    if (error) {
+      return res.status(401).json({ error });
+    }
+  }
 
   if (req.method === 'POST') {
-    const { title, content, wiki_id, has_tabs, tabs } = req.body;
+    const { title, content, wiki_id, has_tabs, tabs, user_email } = req.body;
 
     try {
       const { data: article, error: articleError } = await supabase
         .from('articles')
-        .insert([{ title, content, wiki_id, has_tabs }])
+        .insert([{ title, content, wiki_id, has_tabs, user_email }])
         .select()
         .single();
 

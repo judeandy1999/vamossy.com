@@ -1,14 +1,16 @@
 'use client';
 
-import { useSession, signIn } from 'next-auth/react';
 import { useState } from 'react';
 import { useOptions } from '@/hooks/useOptions';
 import { Plus, Trash } from 'lucide-react';
 import Spinner from '@/components/ui/spinner';
 import Modal from '@/components/ui/modal';
+import { useAuthWithRedirect } from '@/hooks/useAuthWithRedirect';
+import { redirect } from 'next/navigation'
 
 export default function Page() {
-  const { data: session, status } = useSession();
+  const { status, session, role } = useAuthWithRedirect();
+
   const {
     wikiOptions,
     tabOptionsMap,
@@ -85,8 +87,8 @@ export default function Page() {
     return <Spinner />;
   }
 
-  if (!session) {
-    signIn();
+  if (!session || role !== 'admin') {
+    redirect('/login');
     return <Spinner />;
   }
 

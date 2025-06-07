@@ -43,7 +43,6 @@ export default function RichTextEditor({ contentChanged, selectedArticle, conten
           table, th, td { border: 1px solid #ddd; border-collapse: collapse; }
           th, td { padding: 8px; }
         `,
-        paste_retain_style_properties: "all",
         paste_webkit_styles: "all",
         paste_merge_formats: true,
         valid_elements: '*[*]',

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { supabase } from '@/utils/client';
 
 export const useArticleTabs = (articleId) => {
   const [tabContents, setTabContents] = useState({});
@@ -18,19 +19,26 @@ export const useArticleTabs = (articleId) => {
       setError(null);
 
       try {
+        const { data: { session } } = await supabase.auth.getSession();
+        const accessToken = session?.access_token;
+
         const response = await fetch(`/api/tab-articles?id=${articleId}`, {
-            headers: {
-              'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
-            },
-          });
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
+          },
+        });
+
         if (!response.ok) {
           throw new Error('Failed to fetch tab contents');
         }
+
         const tabs = await response.json();
         const formattedTabs = tabs.reduce((acc, tab) => {
           acc[tab.tab_id] = tab.content;
           return acc;
         }, {});
+
         setTabContents(formattedTabs);
         setInitialTabContents(formattedTabs);
       } catch (error) {

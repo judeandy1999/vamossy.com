@@ -1,6 +1,7 @@
 'use client';
 
-import { useSession, signIn } from 'next-auth/react';
+import { useAuthWithRedirect } from '@/hooks/useAuthWithRedirect';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import DOMPurify from 'dompurify';
 import { useAllArticles } from '@/hooks/useAllArticles';
@@ -12,9 +13,10 @@ import Sidebar from '@/components/editor-sidebar';
 import { createArticle, updateArticle, deleteArticle } from '@/utils/articles';
 import CollapsibleTabs from '@/components/collapsible-tabs';
 import { useArticleTabs } from '@/hooks/useArticleTabs';
+import { redirect } from 'next/navigation';
 
 export default function Page() {
-  const { data: session, status } = useSession();
+  const { status, session, role } = useAuthWithRedirect();
   const { articles, loading, error, loadMore, isReachingEnd, addNewArticle, updateArticleInSidebar, deleteArticleFromSidebar } = useAllArticles();
   const { wikiOptions, tabOptionsMap, loading: optionsLoading, error: optionsError } = useOptions();
 
@@ -79,6 +81,7 @@ export default function Page() {
           wiki_id: wikiCategory,
           has_tabs: hasTabs,
           tabs: hasTabs ? tabContents : null,
+          user_email: session.user.email,
         });
         setSavingStatus('Article updated!');
         updateArticleInSidebar({
@@ -93,6 +96,7 @@ export default function Page() {
           wiki_id: wikiCategory,
           has_tabs: hasTabs,
           tabs: hasTabs ? tabContents : null,
+          user_email: session.user.email,
         });
         setNewlyCreatedId(newArticle.id);
         setSavingStatus('Article created!');
@@ -149,8 +153,8 @@ export default function Page() {
     return <Spinner />;
   }
 
-  if (!session) {
-    signIn();
+  if (!session || role !== 'admin') {
+    redirect('/login');
     return <Spinner />;
   }
 

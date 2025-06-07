@@ -1,8 +1,15 @@
+import { supabase } from '@/utils/client';
+
 export async function createArticle(newArticle) {
+  // Get the Supabase access token
+  const { data: { session } } = await supabase.auth.getSession();
+  const accessToken = session?.access_token;
+
   const res = await fetch('/api/articles/create', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
       'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
     },
     body: JSON.stringify(newArticle),
@@ -16,10 +23,14 @@ export async function createArticle(newArticle) {
 }
 
 export async function updateArticle(updatedArticle) {
+  const { data: { session } } = await supabase.auth.getSession();
+  const accessToken = session?.access_token;
+
   const res = await fetch(`/api/articles/${updatedArticle.id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
       'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
     },
     body: JSON.stringify(updatedArticle),
@@ -33,9 +44,13 @@ export async function updateArticle(updatedArticle) {
 }
 
 export async function deleteArticle(id) {
+  const { data: { session } } = await supabase.auth.getSession();
+  const accessToken = session?.access_token;
+
   const res = await fetch(`/api/articles/${id}`, {
     method: 'DELETE',
     headers: {
+      Authorization: `Bearer ${accessToken}`,
       'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
     },
   });
@@ -46,4 +61,3 @@ export async function deleteArticle(id) {
 
   return res.json();
 }
-

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { supabase } from '@/utils/client';
 
 export const useOptions = () => {
   const [wikiOptions, setWikiOptions] = useState({});
@@ -6,14 +7,23 @@ export const useOptions = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const getAccessToken = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    return session?.access_token;
+  };
+
   useEffect(() => {
     const fetchOptions = async () => {
       try {
         setLoading(true);
+        setError(null);
+
+        const accessToken = await getAccessToken();
 
         // Fetch wiki options
         const wikiResponse = await fetch('/api/wiki-options', {
           headers: {
+            Authorization: `Bearer ${accessToken}`,
             'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
           },
         });
@@ -23,12 +33,13 @@ export const useOptions = () => {
         // Fetch tab options
         const tabResponse = await fetch('/api/tab-options', {
           headers: {
+            Authorization: `Bearer ${accessToken}`,
             'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
           },
         });
         const tabJson = await tabResponse.json();
-        if (!tabResponse.ok) throw new Error(tabData.error || 'Failed to fetch tab options');
-        const tabData = tabJson.data || []; 
+        if (!tabResponse.ok) throw new Error(tabJson.error || 'Failed to fetch tab options');
+        const tabData = tabJson.data || [];
 
         // Format wiki options
         const formattedWikiOptions = wikiData.reduce((acc, wiki) => {
@@ -57,15 +68,20 @@ export const useOptions = () => {
 
   const addWiki = async (newWiki) => {
     try {
+      const accessToken = await getAccessToken();
+
       const response = await fetch('/api/wiki-options', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
           'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
         },
         body: JSON.stringify(newWiki),
       });
+
       if (!response.ok) throw new Error('Failed to add wiki');
+
       const addedWiki = await response.json();
       setWikiOptions((prev) => ({ ...prev, [addedWiki[0].id]: addedWiki[0].name }));
     } catch (err) {
@@ -75,15 +91,20 @@ export const useOptions = () => {
 
   const addTab = async (newTab) => {
     try {
+      const accessToken = await getAccessToken();
+
       const response = await fetch('/api/tab-options', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
           'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
         },
         body: JSON.stringify(newTab),
       });
+
       if (!response.ok) throw new Error('Failed to add tab');
+
       const addedTabJson = await response.json();
       const addedTab = addedTabJson.data || [];
       setTabOptionsMap((prev) => ({
@@ -100,23 +121,26 @@ export const useOptions = () => {
 
   const deleteWiki = async (wikiId) => {
     try {
+      const accessToken = await getAccessToken();
+
       const response = await fetch(`/api/wiki-options/${wikiId}`, {
         method: 'DELETE',
         headers: {
+          Authorization: `Bearer ${accessToken}`,
           'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
         },
       });
-  
+
       if (!response.ok) {
         throw new Error(`Failed to delete wiki with ID ${wikiId}`);
       }
-  
+
       setWikiOptions((prev) => {
         const updated = { ...prev };
         delete updated[wikiId];
         return updated;
       });
-  
+
       setTabOptionsMap((prev) => {
         const updated = { ...prev };
         delete updated[wikiId];
@@ -129,13 +153,18 @@ export const useOptions = () => {
 
   const deleteTab = async (tabId, wikiId) => {
     try {
+      const accessToken = await getAccessToken();
+
       const response = await fetch(`/api/tab-options/${tabId}`, {
         method: 'DELETE',
         headers: {
+          Authorization: `Bearer ${accessToken}`,
           'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
         },
       });
+
       if (!response.ok) throw new Error('Failed to delete tab');
+
       setTabOptionsMap((prev) => ({
         ...prev,
         [wikiId]: Object.fromEntries(
