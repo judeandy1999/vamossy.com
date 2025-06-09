@@ -1,3 +1,5 @@
+'use client';
+
 import Image from "next/image";
 import Hero from "@/components/homepage/hero";
 import MarketingFeatures from "@/components/homepage/marketing-features";
