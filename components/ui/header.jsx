@@ -1,7 +1,7 @@
-'use client'
+'use client';
 
-import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { navItems } from '@/data/data';
 import { useAuthWithRedirect } from '@/hooks/useAuthWithRedirect';
@@ -9,21 +9,19 @@ import { signOut } from '@/utils/authService';
 
 export default function Header() {
   const { status, session, role } = useAuthWithRedirect();
-  const [isScrolled, setIsScrolled] = useState(false)
-  const [isClient, setIsClient] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
-    setIsClient(true);
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10)
-    }
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  // Determine if navItems should be hidden on certain pages
+  const shouldHideNavItems = ['/create-article', '/options', '/user-dashboard'].includes(pathname);
 
   return (
     <header
@@ -33,57 +31,73 @@ export default function Header() {
     >
       <nav className="mx-auto flex items-center justify-between px-24 py-8 text-white">
         <Link href="/" className="text-xl font-bold flex items-center">
-          {/* <img src="/logo.png" alt="Logo" className="h-6 w-auto mr-2" /> */}
           <span className="text-4xl text-white">
             Brand<span className="text-yellow-400">Name</span>
           </span>
         </Link>
 
         <ul className="flex space-x-8 font-medium">
-          {(isClient && !(pathname === '/create-article' || pathname === '/options' || pathname === '/user-dashboard')) && navItems.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`text-3xl
-                  ${pathname === item.href ? 'text-yellow-400' : 'text-white hover:text-yellow-400'}
-                  `
-                }>
-                {item.name}
-              </Link>
-            ))}
+          {/* Main nav items */}
+          {status !== 'authenticated' && navItems.map((item) => (
+            <Link
+              key={item.name}
+              href={item.href}
+              className={`text-3xl ${
+                pathname === item.href ? 'text-yellow-400' : 'text-white hover:text-yellow-400'
+              } ${shouldHideNavItems ? 'hidden' : ''}`}
+            >
+              {item.name}
+            </Link>
+          ))}
 
-          {(session && role === 'admin') && (
+          {/* Admin-specific links */}
+          {session && role === 'admin' && (
             <>
               <Link
-                key={'dashboard'}
-                href='/user-dashboard'
-                className={`text-3xl
-                  ${pathname === '/user-dashboard' ? 'text-yellow-400' : 'text-white hover:text-yellow-400'}
-                  `
-                }>
+                key="dashboard"
+                href="/user-dashboard"
+                className={`text-3xl ${
+                  pathname === '/user-dashboard' ? 'text-yellow-400' : 'text-white hover:text-yellow-400'
+                }`}
+              >
                 Dashboard
               </Link>
               <Link
-                key={'create-article'}
-                href='/create-article'
-                className={`text-3xl
-                  ${pathname === '/create-article' ? 'text-yellow-400' : 'text-white hover:text-yellow-400'}
-                  `
-                }>
+                key="create-article"
+                href="/create-article"
+                className={`text-3xl ${
+                  pathname === '/create-article' ? 'text-yellow-400' : 'text-white hover:text-yellow-400'
+                }`}
+              >
                 Create Article
               </Link>
               <Link
-                key={'options'}
-                href='/options'
-                className={`text-3xl
-                  ${pathname === '/options' ? 'text-yellow-400' : 'text-white hover:text-yellow-400'}
-                  `
-                }>
+                key="options"
+                href="/options"
+                className={`text-3xl ${
+                  pathname === '/options' ? 'text-yellow-400' : 'text-white hover:text-yellow-400'
+                }`}
+              >
                 Options
               </Link>
             </>
           )}
 
+          {session && role === 'user' && (
+            <>
+              <Link
+                key="dashboard"
+                href="/user-dashboard"
+                className={`text-3xl ${
+                  pathname === '/user-dashboard' ? 'text-yellow-400' : 'text-white hover:text-yellow-400'
+                }`}
+              >
+                Dashboard
+              </Link>
+            </>
+          )}
+
+          {/* Log out button */}
           {session && (
             <button
               onClick={async () => {
@@ -94,7 +108,7 @@ export default function Header() {
                   window.location.href = '/login';
                 }
               }}
-              className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition-colors"
+              className="cursor-pointer bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition-colors"
             >
               Log out
             </button>
@@ -102,5 +116,5 @@ export default function Header() {
         </ul>
       </nav>
     </header>
-  )
+  );
 }
