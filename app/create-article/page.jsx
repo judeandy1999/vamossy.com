@@ -1,7 +1,6 @@
 'use client';
 
 import { useAuthWithRedirect } from '@/hooks/useAuthWithRedirect';
-import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import DOMPurify from 'dompurify';
 import { useAllArticles } from '@/hooks/useAllArticles';
@@ -14,11 +13,14 @@ import { createArticle, updateArticle, deleteArticle } from '@/utils/articles';
 import CollapsibleTabs from '@/components/collapsible-tabs';
 import { useArticleTabs } from '@/hooks/useArticleTabs';
 import { redirect } from 'next/navigation';
+import { useSendToHubSpot } from '@/hooks/useSendToHubSpot';
+import { getUser } from '@/utils/authService';
 
 export default function Page() {
   const { status, session, role } = useAuthWithRedirect();
   const { articles, loading, error, loadMore, isReachingEnd, addNewArticle, updateArticleInSidebar, deleteArticleFromSidebar } = useAllArticles();
   const { wikiOptions, tabOptionsMap, loading: optionsLoading, error: optionsError } = useOptions();
+  const { sendToHubSpot } = useSendToHubSpot();
 
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [title, setTitle] = useState('');
@@ -34,6 +36,17 @@ export default function Page() {
   const { initialTabContents, tabContents, setTabContents, loading: tabsLoading } = useArticleTabs(selectedArticle?.id);
 
   const isEditing = !!selectedArticle;
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { user } = await getUser();
+      if (user) {
+        await sendToHubSpot(user);
+      }
+    };
+  
+    fetchUser();
+  }, []);
 
   useEffect(() => {
     if (selectedArticle) {
