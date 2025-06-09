@@ -6,6 +6,7 @@ import OurStory from "@/components/homepage/our-story";
 import RemarkableResults from "@/components/homepage/remarkable-results";
 import TeamSection from "@/components/homepage/team-section";
 import Footer from "@/components/ui/footer";
+import { useEffect } from "react";
 import { getUser } from '@/utils/authService';
 import { useSendToHubSpot } from '@/hooks/useSendToHubSpot';
 
