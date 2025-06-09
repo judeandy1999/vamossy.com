@@ -19,14 +19,13 @@ export default async function handler(req, res) {
       });
 
       const data = await response.json();
-      console.log('HubSpot API response:', data);
 
-      res.status(200).json({ success: true, hubspotData: data });
+      return res.status(200).json({ success: true, hubspotData: data });
     } catch (error) {
       console.error('Error sending to HubSpot:', error);
-      res.status(500).json({ success: false, error: error.message });
+      return res.status(500).json({ success: false, error: error.message });
     }
   } else {
-    res.status(405).end(); // Only allow POST
+    return res.status(405).end(); // Only allow POST
   }
 }
