@@ -2,12 +2,24 @@ import { supabase } from '@/utils/client';
 
 // Google sign-in
 export const signInWithGoogle = async () => {
-  return supabase.auth.signInWithOAuth({
+  const { error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo: `${window.location.origin}/create-article` },
+    options: { redirectTo: `${window.location.origin}/` },
+  });
+
+  if (error) {
+    return { error };
+  }
+
+  return new Promise((resolve) => {
+    supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        const { user } = session;
+        resolve({ user });
+      }
+    });
   });
 };
-
 
 // Email/password sign-in
 export const signInWithEmail = async (email, password) => {
@@ -43,4 +55,10 @@ export const getSession = async () => {
 // Sign out
 export const signOut = async () => {
   return supabase.auth.signOut();
+};
+
+// Get current user
+export const getUser = async () => {
+  const { data: { user }, error } = await supabase.auth.getUser();
+  return { user, error };
 };
