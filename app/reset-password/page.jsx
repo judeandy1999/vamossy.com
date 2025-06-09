@@ -34,7 +34,6 @@ export default function Page() {
           console.error('OTP verification error:', error.message);
           setError(error.message || 'Invalid or expired token.');
         } else {
-          console.log('OTP verified!');
           setOtpVerified(true);
         }
       } else {
