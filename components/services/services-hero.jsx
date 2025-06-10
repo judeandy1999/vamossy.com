@@ -29,7 +29,7 @@ export default function ServicesHero() {
   };
 
   return (
-    <section className="mt-12 relative bg-[#02355A] text-white p-16">
+    <section className="relative bg-[#02355A] text-white p-16">
       <div className="mx-auto justify-center flex flex-col md:flex-row items-center gap-12 py-24 relative">
         {/* Left Section: Text Content */}
         <motion.div 
