@@ -11,6 +11,7 @@ import Footer from "@/components/ui/footer";
 import { useEffect } from "react";
 import { getUser } from '@/utils/authService';
 import { useSendToHubSpot } from '@/hooks/useSendToHubSpot';
+import OurServices from "@/components/homepage/our-services";
 
 export default function Home() {
     const { sendToHubSpot } = useSendToHubSpot();
@@ -27,14 +28,27 @@ export default function Home() {
     }, []);
 
     return (
-      <>
-        <NeedHelp />
-        <Hero />
-        <MarketingFeatures />
-        <OurStory />
-        <RemarkableResults />
-        <TeamSection />
-        <Footer />
-      </>
+      <div className="relative min-h-screen overflow-hidden">
+        {/* Full page background */}
+        <div className="fixed inset-0 z-0">
+          <img
+            src="/homepage/hero-bg.webp"
+            alt="Background"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black/50"></div>
+        </div>
+        
+        {/* Page content with relative positioning */}
+        <div className="relative z-10">
+          <Hero />
+          <MarketingFeatures />
+          <OurServices />
+          <OurStory />
+          <RemarkableResults />
+          <TeamSection />
+          <Footer />
+        </div>
+      </div>
     );
 }
