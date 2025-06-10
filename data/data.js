@@ -197,28 +197,46 @@ export const services = [
 
 export const features = [
   {
-    icon: "/icons/web-design.svg",
+    icon: "/homepage/chess.webp",
     title: "Web Design",
-    description: "Create a brand and communicate your value.",
+    description: "Sample text. Click to select the text box. Click again or double click to start editing the text.",
   },
   {
-    icon: "/icons/seo.svg",
+    icon: "/homepage/loc.webp",
     title: "SEO",
-    description: "Find new clients organically and grow a foundation for tomorrow.",
+    description: "Sample text. Click to select the text box. Click again or double click to start editing the text.",
   },
   {
-    icon: "/icons/ppc.svg",
+    icon: "/homepage/machine.webp",
     title: "PPC",
-    description: "Put your business in front of the right people today.",
+    description: "Sample text. Click to select the text box. Click again or double click to start editing the text.",
   },
   {
-    icon: "/icons/email-sms.svg",
+    icon: "/homepage/stats.webp",
     title: "Email & SMS",
-    description: "Get more out of your current website visitors.",
+    description: "Sample text. Click to select the text box. Click again or double click to start editing the text.",
+  },
+];
+
+export const ourServices = [
+  {
+    icon: "/homepage/audit-icon.webp", // You'll need to add these icons
+    title: "Custom Audit",
+    description: "Ideal to gain in-depth information, diagnosing issues, creating an action plan based on it."
   },
   {
-    icon: "/icons/social-media.svg",
-    title: "Social Media",
-    description: "Increase awareness by engaging with your audience.",
+    icon: "/homepage/strategy-icon.webp",
+    title: "Strategy Audit", 
+    description: "You will receive a multi-dimensional, full stack scan of your entire digital marketing activity, comprehensive marketing and business improvement opportunities, in-depth review of your competitive landscape, viable long term brand strategies, and an action plan with all of your opportunities in priority order, and how to utilize them."
   },
+  {
+    icon: "/homepage/consulting-icon.webp",
+    title: "Marketing Consulting",
+    description: "Get expert guidance on your marketing strategy with personalized consulting sessions tailored to your business needs."
+  },
+  {
+    icon: "/homepage/automation-icon.webp", 
+    title: "Marketing Automation",
+    description: "Streamline your marketing processes with advanced automation tools and strategies to maximize efficiency and ROI."
+  }
 ];
