@@ -9,6 +9,7 @@ import { redirect } from 'next/navigation';
 import { signInWithGoogle, signInWithEmail, getUser } from '@/utils/authService';
 import { useAuthWithRedirect } from '@/hooks/useAuthWithRedirect';
 import { useSendToHubSpot } from '@/hooks/useSendToHubSpot';
+import Image from 'next/image';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -59,12 +60,12 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 font-sans p-4">
-      <div className="bg-white/90 backdrop-blur-sm shadow-lg rounded-2xl p-8 max-w-md w-full flex flex-col gap-6">
+      <div className="bg-[#333]/90 backdrop-blur-sm shadow-lg rounded-2xl p-8 max-w-md w-full flex flex-col gap-6">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">
-            Brand<span className="text-yellow-400">Name</span>
+          <h1 className="text-3xl font-bold text-gray-800 mb-2 flex items-center justify-center mb-4">
+            <Image src="/homepage/logo.png" alt="Logo" width={200} height={50} className="h-12 lg:h-14 w-auto" />
           </h1>
-          <p className="text-gray-500 text-sm">Log in to continue</p>
+          <p className="text-gray-100 text-sm">Log in to continue</p>
         </div>
 
         {/* Google Sign-in */}
@@ -77,7 +78,7 @@ export default function LoginPage() {
         </button>
 
         {/* Divider */}
-        <div className="flex items-center gap-2 text-gray-400 text-xs uppercase">
+        <div className="flex items-center gap-2 text-gray-100 text-xs uppercase">
           <span className="flex-1 border-t"></span> or <span className="flex-1 border-t"></span>
         </div>
 
@@ -107,19 +108,19 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading || hubSpotLoading}
-            className="bg-yellow-400 hover:bg-yellow-500 text-white rounded-full py-2 font-medium transition-colors"
+            className="bg-[#f4c30f] hover:bg-yellow-500 text-white rounded-full py-2 font-medium transition-colors"
           >
             {loading || hubSpotLoading ? 'Logging in...' : 'Sign in'}
           </button>
         </form>
 
-        <div className="flex justify-between text-xs text-gray-500">
+        <div className="flex justify-between text-xs text-gray-100">
           <Link href="/forgot-password" className="hover:underline">
             Forgot password?
           </Link>
           <span>
             Don&apos;t have an account?{' '}
-            <Link href="/signup" className="text-yellow-400 hover:underline">
+            <Link href="/signup" className="text-[#f4c30f] hover:underline">
               Sign up
             </Link>
           </span>

@@ -38,7 +38,7 @@ export default function RootLayout({ children }) {
     <html lang="en" className={proximaNova.className}>
       <body className={`${proximaNova.className}`}>
           <Header />
-          <div className="height-[100vh] bg-[#333] pt-8">
+          <div className="height-[100vh]">
             {children}
             <SpeedInsights />
           </div>

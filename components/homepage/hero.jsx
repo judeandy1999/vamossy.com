@@ -1,7 +1,7 @@
 'use client';
 import { Typewriter } from "react-simple-typewriter";
 import { motion } from 'framer-motion';
-import Button from '@/components/ui/button';
+import { Check } from 'lucide-react';
 
 export default function Hero() {
   const h1Variants = {
@@ -29,12 +29,12 @@ export default function Hero() {
   };
 
   const buttonVariants = {
-    hidden: { opacity: 0, y: -400 },
+    hidden: { opacity: 0, y: 400 },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.3,
+        duration: 0.5,
         ease: 'linear',
         delay: 0.2,
       },
@@ -42,34 +42,31 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative h-[100vh] w-full overflow-hidden">
-      <div className="absolute bg-[#333] inset-0 z-0">
-        <div className="absolute inset-0 bg-[#333]"></div>
-      </div>
+    <section className="relative text-gray-100 h-[100vh] w-full overflow-hidden">
       <motion.div
-        className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6 text-white"
+        className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6 text-gray-100"
         initial="hidden"
         animate="visible"
       >
         <motion.h1
-          className="text-[68px] font-light max-w-[70%] leading-tight"
+          className="text-xl md:text-5xl lg:text-6xl font-light md:max-w-[80%] leading-tight"
           variants={h1Variants}
         >
-          AI-Powered Growth Systems
+          Rapid E-Commerce Store Growth, And
         </motion.h1>
         <motion.h1
-          className="text-[68px] font-bold max-w-[50%] leading-tight"
+          className="text-2xl md:text-5xl lg:text-7xl font-bold max-w-full leading-tight"
           variants={h1Variants}
         >
-          for eCommerce Brands
+          Lasting Competitive Advantage
         </motion.h1>
         <motion.h4 
-          className="text-[30px] font-light max-w-[60%] leading-tight"
+          className="text-gray-200 text-md md:text-xl lg:text-2xl mt-4 font-light md:max-w-[60%] leading-tight"
           variants={h4Variants}
         >
           <Typewriter
             words={[
-              "We help you scale smarter with data-infused strategies. Narrative clarity and automated execution. Delivered at the speed of intelligence.",
+              "We help businesses grow at scale through customized digital strategies, tailored marketing solutions, and marketing automation."
             ]}
             cursor
             cursorStyle="|"
@@ -80,8 +77,20 @@ export default function Hero() {
         </motion.h4>
         <motion.div
           variants={buttonVariants}
+          className="flex items-center flex-col md:flex-row max-w-[80%] md:w-3xl md:h-[100px] rounded-lg p-2 md:p-8 mt-4 md:mt-8 flex justify-between bg-yellow-500"
         >
-          <Button title="Book a free strategy call" href="/"/>
+          <p className="text-center mb-2 md:mb-0 md:text-start text-md md:text-xl text-gray-900 font-bold flex items-center max-w-md">Book a free digital strategy call - open up new horizons for your business!</p>
+          <div className="flex items-center space-x-2">
+            <a
+              href='/'
+              className="group flex items-center justify-center gap-2 py-2 px-2 md:py-3 w-[10rem] bg-[#333] text-gray-200 hover:scale-105 hover:bg-gray-800 font-semibold rounded-full transition"
+            >
+              <div className="w-5 h-5 md:w-7 md:h-7 rounded-full border-1 border-white bg-[#333] group-hover:bg-gray-800 flex items-center justify-center">
+                <Check size={16} className="text-gray-200" />
+              </div>
+              Book now
+            </a>
+          </div>
         </motion.div>
       </motion.div>
     </section>
