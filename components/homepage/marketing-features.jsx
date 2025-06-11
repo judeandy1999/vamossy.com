@@ -40,9 +40,9 @@ export default function MarketingFeatures() {
 
   return (
     <section className="min-h-[60vh] flex items-center bg-[#333] text-gray-100 py-16 px-8">
-      <div className="max-w-6xl mx-auto text-center">
+      <div className="max-w-6xl mx-auto text-center mt-8">
         <motion.h2
-          className="text-xl md:text-5xl lg:text-6xl font-bold font-semibold mb-4"
+          className="text-xl md:text-5xl lg:text-6xl font-semibold mb-4"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: false, amount: 0.5 }}
