@@ -124,7 +124,7 @@ export const footerLinks = [
 ];
 
 export const navItems = [
-  { name: "Services", href: "/services" },
+  { name: "Services & Pricing", href: "/services" },
   { name: "Our Work", href: "/our-work" },
   { name: "Pricing", href: "/pricing" },
   { name: "Contact", href: "/contact" },
