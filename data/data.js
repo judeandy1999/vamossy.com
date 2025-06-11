@@ -220,7 +220,7 @@ export const features = [
 
 export const ourServices = [
   {
-    icon: "/homepage/audit-icon.webp", // You'll need to add these icons
+    icon: "/homepage/audit-icon.webp",
     title: "Custom Audit",
     description: "Ideal to gain in-depth information, diagnosing issues, creating an action plan based on it."
   },
@@ -231,12 +231,12 @@ export const ourServices = [
   },
   {
     icon: "/homepage/consulting-icon.webp",
-    title: "Marketing Consulting",
-    description: "Get expert guidance on your marketing strategy with personalized consulting sessions tailored to your business needs."
+    title: "Consultation",
+    description: "We are readily available to provide quick and accurate help. You can request consultations about specific topics, issues, or needs for information, or we can simply focus on increasing your profit."
   },
   {
     icon: "/homepage/automation-icon.webp", 
-    title: "Marketing Automation",
-    description: "Streamline your marketing processes with advanced automation tools and strategies to maximize efficiency and ROI."
+    title: "Operational Consultation",
+    description: "If you want quick results at minimal cost, tell us about your marketing operation, and we will almost instantly provide growth opportunities, and advice on how to improve your operation, plus any supportive knowledge you might need for successful implementations."
   }
 ];
