@@ -44,18 +44,18 @@ export default function Hero() {
   return (
     <section className="relative text-gray-100 h-[100vh] w-full overflow-hidden">
       <motion.div
-        className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6 text-gray-100"
+        className="text-shadow-sm relative z-10 h-full flex flex-col items-center justify-center text-center px-6 text-gray-100"
         initial="hidden"
         animate="visible"
       >
         <motion.h1
-          className="text-xl md:text-5xl lg:text-6xl font-light md:max-w-[80%] leading-tight"
+          className="text-shadow-sm text-xl md:text-5xl lg:text-6xl font-light md:max-w-[80%] leading-tight"
           variants={h1Variants}
         >
           Rapid E-Commerce Store Growth, And
         </motion.h1>
         <motion.h1
-          className="text-2xl md:text-5xl lg:text-7xl font-bold max-w-full leading-tight"
+          className="text-shadow-sm text-2xl md:text-5xl lg:text-7xl font-bold max-w-full leading-tight"
           variants={h1Variants}
         >
           Lasting Competitive Advantage
@@ -77,9 +77,9 @@ export default function Hero() {
         </motion.h4>
         <motion.div
           variants={buttonVariants}
-          className="flex items-center flex-col md:flex-row max-w-[80%] md:w-3xl md:h-[100px] rounded-lg p-2 md:p-8 mt-4 md:mt-8 flex justify-between bg-yellow-500"
+          className="flex items-center flex-col md:flex-row max-w-[80%] md:w-3xl md:h-[120px] rounded-lg p-2 md:p-8 mt-4 md:mt-8 flex justify-between bg-gradient-to-r from-[#a87b00]/70 to-yellow-500/70"
         >
-          <p className="text-center mb-2 md:mb-0 md:text-start text-md md:text-xl text-gray-900 font-bold flex items-center max-w-md">Book a free digital strategy call - open up new horizons for your business!</p>
+          <p className="text-center mb-2 md:mb-0 md:text-start text-md md:text-xl text-gray-200 font-bold flex items-center max-w-md text-shadow-sm">Book a free digital strategy call - open up new horizons for your business!</p>
           <div className="flex items-center space-x-2">
             <a
               href='/'
