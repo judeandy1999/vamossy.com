@@ -97,7 +97,7 @@ export default function Header() {
         pathname !== '/' 
           ? 'bg-black shadow-md translate-y-0 opacity-100' 
           : isVisible
-            ? `${isScrolled ? 'bg-[#333] shadow-md' : 'bg-[#333]'} translate-y-0 opacity-100`
+            ? `${isScrolled ? 'bg-[#333] shadow-md' : 'bg-[#333]/90'} translate-y-0 opacity-100`
             : 'bg-transparent -translate-y-full opacity-0 pointer-events-none'
       }`}
     >
@@ -130,7 +130,7 @@ export default function Header() {
         </div>
 
         {/* Desktop Nav */}
-        <ul className="hidden md:flex items-center space-x-6 font-medium text-lg md:text-2xl lg:text-3xl">
+        <ul className="hidden md:flex items-center space-x-8 font-medium text-lg md:text-[28px]">
           {renderLinks()}
         </ul>
 
