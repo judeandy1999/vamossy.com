@@ -23,7 +23,7 @@ export default function OurServices() {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.8,
+        duration: 1,
         ease: "easeOut",
       },
     },
@@ -33,15 +33,15 @@ export default function OurServices() {
     hidden: {},
     visible: {
       transition: {
-        staggerChildren: 0.2,
+        staggerChildren: 0.4,
       },
     },
   };
 
   return (
-    <section className="relative min-h-screen py-20 px-4 bg-transparent">
+    <section className="relative min-h-screen py-8 lg:py-24 px-8 bg-transparent">
 
-      <div className="relative z-10 max-w-7xl mx-auto">
+      <div className="relative z-10 max-w-6xl mx-auto">
         {/* Header Section */}
         <motion.div
           className="text-center mb-16"
@@ -50,10 +50,10 @@ export default function OurServices() {
           viewport={{ once: false, amount: 0.3 }}
           variants={titleVariants}
         >
-          <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-8">
-            OUR SERVICES
+          <h2 className="text-xl md:text-5xl lg:text-6xl font-semibold text-gray-100 mb-4">
+            Our Services
           </h2>
-          <p className="text-lg md:text-xl lg:text-2xl text-gray-200 max-w-4xl mx-auto">
+          <p className="text-md md:text-xl lg:text-2xl mt-4 font-light text-gray-200 mb-8">
             Our service range covers the entire field of eCommerce Digital Marketing. Feel free to ask for custom requests!
           </p>
         </motion.div>
@@ -69,12 +69,12 @@ export default function OurServices() {
           {ourServices.map((service, index) => (
             <motion.div
               key={index}
-              className="group relative bg-gray-800/80 backdrop-blur-sm rounded-2xl p-8 hover:bg-gray-700/80 transition-all duration-300"
+              className="group relative bg-[#333]/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg shadow-gray-900/50"
               variants={cardVariants}
             >
               {/* Service Icon */}
               <div className="flex justify-center mb-6">
-                <div className="w-20 h-20 bg-yellow-500 rounded-full flex items-center justify-center group-hover:bg-yellow-400 transition-colors duration-300">
+                <div className="w-20 h-20 bg-yellow-500 rounded-full flex items-center justify-center group-hover:bg-yellow-400">
                   <img 
                     src={service.icon} 
                     alt={service.title}
@@ -85,43 +85,17 @@ export default function OurServices() {
 
               {/* Service Content */}
               <div className="text-center">
-                <h3 className="text-2xl md:text-3xl font-bold text-white mb-4 group-hover:text-yellow-400 transition-colors duration-300">
+                <h3 className="text-xl md:text-2xl font-semibold text-gray-50 mb-4">
                   {service.title}
                 </h3>
-                <p className="text-gray-300 text-base md:text-lg leading-relaxed mb-6">
+                <p className="text-gray-200 text-md md:text-lg leading-relaxed mb-6">
                   {service.description}
                 </p>
-                
-                {/* CTA Button */}
-                <Button 
-                  title="Learn More" 
-                  href="/services" 
-                  size="sm"
-                />
               </div>
 
               {/* Hover Effect Border */}
-              <div className="absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-yellow-500/50 transition-all duration-300"></div>
             </motion.div>
           ))}
-        </motion.div>
-
-        {/* Bottom CTA Section */}
-        <motion.div
-          className="text-center mt-16"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: false, amount: 0.5 }}
-          variants={titleVariants}
-        >
-          <p className="text-lg md:text-xl text-gray-200 mb-8">
-            Ready to take your business to the next level?
-          </p>
-          <Button 
-            title="Get Started Today" 
-            href="/contact" 
-            size="lg"
-          />
         </motion.div>
       </div>
     </section>
