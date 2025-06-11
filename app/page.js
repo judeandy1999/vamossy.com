@@ -12,6 +12,8 @@ import { useEffect } from "react";
 import { getUser } from '@/utils/authService';
 import { useSendToHubSpot } from '@/hooks/useSendToHubSpot';
 import OurServices from "@/components/homepage/our-services";
+import PainPoints from "@/components/homepage/pain-points";
+import LiveCaseStudies from "@/components/homepage/live-case-study";
 
 export default function Home() {
     const { sendToHubSpot } = useSendToHubSpot();
@@ -44,9 +46,11 @@ export default function Home() {
           <Hero />
           <MarketingFeatures />
           <OurServices />
-          <OurStory />
+          <PainPoints />
+          <LiveCaseStudies />
+          {/* <OurStory />
           <RemarkableResults />
-          <TeamSection />
+          <TeamSection /> */}
           <Footer />
         </div>
       </div>

@@ -39,10 +39,10 @@ export default function MarketingFeatures() {
   };
 
   return (
-    <section className="min-h-[60vh] flex items-center bg-[#333] text-gray-100 py-16 px-8">
-      <div className="max-w-6xl mx-auto text-center">
+    <section className="min-h-[60vh] flex items-center bg-gradient-to-br from-[#333] via-gray-800 to-gray-900 text-gray-100 py-16 px-8">
+      <div className="max-w-6xl mx-auto text-center mt-8">
         <motion.h2
-          className="text-xl md:text-5xl lg:text-6xl font-bold font-semibold mb-4"
+          className="text-xl md:text-5xl lg:text-6xl font-semibold mb-4 md:mg-8"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: false, amount: 0.5 }}
@@ -51,7 +51,7 @@ export default function MarketingFeatures() {
           AI-Driven Full Stack E-commerce Digital Marketing Solution
         </motion.h2>
         <motion.p 
-          className="text-md md:text-xl lg:text-2xl mt-4 font-light text-gray-200 mb-8"
+          className="font-light text-md md:text-xl lg:text-2xl text-gray-200 max-w-6xl mx-auto text-gray-200 mb-4 md:mb-8"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: false, amount: 0.5 }}
@@ -70,7 +70,7 @@ export default function MarketingFeatures() {
             <motion.div
               key={index}
               variants={featuresVariants}
-              className="border-2 lg:border-4 rounded-xl border-[#a87b00] py-6 px-2 lg:py-8 lg:px-4 flex flex-col items-center text-center lg:space-y-4"
+              className="border-2 lg:border-4 rounded-xl border-yellow-500/80 py-6 px-2 lg:py-8 lg:px-4 flex flex-col items-center text-center lg:space-y-4"
             >
               <div className="relative">
                 <img

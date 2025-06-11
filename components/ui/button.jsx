@@ -11,7 +11,7 @@ export default function CallToActionButton({ href, title, size = 'md' }) {
   return (
     <a
       href={href}
-      className={`mt-6 inline-block bg-[#a87b00] hover:bg-yellow-500 text-black font-semibold rounded-full transition ${sizeClasses[size]}`}
+      className={`mt-6 inline-block bg-yellow-500/90 hover:bg-yellow-500 text-black font-semibold rounded-full transition ${sizeClasses[size]}`}
     >
       {title}
     </a>

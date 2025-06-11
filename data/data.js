@@ -125,10 +125,9 @@ export const footerLinks = [
 
 export const navItems = [
   { name: "Services & Pricing", href: "/services" },
-  { name: "Our Work", href: "/our-work" },
-  { name: "Pricing", href: "/pricing" },
+  { name: "About", href: "/about" },
   { name: "Contact", href: "/contact" },
-  { name: "Wiki", href: "/articles" },
+  { name: "Vamossy Wiki", href: "/articles" },
 ];
 
 export const services = [
@@ -220,23 +219,84 @@ export const features = [
 
 export const ourServices = [
   {
-    icon: "/homepage/audit-icon.webp", // You'll need to add these icons
+    icon: "/homepage/audit.png",
     title: "Custom Audit",
     description: "Ideal to gain in-depth information, diagnosing issues, creating an action plan based on it."
   },
   {
-    icon: "/homepage/strategy-icon.webp",
+    icon: "/homepage/board.png",
     title: "Strategy Audit", 
     description: "You will receive a multi-dimensional, full stack scan of your entire digital marketing activity, comprehensive marketing and business improvement opportunities, in-depth review of your competitive landscape, viable long term brand strategies, and an action plan with all of your opportunities in priority order, and how to utilize them."
   },
   {
-    icon: "/homepage/consulting-icon.webp",
-    title: "Marketing Consulting",
-    description: "Get expert guidance on your marketing strategy with personalized consulting sessions tailored to your business needs."
+    icon: "/homepage/message.png",
+    title: "Consultation",
+    description: "We are readily available to provide quick and accurate help. You can request consultations about specific topics, issues, or needs for information, or we can simply focus on increasing your profit."
   },
   {
-    icon: "/homepage/automation-icon.webp", 
-    title: "Marketing Automation",
-    description: "Streamline your marketing processes with advanced automation tools and strategies to maximize efficiency and ROI."
+    icon: "/homepage/hand.png", 
+    title: "Operational Consultation",
+    description: "If you want quick results at minimal cost, tell us about your marketing operation, and we will almost instantly provide growth opportunities, and advice on how to improve your operation, plus any supportive knowledge you might need for successful implementations."
   }
 ];
+
+export const painPoints = {
+  title: "Taking Care of Pain Points",
+  subtitle: "Creating a masterful, comprehensive digital marketing operation for an eCommerce store is a major challenge, and very few stores manage to tackle it. We exist to solve that problem.",
+  image: "/homepage/tcpp.webp",
+  sections: [
+    {
+      title: "Marketing is a complex and creative activity, unique to each company.",
+      description: "We tackle this by using a multi-dimensional approach that considers all major areas and aspects of digital marketing, enhance our findings with AI-driven overviews to make sure we leave no gap in your strategy, and come up with custom tailored practices that are designed to lead to major competitive advantage."
+    },
+    {
+      title: "Marketing is often chaotic, and difficult to fully comprehend.",
+      description: "We cut through digital chaos with a well built eCommerce marketing framework, and a hybrid system of human strategy and AI-driven tools — making every insight measurable, and every action is intentional."
+    },
+    {
+      title: "Having a great strategy does not guarantee results by itself, it has to be implemented.",
+      description: "We provide regular, continuous help with implementation, while keeping in mind that your growth engine heavily relies on human resources, and their willingness to adapt. Again, there is no one-shoe that fits all solution, but we are masters at achieving success in this area. To maximize efficiency, you have to engineer and automate processes, tasks, workflows, or even projects, while also taking care of their management controlling aspects. We are competent automation engineers, and have the technology to solve complex automations at scale."
+    },
+    {
+      title: "To sustain growth and competitive advantage, you have to keep on improving your business operation in order to maintain the gap against competitors.",
+      description: "We provide automated systematic solutions for sustained improvement, plus all the tools and resources you may need."
+    }
+  ]
+};
+
+export const liveCaseStudies = {
+  title: "Join Our Live Case Studies!",
+  subtitle: "We do our best for all of our clients, and are proud to show it! Let us make a case study with you - live, on the job! No foul play, no bought or incentivized reviews - Just honest, real feedback -before - during - and after our service!",
+  caseStudies: [
+    {
+      id: 1,
+      title: "Case study",
+      description: "Sample text. Click to select the text box. Click again or double click to start editing the text."
+    },
+    {
+      id: 2,
+      title: "Case study",
+      description: "Sample text. Click to select the text box. Click again or double click to start editing the text."
+    },
+    {
+      id: 3,
+      title: "Case study",
+      description: "Sample text. Click to select the text box. Click again or double click to start editing the text."
+    },
+    {
+      id: 4,
+      title: "Case study",
+      description: "Sample text. Click to select the text box. Click again or double click to start editing the text."
+    },
+    {
+      id: 5,
+      title: "Case study",
+      description: "Sample text. Click to select the text box. Click again or double click to start editing the text."
+    },
+    {
+      id: 6,
+      title: "Case study",
+      description: "Sample text. Click to select the text box. Click again or double click to start editing the text."
+    }
+  ]
+};
