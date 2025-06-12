@@ -163,7 +163,7 @@ export default function Hero() {
             {isCalendarLoading && (
               <Spinner />
             )}
-            <p className="pt-4 text-3xl text-extrabold text-[#0091ae]">Book a free discovery call!</p>
+            <p className="pt-4 text-lg md:text-3xl text-extrabold text-[#0091ae]">Book a free discovery call!</p>
             <div 
               key={calendarKey}
               className={`meetings-iframe-container ${isCalendarLoading ? 'opacity-0' : 'opacity-100'} flex mx-auto text-center flex-col-reverse transition-opacity duration-500`}
