@@ -69,7 +69,7 @@ export default function LiveCaseStudies() {
       {/* Overlay for better text readability */}
       <div className="absolute inset-0 bg-black/40"></div>
       
-      <div className="relative z-10 max-w-7xl mx-auto">
+      <div className="relative max-w-7xl mx-auto">
         {/* Header Section */}
         <motion.div
           className="text-center mb-4"
