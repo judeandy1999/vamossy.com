@@ -85,7 +85,7 @@ export const footerLinks = [
   {
     title: "Company",
     items: [
-      "About SmartSites",
+      "About Vamossy",
       "Testimonials",
       "Meet The Team",
       "Careers",
@@ -197,23 +197,23 @@ export const services = [
 export const features = [
   {
     icon: "/homepage/chess.webp",
-    title: "Web Design",
-    description: "Sample text. Click to select the text box. Click again or double click to start editing the text.",
+    title: "Design improved processes ",
+    description: "Creating comprehensive marketing solutions, granting long term competitive advantage.",
   },
   {
     icon: "/homepage/loc.webp",
-    title: "SEO",
-    description: "Sample text. Click to select the text box. Click again or double click to start editing the text.",
+    title: "Help in Implementation",
+    description: "Both do-with-you and do-for-you options can be considered, making sure that implementation is correct.",
   },
   {
     icon: "/homepage/machine.webp",
-    title: "PPC",
-    description: "Sample text. Click to select the text box. Click again or double click to start editing the text.",
+    title: "Include Marketing Automation",
+    description: "Include designing marketing automations where applicable, leaving no stones unturned for advantage.",
   },
   {
     icon: "/homepage/stats.webp",
-    title: "Email & SMS",
-    description: "Sample text. Click to select the text box. Click again or double click to start editing the text.",
+    title: "Plan for maintained growth",
+    description: "Sustained growth is also accounted for, so the advantages are long-lasting, and difficult to replicate",
   },
 ];
 
@@ -247,18 +247,22 @@ export const painPoints = {
   sections: [
     {
       title: "Marketing is a complex and creative activity, unique to each company.",
-      description: "We tackle this by using a multi-dimensional approach that considers all major areas and aspects of digital marketing, enhance our findings with AI-driven overviews to make sure we leave no gap in your strategy, and come up with custom tailored practices that are designed to lead to major competitive advantage."
+      description: "We use a flexible approach that considers all major areas and aspects of digital marketing, enhancing our findings with AI-driven overviews to make sure we leave no gap in your strategy"
     },
     {
       title: "Marketing is often chaotic, and difficult to fully comprehend.",
-      description: "We cut through digital chaos with a well built eCommerce marketing framework, and a hybrid system of human strategy and AI-driven tools — making every insight measurable, and every action is intentional."
+      description: "We cut through digital chaos with a well built eCommerce marketing framework, and a hybrid system of human strategy and AI-driven tools — making every insight measurable, and every action intentional."
     },
     {
       title: "Having a great strategy does not guarantee results by itself, it has to be implemented.",
-      description: "We provide regular, continuous help with implementation, while keeping in mind that your growth engine heavily relies on human resources, and their willingness to adapt. Again, there is no one-shoe that fits all solution, but we are masters at achieving success in this area. To maximize efficiency, you have to engineer and automate processes, tasks, workflows, or even projects, while also taking care of their management controlling aspects. We are competent automation engineers, and have the technology to solve complex automations at scale."
+      description: "We provide regular, continuous help with implementation, while keeping in mind that your growth engine heavily relies on human resources, and their willingness to adapt. Again, there is no one-shoe that fits all solution, but we are masters at achieving success in this area."
     },
     {
-      title: "To sustain growth and competitive advantage, you have to keep on improving your business operation in order to maintain the gap against competitors.",
+      title: "To maximize efficiency, you have to engineer and automate processes, tasks, workflows, or even projects, while also taking care of their management controlling aspects.",
+      description: "We are competent automation engineers, and have the technology to solve complex automations at scale."
+    },
+    {
+      title: "To sustain growth and competitive advantage, you have to keep on improving your business operation in order to maintain the gap against competitors",
       description: "We provide automated systematic solutions for sustained improvement, plus all the tools and resources you may need."
     }
   ]
@@ -298,5 +302,57 @@ export const liveCaseStudies = {
       title: "Case study",
       description: "Sample text. Click to select the text box. Click again or double click to start editing the text."
     }
+  ]
+};
+
+export const newHorizons = {
+  title: "New Horizons by AI and Prompt Engineering",
+  subtitle: "Everyone has access to AI, and everyone is a \"prompt engineer\". We took it a few steps further.",
+  sections: [
+    {
+      title: "What is the limit?",
+      description: "(Company Wiki, SOP etc?)"
+    },
+    {
+      title: "Existing marketing knowledge and know-how",
+      description: ""
+    },
+    {
+      title: "We already \"solved\" digital marketing",
+      description: ""
+    },
+    {
+      title: "Extreme prompt chain showcase",
+      description: ""
+    }
+  ],
+  features: [
+    "Personas and behaviours",
+    "Teams and behaviours", 
+    "Prompt chain for problem interpretation+solution funnel + solution delivery",
+    "Propose better solution -> Create a custom quiz before",
+    "Recreate answers, funnel"
+  ],
+  examples: {
+    title: "Examples of our prompts and what solutions it provide",
+    items: [
+      "Cards: Copy prompts",
+      "Card write down use case"
+    ]
+  }
+};
+
+export const ourValues = {
+  title: "OUR VALUES",
+  image: "/homepage/mountains.webp", // You'll need to add this mountain image
+  values: [
+    "Mutual trust with clients",
+    "Patience, understanding, and flexibility",
+    "Long-term, satisfying collaborations",
+    "Keeping our collaborations meaningful and enjoyable",
+    "Helping business and individual growth",
+    "A supportive, healthy company culture",
+    "Conscientious and diligent work ethic",
+    "Ethical, fully legitimate, real value adding services"
   ]
 };
