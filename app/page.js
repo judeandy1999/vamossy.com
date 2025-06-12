@@ -14,6 +14,10 @@ import { useSendToHubSpot } from '@/hooks/useSendToHubSpot';
 import OurServices from "@/components/homepage/our-services";
 import PainPoints from "@/components/homepage/pain-points";
 import LiveCaseStudies from "@/components/homepage/live-case-study";
+import NewHorizons from "@/components/homepage/new-horizon-section";
+import OurValues from "@/components/homepage/our-values";
+import { Contact } from "lucide-react";
+import ContactUs from "@/components/homepage/contact-us";
 
 export default function Home() {
     const { sendToHubSpot } = useSendToHubSpot();
@@ -42,12 +46,15 @@ export default function Home() {
         </div>
         
         {/* Page content with relative positioning */}
-        <div className="relative z-10">
+        <div className="relative">
           <Hero />
           <MarketingFeatures />
           <OurServices />
           <PainPoints />
           <LiveCaseStudies />
+          {/* <OurValues /> */}
+          <ContactUs />
+          {/* <NewHorizons /> */}
           {/* <OurStory />
           <RemarkableResults />
           <TeamSection /> */}
