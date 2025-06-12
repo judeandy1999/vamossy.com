@@ -37,7 +37,7 @@ export default function ServicesHero() {
           whileInView="visible"
           viewport={{ once: false, amount: 0.5 }}
           variants={leftSectionVariants}
-          className="w-[60%] space-y-2 z-10"
+          className="w-[60%] space-y-2"
         >
           <p className="text-yellow-400 text-[20px] font-semibold">
             Grow Your Business With Scalable Digital Marketing

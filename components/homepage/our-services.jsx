@@ -40,7 +40,7 @@ export default function OurServices() {
   return (
     <section className="relative min-h-screen py-8 lg:py-20 px-8 bg-transparent">
 
-      <div className="relative z-10 max-w-6xl mx-auto">
+      <div className="relative max-w-6xl mx-auto">
         {/* Header Section */}
         <motion.div
           className="text-center mb-4"

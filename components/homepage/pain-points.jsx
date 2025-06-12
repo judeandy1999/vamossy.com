@@ -66,7 +66,7 @@ export default function PainPoints() {
       {/* Background overlay */}
       {/* <div className="absolute inset-0 bg-black/40"></div> */}
       
-      <div className="relative z-10 max-w-7xl mx-auto">
+      <div className="relative max-w-7xl mx-auto">
         {/* Header Section */}
         <motion.div
           className="text-center mb-6"
@@ -146,12 +146,9 @@ export default function PainPoints() {
           variants={titleVariants}
         >
           <div className="mx-auto bg-gradient-to-r from-yellow-500/10 to-orange-500/10 max-w-5xl rounded-2xl p-8 border border-yellow-500/20">
-            <h3 className="text-xl md:text-2xl font-semibold text-white mb-4">
-              Extraordinary Strategy + Implementation + Automation + Improvement 
-              <br />
-              = 
-              <br />
-              Long term Success
+            <h2 className="text-lg md:text-3xl font-semibold text-white mb-4">The recipe for long term success:</h2>
+            <h3 className="text-xl md:text-2xl font-light text-white mb-4">
+              Extraordinary Solutions + Implementation + Automation + Continous Improvement
             </h3>
           </div>
         </motion.div>

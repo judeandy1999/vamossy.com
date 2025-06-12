@@ -48,7 +48,7 @@ export default function MarketingFeatures() {
           viewport={{ once: false, amount: 0.5 }}
           variants={titleVariants}
         >
-          AI-Driven Full Stack E-commerce Digital Marketing Solution
+          Capabilities: Full Stack eCommerce Digital Marketing 
         </motion.h2>
         <motion.p 
           className="font-light text-md md:text-xl lg:text-2xl text-gray-200 max-w-6xl mx-auto text-gray-200 mb-4 md:mb-8"
@@ -57,7 +57,7 @@ export default function MarketingFeatures() {
           viewport={{ once: false, amount: 0.5 }}
           variants={titleVariants}
         > 
-          We deliver solutions and find improvements in any realm of Ecommerce Digital Marketing. Our goal is to make our clients market leaders in the shortest time frame possible. We can help with unique issues and goals, or we can fully transform your digital marketing to a growth machine, while equipping your marketing team with cutting edge knowledge.
+          Through precision, intelligence, and automated innovation, we replace guesswork with systems thinking—unifying AI-powered automation and strategic insight to unlock breakthrough growth.
         </motion.p>
         <motion.div
           className="grid grid-cols-1 grid-cols-1 md:grid-cols-4 gap-8 mb-8"
@@ -70,7 +70,7 @@ export default function MarketingFeatures() {
             <motion.div
               key={index}
               variants={featuresVariants}
-              className="border-2 lg:border-4 rounded-xl border-yellow-500/80 py-6 px-2 lg:py-8 lg:px-4 flex flex-col items-center text-center lg:space-y-4"
+              className="flex justify-around border-2 lg:border-4 rounded-xl border-yellow-500/80 py-6 px-2 lg:py-8 lg:px-4 flex flex-col items-center text-center lg:space-y-4"
             >
               <div className="relative">
                 <img
@@ -93,10 +93,10 @@ export default function MarketingFeatures() {
           viewport={{ once: false, amount: 0.5 }}
           variants={featuresVariants}
         > 
-          These solutions are made possible by our own competitive intelligence system, providing us deep insight in any area of your marketing. Sceptical? Request any custom audit!
+          We create customized strategies, tactics, playbooks, audits, unique deliverables, and more. As an example, we can deliver tailored, complex prompt chain packages, personally customized one-by-one for each of your employees, to boost their productivity.
           <br />
           <br />
-          Through precision, intelligence, and automated innovation, we replace guesswork with systems thinking -unifying Al-powered automation and strategic insight to unlock breakthrough growth.       
+          We take care from one-task projects to complete marketing overhauls. Once the improvements are specified, we support implementation, or in some cases even do them for you. 
         </motion.p>
       </div>
     </section>

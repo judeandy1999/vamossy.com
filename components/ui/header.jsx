@@ -93,7 +93,7 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed w-full z-50 transition-all duration-500 ease-in-out transform ${
+      className={`fixed w-full z-2 transition-all duration-500 ease-in-out transform ${
         pathname !== '/' 
           ? 'bg-black shadow-md translate-y-0 opacity-100' 
           : isVisible
