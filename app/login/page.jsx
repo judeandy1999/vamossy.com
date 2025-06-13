@@ -8,13 +8,13 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { signInWithGoogle, signInWithEmail, getUser } from '@/utils/authService';
 import { useAuthWithRedirect } from '@/hooks/useAuthWithRedirect';
-import { useSendToHubSpot } from '@/hooks/useSendToHubSpot';
+import { useSendToKlaviyo } from '@/hooks/useSendToKlaviyo';
 import Image from 'next/image';
 
 export default function LoginPage() {
   const router = useRouter();
   const { status } = useAuthWithRedirect();
-  const { sendToHubSpot, loading: hubSpotLoading, error: hubSpotError } = useSendToHubSpot();
+  const { sendToKlaviyo, loading: hubSpotLoading, error: hubSpotError } = useSendToKlaviyo();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -38,7 +38,7 @@ export default function LoginPage() {
     } else {
       const { user, error: userError } = await getUser();
       if (user) {
-        await sendToHubSpot(user);
+        await sendToKlaviyo(user);
         router.push('/');
       } else if (userError) {
         setError(userError.message);

@@ -1,15 +1,15 @@
 import { useState } from 'react';
 
-export const useSendToHubSpot = () => {
+export const useSendToKlaviyo = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const sendToHubSpot = async (user) => {
+  const sendToKlaviyo = async (user) => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await fetch('/api/send-to-hubspot', {
+      const response = await fetch('/api/send-to-klaviyo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -19,9 +19,12 @@ export const useSendToHubSpot = () => {
         }),
       });
 
+      const responseText = await response.text();
+      console.log('Klaviyo response:', responseText);
+
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to send data to HubSpot');
+        throw new Error(errorData.error || 'Failed to send data to Klaviyo');
       }
     } catch (err) {
       setError(err.message);
@@ -30,5 +33,5 @@ export const useSendToHubSpot = () => {
     }
   };
 
-  return { sendToHubSpot, loading, error };
+  return { sendToKlaviyo, loading, error };
 };

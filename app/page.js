@@ -10,7 +10,7 @@ import TeamSection from "@/components/homepage/team-section";
 import Footer from "@/components/ui/footer";
 import { useEffect } from "react";
 import { getUser } from '@/utils/authService';
-import { useSendToHubSpot } from '@/hooks/useSendToHubSpot';
+import { useSendToKlaviyo } from '@/hooks/useSendToKlaviyo';
 import OurServices from "@/components/homepage/our-services";
 import PainPoints from "@/components/homepage/pain-points";
 import LiveCaseStudies from "@/components/homepage/live-case-study";
@@ -20,13 +20,13 @@ import { Contact } from "lucide-react";
 import ContactUs from "@/components/homepage/contact-us";
 
 export default function Home() {
-    const { sendToHubSpot } = useSendToHubSpot();
+    const { sendToKlaviyo } = useSendToKlaviyo();
 
     useEffect(() => {
       const fetchUser = async () => {
         const { user } = await getUser();
         if (user) {
-          await sendToHubSpot(user);
+          await sendToKlaviyo(user);
         }
       };
     
