@@ -5,6 +5,7 @@ import { useArticleMeta } from '@/hooks/useArticleMeta';
 import { useArticleContent } from '@/hooks/useArticleContent';
 import Spinner from '@/components/ui/spinner';
 import { use } from 'react';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 
 export default function ArticlePage(props) {
   const params = use(props.params);
@@ -19,6 +20,58 @@ export default function ArticlePage(props) {
       setActiveTab(firstTabId);
     }
   }, [meta?.has_tabs, full?.tabs]);
+
+  // Add this useEffect for collapsible tables
+  useEffect(() => {
+    const makeTablesCollapsible = () => {
+      const tables = document.querySelectorAll('.article-container table');
+      
+      tables.forEach(table => {
+        // Skip if already processed
+        if (table.closest('.table-wrapper')) return;
+        
+        const wrapper = document.createElement('div');
+        wrapper.className = 'table-wrapper';
+        
+        const toggle = document.createElement('div');
+        toggle.className = 'table-toggle';
+        toggle.innerHTML = `
+          <svg class="toggle-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m6 9 6 6 6-6"/>
+          </svg>
+          <span>Table</span>
+        `;
+        
+        const content = document.createElement('div');
+        content.className = 'table-content';
+        
+        table.parentNode.insertBefore(wrapper, table);
+        wrapper.appendChild(toggle);
+        wrapper.appendChild(content);
+        content.appendChild(table);
+        
+        toggle.addEventListener('click', () => {
+          const icon = toggle.querySelector('.toggle-icon');
+          const isCollapsed = content.classList.contains('collapsed');
+          
+          if (isCollapsed) {
+            content.classList.remove('collapsed');
+            // ChevronDown icon
+            icon.innerHTML = '<path d="m6 9 6 6 6-6"/>';
+          } else {
+            content.classList.add('collapsed');
+            // ChevronRight icon
+            icon.innerHTML = '<path d="m9 18 6-6-6-6"/>';
+          }
+        });
+      });
+    };
+
+    // Run after content is loaded
+    if (!loadingContent && (full?.content || full?.tabs)) {
+      setTimeout(makeTablesCollapsible, 100);
+    }
+  }, [loadingContent, full, activeTab]);
 
   if (loadingMeta) {
     return <Spinner />
