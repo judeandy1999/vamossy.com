@@ -4,15 +4,16 @@ import { verifySupabaseAuth } from '@/utils/verifySupabaseAuth';
 
 export default async function handler(req, res) {
   if (!authenticate(req, res)) return;
+
+  const { id } = req.query;
+
   if (req.method !== 'GET') {
     const { user, error } = await verifySupabaseAuth(req);
-
     if (error) {
       return res.status(401).json({ error });
     }
   }
 
-  const { id } = req.query;
   const full = req.query.full === 'true';
 
   if (req.method === 'GET') {
@@ -54,83 +55,60 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'PUT') {
-    const { title, content, wiki_id, has_tabs, tabs } = req.body;
+    const { title, content, wiki_id, has_tabs, user_email } = req.body;
+    // Note: No tabs in this request anymore
 
     try {
-      // Update the article in the `articles` table
-      const { data: article, error: articleError } = await supabase
+      const { data: article, error: updateError } = await supabase
         .from('articles')
-        .update({ title, content, wiki_id, has_tabs })
+        .update({ 
+          title, 
+          content: has_tabs ? '' : content,
+          wiki_id, 
+          has_tabs,
+          user_email,
+          updated_at: new Date().toISOString()
+        })
         .eq('id', id)
         .select()
         .single();
 
-      if (articleError) {
-        throw new Error(`Failed to update article: ${articleError.message}`);
-      }
-
-      // If the article has tabs, update the `article_tabs` table
-      if (has_tabs && tabs && Object.keys(tabs).length > 0) {
-        // Delete existing tabs for the article
-        const { error: deleteError } = await supabase
-          .from('article_tabs')
-          .delete()
-          .eq('article_id', id);
-
-        if (deleteError) {
-          throw new Error(`Failed to delete existing tabs: ${deleteError.message}`);
-        }
-
-        // Insert updated tabs
-        const tabEntries = Object.entries(tabs).map(([tabId, tabContent]) => ({
-          article_id: id,
-          tab_id: Number(tabId),
-          content: tabContent,
-        }));
-
-        const { error: tabsError } = await supabase
-          .from('article_tabs')
-          .insert(tabEntries);
-
-        if (tabsError) {
-          throw new Error(`Failed to update article tabs: ${tabsError.message}`);
-        }
+      if (updateError) {
+        throw new Error(`Failed to update article: ${updateError.message}`);
       }
 
       return res.status(200).json(article);
     } catch (error) {
-      console.error(error.message);
+      console.error('Article update error:', error.message);
       return res.status(500).json({ error: error.message });
     }
   }
 
   if (req.method === 'DELETE') {
     try {
-      const { error: tabArticlesError } = await supabase
+      // Delete associated tabs first
+      await supabase
         .from('article_tabs')
         .delete()
         .eq('article_id', id);
 
-      if (tabArticlesError) {
-        throw new Error(`Failed to delete associated tab articles: ${tabArticlesError.message}`);
-      }
-
-      const { error: articleError } = await supabase
+      // Then delete the article
+      const { error: deleteError } = await supabase
         .from('articles')
         .delete()
         .eq('id', id);
 
-      if (articleError) {
-        throw new Error(`Failed to delete article: ${articleError.message}`);
+      if (deleteError) {
+        throw new Error(`Failed to delete article: ${deleteError.message}`);
       }
 
-      return res.status(200).json({ message: 'Article and associated tab articles deleted successfully' });
+      return res.status(200).json({ message: 'Article deleted successfully' });
     } catch (error) {
-      console.error(error.message);
+      console.error('Article deletion error:', error.message);
       return res.status(500).json({ error: error.message });
     }
   }
 
-  res.setHeader('Allow', ['GET', 'PUT', 'DELETE']);
-  return res.status(405).json({ error: `Method ${req.method} Not Allowed` });
+  res.setHeader('Allow', ['PUT', 'DELETE']);
+  return res.status(405).end(`Method ${req.method} Not Allowed`);
 }
