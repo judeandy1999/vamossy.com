@@ -8,9 +8,6 @@ import OurStory from "@/components/homepage/our-story";
 import RemarkableResults from "@/components/homepage/remarkable-results";
 import TeamSection from "@/components/homepage/team-section";
 import Footer from "@/components/ui/footer";
-import { useEffect } from "react";
-import { getUser } from '@/utils/authService';
-import { useSendToKlaviyo } from '@/hooks/useSendToKlaviyo';
 import OurServices from "@/components/homepage/our-services";
 import PainPoints from "@/components/homepage/pain-points";
 import LiveCaseStudies from "@/components/homepage/live-case-study";
@@ -20,19 +17,6 @@ import { Contact } from "lucide-react";
 import ContactUs from "@/components/homepage/contact-us";
 
 export default function Home() {
-    const { sendToKlaviyo } = useSendToKlaviyo();
-
-    useEffect(() => {
-      const fetchUser = async () => {
-        const { user } = await getUser();
-        if (user) {
-          await sendToKlaviyo(user);
-        }
-      };
-    
-      fetchUser();
-    }, []);
-
     return (
       <div className="relative min-h-screen overflow-hidden">
         {/* Full page background */}
