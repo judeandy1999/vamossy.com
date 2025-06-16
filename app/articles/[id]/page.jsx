@@ -5,7 +5,6 @@ import { useArticleMeta } from '@/hooks/useArticleMeta';
 import { useArticleContent } from '@/hooks/useArticleContent';
 import Spinner from '@/components/ui/spinner';
 import { use } from 'react';
-import { ChevronDown, ChevronRight } from 'lucide-react';
 
 export default function ArticlePage(props) {
   const params = use(props.params);
