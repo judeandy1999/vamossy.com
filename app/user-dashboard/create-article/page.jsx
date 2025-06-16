@@ -43,6 +43,7 @@ export default function Page() {
       if (has_tabs) {
         setHasTabs(true);
         setContent('');
+        setInitialContent('');
       } else {
         setHasTabs(false);
         setContent(content);
