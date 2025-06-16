@@ -1,6 +1,5 @@
 import ServicesHero from '@/components/services/services-hero';
-import NeedHelp from '@/components/ui/need-help';
-import Footer from '@/components/ui/footer';
+import Footer from '@/components/shared/footer';
 import AwardsSection from '@/components/services/awards-section';
 import DigitalMarketingServices from '@/components/services/digital-marketing-services';
 import ServicesPromoSection from '@/components/services/services-promo-section';
@@ -11,7 +10,6 @@ export default function Page() {
   
   return (
     <div>
-      <NeedHelp/>
       <ServicesHero />
       <AwardsSection />
       <DigitalMarketingServices />

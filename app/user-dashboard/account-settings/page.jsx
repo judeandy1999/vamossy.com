@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuthWithRedirect } from '@/hooks/useAuthWithRedirect';
-import { updatePassword, isOAuthUser } from '@/utils/authService';
+import { signInAndUpdatePassword, isOAuthUser } from '@/utils/authService';
 import { User, Mail, Lock, Save, Shield, Calendar } from 'lucide-react';
 import Spinner from '@/components/ui/spinner';
 
@@ -54,7 +54,7 @@ export default function AccountSettings() {
     setMessage('');
 
     try {
-      const { error } = await updatePassword(currentPassword, newPassword);
+      const { error } = await signInAndUpdatePassword(currentPassword, newPassword);
       
       if (error) {
         setMessage(error.message || 'Failed to update password');

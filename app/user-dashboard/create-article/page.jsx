@@ -5,14 +5,14 @@ import { useEffect, useState } from 'react';
 import DOMPurify from 'dompurify';
 import { useAllArticles } from '@/hooks/useAllArticles';
 import { useOptions } from '@/hooks/useOptions';
-import RichTextEditor from '@/components/rich-text-editor';
+import RichTextEditor from '@/components/shared/rich-text-editor';
 import { Save } from 'lucide-react';
 import Spinner from '@/components/ui/spinner';
-import Sidebar from '@/components/editor-sidebar';
+import EditorSidebar from '@/components/shared/editor-sidebar';
 import { createArticle, updateArticle, deleteArticle } from '@/utils/articles';
-import CollapsibleTabs from '@/components/collapsible-tabs';
+import CollapsibleTabs from '@/components/shared/collapsible-tabs';
 import { useArticleTabs } from '@/hooks/useArticleTabs';
-import { useToast } from '@/contexts/toastContext';
+import { useToast } from '@/contexts/toast-context';
 import { supabase } from '@/utils/client';
 
 export default function Page() {
@@ -20,7 +20,6 @@ export default function Page() {
   const { articles, loading, error, loadMore, isReachingEnd, addNewArticle, updateArticleInSidebar, deleteArticleFromSidebar } = useAllArticles();
   const { wikiOptions, tabOptionsMap, loading: optionsLoading, error: optionsError } = useOptions();
   const { showToast } = useToast();
-
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -309,7 +308,7 @@ export default function Page() {
   return (
     <div className="flex h-full bg-gray-50">
       {/* Sidebar */}
-      <Sidebar
+      <EditorSidebar
         articles={articles}
         loading={loading}
         isReachingEnd={isReachingEnd}

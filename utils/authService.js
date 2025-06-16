@@ -1,6 +1,5 @@
 import { supabase } from '@/utils/client';
 
-// Google sign-in
 export const signInWithGoogle = async () => {
   const { error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
@@ -21,7 +20,6 @@ export const signInWithGoogle = async () => {
   });
 };
 
-// Email/password sign-in
 export const signInWithEmail = async (email, password) => {
   return supabase.auth.signInWithPassword({
     email,
@@ -47,7 +45,6 @@ export const resetPassword = async (email) => {
   return { error };
 };
 
-// Check if user signed in with OAuth
 export const isOAuthUser = async () => {
   try {
     const { data: { user } } = await supabase.auth.getUser();
@@ -70,17 +67,14 @@ export const isOAuthUser = async () => {
   }
 };
 
-// Update password (only for email/password users)
-export const updatePassword = async (currentPassword, newPassword) => {
+export const signInAndUpdatePassword = async (currentPassword, newPassword) => {
   try {
-    // First check if user is authenticated
     const { data: { user } } = await supabase.auth.getUser();
     
     if (!user) {
       return { error: { message: 'User not authenticated' } };
     }
 
-    // Check if user signed in with OAuth
     const { isOAuth, provider } = await isOAuthUser();
     
     if (isOAuth) {
@@ -91,7 +85,6 @@ export const updatePassword = async (currentPassword, newPassword) => {
       };
     }
 
-    // Re-authenticate with current password for email/password users
     const { error: authError } = await supabase.auth.signInWithPassword({
       email: user.email,
       password: currentPassword,
@@ -101,7 +94,6 @@ export const updatePassword = async (currentPassword, newPassword) => {
       return { error: { message: 'Current password is incorrect' } };
     }
 
-    // Update to new password
     const { error } = await supabase.auth.updateUser({
       password: newPassword,
     });
@@ -112,18 +104,24 @@ export const updatePassword = async (currentPassword, newPassword) => {
   }
 };
 
-// Check session
 export const getSession = async () => {
   return supabase.auth.getSession();
 };
 
-// Sign out
 export const signOut = async () => {
   return supabase.auth.signOut();
 };
 
-// Get current user
 export const getUser = async () => {
   const { data: { user }, error } = await supabase.auth.getUser();
   return { user, error };
 };
+
+export async function verifyOtpToken({ email, token }) {
+  return await supabase.auth.verifyOtp({ email, token: token, type: 'recovery' });
+}
+
+export async function updateUserPassword(password) {
+  return await supabase.auth.updateUser({ password });
+}
+

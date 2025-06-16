@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import RichTextEditor from '@/components/rich-text-editor';
+import RichTextEditor from '@/components/shared/rich-text-editor';
 import { Plus, Minus } from 'lucide-react';
 
 export default function CollapsibleTabs({
