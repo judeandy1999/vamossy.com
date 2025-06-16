@@ -5,7 +5,8 @@ import { redirect } from 'next/navigation';
 import Sidebar from '@/components/dashboard/sidebar';
 import Topbar from '@/components/dashboard/topbar';
 import Spinner from '@/components/ui/spinner';
-import { ToastProvider } from '@/contexts/toastContext';
+import { ToastProvider } from '@/contexts/toast-context';
+import Toast from '@/components/shared/toast';
 
 export default function UserDashboardLayout({ children }) {
   const { status, session } = useAuthWithRedirect();
@@ -20,7 +21,7 @@ export default function UserDashboardLayout({ children }) {
 
   return (
     <ToastProvider>
-      <div className="flex h-screen bg-gray-50">
+      <div className="flex h-screen bg-gray-50 relative">
         <Sidebar />
         <div className="flex-1 flex flex-col overflow-hidden">
           <Topbar />
@@ -29,6 +30,7 @@ export default function UserDashboardLayout({ children }) {
           </main>
         </div>
       </div>
+      <Toast />
     </ToastProvider>
   );
 }
