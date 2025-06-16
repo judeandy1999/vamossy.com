@@ -12,7 +12,7 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  const [resendCooldown, setResendCooldown] = useState(0); // seconds countdown
+  const [resendCooldown, setResendCooldown] = useState(0);
 
   useEffect(() => {
     if (error) {
@@ -21,7 +21,6 @@ export default function SignupPage() {
     }
   }, [error]);
 
-  // Countdown timer effect
   useEffect(() => {
     let timer;
     if (resendCooldown > 0) {
@@ -86,7 +85,7 @@ export default function SignupPage() {
       setError(signUpError.message);
     } else {
       setSuccessMessage('Success! Check your email for a confirmation link.');
-      setResendCooldown(120); // Start 120-second cooldown after signup
+      setResendCooldown(120);
     }
   };
 
@@ -104,7 +103,7 @@ export default function SignupPage() {
     if (error) {
       setError(error.message || 'Failed to resend confirmation link.');
     } else {
-      setResendCooldown(120); // Restart cooldown
+      setResendCooldown(120);
     }
   };
 
