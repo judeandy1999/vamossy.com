@@ -1,6 +1,6 @@
 import "./globals.css";
 import localFont from 'next/font/local';
-import Header from "@/components/ui/header";
+import Header from "@/components/shared/header";
 import { SpeedInsights } from "@vercel/speed-insights/next"
 
 export const metadata = {
