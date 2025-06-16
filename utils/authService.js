@@ -4,7 +4,7 @@ import { supabase } from '@/utils/client';
 export const signInWithGoogle = async () => {
   const { error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo: `${window.location.origin}/` },
+    options: { redirectTo: `${window.location.origin}/user-dashboard` },
   });
 
   if (error) {
@@ -45,6 +45,71 @@ export const resetPassword = async (email) => {
   });
 
   return { error };
+};
+
+// Check if user signed in with OAuth
+export const isOAuthUser = async () => {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      return { isOAuth: false, provider: null };
+    }
+
+    // Check if user has any OAuth identities
+    const oauthIdentities = user.identities?.filter(
+      identity => identity.provider !== 'email'
+    );
+
+    return {
+      isOAuth: oauthIdentities && oauthIdentities.length > 0,
+      provider: oauthIdentities?.[0]?.provider || null
+    };
+  } catch (err) {
+    return { isOAuth: false, provider: null };
+  }
+};
+
+// Update password (only for email/password users)
+export const updatePassword = async (currentPassword, newPassword) => {
+  try {
+    // First check if user is authenticated
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      return { error: { message: 'User not authenticated' } };
+    }
+
+    // Check if user signed in with OAuth
+    const { isOAuth, provider } = await isOAuthUser();
+    
+    if (isOAuth) {
+      return { 
+        error: { 
+          message: `Cannot change password for ${provider} sign-in. Please manage your password through ${provider}.` 
+        } 
+      };
+    }
+
+    // Re-authenticate with current password for email/password users
+    const { error: authError } = await supabase.auth.signInWithPassword({
+      email: user.email,
+      password: currentPassword,
+    });
+
+    if (authError) {
+      return { error: { message: 'Current password is incorrect' } };
+    }
+
+    // Update to new password
+    const { error } = await supabase.auth.updateUser({
+      password: newPassword,
+    });
+
+    return { error };
+  } catch (err) {
+    return { error: { message: 'An unexpected error occurred' } };
+  }
 };
 
 // Check session
