@@ -83,22 +83,12 @@ export default function Page() {
     return oversizedTabs;
   };
 
-  // Helper function to format size
-  const formatSize = (bytes) => {
-    if (bytes === 0) return '0 B';
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
-  };
-
   const saveArticle = async () => {
     if (!title.trim() || (!content.trim() && !hasTabs)) {
       showToast('Title and content cannot be empty!', 'error');
       return;
     }
 
-    // Validate tab sizes before saving - BLOCK ALL SAVING if any tab is too large
     if (hasTabs && Object.keys(tabContents).length > 0) {
       const oversizedTabs = validateTabSizes(tabContents);
       if (oversizedTabs.length > 0) {
@@ -112,11 +102,10 @@ export default function Page() {
           `Cannot save article. The following tabs exceed the 900KB limit: ${tabNames}. Please reduce content size or remove large images before saving.`,
           'error'
         );
-        return; // Stop execution - don't save anything
+        return;
       }
     }
 
-    // Validate regular content size for non-tab articles
     if (!hasTabs) {
       const contentSize = new Blob([content]).size;
       const maxSize = 900 * 1024;
@@ -127,7 +116,7 @@ export default function Page() {
           `Cannot save article. Content is too large (${sizeInKB}KB). Maximum allowed is 900KB. Please reduce content size or remove large images.`,
           'error'
         );
-        return; // Stop execution - don't save anything
+        return;
       }
     }
 
@@ -137,7 +126,6 @@ export default function Page() {
       const sanitizedContent = DOMPurify.sanitize(content);
 
       if (isEditing) {
-        // Step 1: Update article WITHOUT tabs data
         showToast('Updating article...', 'info');
         
         const updatedArticle = await updateArticle({
@@ -149,7 +137,6 @@ export default function Page() {
           user_email: session.user.email,
         });
 
-        // Step 2: Handle tabs separately if they exist
         if (hasTabs && Object.keys(tabContents).length > 0) {
           showToast('Updating tabs...', 'info');
           await updateTabsIndividually(selectedArticle.id, tabContents);
@@ -162,7 +149,6 @@ export default function Page() {
         });
         setSelectedArticle(null);
       } else {
-        // Step 1: Create article WITHOUT tabs data
         showToast('Creating article...', 'info');
         
         const newArticle = await createArticle({
@@ -173,7 +159,6 @@ export default function Page() {
           user_email: session.user.email,
         });
 
-        // Step 2: Save tabs separately if they exist
         if (hasTabs && Object.keys(tabContents).length > 0) {
           showToast('Saving tabs...', 'info');
           await saveTabsIndividually(newArticle.id, tabContents);
@@ -198,12 +183,10 @@ export default function Page() {
     }
   };
 
-  // Add this helper function for updating tabs
   const updateTabsIndividually = async (articleId, tabs) => {
     const { data: { session } } = await supabase.auth.getSession();
     const accessToken = session?.access_token;
 
-    // First, delete existing tabs for this article
     await fetch(`/api/tab-articles/${articleId}/delete-all`, {
       method: 'DELETE',
       headers: {
@@ -212,7 +195,6 @@ export default function Page() {
       },
     });
 
-    // Then create new tabs
     for (const [tabId, tabContent] of Object.entries(tabs)) {
       if (tabContent && tabContent.trim()) {
         const res = await fetch('/api/tab-articles/create-tab', {
@@ -237,7 +219,6 @@ export default function Page() {
     }
   };
 
-  // Keep the existing saveTabsIndividually function for new articles
   const saveTabsIndividually = async (articleId, tabs) => {
     const { data: { session } } = await supabase.auth.getSession();
     const accessToken = session?.access_token;
@@ -300,9 +281,8 @@ export default function Page() {
       [tabId]: newContent,
     }));
 
-    // Check size and show warning if too large
     const contentSize = new Blob([newContent]).size;
-    const maxSize = 900 * 1024; // 900KB
+    const maxSize = 900 * 1024;
     
     if (contentSize > maxSize) {
       const sizeInKB = (contentSize / 1024).toFixed(1);
