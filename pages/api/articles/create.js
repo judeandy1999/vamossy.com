@@ -13,12 +13,19 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'POST') {
-    const { title, content, wiki_id, has_tabs, tabs, user_email } = req.body;
+    const { title, content, wiki_id, has_tabs, user_email } = req.body;
+    // Note: No tabs in this request anymore
 
     try {
       const { data: article, error: articleError } = await supabase
         .from('articles')
-        .insert([{ title, content, wiki_id, has_tabs, user_email }])
+        .insert([{ 
+          title, 
+          content: has_tabs ? '' : content,
+          wiki_id, 
+          has_tabs, 
+          user_email 
+        }])
         .select()
         .single();
 
@@ -26,25 +33,9 @@ export default async function handler(req, res) {
         throw new Error(`Failed to create article: ${articleError.message}`);
       }
 
-      if (has_tabs && tabs && Object.keys(tabs).length > 0) {
-        const tabEntries = Object.entries(tabs).map(([tabId, tabContent]) => ({
-          article_id: article.id,
-          tab_id: Number(tabId),
-          content: tabContent,
-        }));
-
-        const { error: tabsError } = await supabase
-          .from('article_tabs')
-          .insert(tabEntries);
-
-        if (tabsError) {
-          throw new Error(`Failed to create article tabs: ${tabsError.message}`);
-        }
-      }
-
       return res.status(200).json(article);
     } catch (error) {
-      console.error(error.message);
+      console.error('Article creation error:', error.message);
       return res.status(500).json({ error: error.message });
     }
   }

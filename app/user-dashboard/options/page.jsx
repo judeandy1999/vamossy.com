@@ -66,7 +66,7 @@ export default function Page() {
   };
 
   const confirmDelete = async () => {
-    setDeleting(true); // Start loading animation
+    setDeleting(true);
     try {
       if (deleteTarget.type === 'wiki') {
         await deleteWiki(deleteTarget.id);
@@ -79,16 +79,11 @@ export default function Page() {
     } catch (error) {
       console.error('Error deleting:', error);
     } finally {
-      setDeleting(false); // Stop loading animation
+      setDeleting(false);
     }
   };
 
   if (status === 'loading' || loading) {
-    return <Spinner />;
-  }
-
-  if (!session || role !== 'admin') {
-    redirect('/login');
     return <Spinner />;
   }
 

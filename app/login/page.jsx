@@ -23,7 +23,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (status === 'authenticated') {
-      redirect('/');
+      redirect('/user-dashboard');
     }
   }, [status]);
 
@@ -39,7 +39,7 @@ export default function LoginPage() {
       const { user, error: userError } = await getUser();
       if (user) {
         await sendToKlaviyo(user);
-        router.push('/');
+        router.push('/user-dashboard');
       } else if (userError) {
         setError(userError.message);
       }

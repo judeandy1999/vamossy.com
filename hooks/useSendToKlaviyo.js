@@ -19,9 +19,6 @@ export const useSendToKlaviyo = () => {
         }),
       });
 
-      const responseText = await response.text();
-      console.log('Klaviyo response:', responseText);
-
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Failed to send data to Klaviyo');

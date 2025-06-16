@@ -12,7 +12,7 @@ import { Menu, X } from 'lucide-react';
 import { FaFacebookF, FaLinkedinIn } from 'react-icons/fa';
 
 export default function Header() {
-  const { status, session, role } = useAuthWithRedirect();
+  const { session } = useAuthWithRedirect();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
@@ -37,63 +37,14 @@ export default function Header() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [lastScrollY]);
 
-  const shouldHideNavItems = ['/create-article', '/options', '/user-dashboard'].includes(pathname);
 
-  const renderLinks = () => (
-    <>
-      {status !== 'authenticated' && navItems.map((item) => (
-        <Link
-          key={item.name}
-          href={item.href}
-          className={`transition-colors duration-300 ${
-            pathname === item.href ? 'text-yellow-400' : 'text-white hover:text-yellow-400'
-          } ${shouldHideNavItems ? 'hidden' : ''}`}
-        >
-          {item.name}
-        </Link>
-      ))}
-
-      {session && role === 'admin' && (
-        <>
-          <Link href="/user-dashboard" className={`transition-colors duration-300 ${pathname === '/user-dashboard' ? 'text-yellow-400' : 'text-white hover:text-yellow-400'}`}>
-            Dashboard
-          </Link>
-          <Link href="/create-article" className={`transition-colors duration-300 ${pathname === '/create-article' ? 'text-yellow-400' : 'text-white hover:text-yellow-400'}`}>
-            Create Article
-          </Link>
-          <Link href="/options" className={`transition-colors duration-300 ${pathname === '/options' ? 'text-yellow-400' : 'text-white hover:text-yellow-400'}`}>
-            Options
-          </Link>
-        </>
-      )}
-
-      {session && role === 'user' && (
-        <Link href="/user-dashboard" className={`transition-colors duration-300 ${pathname === '/user-dashboard' ? 'text-yellow-400' : 'text-white hover:text-yellow-400'}`}>
-          Dashboard
-        </Link>
-      )}
-
-      {session && (
-        <button
-          onClick={async () => {
-            const { error } = await signOut();
-            if (error) {
-              console.error('Error signing out:', error.message);
-            } else {
-              window.location.href = '/login';
-            }
-          }}
-          className="cursor-pointer bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition-colors"
-        >
-          Log out
-        </button>
-      )}
-    </>
-  );
+  if (pathname === '/user-dashboard' || pathname.startsWith('/user-dashboard/')) {
+    return null;
+  }
 
   return (
     <header
-      className={`fixed w-full z-2 transition-all duration-500 ease-in-out transform ${
+      className={`fixed w-full z-50 transition-all duration-500 ease-in-out transform ${
         pathname !== '/' 
           ? 'bg-black shadow-md translate-y-0 opacity-100' 
           : isVisible
@@ -129,10 +80,33 @@ export default function Header() {
           </Link>
         </div>
 
-        {/* Desktop Nav */}
+        {/* Desktop Nav - only show nav items when not authenticated */}
         <ul className="hidden md:flex items-center space-x-8 font-medium text-lg md:text-[28px]">
-          {renderLinks()}
+          {!session && navItems.map((item) => (
+            <Link
+              key={item.name}
+              href={item.href}
+              className={`transition-colors duration-300 ${
+                pathname === item.href ? 'text-yellow-400' : 'text-white hover:text-yellow-400'
+              }`}
+            >
+              {item.name}
+            </Link>
+          ))}
+          {/* Logout button - only show when authenticated */}
+          {session && (
+            <Link
+              key="dashboard"
+              href='/user-dashboard'
+              className={`transition-colors duration-300 ${
+                pathname === 'user-dashboard' ? 'text-yellow-400' : 'text-white hover:text-yellow-400'
+              }`}
+            >
+              Go to Dashboard
+            </Link>
+          )}
         </ul>
+
 
         {/* Mobile Menu Toggle */}
         <div className="md:hidden flex items-center">
@@ -168,7 +142,30 @@ export default function Header() {
               <X size={28} />
             </motion.button>
 
-            {renderLinks()}
+            {!session && navItems.map((item) => (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={`transition-colors duration-300 ${
+                  pathname === item.href ? 'text-yellow-400' : 'text-white hover:text-yellow-400'
+                }`}
+              >
+                {item.name}
+              </Link>
+            ))}
+
+            {/* Logout button - only show when authenticated */}
+            {session && (
+              <Link
+                key="dashboard"
+                href='/user-dashboard'
+                className={`transition-colors duration-300 ${
+                  pathname === 'user-dashboard' ? 'text-yellow-400' : 'text-white hover:text-yellow-400'
+                }`}
+              >
+                Go to Dashboard
+              </Link>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

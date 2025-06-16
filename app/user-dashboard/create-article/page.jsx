@@ -12,18 +12,19 @@ import Sidebar from '@/components/editor-sidebar';
 import { createArticle, updateArticle, deleteArticle } from '@/utils/articles';
 import CollapsibleTabs from '@/components/collapsible-tabs';
 import { useArticleTabs } from '@/hooks/useArticleTabs';
-import { redirect } from 'next/navigation';
+import { useToast } from '@/contexts/toastContext';
+import { supabase } from '@/utils/client';
 
 export default function Page() {
-  const { status, session, role } = useAuthWithRedirect();
+  const { status, session } = useAuthWithRedirect();
   const { articles, loading, error, loadMore, isReachingEnd, addNewArticle, updateArticleInSidebar, deleteArticleFromSidebar } = useAllArticles();
   const { wikiOptions, tabOptionsMap, loading: optionsLoading, error: optionsError } = useOptions();
+  const { showToast } = useToast();
 
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [initialContent, setInitialContent] = useState('');
-  const [savingStatus, setSavingStatus] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const [newlyCreatedId, setNewlyCreatedId] = useState(null);
   const [contentChanged, setContentChanged] = useState(false);
@@ -61,10 +62,73 @@ export default function Page() {
     setInitialContent('');
   };
 
+  // Helper function to check individual tab sizes
+  const validateTabSizes = (tabs) => {
+    const maxSize = 900 * 1024; // 900KB limit
+    const oversizedTabs = [];
+
+    for (const [tabId, tabContent] of Object.entries(tabs)) {
+      if (tabContent && tabContent.trim()) {
+        const contentSize = new Blob([tabContent]).size;
+        if (contentSize > maxSize) {
+          oversizedTabs.push({
+            tabId,
+            size: contentSize,
+            sizeInKB: (contentSize / 1024).toFixed(1)
+          });
+        }
+      }
+    }
+
+    return oversizedTabs;
+  };
+
+  // Helper function to format size
+  const formatSize = (bytes) => {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+  };
+
   const saveArticle = async () => {
     if (!title.trim() || (!content.trim() && !hasTabs)) {
-      setSavingStatus('Title and content cannot be empty!');
+      showToast('Title and content cannot be empty!', 'error');
       return;
+    }
+
+    // Validate tab sizes before saving - BLOCK ALL SAVING if any tab is too large
+    if (hasTabs && Object.keys(tabContents).length > 0) {
+      const oversizedTabs = validateTabSizes(tabContents);
+      if (oversizedTabs.length > 0) {
+        const tabNames = oversizedTabs.map(tab => {
+          const tabOption = tabOptionsMap[wikiCategory]?.[tab.tabId];
+          const tabName = tabOption || `Tab ${tab.tabId}`;
+          return `${tabName} (${tab.sizeInKB}KB)`;
+        }).join(', ');
+        
+        showToast(
+          `Cannot save article. The following tabs exceed the 900KB limit: ${tabNames}. Please reduce content size or remove large images before saving.`,
+          'error'
+        );
+        return; // Stop execution - don't save anything
+      }
+    }
+
+    // Validate regular content size for non-tab articles
+    if (!hasTabs) {
+      const contentSize = new Blob([content]).size;
+      const maxSize = 900 * 1024;
+      
+      if (contentSize > maxSize) {
+        const sizeInKB = (contentSize / 1024).toFixed(1);
+        showToast(
+          `Cannot save article. Content is too large (${sizeInKB}KB). Maximum allowed is 900KB. Please reduce content size or remove large images.`,
+          'error'
+        );
+        return; // Stop execution - don't save anything
+      }
     }
 
     setIsSaving(true);
@@ -73,45 +137,132 @@ export default function Page() {
       const sanitizedContent = DOMPurify.sanitize(content);
 
       if (isEditing) {
+        // Step 1: Update article WITHOUT tabs data
+        showToast('Updating article...', 'info');
+        
         const updatedArticle = await updateArticle({
           id: selectedArticle.id,
           title,
           content: sanitizedContent,
           wiki_id: wikiCategory,
           has_tabs: hasTabs,
-          tabs: hasTabs ? tabContents : null,
           user_email: session.user.email,
         });
-        setSavingStatus('Article updated!');
+
+        // Step 2: Handle tabs separately if they exist
+        if (hasTabs && Object.keys(tabContents).length > 0) {
+          showToast('Updating tabs...', 'info');
+          await updateTabsIndividually(selectedArticle.id, tabContents);
+        }
+
+        showToast('Article updated successfully!', 'success');
         updateArticleInSidebar({
           ...updatedArticle,
           updated_at: new Date().toISOString(),
         });
         setSelectedArticle(null);
       } else {
+        // Step 1: Create article WITHOUT tabs data
+        showToast('Creating article...', 'info');
+        
         const newArticle = await createArticle({
           title,
           content: sanitizedContent,
           wiki_id: wikiCategory,
           has_tabs: hasTabs,
-          tabs: hasTabs ? tabContents : null,
           user_email: session.user.email,
         });
+
+        // Step 2: Save tabs separately if they exist
+        if (hasTabs && Object.keys(tabContents).length > 0) {
+          showToast('Saving tabs...', 'info');
+          await saveTabsIndividually(newArticle.id, tabContents);
+        }
+        
         setNewlyCreatedId(newArticle.id);
-        setSavingStatus('Article created!');
+        showToast('Article created successfully!', 'success');
         addNewArticle({
           ...newArticle,
           created_at: new Date().toISOString(),
         });
         setSelectedArticle(null);
       }
+      
       refreshContent();
       setContentChanged(!contentChanged);
     } catch (error) {
       console.error('Error saving article:', error.message);
-      setSavingStatus('Failed to save article!');
+      showToast(error.message || 'Failed to save article!', 'error');
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  // Add this helper function for updating tabs
+  const updateTabsIndividually = async (articleId, tabs) => {
+    const { data: { session } } = await supabase.auth.getSession();
+    const accessToken = session?.access_token;
+
+    // First, delete existing tabs for this article
+    await fetch(`/api/tab-articles/${articleId}/delete-all`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
+      },
+    });
+
+    // Then create new tabs
+    for (const [tabId, tabContent] of Object.entries(tabs)) {
+      if (tabContent && tabContent.trim()) {
+        const res = await fetch('/api/tab-articles/create-tab', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+            'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
+          },
+          body: JSON.stringify({
+            article_id: articleId,
+            tab_id: Number(tabId),
+            content: tabContent
+          })
+        });
+        
+        if (!res.ok) {
+          const errorText = await res.text();
+          throw new Error(`Failed to update tab ${tabId}: ${errorText}`);
+        }
+      }
+    }
+  };
+
+  // Keep the existing saveTabsIndividually function for new articles
+  const saveTabsIndividually = async (articleId, tabs) => {
+    const { data: { session } } = await supabase.auth.getSession();
+    const accessToken = session?.access_token;
+
+    for (const [tabId, tabContent] of Object.entries(tabs)) {
+      if (tabContent && tabContent.trim()) {
+        const res = await fetch('/api/tab-articles/create-tab', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+            'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
+          },
+          body: JSON.stringify({
+            article_id: articleId,
+            tab_id: Number(tabId),
+            content: tabContent
+          })
+        });
+        
+        if (!res.ok) {
+          const errorText = await res.text();
+          throw new Error(`Failed to save tab ${tabId}: ${errorText}`);
+        }
+      }
     }
   };
 
@@ -123,8 +274,10 @@ export default function Page() {
         setSelectedArticle(null);
         refreshContent();
       }
+      showToast('Article deleted successfully!', 'success');
     } catch (error) {
       console.error('Failed to delete article:', error.message);
+      showToast('Failed to delete article!', 'error');
     }
   };
 
@@ -146,14 +299,22 @@ export default function Page() {
       ...prev,
       [tabId]: newContent,
     }));
+
+    // Check size and show warning if too large
+    const contentSize = new Blob([newContent]).size;
+    const maxSize = 900 * 1024; // 900KB
+    
+    if (contentSize > maxSize) {
+      const sizeInKB = (contentSize / 1024).toFixed(1);
+      const tabName = tabOptionsMap[wikiCategory]?.[tabId] || `Tab ${tabId}`;
+      showToast(
+        `Warning: ${tabName} content is ${sizeInKB}KB (exceeds 900KB limit). Article cannot be saved until this is reduced.`,
+        'warning'
+      );
+    }
   };
 
   if (status === 'loading' || optionsLoading) {
-    return <Spinner />;
-  }
-
-  if (!session || role !== 'admin') {
-    redirect('/login');
     return <Spinner />;
   }
 
@@ -166,7 +327,7 @@ export default function Page() {
   }
 
   return (
-    <div className="pt-18 flex h-[85%] bg-gray-50">
+    <div className="flex h-full bg-gray-50">
       {/* Sidebar */}
       <Sidebar
         articles={articles}
@@ -254,10 +415,6 @@ export default function Page() {
               initialContent={initialContent}
               onContentChange={setContent}
             />
-          )}
-
-          {savingStatus && (
-            <p className="mt-2 text-sm text-slate-500">{savingStatus}</p>
           )}
         </div>
       </div>
