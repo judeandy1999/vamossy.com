@@ -124,7 +124,7 @@ export const footerLinks = [
 ];
 
 export const navItems = [
-  { name: "Services & Pricing", href: "/services" },
+  { name: "Services Packages", href: "/services" },
   { name: "About", href: "/about" },
   { name: "Contact", href: "/contact" },
   { name: "Vamossy Wiki", href: "/articles" },
@@ -401,3 +401,181 @@ export const growthSteps = [
       "We embed feedback loops that suggest improvement ideas, and help maintain unique competitive advantage.",
   },
 ];
+
+export const uniqueSolutions = {
+  title: "UNIQUE SOLUTIONS",
+  features: [
+    {
+      icon: "🔧", // You can replace with actual icon path
+      title: "Engineered advantages",
+      description: "No guesswork, just scalable, full-stack innovative advantages, designed to outperform the market at scale."
+    },
+    {
+      icon: "🎯", // You can replace with actual icon path
+      title: "Outcome First",
+      description: "We focus on measurable success only!"
+    },
+    {
+      icon: "🤖", // You can replace with actual icon path
+      title: "AI-Driven Execution",
+      description: "GPT automations power your content, audits, and offer logic."
+    },
+    {
+      icon: "📋", // You can replace with actual icon path
+      title: "Strategic Depth",
+      description: "We don't guess. We diagnose."
+    },
+    {
+      icon: "📦", // You can replace with actual icon path
+      title: "Productized Clarity",
+      description: "Choose Sprint, Retainer, or Fully-Automated Growth Engine models."
+    }
+  ],
+  beforeAfter: {
+    before: {
+      title: "Before us:",
+      code: `
+Activate: Abandoned Cart Recovery SOP
+Brief: Recover lost sales through automated multi-channel reminders
+Input: Shopify cart data, product links, email/SMS system
+Deliverables: 3x email sequence, 1x SMS nudge, retargeting ad copy`
+    },
+    after: {
+      title: "After us:",
+      code: `
+Activate: Auto Cart Recovery Module - Evolution Engine Enabled
+
+Input:
+{
+  "cartData": {customer_id, timestamp, cart_items, total_value},
+  "customerProfile": {segment, previous_orders, device},
+  "behavioralResponseLog": {open/click/timing/ignore flags}
+}
+  
+Output:
+- Adaptive message sequence (email, SMS, retargeting)
+- Channel/tone/copy adjusted to real-time performance
+- Feedback-enhanceed prompts and data logging`
+    }
+  }
+};
+
+export const tieredServices = {
+  title: "AI GROWTH ENGINE",
+  subtitle: "TIERED SERVICES",
+  tiers: [
+    {
+      id: 1,
+      name: "Tier 1",
+      icon: "/homepage/tier1.webp",
+      idealFor: "Sample text. Click to select the Text Element.",
+      coreOffer: "Sample text. Click to select the Text Element.",
+      investment: "Sample text. Click to select the Text Element.",
+      features: {
+        "Funnel Audit (GPT-Powered)": "included",
+        "Full KPI + Marketing Activity Audit": "partial"
+      }
+    },
+    {
+      id: 2,
+      name: "Tier 2",
+      icon: "/homepage/tier2.webp",
+      idealFor: "Sample text. Click to select the Text Element.",
+      coreOffer: "Sample text. Click to select the Text Element.",
+      investment: "Sample text. Click to select the Text Element.",
+      features: {
+        "Funnel Audit (GPT-Powered)": "included",
+        "Full KPI + Marketing Activity Audit": "included"
+      }
+    },
+    {
+      id: 3,
+      name: "Tier 3",
+      icon: "/homepage/tier3.webp",
+      idealFor: "Sample text. Click to select the Text Element.",
+      coreOffer: "Sample text. Click to select the Text Element.",
+      investment: "Sample text. Click to select the Text Element.",
+      features: {
+        "Funnel Audit (GPT-Powered)": "included",
+        "Full KPI + Marketing Activity Audit": "included",
+        "Deep audit": "Deep audit (incl. LTV, retention)"
+      }
+    }
+  ],
+  featureRows: [
+    "Ideal For",
+    "Core Offer",
+    "Investment", 
+    "Funnel Audit (GPT-Powered)",
+    "Full KPI + Marketing Activity Audit"
+  ]
+};
+
+export const testimonials = {
+  title: "PROOF THROUGH PERSPECTIVE",
+  testimonialCards: [
+    {
+      id: 1,
+      role: "CMO, DTC Apparel Brand",
+      rating: 5,
+      quote: "The first thing they did wasn't pitch — it was diagnose. Their growth audit told us more than our last three CRO tools combined.",
+      isPaused: false
+    },
+    {
+      id: 2,
+      role: "Founder, Health Supplements Brand",
+      rating: 5,
+      quote: "They productized clarity. Our email flows went from guesswork to GPT-built logic, and ROAS jumped 41% in 30 days.",
+      isPaused: true
+    },
+    {
+      id: 3,
+      role: "CMO, DTC Skincare Brand",
+      rating: 5,
+      quote: "The AI audit gave us clarity in days. Cart recovery rose 34%, ROAS doubled. Not another agency—the future of eCom consulting.",
+      isPaused: false
+    },
+    {
+      id: 4,
+      role: "CEO, E-commerce Platform",
+      rating: 5,
+      quote: "Their systematic approach transformed our entire funnel. Revenue per visitor increased by 67% within the first quarter.",
+      isPaused: false
+    },
+    {
+      id: 5,
+      role: "Marketing Director, SaaS Startup",
+      rating: 5,
+      quote: "Finally, someone who understands the technical side. They built automations that our engineering team couldn't figure out in months.",
+      isPaused: false
+    },
+    {
+      id: 6,
+      role: "Founder, Fitness Brand",
+      rating: 5,
+      quote: "ROI went from break-even to 4.2x in 90 days. Their AI-driven approach to customer segmentation was a game changer.",
+      isPaused: false
+    },
+    {
+      id: 7,
+      role: "VP Marketing, Beauty Brand",
+      rating: 5,
+      quote: "We've worked with 12 agencies in 3 years. This is the first time we've seen consistent, measurable growth month over month.",
+      isPaused: false
+    },
+    {
+      id: 8,
+      role: "Co-founder, Tech Accessories",
+      rating: 5,
+      quote: "Their prompt engineering framework generated better copy than our $200k/year copywriting team. Conversion rates doubled overnight.",
+      isPaused: false
+    },
+    {
+      id: 9,
+      role: "CMO, Luxury Goods",
+      rating: 5,
+      quote: "They didn't just optimize our campaigns—they rebuilt our entire customer journey from scratch. LTV increased by 145%.",
+      isPaused: false
+    }
+  ]
+};
