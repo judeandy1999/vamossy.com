@@ -4,7 +4,7 @@ import { footerLinks } from "@/data/data";
 export default function Footer() {
   return (
     <>
-      <footer className="bg-[#333] text-white py-4 md:py-6">
+      <footer className="bg-[#262626] text-white py-4 md:py-6">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 px-6">
           {footerLinks.map((section, index) => (
             <div key={index}>

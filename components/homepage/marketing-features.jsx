@@ -39,7 +39,7 @@ export default function MarketingFeatures() {
   };
 
   return (
-    <section className="min-h-[60vh] flex items-center bg-gradient-to-br from-[#333] via-gray-800 to-gray-900 text-gray-100 py-16 px-8">
+    <section className="min-h-[60vh] flex items-center bg-gradient-to-br from-[#262626] via-gray-800 to-gray-900 text-gray-100 py-16 px-8">
       <div className="max-w-6xl mx-auto text-center mt-8">
         <motion.h2
           className="text-xl md:text-5xl lg:text-6xl font-semibold mb-4 md:mg-8"

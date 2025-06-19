@@ -13,35 +13,36 @@ import PainPoints from "@/components/homepage/pain-points";
 import LiveCaseStudies from "@/components/homepage/live-case-study";
 import NewHorizons from "@/components/homepage/new-horizon-section";
 import OurValues from "@/components/homepage/our-values";
+import WhoWeHelp from "@/components/homepage/who-we-help";
 import { Contact } from "lucide-react";
 import ContactUs from "@/components/homepage/contact-us";
+import UniqueSolutions from "@/components/homepage/unique-solutions";
+import TieredServices from "@/components/homepage/tiered-services";
+import ProofThroughPerspective from "@/components/homepage/proof-through-perspective";
 
 export default function Home() {
     return (
       <div className="relative min-h-screen overflow-hidden">
-        {/* Full page background */}
         <div className="fixed inset-0 z-0">
           <img
             src="/homepage/hero-bg.webp"
             alt="Background"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-black/50"></div>
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
         </div>
-        
-        {/* Page content with relative positioning */}
+
         <div className="relative">
           <Hero />
-          <MarketingFeatures />
+          <WhoWeHelp />
+          <UniqueSolutions />
+          <TieredServices />
+          <ProofThroughPerspective />
+          {/* <MarketingFeatures />
           <OurServices />
           <PainPoints />
-          <LiveCaseStudies />
-          {/* <OurValues /> */}
+          <LiveCaseStudies /> */}
           <ContactUs />
-          {/* <NewHorizons /> */}
-          {/* <OurStory />
-          <RemarkableResults />
-          <TeamSection /> */}
           <Footer />
         </div>
       </div>

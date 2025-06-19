@@ -48,11 +48,11 @@ export default function Header() {
         pathname !== '/' 
           ? 'bg-black shadow-md translate-y-0 opacity-100' 
           : isVisible
-            ? `${isScrolled ? 'bg-[#333] shadow-md' : 'bg-[#333]/90'} translate-y-0 opacity-100`
+            ? `${isScrolled ? 'bg-[#262626] shadow-md' : 'bg-[#262626]/90'} translate-y-0 opacity-100`
             : 'bg-transparent -translate-y-full opacity-0 pointer-events-none'
       }`}
     >
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:py-6 md:px-8 lg:px-12 text-white">
+      <nav className="mx-auto flex max-w-8xl items-center justify-between px-4 py-4 md:py-6 md:px-8 lg:px-28 text-gray-200">
         <div className="flex items-center space-x-4">
           {/* Social Media Icons with Yellow Background */}
           <div className="flex items-center space-x-2">
@@ -62,7 +62,7 @@ export default function Header() {
               rel="noopener noreferrer"
               className="bg-yellow-500 p-2 rounded-full hover:bg-yellow-500 transition-colors"
             >
-              <FaFacebookF size={20} className="text-white" />
+              <FaFacebookF size={20} className="text-gray-200" />
             </Link>
             <Link 
               href="https://linkedin.com" 
@@ -70,7 +70,7 @@ export default function Header() {
               rel="noopener noreferrer"
               className="bg-yellow-500 p-2 rounded-full hover:bg-yellow-500 transition-colors"
             >
-              <FaLinkedinIn size={20} className="text-white" />
+              <FaLinkedinIn size={20} className="text-gray-200" />
             </Link>
           </div>
           
@@ -87,7 +87,7 @@ export default function Header() {
               key={item.name}
               href={item.href}
               className={`transition-colors duration-300 ${
-                pathname === item.href ? 'text-yellow-400' : 'text-white hover:text-yellow-400'
+                pathname === item.href ? 'text-yellow-400' : 'text-gray-200 hover:text-yellow-400'
               }`}
             >
               {item.name}
@@ -99,7 +99,7 @@ export default function Header() {
               key="dashboard"
               href='/user-dashboard'
               className={`transition-colors duration-300 ${
-                pathname === 'user-dashboard' ? 'text-yellow-400' : 'text-white hover:text-yellow-400'
+                pathname === 'user-dashboard' ? 'text-yellow-400' : 'text-gray-200 hover:text-yellow-400'
               }`}
             >
               Go to Dashboard

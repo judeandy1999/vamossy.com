@@ -50,7 +50,7 @@ export default function OurValues() {
   };
 
   return (
-    <section className="relative min-h-screen py-20 px-4 bg-gradient-to-br from-[#333] via-gray-800 to-gray-900">
+    <section className="relative min-h-screen py-20 px-4 bg-gradient-to-br from-[#262626] via-gray-800 to-gray-900">
       <div className="relative max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
           
