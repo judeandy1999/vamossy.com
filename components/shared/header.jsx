@@ -81,7 +81,7 @@ export default function Header() {
         </div>
 
         {/* Desktop Nav - only show nav items when not authenticated */}
-        <ul className="hidden md:flex items-center space-x-8 font-medium text-lg md:text-[28px]">
+        <ul className="hidden md:flex items-center space-x-8 font-medium text-lg md:text-2xl">
           {!session && navItems.map((item) => (
             <Link
               key={item.name}
