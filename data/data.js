@@ -23,7 +23,7 @@ export const promoSections = [
     heading: "Email & SMS Marketing",
     subheading: "Convert visitors into loyal customers.",
     description:
-      "Unleash your brand’s potential by maximizing the likelihood that visitors take desired actions. Turn prospects to customers. Customers to frequent purchasers. We multiply your returns with email, SMS & more.",
+      "Unleash your brand's potential by maximizing the likelihood that visitors take desired actions. Turn prospects to customers. Customers to frequent purchasers. We multiply your returns with email, SMS & more.",
     imageSrc: "/convert-visitors-into-loyal-customers.webp",
     reverse: true,
   },
@@ -356,3 +356,48 @@ export const ourValues = {
     "Ethical, fully legitimate, real value adding services"
   ]
 };
+
+// New data for Who We Help section
+export const clientTypes = [
+  {
+    title: "7-8 Figure Brands",
+    description: "Seeking systems, not headcount",
+  },
+  {
+    title: "Scaling Founders",
+    description: "Tired of agency fluff, need strategic action",
+  },
+  {
+    title: "CMOs & Operators",
+    description: "Need leverage, not just content",
+  },
+  {
+    title: "Retention-Challenged Brands",
+    description: "Winback, subscription, loyalty fixes",
+  },
+  {
+    title: "High-LTV Product Teams",
+    description: "Want compounding automation logic",
+  },
+];
+
+export const growthSteps = [
+  {
+    number: "1",
+    title: "Audit & Map",
+    description:
+      "We deploy GPT-powered diagnostics to pinpoint friction, decay, and inefficiency in your funnel, content, and lifecycle.",
+  },
+  {
+    number: "2",
+    title: "Systemize & Automate",
+    description:
+      "Our PromptOps framework builds full-stack GPT assets: emails, hooks, audits, campaigns — all mapped to growth levers.",
+  },
+  {
+    number: "3",
+    title: "Built Self-Improvement",
+    description:
+      "We embed feedback loops that suggest improvement ideas, and help maintain unique competitive advantage.",
+  },
+];
