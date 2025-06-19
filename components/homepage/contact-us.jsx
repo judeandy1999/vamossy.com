@@ -51,7 +51,7 @@ export default function ContactUs() {
   };
 
   return (
-    <section className="relative py-8 md:py-16 px-4 bg-gradient-to-br from-[#333] via-gray-800 to-gray-900">
+    <section className="relative py-8 md:py-16 px-4 bg-gradient-to-br from-[#262626] via-gray-800 to-gray-900">
       <div className="relative max-w-3xl mx-auto">
         
         {/* Header Section */}
