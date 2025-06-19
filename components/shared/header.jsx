@@ -37,7 +37,6 @@ export default function Header() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [lastScrollY]);
 
-
   if (pathname === '/user-dashboard' || pathname.startsWith('/user-dashboard/')) {
     return null;
   }
@@ -83,30 +82,49 @@ export default function Header() {
         {/* Desktop Nav - only show nav items when not authenticated */}
         <ul className="hidden md:flex items-center space-x-8 font-medium text-lg md:text-[28px]">
           {!session && navItems.map((item) => (
-            <Link
-              key={item.name}
-              href={item.href}
-              className={`transition-colors duration-300 ${
-                pathname === item.href ? 'text-yellow-400' : 'text-gray-200 hover:text-yellow-400'
-              }`}
-            >
-              {item.name}
-            </Link>
+            <li key={item.name}>
+              {item.isSpecial ? (
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Link
+                    href={item.href}
+                    className={`border-2 border-gray-600 px-6 py-3 rounded-xl shadow-md shadow-gray-900 font-semibold transition-all duration-300 ${
+                      pathname === item.href 
+                        ? 'text-gray-100 bg-yellow-500 border-gray-100' 
+                        : 'text-yellow-400 hover:text-yellow-300'
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
+                </motion.div>
+              ) : (
+                <Link
+                  href={item.href}
+                  className={`transition-colors duration-300 ${
+                    pathname === item.href ? 'text-yellow-400' : 'text-gray-200 hover:text-yellow-400'
+                  }`}
+                >
+                  {item.name}
+                </Link>
+              )}
+            </li>
           ))}
-          {/* Logout button - only show when authenticated */}
+          {/* Dashboard link - only show when authenticated */}
           {session && (
-            <Link
-              key="dashboard"
-              href='/user-dashboard'
-              className={`transition-colors duration-300 ${
-                pathname === 'user-dashboard' ? 'text-yellow-400' : 'text-gray-200 hover:text-yellow-400'
-              }`}
-            >
-              Go to Dashboard
-            </Link>
+            <li>
+              <Link
+                href='/user-dashboard'
+                className={`transition-colors duration-300 ${
+                  pathname === '/user-dashboard' ? 'text-yellow-400' : 'text-gray-200 hover:text-yellow-400'
+                }`}
+              >
+                Go to Dashboard
+              </Link>
+            </li>
           )}
         </ul>
-
 
         {/* Mobile Menu Toggle */}
         <div className="md:hidden flex items-center">
@@ -143,24 +161,44 @@ export default function Header() {
             </motion.button>
 
             {!session && navItems.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`transition-colors duration-300 ${
-                  pathname === item.href ? 'text-yellow-400' : 'text-white hover:text-yellow-400'
-                }`}
-              >
-                {item.name}
-              </Link>
+              <div key={item.name} className="w-full flex justify-center">
+                {item.isSpecial ? (
+                  <motion.div
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Link
+                      href={item.href}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={`transition-all duration-300 font-bold text-2xl ${
+                        pathname === item.href 
+                          ? 'text-yellow-300' 
+                          : 'text-yellow-400 hover:text-yellow-300'
+                      }`}
+                    >
+                      {item.name}
+                    </Link>
+                  </motion.div>
+                ) : (
+                  <Link
+                    href={item.href}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`transition-colors duration-300 text-lg ${
+                      pathname === item.href ? 'text-yellow-400' : 'text-white hover:text-yellow-400'
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
+                )}
+              </div>
             ))}
 
-            {/* Logout button - only show when authenticated */}
+            {/* Dashboard link - only show when authenticated */}
             {session && (
               <Link
-                key="dashboard"
                 href='/user-dashboard'
-                className={`transition-colors duration-300 ${
-                  pathname === 'user-dashboard' ? 'text-yellow-400' : 'text-white hover:text-yellow-400'
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`transition-colors duration-300 text-lg ${
+                  pathname === '/user-dashboard' ? 'text-yellow-400' : 'text-white hover:text-yellow-400'
                 }`}
               >
                 Go to Dashboard
