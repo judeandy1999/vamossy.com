@@ -16,6 +16,9 @@ import OurValues from "@/components/homepage/our-values";
 import WhoWeHelp from "@/components/homepage/who-we-help";
 import { Contact } from "lucide-react";
 import ContactUs from "@/components/homepage/contact-us";
+import UniqueSolutions from "@/components/homepage/unique-solutions";
+import TieredServices from "@/components/homepage/tiered-services";
+import ProofThroughPerspective from "@/components/homepage/proof-through-perspective";
 
 export default function Home() {
     return (
@@ -32,10 +35,13 @@ export default function Home() {
         <div className="relative">
           <Hero />
           <WhoWeHelp />
-          <MarketingFeatures />
+          <UniqueSolutions />
+          <TieredServices />
+          <ProofThroughPerspective />
+          {/* <MarketingFeatures />
           <OurServices />
           <PainPoints />
-          <LiveCaseStudies />
+          <LiveCaseStudies /> */}
           <ContactUs />
           <Footer />
         </div>
