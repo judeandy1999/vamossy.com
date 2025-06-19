@@ -1,7 +1,7 @@
 'use client';
 import { Typewriter } from "react-simple-typewriter";
 import { motion } from 'framer-motion';
-import { Check, X } from 'lucide-react';
+import { Check, X, FileText } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import Spinner from "../ui/spinner";
 
@@ -15,18 +15,6 @@ export default function Hero() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: {
-        duration: 1,
-        ease: 'easeOut',
-      },
-    },
-  };
-
-  const h4Variants = {
-    hidden: { opacity: 0, x: 500 },
-    visible: {
-      opacity: 1,
-      x: 0,
       transition: {
         duration: 1,
         ease: 'easeOut',
@@ -99,55 +87,69 @@ export default function Hero() {
     <>
       <section className="relative text-gray-100 h-[100vh] w-full overflow-hidden">
         <motion.div
-          className="text-shadow-sm relative z-1 h-full flex flex-col items-center justify-center text-center px-6 text-gray-100"
+          className="relative z-1 h-full flex flex-col items-center justify-center text-center px-6 text-gray-100"
           initial="hidden"
           animate="visible"
         >
           <motion.h1
-            className="text-shadow-sm text-xl md:text-5xl lg:text-6xl font-light md:max-w-[80%] leading-tight"
+            className="text-xl md:text-5xl lg:text-6xl font-semibold md:max-w-[80%] leading-tight"
             variants={h1Variants}
           >
-            Ecommerce Growth Solutions and
+            YOUR AI-POWERED ECOMMERCE GROWTH CONSULTING AGENCY
           </motion.h1>
           <motion.h1
-            className="text-shadow-sm text-2xl md:text-5xl lg:text-7xl font-bold max-w-full leading-tight"
+            className="lg:mt-4 text-xl md:text-2xl lg:text-3xl font-normal max-w-full leading-tight"
             variants={h1Variants}
           >
-            Lasting competitive advantage
+            From Chaos to Clarity. From Funnels to Frameworks
           </motion.h1>
           <motion.h4 
-            className="text-gray-200 text-md md:text-xl lg:text-2xl mt-4 font-light md:max-w-[60%] leading-tight"
-            variants={h4Variants}
+            className="lg:mt-8 text-gray-200 text-md md:text-xl lg:text-2xl mt-4 font-light md:max-w-[60%] leading-tight"
+            variants={h1Variants}
+          >
+            We engineer AI-powered growth systems that scale eCommerce brands - profitable, predictable, and without the guesswork.
+          </motion.h4>
+          <motion.h4 
+            className="lg:mt-8 text-gray-200 text-md md:text-xl lg:text-2xl mt-4 font-light md:max-w-[60%] leading-tight"
+            variants={h1Variants}
           >
             <Typewriter
               words={[
-                "Cutting-edge marketing solutions at scale, designed to be the new industry standard! Created by unique eCommerce know-how, and extraordinary AI resources."
+                "Your next 10x isn't in more tools - it's in better logic.",
               ]}
               cursor
               cursorStyle="|"
-              typeSpeed={50}
+              loop={true}
+              typeSpeed={60}
               deleteSpeed={30}
               delaySpeed={2000}
             />
           </motion.h4>
           <motion.div
             variants={buttonVariants}
-            className="flex items-center flex-col md:flex-row max-w-[80%] md:w-3xl md:h-[120px] rounded-lg p-2 md:p-8 mt-4 md:mt-8 flex justify-between bg-gradient-to-r from-[#a87b00]/70 to-yellow-500/70"
-          >
-            <p className="text-center mb-2 md:mb-0 md:text-start text-md md:text-xl text-gray-200 font-bold flex items-center max-w-md text-shadow-sm">Book a free discovery call - open up new horizons for your business!</p>
-            <div className="flex items-center space-x-2">
-              <button
-                onClick={handleBookNowClick}
-                className="cursor-pointer group flex items-center justify-center gap-2 py-2 px-2 md:py-3 w-[10rem] bg-[#333] text-gray-200 hover:scale-105 hover:bg-gray-800 font-semibold rounded-full transition"
-              >
-                <div className="w-5 h-5 md:w-7 md:h-7 rounded-full border-1 border-white bg-[#333] group-hover:bg-gray-800 flex items-center justify-center">
-                  <Check size={16} className="text-gray-200" />
-                </div>
-                Book now
-              </button>
-            </div>
+            className="mt-4 lg:mt-8 flex flex-col md:flex-row gap-4 items-center">
+            <button
+              onClick={handleBookNowClick}
+              className="cursor-pointer lg:text-xl border-2 border-gray-600 group flex items-center justify-center gap-2 py-4 px-2 md:py-6 w-[20rem] bg-[#262626] text-gray-200 hover:scale-105 hover:bg-gray-800 font-semibold rounded-xl transition"
+            >
+              <div className="w-7 h-7 md:w-8 md:h-8 p-1 rounded-full border-2 border-yellow-500 bg-[#262626] group-hover:bg-gray-800 flex items-center justify-center">
+                <Check size={22} className="text-yellow-500" />
+              </div>
+              Book a Growth Audit
+            </button>
+            <button
+              onClick={() => window.location.href = '/submit-brief'}
+              className="cursor-pointer lg:text-xl border-2 border-gray-600 group flex items-center justify-center gap-2 py-4 px-2 md:py-6 w-[20rem] bg-[#262626] text-gray-200 hover:scale-105 hover:bg-gray-800 font-semibold rounded-xl transition"
+            >
+              <div className="w-7 h-7 md:w-8 md:h-8 p-1 rounded-full border-2 border-yellow-500 bg-[#262626] group-hover:bg-gray-800 flex items-center justify-center">
+                <FileText size={20} className="text-yellow-500" />
+              </div>
+              Submit a Brief
+            </button>
           </motion.div>
         </motion.div>
+        
+        <div className="absolute bottom-0 left-0 w-full h-62 bg-gradient-to-b from-transparent to-[#262626] z-10"></div>
       </section>
 
       {showCalendar && (
@@ -163,7 +165,7 @@ export default function Hero() {
             {isCalendarLoading && (
               <Spinner />
             )}
-            <p className="pt-4 text-lg md:text-3xl text-extrabold text-[#0091ae]">Book a free discovery call!</p>
+            <p className="pt-4 text-lg md:text-3xl text-extrabold text-[#0091ae]">Book a Growth Audit!</p>
             <div 
               key={calendarKey}
               className={`meetings-iframe-container ${isCalendarLoading ? 'opacity-0' : 'opacity-100'} flex mx-auto text-center flex-col-reverse transition-opacity duration-500`}
