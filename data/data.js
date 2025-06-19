@@ -124,6 +124,7 @@ export const footerLinks = [
 ];
 
 export const navItems = [
+  { name: "Consulting", href: "/consulting", isSpecial: true },
   { name: "Services Packages", href: "/services" },
   { name: "About", href: "/about" },
   { name: "Contact", href: "/contact" },
