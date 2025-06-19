@@ -145,6 +145,11 @@ export default function WhoWeHelp() {
 							</div>
 						</motion.div>
 					))}
+					<div className="text-center md:text-start mt-8">
+						<p className="text-gray-300 text-md md:text-lg lg:text-xl font-light">
+							If you're scaling and need systems, not spreadsheets - we're your unfair advantage.
+						</p>
+					</div>
 				</motion.div>
 
 				{/* Enhanced Arrow Graphics */}
