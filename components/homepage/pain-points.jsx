@@ -62,7 +62,7 @@ export default function PainPoints() {
   };
 
   return (
-    <section className="relative min-h-screen py-20 px-4 bg-gradient-to-br from-[#333] via-gray-800 to-gray-900">
+    <section className="relative min-h-screen py-20 px-4 bg-gradient-to-br from-[#262626] via-gray-800 to-gray-900">
       {/* Background overlay */}
       {/* <div className="absolute inset-0 bg-black/40"></div> */}
       
