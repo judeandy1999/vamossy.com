@@ -127,7 +127,7 @@ export default function Hero() {
           </motion.h4>
           <motion.div
             variants={buttonVariants}
-            className="mt-4 lg:mt-8 flex flex-col md:flex-row gap-4 items-center">
+            className="z-11 mt-4 lg:mt-8 flex flex-col md:flex-row gap-4 items-center">
             <button
               onClick={handleBookNowClick}
               className="cursor-pointer lg:text-xl border-2 border-gray-600 group flex items-center justify-center gap-2 py-4 px-2 md:py-6 w-[20rem] bg-[#262626] text-gray-200 hover:scale-105 hover:bg-gray-800 font-semibold rounded-xl transition"
@@ -149,7 +149,7 @@ export default function Hero() {
           </motion.div>
         </motion.div>
         
-        <div className="absolute bottom-0 left-0 w-full h-62 bg-gradient-to-b from-transparent to-[#262626] z-10"></div>
+        <div className="absolute bottom-0 left-0 w-full h-52 bg-gradient-to-b from-transparent to-[#262626] z-10"></div>
       </section>
 
       {showCalendar && (
