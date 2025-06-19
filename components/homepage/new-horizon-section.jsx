@@ -50,7 +50,7 @@ export default function NewHorizons() {
   };
 
   return (
-    <section className="relative min-h-screen py-20 px-4 bg-gradient-to-br from-[#333] via-gray-800 to-gray-900">
+    <section className="relative min-h-screen py-20 px-4 bg-gradient-to-br from-[#262626] via-gray-800 to-gray-900">
       <div className="relative max-w-6xl mx-auto">
         {/* Header Section */}
         <motion.div
