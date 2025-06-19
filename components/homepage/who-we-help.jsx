@@ -88,7 +88,6 @@ export default function WhoWeHelp() {
 
 	return (
 		<section className="relative min-h-screen py-8 lg:py-16 px-4 bg-gradient-to-b from-[#262626] via-gray-800 to-gray-900 overflow-hidden">
-      {/* <div className="absolute top-0 left-0 w-full h-62 bg-gradient-to-b from-transparent to-[#262626] z-0"></div> */}
       <div className="relative max-w-6xl mx-auto">
 				{/* Header */}
 				<motion.div
