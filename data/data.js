@@ -886,5 +886,5 @@ export const brandWorkWithUs = {
 
 // About page data ends here
 
-// Contact page data starts here
+// Consulting page data starts here
 
