@@ -81,19 +81,18 @@ export default function Header() {
         </div>
 
         {/* Desktop Nav - only show nav items when not authenticated */}
-        <ul className="hidden md:flex items-center space-x-8 font-medium text-lg md:text-[28px]">
+        <ul className="hidden md:flex items-center space-x-8 font-medium text-lg md:text-2xl">
           {!session && navItems.map((item) => (
             <Link
               key={item.name}
               href={item.href}
-              className={`transition-colors duration-300 ${
+              className={`transition-colors duration-300 hover:scale-105 ${
                 pathname === item.href ? 'text-yellow-400' : 'text-gray-200 hover:text-yellow-400'
               }`}
             >
               {item.name}
             </Link>
           ))}
-          {/* Logout button - only show when authenticated */}
           {session && (
             <Link
               key="dashboard"
