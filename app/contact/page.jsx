@@ -1,17 +1,25 @@
 import PageWrapper from '@/components/page-wrapper';
+import ContactUs from '@/components/homepage/contact-us';
+import ContactHero from '@/components/contact/contact-hero';
+import WhatWeBelieve from '@/components/contact/what-we-believe';
 
 
 export default function Page() {
   return (
-    <PageWrapper title="Contact Us" subtitle="We'd love to hear from you! Fill out the form below to get in touch." color="contact">
-      <form className="space-y-6">
-        <input className="w-full border border-gray-300 p-3 rounded" type="text" placeholder="Your Name" />
-        <input className="w-full border border-gray-300 p-3 rounded" type="email" placeholder="Your Email" />
-        <textarea className="w-full border border-gray-300 p-3 rounded" rows="5" placeholder="Your Message"></textarea>
-        <button className="bg-indigo-600 text-white px-6 py-3 rounded hover:bg-indigo-700 transition w-full">
-          Send Message
-        </button>
-      </form>
-    </PageWrapper>
+    <div className="relative min-h-screen overflow-hidden">
+          <div className="fixed inset-0 z-0">
+            <img
+              src="/homepage/hero-bg.webp"
+              alt="Background"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+          </div>
+          <div className="relative z-10">
+            <ContactHero />
+            <WhatWeBelieve />
+            <ContactUs />
+          </div>  
+        </div>
   );
 }

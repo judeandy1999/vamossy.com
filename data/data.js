@@ -581,3 +581,310 @@ export const testimonials = {
     }
   ]
 };
+
+// Services page data starts here
+
+export const tieredServicesPage = {
+  title: "AI GROWTH ENGINE",
+  subtitle: "TIERED SERVICES",
+  tiers: [
+    {
+      id: 1,
+      name: "Tier 1",
+      icon: "/homepage/tier1.webp",
+      idealFor: "Sample text. Click to select the Text Element.",
+      coreOffer: "Sample text. Click to select the Text Element.",
+      investment: "Sample text. Click to select the Text Element.",
+      features: {
+        "Funnel Audit (GPT-Powered)": "included",
+        "Full KPI + Marketing Activity Audit": "partial"
+      }
+    },
+    {
+      id: 2,
+      name: "Tier 2",
+      icon: "/homepage/tier2.webp",
+      idealFor: "Sample text. Click to select the Text Element.",
+      coreOffer: "Sample text. Click to select the Text Element.",
+      investment: "Sample text. Click to select the Text Element.",
+      features: {
+        "Funnel Audit (GPT-Powered)": "included",
+        "Full KPI + Marketing Activity Audit": "included"
+      }
+    },
+    {
+      id: 3,
+      name: "Tier 3",
+      icon: "/homepage/tier3.webp",
+      idealFor: "Sample text. Click to select the Text Element.",
+      coreOffer: "Sample text. Click to select the Text Element.",
+      investment: "Sample text. Click to select the Text Element.",
+      features: {
+        "Funnel Audit (GPT-Powered)": "included",
+        "Full KPI + Marketing Activity Audit": "included",
+        "Deep audit": "Deep audit (incl. LTV, retention)"
+      }
+    }
+  ],
+  featureRows: [
+    "Ideal For",
+    "Core Offer",
+    "Investment", 
+    "Funnel Audit (GPT-Powered)",
+    "Full KPI + Marketing Activity Audit"
+  ]
+};
+
+export const tierPackages = [
+  {
+    id: 1,
+    title: "Tier 1 - Foundational Growth Package",
+    subtitle: '"Audit. Align. Activate."',
+    whatsIncluded: [
+      "Full Funnel Audit (TOFU → Checkout): Includes GPT-assisted breakdown of traffic, content, CRO, and retention gaps",
+      "Comprehensive Opportunity Diagnostics: We uncover your growth opportunities, and prioritize them",
+      "Lifecycle Value Growth Tactics: We engineer tactics to take advantage of your growth opportunities",
+      "Up to 4 consultations on request: To be on the same page, we can have regular consultations while we deliver this offer!"
+    ],
+    embeddedAISystems: [
+      "AI Full Funnel Audit",
+      "AI Full Marketing Activity Audit",
+      "Living AI Tactics and Playbooks Systems offer!"
+    ],
+    deliverables: [
+      "Funnel Audit (Awareness → Purchase)",
+      "Full KPI Audit (After onboarding)",
+      "Growth Playbooks",
+      "Your Ready to Deploy Tactical Playbook",
+      "Customer Bias Leverage AI Toolkit"
+    ],
+    cards: [
+      {
+        icon: "/services-images/target.webp",
+        label: "Target Client",
+        description: "New or under-optimized eCom stores (0–$50k/mo)"
+      },
+      {
+        icon: "/services-images/position.webp",
+        label: "Positioning",
+        description: "Get a strategic AI growth foundation without the overwhelm."
+      },
+      {
+        icon: "/services-images/investment.webp",
+        label: "Investment",
+        description: "$1.5k–$3k (one-time sprint)"
+      }
+    ]
+  },
+
+  {
+    id: 2,
+    title: "Tier 2 - Full Growth Package",
+    subtitle: '"Every word, offer, and funnel stage – rebuilt by GPT. Just scale."',
+    cards: [
+      {
+        icon: "/services-images/target.webp",
+        label: "Target Client",
+        description: "Scaling eCom stores ($50k–$250k/mo)"
+      },
+      {
+        icon: "/services-images/position.webp",
+        label: "Positioning",
+        description: "Done-with-you growth engine powered by GPT systems"
+      },
+      {
+        icon: "/services-images/investment.webp",
+        label: "Investment",
+        description: "$5k/mo retainer or $8k–$12k sprint"
+      }
+    ],
+    whatsIncluded: [
+      "Everything from Tier 1 is included",
+      "Consultations: On demand (with once a week limit), until the execution of development projects."
+    ],
+    embeddedAISystems: [
+      "Full AI Business Audit Kit",
+      "Briefer, Controller, and Technical Specification AI",
+      "Agency auditor, vetting AI, recruiter AI",
+      "Project ROI calculator AI"
+    ],
+    deliverables: [
+      "Advanced Marketing KPI Audit",
+      "Growth diagnosis, and specifications of development projects.",
+      "Includes guidance, and detailed briefs and specifications for each of your projects, for safe and successful execution.",
+      "3rd party auditor reviews on demand"
+    ]
+  },
+
+  {
+    id: 3,
+    title: "Tier 3 - AI Growth Infrastructure Package",
+    subtitle: '"Turn your brand into an AI-powered revenue machine"',
+    cards: [
+      {
+        icon: "/services-images/target.webp",
+        label: "Target Client",
+        description: "7–8 figure brands ($250k+/mo)"
+      },
+      {
+        icon: "/services-images/position.webp",
+        label: "Positioning",
+        description: "Fully AI-integrated eCommerce operating system"
+      },
+      {
+        icon: "/services-images/investment.webp",
+        label: "Investment",
+        description: "$15k–$25k project or $6k+/mo retainer"
+      }
+    ],
+    whatsIncluded: [
+      "Everything from Tier 1 + Tier 2 is included"
+    ],
+    embeddedAISystems: [
+      "Brand and position GPT Mapper",
+      "Company GPT and Customized Assistant GPT for each role",
+      "Prompt chain planning, and AI SOP creator tool",
+      "AI Automated Workflows",
+      "Other, on demand prompts and prompt chains"
+    ],
+    deliverables: [
+      "Strategic Deep Audit (Funnels, LTV, Retention, Offers)",
+      "Customized SOPs, and Full SOP Library",
+      "SOP controller hub: Automated Operations Interface",
+      "Automated Workflows, with automated supervision and improvement loop",
+      "Custom GPTs, Role Supporting AI Assistants",
+      "Customized SOP, Project, and Automation prompts"
+    ]
+  }
+];
+
+export const bonusAssets = [
+  {
+    asset: "Marketing Prompt toolkit",
+    use: "Downloadable prompt chains for in-house teams"
+  },
+  {
+    asset: "Management Prompt toolkit",
+    use: "Downloadable prompt chains for in-house teams"
+  },
+  {
+    asset: "GPT Client Training Deck",
+    use: "Show clients how to use embedded AI systems"
+  }
+];
+
+// Services page data ends here
+
+// About page data starts here
+
+export const whoWeAre = {
+  title: "Who We Are",
+  items: [
+    "We are not your average marketing agency.",
+    "We are an AI-powered, strategy-obsessed growth consultancy built for one mission:",
+    "To eliminate guesswork, unprofitable experiments, and creative waste from the eCommerce funnel — and replace them with breakthrough systems that actually scale.",
+    "We help eCommerce brands grow through high-precision strategy, prompt-engineered automations, and a full-stack understanding of how real growth happens online — one GPT-powered asset, offer, and funnel at a time.",
+    "Our team fuses deep digital marketing expertise with AI-first execution. We don’t just use AI — we design it into your business model."
+  ]
+};
+
+export const whatWeBelieve = {
+  title: "What We Believe",
+  items: [
+    "Growth is a system, not a gamble. We map it, test it, optimize it.",
+    "AI is not a trend — it’s leverage. GPT systems help us move faster, iterate smarter, and out-execute agencies with bloated headcounts.",
+    "Your customer journey is a funnel, not a feed. We build for lifecycle impact, not just vanity metrics.",
+    "Trust is earned with clarity. We make every deliverable measurable and every strategy explainable."
+  ]
+};
+
+export const founder = {
+  name: "Gergo Vamosy",
+  title: "Founder",
+  image: "/about/founder.webp", 
+  intro: `I have started this agency to fix the two biggest problems I saw in eCommerce consulting: people guessing, and people bluffing.`,
+  bio: `I have built this practice after 11 years being a large eCommerce store owner/founder, and then 9 years in becoming a SEO, and an eCommerce digital marketing specialist. By adding prompt engineering to this package, I managed to create better performing marketing campaigns than ever before, and we evolved into a multidisciplinary team that combines strategic foresight, real funnel experience, and GPT-native execution systems.`,
+  closing: `You're not hiring just a strategist.`
+};
+
+export const agencyComparison = {
+  title: "What We Do (That No One Else Does)",
+  subtitle: "We’ve rebuilt the digital consulting model from the ground up using AI.",
+  columns: [
+    {
+      heading: "Traditional Agency",
+      icon: null,
+      items: [
+        { text: "Tactics on demand", type: "bad" },
+        { text: "Human bandwidth bottlenecks", type: "bad" },
+        { text: "Random A/B testing", type: "bad" },
+        { text: "Marketing fluff", type: "bad" },
+        { text: "Flat retainers", type: "bad" }
+      ]
+    },
+    {
+      heading: "Us",
+      icon: null,
+      items: [
+        { text: "Full-funnel architecture", type: "good" },
+        { text: "GPT-enhanced production at scale", type: "good" },
+        { text: "PromptOps-driven hypothesis systems", type: "good" },
+        { text: "Operational growth blueprints", type: "good" },
+        { text: "Performance-aligned packages", type: "good" },
+        { text: "We don’t do vanity metrics.", type: "good" },
+        { text: "We move revenue.", type: "good" }
+      ]
+    }
+  ]
+};
+
+export const aiSystemsWorkCards = [
+  {
+    image: "/about/prompt-ops.webp",
+    title: "PromptOps For Marketing and Management",
+    description:
+      "Reusable, editable GPT prompt stacks that power any of your marketing processes.",
+  },
+  {
+    image: "/about/growth-map.webp",
+    title: "AI-Generated Growth Maps",
+    description:
+      "Offer diagnostics, and tactic signals — built by AI, interpreted by humans.",
+  },
+  {
+    image: "/about/c&c-generators.webp",
+    title: "Copy & Campaign Generators",
+    description:
+      "From ad angles to product pages to reviews → our GPT stacks are designed to write with your brand voice in real time.",
+  },
+  {
+    image: "/about/strategy-layer.webp",
+    title: "AI Strategy Layer",
+    description:
+      "We don’t just install tools — we deploy them. Each system comes with a strategic map, usage rules, and a trainable toolkit for your team.",
+  },
+];
+
+export const brandWorkWithUs = {
+  left: {
+    title: "Brands work with us when...",
+    items: [
+      "They’re scaling and don’t have time for slow agencies",
+      "Their funnel is leaking, and they want a surgical AI-audit to fix it",
+      "Their content is scattered, and they need a system that builds itself",
+      "Their team is maxed out, and automation isn't optional anymore"
+    ]
+  },
+  right: {
+    title: "Let’s make growth predictable",
+    items: [
+      "Your customer journey is a funnel, not a feed. We build for lifecycle impact, not just vanity metrics.",
+      "Trust is earned with clarity. We make every deliverable measurable and every strategy explainable."
+    ]
+  }
+};
+
+// About page data ends here
+
+// Contact page data starts here
+
