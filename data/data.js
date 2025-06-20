@@ -579,3 +579,194 @@ export const testimonials = {
     }
   ]
 };
+
+// Services Page Data
+
+export const tieredServicesPage = {
+  title: "AI GROWTH ENGINE",
+  subtitle: "TIERED SERVICES",
+  tiers: [
+    {
+      id: 1,
+      name: "Tier 1",
+      icon: "/homepage/tier1.webp",
+      idealFor: "Sample text. Click to select the Text Element.",
+      coreOffer: "Sample text. Click to select the Text Element.",
+      investment: "Sample text. Click to select the Text Element.",
+      features: {
+        "Funnel Audit (GPT-Powered)": "included",
+        "Full KPI + Marketing Activity Audit": "partial"
+      }
+    },
+    {
+      id: 2,
+      name: "Tier 2",
+      icon: "/homepage/tier2.webp",
+      idealFor: "Sample text. Click to select the Text Element.",
+      coreOffer: "Sample text. Click to select the Text Element.",
+      investment: "Sample text. Click to select the Text Element.",
+      features: {
+        "Funnel Audit (GPT-Powered)": "included",
+        "Full KPI + Marketing Activity Audit": "included"
+      }
+    },
+    {
+      id: 3,
+      name: "Tier 3",
+      icon: "/homepage/tier3.webp",
+      idealFor: "Sample text. Click to select the Text Element.",
+      coreOffer: "Sample text. Click to select the Text Element.",
+      investment: "Sample text. Click to select the Text Element.",
+      features: {
+        "Funnel Audit (GPT-Powered)": "included",
+        "Full KPI + Marketing Activity Audit": "included",
+        "Deep audit": "Deep audit (incl. LTV, retention)"
+      }
+    }
+  ],
+  featureRows: [
+    "Ideal For",
+    "Core Offer",
+    "Investment", 
+    "Funnel Audit (GPT-Powered)",
+    "Full KPI + Marketing Activity Audit"
+  ]
+};
+
+export const tierPackages = [
+  {
+    id: 1,
+    title: "Tier 1 - Foundational Growth Package",
+    subtitle: '"Audit. Align. Activate."',
+    whatsIncluded: [
+      "Full Funnel Audit (TOFU → Checkout): Includes GPT-assisted breakdown of traffic, content, CRO, and retention gaps",
+      "Comprehensive Opportunity Diagnostics: We uncover your growth opportunities, and prioritize them",
+      "Lifecycle Value Growth Tactics: We engineer tactics to take advantage of your growth opportunities",
+      "Up to 4 consultations on request: To be on the same page, we can have regular consultations while we deliver this offer!"
+    ],
+    embeddedAISystems: [
+      "AI Full Funnel Audit",
+      "AI Full Marketing Activity Audit",
+      "Living AI Tactics and Playbooks Systems offer!"
+    ],
+    deliverables: [
+      "Funnel Audit (Awareness → Purchase)",
+      "Full KPI Audit (After onboarding)",
+      "Growth Playbooks",
+      "Your Ready to Deploy Tactical Playbook",
+      "Customer Bias Leverage AI Toolkit"
+    ],
+    cards: [
+      {
+        icon: "/services-images/target.webp",
+        label: "Target Client",
+        description: "New or under-optimized eCom stores (0–$50k/mo)"
+      },
+      {
+        icon: "/services-images/position.webp",
+        label: "Positioning",
+        description: "Get a strategic AI growth foundation without the overwhelm."
+      },
+      {
+        icon: "/services-images/investment.webp",
+        label: "Investment",
+        description: "$1.5k–$3k (one-time sprint)"
+      }
+    ]
+  },
+
+  {
+    id: 2,
+    title: "Tier 2 - Full Growth Package",
+    subtitle: '"Every word, offer, and funnel stage – rebuilt by GPT. Just scale."',
+    cards: [
+      {
+        icon: "/services-images/target.webp",
+        label: "Target Client",
+        description: "Scaling eCom stores ($50k–$250k/mo)"
+      },
+      {
+        icon: "/services-images/position.webp",
+        label: "Positioning",
+        description: "Done-with-you growth engine powered by GPT systems"
+      },
+      {
+        icon: "/services-images/investment.webp",
+        label: "Investment",
+        description: "$5k/mo retainer or $8k–$12k sprint"
+      }
+    ],
+    whatsIncluded: [
+      "Everything from Tier 1 is included",
+      "Consultations: On demand (with once a week limit), until the execution of development projects."
+    ],
+    embeddedAISystems: [
+      "Full AI Business Audit Kit",
+      "Briefer, Controller, and Technical Specification AI",
+      "Agency auditor, vetting AI, recruiter AI",
+      "Project ROI calculator AI"
+    ],
+    deliverables: [
+      "Advanced Marketing KPI Audit",
+      "Growth diagnosis, and specifications of development projects.",
+      "Includes guidance, and detailed briefs and specifications for each of your projects, for safe and successful execution.",
+      "3rd party auditor reviews on demand"
+    ]
+  },
+
+  {
+    id: 3,
+    title: "Tier 3 - AI Growth Infrastructure Package",
+    subtitle: '"Turn your brand into an AI-powered revenue machine"',
+    cards: [
+      {
+        icon: "/services-images/target.webp",
+        label: "Target Client",
+        description: "7–8 figure brands ($250k+/mo)"
+      },
+      {
+        icon: "/services-images/position.webp",
+        label: "Positioning",
+        description: "Fully AI-integrated eCommerce operating system"
+      },
+      {
+        icon: "/services-images/investment.webp",
+        label: "Investment",
+        description: "$15k–$25k project or $6k+/mo retainer"
+      }
+    ],
+    whatsIncluded: [
+      "Everything from Tier 1 + Tier 2 is included"
+    ],
+    embeddedAISystems: [
+      "Brand and position GPT Mapper",
+      "Company GPT and Customized Assistant GPT for each role",
+      "Prompt chain planning, and AI SOP creator tool",
+      "AI Automated Workflows",
+      "Other, on demand prompts and prompt chains"
+    ],
+    deliverables: [
+      "Strategic Deep Audit (Funnels, LTV, Retention, Offers)",
+      "Customized SOPs, and Full SOP Library",
+      "SOP controller hub: Automated Operations Interface",
+      "Automated Workflows, with automated supervision and improvement loop",
+      "Custom GPTs, Role Supporting AI Assistants",
+      "Customized SOP, Project, and Automation prompts"
+    ]
+  }
+];
+
+export const bonusAssets = [
+  {
+    asset: "Marketing Prompt toolkit",
+    use: "Downloadable prompt chains for in-house teams"
+  },
+  {
+    asset: "Management Prompt toolkit",
+    use: "Downloadable prompt chains for in-house teams"
+  },
+  {
+    asset: "GPT Client Training Deck",
+    use: "Show clients how to use embedded AI systems"
+  }
+];
