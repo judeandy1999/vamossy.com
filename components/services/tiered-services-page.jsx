@@ -113,7 +113,7 @@ export default function TieredServices() {
           className="text-center mb-4 lg:mb-16"
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }}
+          viewport={{ amount: 0.3 }}
           variants={titleVariants}
         >
           <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
@@ -167,7 +167,7 @@ export default function TieredServices() {
           className="bg-gray-800/50 backdrop-blur-sm rounded-2xl overflow-auto border border-gray-700/50 scrollbar-always-visible"
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
+          viewport={{ amount: 0.2 }}
           variants={tableVariants}
           style={{
             scrollbarWidth: 'thin',

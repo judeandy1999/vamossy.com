@@ -582,7 +582,7 @@ export const testimonials = {
   ]
 };
 
-// Services Page Data
+// Services page data starts here
 
 export const tieredServicesPage = {
   title: "AI GROWTH ENGINE",
@@ -772,3 +772,119 @@ export const bonusAssets = [
     use: "Show clients how to use embedded AI systems"
   }
 ];
+
+// Services page data ends here
+
+// About page data starts here
+
+export const whoWeAre = {
+  title: "Who We Are",
+  items: [
+    "We are not your average marketing agency.",
+    "We are an AI-powered, strategy-obsessed growth consultancy built for one mission:",
+    "To eliminate guesswork, unprofitable experiments, and creative waste from the eCommerce funnel — and replace them with breakthrough systems that actually scale.",
+    "We help eCommerce brands grow through high-precision strategy, prompt-engineered automations, and a full-stack understanding of how real growth happens online — one GPT-powered asset, offer, and funnel at a time.",
+    "Our team fuses deep digital marketing expertise with AI-first execution. We don’t just use AI — we design it into your business model."
+  ]
+};
+
+export const whatWeBelieve = {
+  title: "What We Believe",
+  items: [
+    "Growth is a system, not a gamble. We map it, test it, optimize it.",
+    "AI is not a trend — it’s leverage. GPT systems help us move faster, iterate smarter, and out-execute agencies with bloated headcounts.",
+    "Your customer journey is a funnel, not a feed. We build for lifecycle impact, not just vanity metrics.",
+    "Trust is earned with clarity. We make every deliverable measurable and every strategy explainable."
+  ]
+};
+
+export const founder = {
+  name: "Gergo Vamosy",
+  title: "Founder",
+  image: "/about/founder.webp", 
+  intro: `I have started this agency to fix the two biggest problems I saw in eCommerce consulting: people guessing, and people bluffing.`,
+  bio: `I have built this practice after 11 years being a large eCommerce store owner/founder, and then 9 years in becoming a SEO, and an eCommerce digital marketing specialist. By adding prompt engineering to this package, I managed to create better performing marketing campaigns than ever before, and we evolved into a multidisciplinary team that combines strategic foresight, real funnel experience, and GPT-native execution systems.`,
+  closing: `You're not hiring just a strategist.`
+};
+
+export const agencyComparison = {
+  title: "What We Do (That No One Else Does)",
+  subtitle: "We’ve rebuilt the digital consulting model from the ground up using AI.",
+  columns: [
+    {
+      heading: "Traditional Agency",
+      icon: null,
+      items: [
+        { text: "Tactics on demand", type: "bad" },
+        { text: "Human bandwidth bottlenecks", type: "bad" },
+        { text: "Random A/B testing", type: "bad" },
+        { text: "Marketing fluff", type: "bad" },
+        { text: "Flat retainers", type: "bad" }
+      ]
+    },
+    {
+      heading: "Us",
+      icon: null,
+      items: [
+        { text: "Full-funnel architecture", type: "good" },
+        { text: "GPT-enhanced production at scale", type: "good" },
+        { text: "PromptOps-driven hypothesis systems", type: "good" },
+        { text: "Operational growth blueprints", type: "good" },
+        { text: "Performance-aligned packages", type: "good" },
+        { text: "We don’t do vanity metrics.", type: "good" },
+        { text: "We move revenue.", type: "good" }
+      ]
+    }
+  ]
+};
+
+export const aiSystemsWorkCards = [
+  {
+    image: "/about/prompt-ops.webp",
+    title: "PromptOps For Marketing and Management",
+    description:
+      "Reusable, editable GPT prompt stacks that power any of your marketing processes.",
+  },
+  {
+    image: "/about/growth-map.webp",
+    title: "AI-Generated Growth Maps",
+    description:
+      "Offer diagnostics, and tactic signals — built by AI, interpreted by humans.",
+  },
+  {
+    image: "/about/c&c-generators.webp",
+    title: "Copy & Campaign Generators",
+    description:
+      "From ad angles to product pages to reviews → our GPT stacks are designed to write with your brand voice in real time.",
+  },
+  {
+    image: "/about/strategy-layer.webp",
+    title: "AI Strategy Layer",
+    description:
+      "We don’t just install tools — we deploy them. Each system comes with a strategic map, usage rules, and a trainable toolkit for your team.",
+  },
+];
+
+export const brandWorkWithUs = {
+  left: {
+    title: "Brands work with us when...",
+    items: [
+      "They’re scaling and don’t have time for slow agencies",
+      "Their funnel is leaking, and they want a surgical AI-audit to fix it",
+      "Their content is scattered, and they need a system that builds itself",
+      "Their team is maxed out, and automation isn't optional anymore"
+    ]
+  },
+  right: {
+    title: "Let’s make growth predictable",
+    items: [
+      "Your customer journey is a funnel, not a feed. We build for lifecycle impact, not just vanity metrics.",
+      "Trust is earned with clarity. We make every deliverable measurable and every strategy explainable."
+    ]
+  }
+};
+
+// About page data ends here
+
+// Contact page data starts here
+

@@ -29,80 +29,42 @@ export default function ServicesHero() {
   };
 
   return (
-    /* 
-      <section className="relative bg-[#02355A] text-white p-16">
-      <div className="mx-auto justify-center flex flex-col md:flex-row items-center gap-12 py-24 relative">
-        {/* Left Section: Text Content */
-
-        /*
-        <motion.div 
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: false, amount: 0.5 }}
-          variants={leftSectionVariants}
-          className="w-[60%] space-y-2"
-        >
-          <p className="text-yellow-400 text-[20px] font-semibold">
-            Grow Your Business With Scalable Digital Marketing
-          </p>
-          <h1 className="text-[68px] font-semibold leading-tight">
-            Outsmart the competition with best-in-class digital marketing services
-          </h1>
-          <p className="text-[20px] text-gray-200">
-            Get more traffic. Acquire more customers. Sell more stuff. SmartSites
-            offers proven strategies & reliable execution to exceed your marketing
-            goals.
-          </p>
-        </motion.div>
-
-        {/* Right Section: Image */
-
-        /*
-        <motion.div 
-          className="w-[40%]"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: false, amount: 0.5 }}
-          variants={rightSectionVariants}
-        >
-          <div className="absolute w-[750px] h-[750px] left-[50%] top-[4.5rem]">
-            <Image
-              width={1200}
-              height={1200}
-              src="/digital-marketing-services-banner-hero.webp"
-              alt="Digital Marketing Analytics"
-              className="w-full h-auto"
-            />
-          </div>
-        </motion.div>
-      </div>
-    </section>
-    */
-
     <section className="relative h-screen flex items-center justify-center text-center overflow-hidden">
       {/* Centered Content */}
       <div className="relative z-10 flex flex-col items-center justify-center w-full h-full px-4">
         <motion.h1
           className="text-3xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 drop-shadow"
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: false, amount: 0.3 }}
+          variants={{
+            hidden: { opacity: 0, y: 40 },
+            visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } }
+          }}
         >
           Service Package Suite: <span className="text-yellow-400">AI Growth Engine</span>
         </motion.h1>
         <motion.p
           className="text-base md:text-xl font-semibold text-white mb-3"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: false, amount: 0.3 }}
+          variants={{
+            hidden: { opacity: 0, y: 30 },
+            visible: { opacity: 1, y: 0, transition: { duration: 0.7, delay: 0.2, ease: "easeOut" } }
+          }}
         >
           A 3-tier consulting offer from our AI-driven <span className="text-yellow-400">eCommerce Growth Agency.</span>
         </motion.p>
         <motion.p
           className="text-base md:text-xl font-semibold text-white"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.4, ease: "easeOut" }}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: false, amount: 0.3 }}
+          variants={{
+            hidden: { opacity: 0, y: 20 },
+            visible: { opacity: 1, y: 0, transition: { duration: 0.7, delay: 0.4, ease: "easeOut" } }
+          }}
         >
           Each package is fully modular, strategically differentiated, and embedded<br />
           with proprietary AI systems.

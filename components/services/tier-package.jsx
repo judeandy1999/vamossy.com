@@ -58,7 +58,7 @@ export default function TierPackage({
                 {whatsIncluded.map((item, idx) => (
                   <li key={idx} className="flex items-start">
                     <img
-                      src="/services-images/list-icon.webp"
+                      src="/list-icon.webp"
                       alt="list icon"
                       className="mt-1 mr-2 w-5 h-4 object-contain"
                       loading="lazy"
@@ -78,7 +78,7 @@ export default function TierPackage({
                 {embeddedAISystems.map((item, idx) => (
                   <li key={idx} className="flex items-start">
                     <img
-                      src="/services-images/list-icon.webp"
+                      src="/list-icon.webp"
                       alt="list icon"
                       className="mt-1 mr-2 w-5 h-4 object-contain"
                       loading="lazy"
@@ -95,7 +95,7 @@ export default function TierPackage({
                 {deliverables.map((item, idx) => (
                   <li key={idx} className="flex items-start">
                     <img
-                      src="/services-images/list-icon.webp"
+                      src="/list-icon.webp"
                       alt="list icon"
                       className="mt-1 mr-2 w-5 h-4 object-contain"
                       loading="lazy"
