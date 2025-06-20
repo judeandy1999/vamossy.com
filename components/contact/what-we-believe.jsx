@@ -40,6 +40,7 @@ export default function WhatWeBelieve() {
             What We Believe
           </span>
         </motion.h2>
+        {/**/}
         <div className="bg-[#323232] rounded-xl shadow-lg p-6 md:p-10 mb-10">
           <ul className="space-y-6">
             {items.map((item, idx) => (
