@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import Button from "@/components/ui/button";
+import Container from "@/components/ui/container";
 
 export default function ContactUs() {
   const [formData, setFormData] = useState({
@@ -51,7 +52,7 @@ export default function ContactUs() {
   };
 
   return (
-    <section className="relative py-8 md:py-16 px-4 bg-gradient-to-br from-[#262626] via-gray-800 to-gray-900">
+    <Container variant="gray-gradient">
       <div className="relative max-w-3xl mx-auto">
         
         {/* Header Section */}
@@ -125,6 +126,6 @@ export default function ContactUs() {
           </form>
         </motion.div>
       </div>
-    </section>
+    </Container>
   );
 }
