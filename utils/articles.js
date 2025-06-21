@@ -21,7 +21,7 @@ export async function createArticle(newArticle) {
         Authorization: `Bearer ${accessToken}`,
         'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
       },
-      body: JSON.stringify(articleData), // Only article data, no tabs
+      body: JSON.stringify(articleData),
     });
 
     if (!res.ok) {
