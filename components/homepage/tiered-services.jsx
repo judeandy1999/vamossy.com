@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { tieredServices } from '@/data/data';
 import { Check, Minus, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
+import Title from "@/components/ui/title";
 
 export default function TieredServices() {
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -109,20 +110,8 @@ export default function TieredServices() {
 
       <div className="relative max-w-7xl mx-auto">
         {/* Title */}
-        <motion.div
-          className="text-center mb-4 lg:mb-16"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }}
-          variants={titleVariants}
-        >
-          <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
-            {tieredServices.title}
-          </h2>
-          <h3 className="text-2xl md:text-4xl lg:text-5xl font-bold text-white">
-            {tieredServices.subtitle}
-          </h3>
-        </motion.div>
+        <Title title={tieredServices.title} variant="h2" />
+        <Title title={tieredServices.subtitle} variant="h2" />
 
         {/* Mobile Scroll Hint */}
         <div className="block lg:hidden mb-4">
