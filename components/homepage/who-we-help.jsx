@@ -3,19 +3,9 @@
 import { motion } from "framer-motion";
 import { Play } from 'lucide-react';
 import { clientTypes, growthSteps } from '@/data/data';
+import Title from "@/components/ui/title";
 
 export default function WhoWeHelp() {
-	const titleVariants = {
-		hidden: { opacity: 0, x: -100 },
-		visible: {
-			opacity: 1,
-			x: 0,
-			transition: {
-				duration: 1,
-				ease: "easeOut",
-			},
-		},
-	};
 
   const secondTitleVariants = {
 		hidden: { opacity: 0, x: 100 },
@@ -89,25 +79,12 @@ export default function WhoWeHelp() {
 	return (
 		<section className="relative min-h-screen py-8 lg:py-16 px-4 bg-gradient-to-b from-[#262626] via-gray-800 to-gray-900 overflow-hidden">
       <div className="relative max-w-6xl mx-auto">
-				{/* Header */}
-				<motion.div
-					className="mb-8 text-center md:text-left"
-					initial="hidden"
-					whileInView="visible"
-					viewport={{ once: false, amount: 0.3 }}
-					variants={titleVariants}
-				>
-					<h2 className="text-2xl md:text-5xl lg:text-6xl font-semibold bg-gradient-to-r from-white via-white to-yellow-200 bg-clip-text text-transparent">
-						Who We Help
-					</h2>
-					<div className="m-auto md:m-px w-16 h-[2px] lg:w-32 lg:h-1 bg-gradient-to-r from-transparent via-yellow-500 to-transparent mb-4 relative">
-						<div className="absolute inset-0 bg-gradient-to-r from-transparent via-yellow-400 to-transparent blur-sm"></div>
-					</div>
-				</motion.div>
-
+				<div className="text-center md:text-left">
+					<Title title="Who We Help" variant="h2" titlePosition="left" underlineEffect={true} animationVariant="leftToRight" />
+				</div>
 				{/* Client Types List */}
 				<motion.div
-					className="space-y-8 mb-8 lg:mb-16"
+					className="space-y-8 mb-8 lg:mb-8"
 					initial="hidden"
 					whileInView="visible"
 					viewport={{ once: false, amount: 0.2 }}
@@ -176,21 +153,9 @@ export default function WhoWeHelp() {
 					</div>
 				</motion.div>
 
-        {/* Header */}
-				<motion.div
-					className="mt-8 mb-8 lg:mt-16 text-center md:text-right"
-					initial="hidden"
-					whileInView="visible"
-					viewport={{ once: false, amount: 0.3 }}
-					variants={secondTitleVariants}
-				>
-					<h2 className="text-2xl md:text-5xl lg:text-6xl font-semibold bg-gradient-to-l from-white via-white to-yellow-200 bg-clip-text text-transparent">
-						How We Drive Growth
-					</h2>
-					<div className="mt-2 m-auto md:mr-0 w-16 h-[2px] lg:w-32 lg:h-1 bg-gradient-to-r from-transparent via-yellow-500 to-transparent mb-4 relative">
-						<div className="absolute inset-0 bg-gradient-to-r from-transparent via-yellow-400 to-transparent blur-sm"></div>
-					</div>
-				</motion.div>
+        <div className="mt-8 mb-8 text-center md:text-right">
+					<Title title="How We Drive Growth" titlePosition="right" variant="h2" underlineEffect={true} animationVariant="rightToLeft" />
+				</div>
 
         <motion.div
           className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12"
