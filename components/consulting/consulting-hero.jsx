@@ -3,43 +3,6 @@ import { motion } from 'framer-motion';
 import Title from '@/components/ui/title';  
 
 export default function ConsultingHero() {
-  const h1Variants = {
-    hidden: { opacity: 0, y: -50 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 1,
-        ease: 'easeOut',
-      },
-    },
-  };
-
-  const subheadingVariants = {
-    hidden: { opacity: 0, y: 40 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 1,
-        delay: 0.2,
-        ease: 'easeOut',
-      },
-    },
-  };
-
-  const paragraphVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 1,
-        delay: 0.4,
-        ease: 'easeOut',
-      },
-    },
-  };
 
   return (
     <section className="relative text-gray-100 h-[100vh] w-full overflow-hidden">
