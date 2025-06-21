@@ -1,3 +1,6 @@
+import { FaChartBar, FaRocket, FaPuzzlePiece, FaUsers } from 'react-icons/fa';
+
+
 export const categories = [
   "Home Services",
   "Medical",
@@ -887,4 +890,83 @@ export const brandWorkWithUs = {
 // About page data ends here
 
 // Consulting page data starts here
+
+export const expertiseData = [
+  {
+    icon: FaChartBar,
+    title: 'Business Intelligence',
+    description: 'We help you uncover hidden truths about your market, customers, and competitors.',
+    deliverables: [
+      'Full-stack audits, diagnostics, and digital footprint scans',
+      'Market research, industry benchmarks, and performance mapping',
+      'Competitive intelligence & strategic positioning analysis',
+      'Customer segmentation, intent modeling, and value matrix development',
+    ],
+  },
+  {
+    icon: FaRocket,
+    title: 'Growth Consulting',
+    description: 'We engineer data-informed growth strategies that align with your unique customer journeys and business model.',
+    deliverables: [
+      'All-inclusive funnel and lifecycle diagnostics',
+      'SEO, CRO, and product/category page optimization',
+      'Marketing channel strategy & execution logic',
+      'Brand voice, content rewrites, UX/UI improvements',
+      'A/B testing protocols using AI agents and predictive models',
+    ],
+  },
+  {
+    icon: FaPuzzlePiece,
+    title: 'Organizational Development',
+    description: 'We empower your teams and workflows to operate at AI-native speed and scale.',
+    deliverables: [
+      'Business workflow automation, AI-Ops and prompt engineering',
+      'KPI dashboards, decision frameworks, and growth systems',
+      'SOP and process development for marketing and product ops',
+      'Internal enablement tools: company wikis, internal agents, content pipelines',
+      'Gamified systems and campaign flow orchestration',
+    ],
+  },
+  {
+    icon: FaUsers,
+    title: 'Human Resource & Capability Development',
+    description: 'We ensure your people are AI-empowered, strategically aligned, and future-ready.',
+    deliverables: [
+      'Role enablement via custom GPTs, task-specific assistant agents',
+      'Training programs for AI-assisted workflows and tools',
+      'System onboarding, motivation frameworks, and AI literacy enablement',
+      'Bespoke coaching for in-house marketers, strategists, and ops teams',
+    ],
+  },
+];
+
+export const ourProcess = [
+  {
+    step: '1',
+    title: 'Diagnosis',
+    description: 'Deep discovery, audit, and stakeholder interviews',
+  },
+  {
+    step: '2',
+    title: 'Blueprint',
+    description: 'Custom solution maps + prioritization frameworks',
+  },
+  {
+    step: '3',
+    title: 'Prototyping & Enablement',
+    description: 'Guided execution or full rollout',
+  },
+  {
+    step: '4',
+    title: 'Capability Transfer',
+    description: 'Internal systems, documentation, and training',
+  },
+];
+
+export const whyClientsWorkWithUs = [
+  "We solve the right problems, not just visible symptoms",
+  "We integrate AI technology, human creativity, and strategic intelligence",
+  "We produce tools, workflows, and frameworks clients reuse for years",
+  "We create change that compounds",
+];
 

@@ -1,6 +1,9 @@
 import React from 'react';
 import Footer from '@/components/shared/footer';
 import ConsultingHero from '@/components/consulting/consulting-hero';
+import ExpertiseSection from '@/components/consulting/expertise-framework';
+import OurProcess from '@/components/consulting/our-process';
+import WhyClientsWorkWithUs from '@/components/consulting/why-clients-work-with-us';
 
 
 export default function Page() {
@@ -16,6 +19,9 @@ export default function Page() {
       </div>
       <div className="relative z-10">
         <ConsultingHero />
+        <ExpertiseSection />
+        <WhyClientsWorkWithUs />
+        <OurProcess />
         <Footer />
       </div>
     </div>
