@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Check, FileText } from 'lucide-react';
 import { useState } from 'react';
 import Title from "@/components/ui/title";
+import Container from "@/components/ui/container";
 import HeroButton from "@/components/ui/hero-button";
 import HubSpotCalendar from "@/components/ui/hubspot-calendar";
 
@@ -34,7 +35,7 @@ export default function Hero() {
 
   return (
     <>
-      <section className="relative text-gray-100 h-[100vh] w-full overflow-hidden">
+      <Container variant="transparent" className="h-[100vh]">
         <motion.div
           className="relative z-1 h-full flex flex-col items-center justify-center"
           initial="hidden"
@@ -67,8 +68,7 @@ export default function Hero() {
           </motion.div>
         </motion.div>
         
-        <div className="absolute bottom-0 left-0 w-full h-52 bg-gradient-to-b from-transparent to-[#262626] z-10"></div>
-      </section>
+      </Container>
 
       <HubSpotCalendar 
         isOpen={showCalendar} 

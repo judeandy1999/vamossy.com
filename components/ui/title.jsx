@@ -61,19 +61,6 @@ export default function Title({
     }
   };
 
-  const getTitlePosition = (titlePosition) => {
-    switch (titlePosition) {
-      case 'left':
-        return 'left';
-      case 'right':
-        return 'right';
-      case 'center':
-        return 'center';
-      default:
-        return 'center';
-    }
-  };
-
   const getClasses = (variant) => {
     const baseClasses = `${titlePosition === 'center' ? 'items-center text-center' : titlePosition === 'left' ? 'md:items-start md:text-left' : 'md:items-end md:text-right' } mb-2 md:mb-4 flex flex-col justify-center px-6 text-gray-100 leading-tight`;
     const underlineEffectClasses = underlineEffect
@@ -81,11 +68,11 @@ export default function Title({
     
     switch (variant) {
       case 'h1':
-        return `${baseClasses} ${underlineEffectClasses} text-3xl font-semibold md:text-5xl lg:text-6xl md:max-w-[80%]`;
+        return `${baseClasses} ${underlineEffectClasses} text-3xl font-semibold md:text-4xl lg:text-5xl md:max-w-[80%]`;
       case 'h2':
-        return `${baseClasses} ${underlineEffectClasses} text-3xl font-semibold md:text-5xl lg:text-6xl`;
+        return `${baseClasses} ${underlineEffectClasses} text-3xl font-semibold md:text-4xl lg:text-5xl`;
       case 'h3':
-        return `${baseClasses} ${underlineEffectClasses} text-xl md:text-3xl lg:text-4xl font-normal max-w-full`;
+        return `${baseClasses} ${underlineEffectClasses} text-xl md:text-3xl lg:text-4xl font-normal max-w-full md:max-w-[80%]`;
       case 'h4':
         return `${baseClasses} ${underlineEffectClasses} text-sm !flex-row !mb-0 !md:mb-4 text-gray-200 md:text-xl lg:text-2xl mt-2 font-light md:max-w-[60%]`;
       default:
@@ -94,7 +81,7 @@ export default function Title({
   };
 
   const MotionComponent = motion[variant] || motion.h1;
-console.log( animationVariant, getAnimationVariant(animationVariant) );
+
   return (
     <MotionComponent
       className={getClasses(variant)}
