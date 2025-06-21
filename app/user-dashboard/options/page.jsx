@@ -6,7 +6,6 @@ import { Plus, Trash } from 'lucide-react';
 import Spinner from '@/components/ui/spinner';
 import Modal from '@/components/ui/modal';
 import { useAuthWithRedirect } from '@/hooks/useAuthWithRedirect';
-import { redirect } from 'next/navigation'
 
 export default function Page() {
   const { status, session, role } = useAuthWithRedirect();
