@@ -5,6 +5,7 @@ import { testimonials } from '@/data/data';
 import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
 import { useState } from 'react';
 import Title from "@/components/ui/title";
+import Container from "@/components/ui/container";
 
 export default function ProofThroughPerspective() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -141,12 +142,7 @@ export default function ProofThroughPerspective() {
   );
 
   return (
-    <section className="relative min-h-screen py-16 lg:py-24 px-4 bg-gradient-to-br from-gray-900 via-blue-900/30 to-gray-800 overflow-hidden">
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-20 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
-      </div>
-
+    <Container variant="transparent-gradient">
       <div className="relative max-w-7xl mx-auto">
         {/* Title */}
 
@@ -258,6 +254,6 @@ export default function ProofThroughPerspective() {
           </div>
         </div>
       </div>
-    </section>
+    </Container>
   );
 }
