@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { uniqueSolutions } from '@/data/data';
 import { Settings, Target, Bot, ClipboardCheck, Package } from 'lucide-react';
+import Title from "@/components/ui/title";
 
 export default function UniqueSolutions() {
   const iconMap = {
@@ -68,17 +69,7 @@ export default function UniqueSolutions() {
 
       <div className="relative max-w-7xl mx-auto">
         {/* Title */}
-        <motion.div
-          className="text-center mb-16"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: false, amount: 0.3 }}
-          variants={titleVariants}
-        >
-          <h2 className="text-2xl md:text-5xl lg:text-6xl font-semibold bg-gradient-to-r from-white via-white to-yellow-200 bg-clip-text text-transparent">
-            {uniqueSolutions.title}
-          </h2>
-        </motion.div>
+        <Title title={uniqueSolutions.title} variant="h2"/>
 
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
