@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { testimonials } from '@/data/data';
 import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
 import { useState } from 'react';
+import Title from "@/components/ui/title";
 
 export default function ProofThroughPerspective() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -148,17 +149,8 @@ export default function ProofThroughPerspective() {
 
       <div className="relative max-w-7xl mx-auto">
         {/* Title */}
-        <motion.div
-          className="text-center mb-4 lg:mb-8"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: false, amount: 0.3 }}
-          variants={titleVariants}
-        >
-          <h2 className="text-2xl md:text-5xl lg:text-6xl font-semibold bg-gradient-to-r from-white via-white to-blue-200 bg-clip-text text-transparent">
-            {testimonials.title}
-          </h2>
-        </motion.div>
+
+         <Title title={testimonials.title} variant="h2"/>
 
         {/* Testimonials Container */}
         <div className="relative">
