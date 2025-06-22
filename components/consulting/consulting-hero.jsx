@@ -1,12 +1,12 @@
 'use client';
 import { motion } from 'framer-motion';
 import Title from '@/components/ui/title';  
+import Container from "@/components/ui/container";
 
 export default function ConsultingHero() {
 
   return (
-    <section className="relative text-gray-100 h-[100vh] w-full overflow-hidden">
-        <div className="absolute inset-0 backdrop-blur-sm"></div>
+    <Container variant="transparent" className="h-[100vh]">
       <motion.div
         className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6"
         initial="hidden"
@@ -18,6 +18,6 @@ export default function ConsultingHero() {
         <Title variant="h4" title="We don't offer generic playbooks. We engineer outcomes." />
    
       </motion.div>
-    </section>
+    </Container>
   );
 }
