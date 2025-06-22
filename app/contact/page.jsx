@@ -2,6 +2,7 @@ import PageWrapper from '@/components/page-wrapper';
 import ContactUs from '@/components/homepage/contact-us';
 import ContactHero from '@/components/contact/contact-hero';
 import WhatWeBelieve from '@/components/contact/what-we-believe';
+import Footer from '@/components/shared/footer';
 
 
 export default function Page() {
@@ -19,7 +20,8 @@ export default function Page() {
             <ContactHero />
             <WhatWeBelieve />
             <ContactUs />
-          </div>  
+            <Footer />
+          </div>
         </div>
   );
 }
