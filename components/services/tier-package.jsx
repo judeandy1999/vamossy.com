@@ -1,3 +1,7 @@
+
+import Title from '@/components/ui/title'; 
+import Container from '@/components/ui/container';
+
 export default function TierPackage({
   title,
   subtitle,
@@ -7,19 +11,13 @@ export default function TierPackage({
   deliverables = [],
 }) {
   return (
-    <section className="min-h-screen flex flex-col justify-center py-8 sm:py-12 md:py-16">
+    <Container variant="transparent-gradient">
       <div className="max-w-6xl mx-auto px-4">
-        <div className="bg-[#373535] border border-yellow-400 rounded-2xl shadow-xl p-6 sm:p-10 md:p-14">
+        <Container variant="gray-gradient" className="border border-yellow-400 rounded-2xl shadow-xl p-6 sm:p-10 md:p-14">
           {/* Header */}
-          <div className="text-center mb-8 sm:mb-10 md:mb-12">
-            <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-white drop-shadow-lg">
-              {title}
-            </h2>
-            <div className="h-1 w-20 sm:w-24 bg-yellow-500 mx-auto mt-2 mb-4 sm:mb-6 rounded"></div>
-            <div className="text-base sm:text-xl md:text-2xl font-medium text-gray-200">
-              {subtitle}
-            </div>
-          </div>
+
+          <Title variant="h2" title={title} underlineEffect={true}/>
+          <Title variant="h5" title={subtitle} className="!mb-4"/>
 
           {/* Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
@@ -36,12 +34,8 @@ export default function TierPackage({
                     loading="lazy"
                   />
                 </div>
-                <h3 className="text-xl sm:text-2xl font-bold text-white mb-2 text-center">
-                  {card.label}
-                </h3>
-                <p className="text-base sm:text-lg text-gray-300 text-center">
-                  {card.description}
-                </p>
+                <Title variant="h3-full" title={card.label} />
+                <Title variant="h6" title={card.description}/>
               </div>
             ))}
           </div>
@@ -106,8 +100,8 @@ export default function TierPackage({
               </ul>
             </div>
           </div>
-        </div>
+        </Container>
       </div>
-    </section>
+    </Container>
   );
 }
