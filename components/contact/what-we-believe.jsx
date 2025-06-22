@@ -1,6 +1,8 @@
 "use client";
 import React from "react";
 import { motion } from "framer-motion";
+import Title from "@/components/ui/title";
+import Container from "@/components/ui/container";
 import { whatWeBelieve } from "../../data/data";
 
 const bulletIcon = "/list-icon.webp";
@@ -28,20 +30,21 @@ export default function WhatWeBelieve() {
   const items = whatWeBelieve?.items || [];
 
   return (
-    <section className="w-full py-16 bg-[#232323]">
-      <div className="max-w-4xl mx-auto px-4">
-        <motion.h2
-          className="text-3xl md:text-4xl font-bold mb-8 flex items-center gap-3 text-white"
-          initial={{ opacity: 0, x: -40 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5 }}
+    <Container variant="gray" className="py-20 relative">
+      
+      <div className="relative z-10 max-w-4xl mx-auto px-4">
+        <Title
+          variant="h2"
+          title="What We Believe"
+          underlineEffect={true}
+          className="mb-10 text-white text-center"
+        />
+        <motion.div
+          className="relative h-full mb-10 p-8 bg-gray-800/50 backdrop-blur-sm border-2 border-yellow-500 rounded-2xl"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7 }}
         >
-          <span className="border-l-4 border-yellow-400 pl-3">
-            What We Believe
-          </span>
-        </motion.h2>
-        {/**/}
-        <div className="bg-[#323232] rounded-xl shadow-lg p-6 md:p-10 mb-10">
           <ul className="space-y-6">
             {items.map((item, idx) => (
               <motion.li
@@ -50,6 +53,7 @@ export default function WhatWeBelieve() {
                 custom={idx}
                 initial="hidden"
                 whileInView="visible"
+                viewport={{ once: true, amount: 0.3 }}
                 variants={listVariants}
               >
                 <img
@@ -59,15 +63,15 @@ export default function WhatWeBelieve() {
                   style={{ minWidth: 20 }}
                   loading="lazy"
                 />
-                <span className="text-base md:text-lg text-white">
+                <span className="text-base md:text-lg text-gray-100">
                   {item}
                 </span>
               </motion.li>
             ))}
           </ul>
-        </div>
+        </motion.div>
         {/* Steps Section */}
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-3 gap-8">
           {(whatWeBelieve?.steps || [
             {
               number: 1,
@@ -89,20 +93,21 @@ export default function WhatWeBelieve() {
           ]).map((step, idx) => (
             <motion.div
               key={idx}
-              className="bg-[#323232] rounded-xl shadow-md p-6 flex flex-col items-center border border-yellow-400"
+              className="bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-lg p-8 flex flex-col items-center border border-yellow-400"
               custom={idx}
               initial="hidden"
               whileInView="visible"
+              viewport={{ once: true, amount: 0.3 }}
               variants={stepVariants}
             >
-              <div className="w-12 h-12 flex items-center justify-center bg-yellow-400 text-xl font-bold rounded-full mb-4 text-black">
+              <div className="w-12 h-12 flex items-center justify-center bg-yellow-400 text-xl font-bold rounded-full mb-4 text-black shadow">
                 {step.number}
               </div>
               <div className="text-center font-semibold mb-2 text-white">
                 {step.text}
               </div>
               {step.list && (
-                <ul className="text-left mt-2 space-y-1 text-sm text-white">
+                <ul className="text-left mt-2 space-y-1 text-sm text-gray-100">
                   {step.list.map((li, i) => (
                     <li key={i}>• {li}</li>
                   ))}
@@ -112,6 +117,6 @@ export default function WhatWeBelieve() {
           ))}
         </div>
       </div>
-    </section>
+    </Container>
   );
 }
