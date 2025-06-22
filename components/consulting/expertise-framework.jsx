@@ -1,6 +1,8 @@
 "use client";
 import { expertiseData } from '@/data/data';
 import { motion } from "framer-motion";
+import Title from '@/components/ui/title';
+import Container from "@/components/ui/container";
 
 const cardVariants = {
   hidden: { opacity: 0, y: 40 },
@@ -16,37 +18,13 @@ const cardVariants = {
   }),
 };
 
-const headingVariants = {
-  hidden: { opacity: 0, y: -30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7, type: "spring", stiffness: 60 } },
-};
-
-const subheadingVariants = {
-  hidden: { opacity: 0, y: -10 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7, delay: 0.2, type: "spring", stiffness: 60 } },
-};
-
 export default function ExpertiseSection() {
   return (
-    <section className="bg-[#0B0F1A] text-white py-20 px-4 sm:px-10 lg:px-20">
-      <motion.h2
-        className="text-3xl sm:text-5xl font-bold text-center mb-2 text-yellow-400"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: false, amount: 0.5 }}
-        variants={headingVariants}
-      >
-        🧠 Our Expertise Framework
-      </motion.h2>
-      <motion.p
-        className="text-center text-white text-lg font-bold mb-12"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: false, amount: 0.5 }}
-        variants={subheadingVariants}
-      >
-        We organize our consulting capabilities into four core verticals:
-      </motion.p>
+    <Container variant="gray">
+
+      <Title className="text-yellow-400" variant="h2" title="Our Expertise Framework"/>
+      <Title variant="h5" title="We organize our consulting capabilities into four core verticals:"/>
+      
       <div className="grid md:grid-cols-2 gap-10">
         {expertiseData.map((item, index) => {
           const Icon = item.icon;
@@ -62,7 +40,7 @@ export default function ExpertiseSection() {
             >
               <div className="flex items-center gap-3 mb-4">
                 <Icon className="text-yellow-400 text-2xl" />
-                <h3 className="text-xl font-semibold">{item.title}</h3>
+                <h3 className="text-xl text-white font-semibold">{item.title}</h3>
               </div>
               <p className="text-sm mb-6 text-gray-300">{item.description}</p>
               <div className="space-y-3">
@@ -84,6 +62,6 @@ export default function ExpertiseSection() {
           );
         })}
       </div>
-    </section>
+    </Container>
   );
 }
