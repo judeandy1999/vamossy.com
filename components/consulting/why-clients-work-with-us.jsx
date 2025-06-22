@@ -1,13 +1,13 @@
 import { whyClientsWorkWithUs } from '@/data/data';
+import Title from '@/components/ui/title'; 
+import Container from '@/components/ui/container';
 
 export default function WhyClientsWorkWithUs() {
   return (
-    <section className="w-full py-20 px-4 sm:px-10 lg:px-20 flex items-center justify-center min-h-[60vh]">
+    <Container variant="transparent-gradient">
       <div className="bg-[#151B2C] border border-yellow-400 rounded-2xl shadow-lg flex flex-col items-center w-full max-w-[100ch] mx-auto p-10">
-        <h2 className="text-4xl sm:text-5xl font-bold text-yellow-400 mb-10 flex items-center gap-3 text-center">
-          <span role="img" aria-label="dna">🧬</span>
-          <span>Why Clients Work With Us</span>
-        </h2>
+        
+        <Title variant="h2" title="Why Clients Work With Us" className="text-yellow-400"/>
         <div className="flex flex-col gap-8 w-full">
           {whyClientsWorkWithUs.map((item, idx) => (
             <div
@@ -20,6 +20,6 @@ export default function WhyClientsWorkWithUs() {
           ))}
         </div>
       </div>
-    </section>
+    </Container>
   );
 }
