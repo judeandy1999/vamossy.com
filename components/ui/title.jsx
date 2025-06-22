@@ -9,7 +9,8 @@ export default function Title({
   typewriter = false, 
   underlineEffect = false, 
   titlePosition = 'center', 
-  animationVariant = 'topToBottom' 
+  animationVariant = 'topToBottom',
+  className ='',
 }) {
 
   const topToBottom = {
@@ -62,7 +63,7 @@ export default function Title({
   };
 
   const getClasses = (variant) => {
-    const baseClasses = `${titlePosition === 'center' ? 'items-center text-center' : titlePosition === 'left' ? 'md:items-start md:text-left' : 'md:items-end md:text-right' } mb-2 md:mb-4 flex flex-col justify-center px-6 text-gray-100 leading-tight`;
+    const baseClasses = `${titlePosition === 'center' ? 'items-center text-center' : titlePosition === 'left' ? 'md:items-start md:text-left' : 'md:items-end md:text-right' } ${className} mb-2 md:mb-4 flex flex-col justify-center px-6 text-gray-100 leading-tight`;
     const underlineEffectClasses = underlineEffect
       && `${animationVariant === 'leftToRight' ? 'bg-gradient-to-l' : 'bg-gradient-to-r'} from-white via-white to-yellow-200 bg-clip-text text-transparent md:max-w-full`;
     
@@ -73,8 +74,14 @@ export default function Title({
         return `${baseClasses} ${underlineEffectClasses} text-3xl font-semibold md:text-4xl lg:text-5xl`;
       case 'h3':
         return `${baseClasses} ${underlineEffectClasses} text-xl md:text-3xl lg:text-4xl font-normal max-w-full md:max-w-[80%]`;
+      case 'h3-full':
+        return `${baseClasses} ${underlineEffectClasses} text-xl md:text-3xl lg:text-4xl font-normal max-w-full`;
       case 'h4':
         return `${baseClasses} ${underlineEffectClasses} text-sm !flex-row !mb-0 !md:mb-4 text-gray-200 md:text-xl lg:text-2xl mt-2 font-light md:max-w-[60%]`;
+      case 'h5':
+        return `${baseClasses} ${underlineEffectClasses} text-sm !flex-row !mb-0 !md:mb-4 text-gray-200 md:text-xl lg:text-2xl mt-2 font-light`;
+      case 'h6':
+        return `${baseClasses} ${underlineEffectClasses} text-sm !flex-row !mb-0 !md:mb-4 text-gray-200 md:text-xl lg:text-xl mt-2 font-light`;
       default:
         return `${baseClasses} ${underlineEffectClasses} text-xl md:text-5xl lg:text-6xl`;
     }
@@ -106,7 +113,7 @@ export default function Title({
         title
       )}
       { underlineEffect &&
-        <div className={`m-auto ${animationVariant === 'leftToRight' ? 'md:ml-0' : 'md:mr-0'} w-16 h-[2px] md:w-32 lg:h-1 bg-gradient-to-r from-transparent via-yellow-500 to-transparent mb-4 relative`}>
+        <div className={`m-auto ${animationVariant === 'leftToRight' ? 'md:ml-0' : animationVariant === 'rightToLeft' ? 'md:mr-0' : 'md:m-auto'} w-16 h-[2px] md:w-32 lg:h-1 bg-gradient-to-r from-transparent via-yellow-500 to-transparent mb-4 relative`}>
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-yellow-400 to-transparent blur-sm"></div>
         </div>
       }
