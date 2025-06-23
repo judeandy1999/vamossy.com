@@ -2,14 +2,7 @@ import { supabase } from '@/utils/client';
 import { authenticate } from '@/lib/authMiddleware';
 import { verifySupabaseAuth } from '@/utils/verifySupabaseAuth';
 
-export default async function handler(req, res) {
-  console.log('=== Evaluate Log API Called ===');
-  console.log('Method:', req.method);
-  console.log('Headers:', {
-    authorization: req.headers.authorization ? 'present' : 'missing',
-    internal: req.headers['x-internal-request'] ? 'present' : 'missing'
-  });
-  
+export default async function handler(req, res) {  
   if (!authenticate(req, res)) return;
 
   if (req.method !== 'POST') {
@@ -24,10 +17,7 @@ export default async function handler(req, res) {
       return res.status(401).json({ error: authError });
     }
 
-    console.log('User authenticated:', user.id);
-
     const { logId, taskId, logContent, fileUrl } = req.body;
-    console.log('Request body:', { logId, taskId, logContent: logContent ? 'present' : 'missing', fileUrl });
 
     if (!logId || !taskId) {
       return res.status(400).json({ error: 'Missing required fields: logId and taskId' });
