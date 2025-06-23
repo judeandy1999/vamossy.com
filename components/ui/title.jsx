@@ -10,6 +10,7 @@ export default function Title({
   underlineEffect = false, 
   titlePosition = 'center', 
   animationVariant = 'topToBottom',
+  heroViewport = false,
   className ='',
 }) {
 
@@ -48,6 +49,12 @@ export default function Title({
 			},
 		},
 	};
+
+  const heroViewportVariants = (heroViewport) => {
+    return heroViewport
+    ? { once: true, amount: 0.3 }
+    : { once: false, amount: 0.3 };
+  }
 
   const getAnimationVariant = (animationVariant) => {
     switch (animationVariant) {
@@ -93,9 +100,9 @@ export default function Title({
     <MotionComponent
       className={getClasses(variant)}
       variants={getAnimationVariant(animationVariant)}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: false, amount: 0.3 }}
+       initial="hidden"
+       whileInView="visible"
+      viewport={heroViewportVariants(heroViewport)}
     >
       {typewriter ? (
         <Typewriter
