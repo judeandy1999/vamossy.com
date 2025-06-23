@@ -19,7 +19,6 @@ export default function ContactHero() {
         >
           <Title
           title="Let’s Map Your Growth System"
-          heroViewport={true}
           animationVariant="topToBottom"
           className="md:mb-6 text-white item-center md:items-start justify-start text-center md:text-left"
           />
