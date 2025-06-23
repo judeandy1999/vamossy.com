@@ -5,7 +5,7 @@ import { useState } from "react";
 import Button from "@/components/ui/button";
 import Container from "@/components/ui/container";
 
-export default function ContactUs({ variant, size = 'lg', animateOnce = false }) {
+export default function ContactUs({ variant, size = 'lg'}) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -84,7 +84,7 @@ console.log(variant);
           className="text-center mb-4 md:mb-6"
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: animateOnce, amount: 0.3 }}
+          viewport={{ once: false, amount: 0.3 }}
           variants={titleVariants}
         >
           <h2 className={`${getTitleSize(size)} font-semibold mb-2 text-gray-100 tracking-wide`}>
@@ -99,7 +99,7 @@ console.log(variant);
         <motion.div
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: animateOnce, amount: 0.3 }}
+          viewport={{ once: false, amount: 0.3 }}
           variants={formVariants}
         >
           <form onSubmit={handleSubmit} className="space-y-2 md:space-y-6">
