@@ -6,71 +6,41 @@ import Container from '@/components/ui/container';
 export default function ServicesHero() {
 
   return (
-    <Container variant="transparent" className="h-[100vh]">
-      
+    <Container
+      variant="transparent-gradient"
+      className="h-[100vh] flex flex-col justify-center items-center bg-gradient-to-b from-background to-transparent relative"
+    >
       <motion.div
-          className="relative z-1 h-full flex flex-col items-center justify-center"
-          initial="hidden"
-          animate="visible"
-        >
-
-        <Title variant="h2" title="Service Package Suite: AI Growth Engine"/>
-        <Title variant="h3" title="A 3-tier consulting offer from our AI-driven eCommerce Growth Agency." />
-        <Title variant="h4" title="Each package is fully modular, strategically differentiated, and embedded with proprietary AI systems." />
-        
-        {/* 
-        <div className="flex flex-col md:flex-row gap-4 mt-8">
-          <motion.div 
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: false, amount: 0.5 }}
-            variants={leftSectionVariants}
-            className="bg-white text-black rounded-lg p-6 shadow-md w-full md:w-[30%]"
-          >
-            <h3 className="text-xl font-bold mb-2">Starter Package</h3>
-            <p className="text-sm mb-4">
-              Ideal for small businesses or startups looking to establish an online presence.
-            </p>
-            <a href="#" className="text-blue-500 font-semibold text-sm">
-              Learn More
-            </a>
-          </motion.div>
-
-          <motion.div 
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: false, amount: 0.5 }}
-            variants={rightSectionVariants}
-            className="bg-white text-black rounded-lg p-6 shadow-md w-full md:w-[30%]"
-          >
-            <h3 className="text-xl font-bold mb-2">Growth Package</h3>
-            <p className="text-sm mb-4">
-              Perfect for growing businesses aiming to enhance their digital marketing efforts.
-            </p>
-            <a href="#" className="text-blue-500 font-semibold text-sm">
-              Learn More
-            </a>
-          </motion.div>
-
-          <motion.div 
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: false, amount: 0.5 }}
-            variants={leftSectionVariants}
-            className="bg-white text-black rounded-lg p-6 shadow-md w-full md:w-[30%]"
-          >
-            <h3 className="text-xl font-bold mb-2">Pro Package</h3>
-            <p className="text-sm mb-4">
-              Comprehensive package for established businesses seeking maximum growth and ROI.
-            </p>
-            <a href="#" className="text-blue-500 font-semibold text-sm">
-              Learn More
-            </a>
-          </motion.div>
+        className="relative z-10 flex flex-col items-center justify-center text-center gap-4"
+        initial="hidden"
+        animate="visible"
+      >
+        <div className="flex flex-col items-center gap-2 mt-20">
+          <Title variant="h2" title="Service Package Suite: AI Growth Engine" />
+          <Title variant="h3" title="A 3-tier consulting offer from our AI-driven eCommerce Growth Agency." />
+          <Title variant="h4" title="Each package is fully modular, strategically differentiated, and embedded with proprietary AI systems." />
         </div>
-        */}
       </motion.div>
-    </Container>
 
+      
+      <div className="flex flex-col items-center mt-30 select-none pointer-events-none">
+        <span className="text-lg md:text-2xl font-medium text-yellow-400 tracking-wide mb-2 drop-shadow-sm">
+          Explore Packages:
+        </span>
+        <svg
+          width={48}
+          height={48}
+          viewBox="0 0 24 24"
+          fill="none"
+          className="animate-bounce text-yellow-400 drop-shadow"
+          stroke="currentColor"
+          strokeWidth={2.5}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M12 5v14M19 12l-7 7-7-7" />
+        </svg>
+      </div>
+    </Container>
   );
 }
