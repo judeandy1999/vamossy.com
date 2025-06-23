@@ -1,83 +1,24 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/utils/client';
-import { useToast } from '@/contexts/toast-context';
-import { Calendar, Star, Filter, User, FileText } from 'lucide-react';
+import { Calendar, Star, Filter, FileText } from 'lucide-react';
+import Spinner from '../ui/spinner';
 
-export default function EvaluationTable({ userRole }) {
-  const { showToast } = useToast();
-  const [evaluations, setEvaluations] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('all'); // all, daily, weekly, monthly
-  const [sortBy, setSortBy] = useState('created_at'); // created_at, score, task_title
+export default function EvaluationTable({ evaluations, fetchEvaluations, loading }) {
+  const [filter, setFilter] = useState('all');
+  const [sortBy, setSortBy] = useState('created_at');
 
   useEffect(() => {
-    fetchEvaluations();
-  }, [filter, sortBy]);
-
-  const fetchEvaluations = async () => {
-    try {
-      setLoading(true);
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        throw new Error('Not authenticated');
-      }
-
-      // Calculate date filter
-      let dateFilter = null;
-      const now = new Date();
-      
-      switch (filter) {
-        case 'daily':
-          dateFilter = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-          break;
-        case 'weekly':
-          const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-          dateFilter = weekAgo;
-          break;
-        case 'monthly':
-          const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-          dateFilter = monthAgo;
-          break;
-        default:
-          dateFilter = null;
-      }
-
-      // Build query
-      let query = supabase
-        .from('evaluations')
-        .select(`
-          *,
-          tasks (id, title, description),
-          task_logs (id, log_content, file_url)
-        `);
-
-      // Add user filter (admin can see all, workers see only their own)
-      if (userRole !== 'admin') {
-        query = query.eq('user_id', user.id);
-      }
-
-      // Add date filter
-      if (dateFilter) {
-        query = query.gte('created_at', dateFilter.toISOString());
-      }
-
-      // Add sorting
-      query = query.order(sortBy, { ascending: false });
-
-      const { data, error } = await query;
-
-      if (error) throw error;
-      setEvaluations(data || []);
-    } catch (err) {
-      console.error('Error fetching evaluations:', err);
-      showToast('Failed to load evaluations', 'error');
-    } finally {
-      setLoading(false);
+    if (fetchEvaluations) {
+      fetchEvaluations(filter, sortBy);
     }
-  };
+  }, [fetchEvaluations]);
+
+  useEffect(() => {
+    if (fetchEvaluations) {
+      fetchEvaluations(filter, sortBy);
+    }
+  }, [filter, sortBy]);
 
   const getScoreColor = (score) => {
     if (score >= 90) return 'text-green-600 bg-green-50';
@@ -88,7 +29,7 @@ export default function EvaluationTable({ userRole }) {
   };
 
   const getScoreStars = (score) => {
-    const stars = Math.round(score / 20); // Convert 0-100 to 0-5 stars
+    const stars = Math.round(score / 20);
     return Array.from({ length: 5 }, (_, i) => (
       <Star
         key={i}
@@ -110,9 +51,7 @@ export default function EvaluationTable({ userRole }) {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
+      <Spinner />
     );
   }
 
@@ -120,7 +59,7 @@ export default function EvaluationTable({ userRole }) {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold">Task Evaluations</h2>
-        <span className="text-sm text-gray-500">{evaluations.length} evaluations</span>
+        <span className="text-sm text-gray-500">{evaluations?.length || 0} evaluations</span>
       </div>
 
       {/* Filters */}
@@ -153,7 +92,7 @@ export default function EvaluationTable({ userRole }) {
       </div>
 
       {/* Evaluations Grid */}
-      {evaluations.length === 0 ? (
+      {!evaluations || evaluations.length === 0 ? (
         <div className="text-center py-12 text-gray-500">
           <FileText className="mx-auto h-12 w-12 text-gray-400" />
           <h3 className="mt-2 text-sm font-medium">No evaluations found</h3>
