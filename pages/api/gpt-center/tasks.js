@@ -2,6 +2,7 @@
 import { supabase } from '@/utils/client';
 import { authenticate } from '@/lib/authMiddleware';
 import { verifySupabaseAuth } from '@/utils/verifySupabaseAuth';
+import { getUserRole } from '@/utils/getUserRole';
 
 export default async function handler(req, res) {
   if (!authenticate(req, res)) return;
@@ -11,37 +12,42 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: authError });
   }
 
+  const userRole = await getUserRole(user.email);
+
   switch (req.method) {
     case 'GET':
-      return handleGet(req, res, user);
+      return handleGet(req, res, user, userRole);
     case 'POST':
-      return handlePost(req, res, user);
+      return handlePost(req, res, user, userRole);
     case 'PUT':
-      return handlePut(req, res, user);
+      return handlePut(req, res, user, userRole);
     case 'DELETE':
-      return handleDelete(req, res, user);
+      return handleDelete(req, res, user, userRole);
     default:
       return res.status(405).json({ error: 'Method not allowed' });
   }
 }
 
-async function handleGet(req, res, user) {
+async function handleGet(req, res, user, userRole) {
   try {
     const { all } = req.query;
-    
+
     let query = supabase
       .from('tasks')
-      .select('*, users(email, name)')
+      .select('*')
+      .eq('assigned_user_id', user.id)
       .eq('is_active', true)
       .order('created_at', { ascending: false });
 
-    // If not admin or not requesting all tasks, filter by user
-    if (!all || user.role !== 'admin') {
-      query = query.eq('assigned_user_id', user.id);
+    if (all && userRole === 'admin') {
+      query = supabase
+        .from('tasks')
+        .select('*, users(email, name)')
+        .eq('is_active', true)
+        .order('created_at', { ascending: false });
     }
 
     const { data, error } = await query;
-
     if (error) throw error;
 
     return res.status(200).json({ tasks: data });
@@ -51,14 +57,19 @@ async function handleGet(req, res, user) {
   }
 }
 
-async function handlePost(req, res, user) {
-  try {
+async function handlePost(req, res, user, userRole) {
+  try {    
     // Check if user is admin
-    if (user.role !== 'admin') {
+    if (userRole !== 'admin') {
       return res.status(403).json({ error: 'Only admins can create tasks' });
     }
 
     const { title, description, gpt_url, frequency, notification_type, assigned_user_id } = req.body;
+
+    // Validate required fields
+    if (!title || !description) {
+      return res.status(400).json({ error: 'Title and description are required' });
+    }
 
     const { data, error } = await supabase
       .from('tasks')
@@ -74,7 +85,10 @@ async function handlePost(req, res, user) {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      console.error('Supabase error:', error);
+      throw error;
+    }
 
     return res.status(201).json({ task: data });
   } catch (error) {
@@ -83,10 +97,10 @@ async function handlePost(req, res, user) {
   }
 }
 
-async function handlePut(req, res, user) {
+async function handlePut(req, res, user, userRole) {
   try {
     // Check if user is admin
-    if (user.role !== 'admin') {
+    if (userRole !== 'admin') {
       return res.status(403).json({ error: 'Only admins can update tasks' });
     }
 
@@ -108,10 +122,10 @@ async function handlePut(req, res, user) {
   }
 }
 
-async function handleDelete(req, res, user) {
+async function handleDelete(req, res, user, userRole) {
   try {
     // Check if user is admin
-    if (user.role !== 'admin') {
+    if (userRole !== 'admin') {
       return res.status(403).json({ error: 'Only admins can delete tasks' });
     }
 

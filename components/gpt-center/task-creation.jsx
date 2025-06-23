@@ -1,13 +1,14 @@
-// components/gpt-center/task-creation.jsx
 'use client';
+import { useUsers } from '@/hooks/useUsers';
 
 import { useState } from 'react';
 import { supabase } from '@/utils/client';
 import { useToast } from '@/contexts/toast-context';
 import { Plus, Users, Clock, Bell, ExternalLink } from 'lucide-react';
 
-export default function TaskCreation({ onTaskCreated }) {
+export default function TaskCreation({ createTask }) {
   const { showToast } = useToast();
+  const { users, loading: usersLoading } = useUsers();
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -16,50 +17,21 @@ export default function TaskCreation({ onTaskCreated }) {
     notification_type: 'popup',
     assigned_user_id: ''
   });
-  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showUserSelect, setShowUserSelect] = useState(false);
-
-  const fetchUsers = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('users')
-        .select('id, email, name, role')
-        .order('email');
-
-      if (error) throw error;
-      setUsers(data || []);
-      setShowUserSelect(true);
-    } catch (err) {
-      console.error('Error fetching users:', err);
-      showToast('Failed to load users', 'error');
-    }
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
+    
     try {
-      const user = (await supabase.auth.getUser()).data.user;
-      
-      const { error } = await supabase
-        .from('tasks')
-        .insert({
-          title: formData.title,
-          description: formData.description,
-          gpt_url: formData.gpt_url || null,
-          frequency: formData.frequency,
-          notification_type: formData.notification_type,
-          assigned_user_id: formData.assigned_user_id || null,
-          created_by: user.id
-        });
+      if (!formData.assigned_user_id) {
+        showToast('Please select a user to assign the task to', 'error');
+        return;
+      }
 
-      if (error) throw error;
-
-      showToast('Task created successfully!', 'success');
+      await createTask(formData);
       
-      // Reset form
       setFormData({
         title: '',
         description: '',
@@ -68,14 +40,16 @@ export default function TaskCreation({ onTaskCreated }) {
         notification_type: 'popup',
         assigned_user_id: ''
       });
-
-      onTaskCreated?.();
-    } catch (err) {
-      console.error('Error creating task:', err);
-      showToast('Failed to create task', 'error');
+      setShowUserSelect(false);
+    } catch (error) {
+      console.error('Error creating task:', error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleShowUserSelect = () => {
+    setShowUserSelect(true);
   };
 
   return (
@@ -184,7 +158,7 @@ export default function TaskCreation({ onTaskCreated }) {
           {!showUserSelect ? (
             <button
               type="button"
-              onClick={fetchUsers}
+              onClick={handleShowUserSelect}
               className="w-full px-3 py-2 border border-gray-300 rounded-md text-left text-gray-500 hover:bg-gray-50"
             >
               Click to load users...
