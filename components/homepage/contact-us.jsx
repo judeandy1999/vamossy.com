@@ -5,7 +5,7 @@ import { useState } from "react";
 import Button from "@/components/ui/button";
 import Container from "@/components/ui/container";
 
-export default function ContactUs() {
+export default function ContactUs({ variant, size = 'lg'}) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -37,6 +37,28 @@ export default function ContactUs() {
     },
   };
 
+  const getTitleSize = (size) => {
+    switch (size) {
+      case 'sm':
+        return 'text-2xl md:text-3xl lg:text-3xl';
+      case 'md':
+        return 'text-lg md:text-3xl lg:text-5xl';
+      case 'lg':
+        return 'text-xl md:text-5xl lg:text-6xl';
+    }
+  };
+
+  const getSubTitleSize = (size) => {
+    switch (size) {
+      case 'sm':
+        return 'text-sm md:text-lg lg:text-xl';
+      case 'md':
+        return 'text-sm md:text-lg lg:text-xl';
+      case 'lg':
+        return 'text-md md:text-xl lg:text-2xl';
+    }
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -51,22 +73,24 @@ export default function ContactUs() {
     console.log('Form submitted:', formData);
   };
 
+  variant = variant || 'gray-gradient';
+console.log(variant);
   return (
-    <Container variant="gray-gradient">
+    <Container variant={variant}>
       <div className="relative max-w-3xl mx-auto">
         
         {/* Header Section */}
         <motion.div
-          className="text-center mb-8"
+          className="text-center mb-4 md:mb-6"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: false, amount: 0.3 }}
           variants={titleVariants}
         >
-          <h2 className="text-xl md:text-5xl lg:text-6xl font-semibold mb-4 text-gray-100 tracking-wide">
+          <h2 className={`${getTitleSize(size)} font-semibold mb-2 text-gray-100 tracking-wide`}>
             Contact Us
           </h2>
-          <p className="font-light text-md md:text-xl lg:text-2xl text-gray-200 max-w-5xl mx-auto leading-relaxed">
+          <p className={`${getSubTitleSize(size)} font-light text-gray-200 max-w-5xl mx-auto leading-relaxed`}>
             Book a free digital strategy call - open up new horizons for your business!
           </p>
         </motion.div>

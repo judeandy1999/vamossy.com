@@ -1,74 +1,23 @@
 'use client';
-import Image from "next/image";
 import { motion } from 'framer-motion';
+import Title from '@/components/ui/title'; 
+import Container from '@/components/ui/container';
 
 export default function ServicesHero() {
 
-  const leftSectionVariants = {
-    hidden: { opacity: 0, y: -50 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 1,
-        ease: 'easeOut',
-      },
-    },
-  };
-
-  const rightSectionVariants = {
-    hidden: { opacity: 0, },
-    visible: {
-      opacity: 1,
-      transition: {
-        duration: 1.5,
-        ease: 'easeOut',
-        delay: 0.5,
-      },
-    },
-  };
-
   return (
-    <section className="relative h-screen flex items-center justify-center text-center overflow-hidden">
-      {/* Centered Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center w-full h-full px-4">
-        <motion.h1
-          className="text-3xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 drop-shadow"
+    <Container variant="transparent" className="h-[100vh]">
+      
+      <motion.div
+          className="relative z-1 h-full flex flex-col items-center justify-center"
           initial="hidden"
-          whileInView="visible"
-          viewport={{ once: false, amount: 0.3 }}
-          variants={{
-            hidden: { opacity: 0, y: 40 },
-            visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } }
-          }}
+          animate="visible"
         >
-          Service Package Suite: <span className="text-yellow-400">AI Growth Engine</span>
-        </motion.h1>
-        <motion.p
-          className="text-base md:text-xl font-semibold text-white mb-3"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: false, amount: 0.3 }}
-          variants={{
-            hidden: { opacity: 0, y: 30 },
-            visible: { opacity: 1, y: 0, transition: { duration: 0.7, delay: 0.2, ease: "easeOut" } }
-          }}
-        >
-          A 3-tier consulting offer from our AI-driven <span className="text-yellow-400">eCommerce Growth Agency.</span>
-        </motion.p>
-        <motion.p
-          className="text-base md:text-xl font-semibold text-white"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: false, amount: 0.3 }}
-          variants={{
-            hidden: { opacity: 0, y: 20 },
-            visible: { opacity: 1, y: 0, transition: { duration: 0.7, delay: 0.4, ease: "easeOut" } }
-          }}
-        >
-          Each package is fully modular, strategically differentiated, and embedded<br />
-          with proprietary AI systems.
-        </motion.p>
+
+        <Title variant="h2" title="Service Package Suite: AI Growth Engine"/>
+        <Title variant="h3" title="A 3-tier consulting offer from our AI-driven eCommerce Growth Agency." />
+        <Title variant="h4" title="Each package is fully modular, strategically differentiated, and embedded with proprietary AI systems." />
+        
         {/* 
         <div className="flex flex-col md:flex-row gap-4 mt-8">
           <motion.div 
@@ -120,8 +69,8 @@ export default function ServicesHero() {
           </motion.div>
         </div>
         */}
-      </div>
-    </section>
+      </motion.div>
+    </Container>
 
   );
 }

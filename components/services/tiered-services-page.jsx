@@ -100,12 +100,8 @@ export default function TieredServices() {
   };
 
   return (
-    <section className="relative min-h-screen py-16 lg:py-24 px-4 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 overflow-hidden">
-      {/* Background Effects */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-20 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
-      </div>
+    <section className="relative min-h-screen py-16 lg:py-24 px-4 bg-[#262626] overflow-hidden">
+     
 
       <div className="relative max-w-7xl mx-auto">
         {/* Title */}

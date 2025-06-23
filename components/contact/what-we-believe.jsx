@@ -1,9 +1,10 @@
 "use client";
 import React from "react";
 import { motion } from "framer-motion";
-import { whatWeBelieve } from "../../data/data";
-
-const bulletIcon = "/list-icon.webp";
+import { Play } from "lucide-react";
+import Title from "@/components/ui/title";
+import Container from "@/components/ui/container";
+import { whatWeBelieve } from "@/data/data";
 
 const listVariants = {
   hidden: { opacity: 0, y: 30 },
@@ -28,46 +29,47 @@ export default function WhatWeBelieve() {
   const items = whatWeBelieve?.items || [];
 
   return (
-    <section className="w-full py-16 bg-[#232323]">
-      <div className="max-w-4xl mx-auto px-4">
-        <motion.h2
-          className="text-3xl md:text-4xl font-bold mb-8 flex items-center gap-3 text-white"
-          initial={{ opacity: 0, x: -40 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5 }}
+    <Container variant="gray-gradient" className="py-20 relative">
+      
+      <div className="relative z-10 mx-auto px-4">
+        <Title
+          variant="h2"
+          title="What We Believe"
+          underlineEffect={true}
+          className="mb-10 text-white text-center"
+        />
+        <motion.div
+          className="relative h-full mb-10 p-4 sm:p-8 bg-gray-800/50 backdrop-blur-sm border-2 border-yellow-500/50 rounded-2xl"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7 }}
         >
-          <span className="border-l-4 border-yellow-400 pl-3">
-            What We Believe
-          </span>
-        </motion.h2>
-        {/**/}
-        <div className="bg-[#323232] rounded-xl shadow-lg p-6 md:p-10 mb-10">
-          <ul className="space-y-6">
+          <ul className="space-y-4 sm:space-y-6">
             {items.map((item, idx) => (
               <motion.li
                 key={idx}
-                className="flex items-start gap-4"
+                className="flex items-center items-center gap-3 sm:gap-4"
                 custom={idx}
                 initial="hidden"
                 whileInView="visible"
+                viewport={{ once: true, amount: 0.3 }}
                 variants={listVariants}
               >
-                <img
-                  src={bulletIcon}
-                  alt=""
-                  className="mt-1 w-5 h-5"
-                  style={{ minWidth: 20 }}
-                  loading="lazy"
-                />
-                <span className="text-base md:text-lg text-white">
+                <div className="relative w-7 h-7 sm:w-12 sm:h-12 flex-shrink-0 flex items-center justify-center">
+                  <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-full animate-pulse opacity-75"></div>
+                  <div className="relative w-full h-full bg-gradient-to-r from-yellow-600 to-yellow-400 rounded-full flex items-center justify-center shadow-lg shadow-yellow-500/25">
+                    <Play size={16} className="text-white sm:w-6 sm:h-6" />
+                  </div>
+                </div>
+                <span className="flex-1 min-w-0 text-base sm:text-lg text-gray-100 leading-snug">
                   {item}
                 </span>
               </motion.li>
             ))}
           </ul>
-        </div>
+        </motion.div>
         {/* Steps Section */}
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-3 gap-8">
           {(whatWeBelieve?.steps || [
             {
               number: 1,
@@ -89,29 +91,50 @@ export default function WhatWeBelieve() {
           ]).map((step, idx) => (
             <motion.div
               key={idx}
-              className="bg-[#323232] rounded-xl shadow-md p-6 flex flex-col items-center border border-yellow-400"
+              className="flex flex-col md:flex-row items-center md:items-center justify-center relative"
               custom={idx}
               initial="hidden"
               whileInView="visible"
+              viewport={{ once: true, amount: 0.3 }}
               variants={stepVariants}
             >
-              <div className="w-12 h-12 flex items-center justify-center bg-yellow-400 text-xl font-bold rounded-full mb-4 text-black">
-                {step.number}
+              {/* Circle background with number */}
+              <div
+                className={`
+                  w-20 h-20 md:w-28 md:h-28
+                  rounded-full flex items-center justify-center
+                  font-bold text-2xl md:text-5xl
+                  z-0 bg-gray-600 text-yellow-500/60
+                  mb-4 md:mb-0
+                  md:absolute md:left-0 md:top-1/2 md:-translate-y-1/2
+                `}
+              >
+                <span className="">{step.number}</span>
               </div>
-              <div className="text-center font-semibold mb-2 text-white">
-                {step.text}
+              {/* Card */}
+              <div
+                className={`
+                  flex items-center justify-center bg-gray-800 backdrop-blur-sm relative
+                  rounded-2xl p-4 border-2 border-gray-600
+                  flex-col min-h-[140px] w-full
+                  md:ml-24
+                `}
+              >
+                <div className="font-semibold mb-2 text-gray-300 text-center md:text-left">
+                  {step.text}
+                </div>
+                {step.list && (
+                  <ul className="text-xs text-gray-300 text-left">
+                    {step.list.map((li, i) => (
+                      <li key={i}>• {li}</li>
+                    ))}
+                  </ul>
+                )}
               </div>
-              {step.list && (
-                <ul className="text-left mt-2 space-y-1 text-sm text-white">
-                  {step.list.map((li, i) => (
-                    <li key={i}>• {li}</li>
-                  ))}
-                </ul>
-              )}
             </motion.div>
           ))}
         </div>
       </div>
-    </section>
+    </Container>
   );
 }

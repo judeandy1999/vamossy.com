@@ -1,44 +1,43 @@
 "use client";
-import React, { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import React from "react";
+import { motion } from "framer-motion";
+import Title from "@/components/ui/title";
+import Container from "@/components/ui/container";
+import ContactUs from "@/components/homepage/contact-us";
 
 export default function ContactHero() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { margin: "-100px" });
 
   return (
-    <section className="relative flex items-center justify-center min-h-screen h-[100vh] overflow-hidden bg-cover bg-center"
-    >
-      <div className="absolute inset-0 z-0" />
-      <div
-        className="relative z-20 flex flex-col items-center justify-center text-center px-4"
-        ref={ref}
-      >
-        <motion.h1
-          className="text-white text-4xl md:text-6xl font-bold mb-6"
-          initial={{ opacity: 0, y: 40 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7 }}
+    <>
+    <Container variant="transparent-gradient" className="min-h-[100vh] flex items-center justify-center overflow-hidden">
+      {/* Content */}
+      <div className="flex flex-col md:flex-row items-center">
+        <motion.div
+          className="pt-16 md:pt-0 relative z-1 h-full flex flex-col items-center md:items-start justify-start lg:max-w-[60%] md:pr-8"
+          initial="hidden"
+          animate="visible"
         >
-          Let’s Map Your Growth System
-        </motion.h1>
-        <motion.p
-          className="text-xl md:text-2xl font-semibold text-white mb-4"
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7, delay: 0.2 }}
-        >
-          This is your first step toward a more intelligent, scalable, AI-augmented growth strategy.
-        </motion.p>
-        <motion.p
-          className="text-lg md:text-xl text-white font-medium max-w-3xl"
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7, delay: 0.35 }}
-        >
-          Whether you’re dealing with plateaued revenue, fragmented funnels, or too much manual work, you’re here because you know your eCommerce business can perform better — smarter. We’re here to engineer that next level with you.
-        </motion.p>
+          <Title
+          title="Let’s Map Your Growth System"
+          animationVariant="topToBottom"
+          className="md:mb-6 text-white item-center md:items-start justify-start text-center md:text-left"
+          />
+          <Title
+          variant="h5"
+          title="This is your first step toward a more intelligent, scalable, AI-augmented growth strategy."
+          animationVariant="leftToRight"
+          className="md:mb-4 text-white item-center md:items-start justify-start text-center md:text-left"
+          />
+          <Title
+          variant="h5"
+          title="Whether you’re dealing with plateaued revenue, fragmented funnels, or too much manual work, you’re here because you know your eCommerce business can perform better — smarter. We’re here to engineer that next level with you."
+          animationVariant="rightToLeft"
+          className="md:mt-8 text-white item-center md:items-start justify-start text-center md:text-left"
+          />
+        </motion.div>
+        <ContactUs size="sm" variant="gray-card" />
       </div>
-    </section>
+    </Container>
+    </>
   );
 }
