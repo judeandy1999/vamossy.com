@@ -11,29 +11,29 @@ export default function Container({
       case 'transparent':
         return 'bg-transparent';
       case 'gradient':
-        return 'bg-gradient-to-b from-[#262626] via-gray-800 to-gray-900';
+        return 'bg-gray-900';
       case 'gray':
         return 'py-0 px-0 bg-[#262626]';
       case 'transparent-gradient':
-        return 'bg-gradient-to-br from-gray-900 via-blue-900/30 to-gray-800';
+        return 'bg-gradient-to-br from-gray-900/30 to-blue-900/30';
       case 'gray-gradient':
-        return 'bg-gradient-to-br from-[#262626] via-gray-800 to-gray-900';
+        return 'bg-gray-900';
+      case 'gray-card':
+        return 'mt-5 md:mt-16 md:px-10 rounded-xl border border-yellow-400 bg-gradient-to-br from-[#262626] to-gray-900';
       default:
         return `bg-transparent`;
     }
   };
-
+console.log(variant);
   const containerClasses = `py-8 lg:py-16 px-4 relative w-full overflow-hidden flex flex-row justify-center ${getVariantClasses(variant)} ${className}`;
 
   return (
     <section className={containerClasses}>
       {
-      variant === 'gradient' &&
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-20 left-20 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
-        </div>
+        variant !== 'gray' &&
+         <div className="absolute inset-0 overflow-hidden bg-black/30"></div>
       }
+     
       <div className="relative max-w-7xl mx-auto">
         {children}
       </div>
