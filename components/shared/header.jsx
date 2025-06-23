@@ -44,10 +44,7 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed w-full z-50 transition-all duration-500 ease-in-out transform ${
-        pathname !== '/' 
-          ? 'bg-black shadow-md translate-y-0 opacity-100' 
-          : isVisible
+      className={`fixed w-full z-50 transition-all duration-500 ease-in-out transform ${ isVisible
             ? `${isScrolled ? 'bg-[#262626] shadow-md' : 'bg-[#262626]/90'} translate-y-0 opacity-100`
             : 'bg-transparent -translate-y-full opacity-0 pointer-events-none'
       }`}
