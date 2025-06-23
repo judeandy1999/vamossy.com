@@ -91,7 +91,7 @@ export default function TieredServices() {
 
   return (
     
-    <Container variant="gradient">
+    <Container variant="gradient" isTable={true}>
       {/* Title */}
       <Title title={tieredServices.title} variant="h2" />
       <Title title={tieredServices.subtitle} variant="h2" />
@@ -139,11 +139,11 @@ export default function TieredServices() {
         className="bg-gray-800/50 backdrop-blur-sm rounded-2xl overflow-auto border border-gray-700/50 scrollbar-always-visible"
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
+        viewport={{ amount: 0.3 }}
         variants={tableVariants}
         style={{
           scrollbarWidth: 'thin',
-          scrollbarColor: '#fbbf24 #374151'
+          scrollbarColor: '#fbbf24 #374151',
         }}
       >
         <div className="min-w-3xl ">
