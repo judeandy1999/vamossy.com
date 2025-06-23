@@ -16,7 +16,7 @@ export default function ConsultingHero() {
         <Title variant="h3" title="We specialize in diagnosing complex business challenges and delivering high-performance solutions at the intersection of AI, ecommerce, and digital strategy. Complexity into Clarity" />
         <Title variant="h4" title="Our consulting division is designed for brands seeking to evolve intelligently — not just scale blindly." />
         <Title variant="h4" title="We don't offer generic playbooks. We engineer outcomes." />
-   
+
       </motion.div>
     </Container>
   );
