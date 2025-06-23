@@ -1,6 +1,8 @@
+"use client";
 import { tierPackages } from "@/data/data";
 import Title from '@/components/ui/title';
 import Container from '@/components/ui/container';
+import { motion } from "framer-motion"; // <-- Add this import
 
 export default function Tier3Package() {
   const tier3 = tierPackages.find((t) => t.id === 3);
@@ -16,14 +18,23 @@ export default function Tier3Package() {
     deliverables = [],
   } = tier3;
 
+  // Animation variants
+  const listVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0, transition: { staggerChildren: 0.08 } },
+  };
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0 },
+  };
+
   return (
     <Container variant="transparent-gradient" className="py-16 lg:py-24">
-          <div className="max-w-6xl mx-auto px-4">
-            <Container variant="gray-gradient" className="border border-yellow-400 rounded-2xl shadow-xl p-6 sm:p-10 md:p-14">
-                    {/* Header */}
-          
-                    <Title variant="h2" title={title} underlineEffect={true}/>
-                    <Title variant="h5" title={subtitle} className="!mb-4"/>
+      <div className="max-w-6xl mx-auto px-4">
+        <Container variant="gray-gradient" className="border border-yellow-400 rounded-2xl shadow-xl p-6 sm:p-10 md:p-14">
+          {/* Header */}
+          <Title variant="h2" title={title} underlineEffect={true}/>
+          <Title variant="h5" title={subtitle} className="!mb-4"/>
 
           {/* Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
@@ -54,9 +65,19 @@ export default function Tier3Package() {
                 What's Included
               </h3>
               <div className="h-1 w-24 bg-yellow-500 mb-4 rounded"></div>
-              <ul className="space-y-4 mb-8">
+              <motion.ul
+                className="space-y-4 mb-8"
+                variants={listVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: false, amount: 0.2 }}
+              >
                 {whatsIncluded.map((item, idx) => (
-                  <li key={idx} className="flex items-start">
+                  <motion.li
+                    key={idx}
+                    className="flex items-start"
+                    variants={itemVariants}
+                  >
                     <img
                       src="/list-icon.webp"
                       alt="list icon"
@@ -64,16 +85,26 @@ export default function Tier3Package() {
                       loading="lazy"
                     />
                     <span className="text-gray-100">{item}</span>
-                  </li>
+                  </motion.li>
                 ))}
-              </ul>
+              </motion.ul>
               <h3 className="text-2xl font-bold text-white mb-2 flex items-center">
                 Embedded AI Systems
               </h3>
               <div className="h-1 w-24 bg-yellow-500 mb-4 rounded"></div>
-              <ul className="space-y-4">
+              <motion.ul
+                className="space-y-4"
+                variants={listVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: false, amount: 0.2 }}
+              >
                 {embeddedAISystems.map((item, idx) => (
-                  <li key={idx} className="flex items-start">
+                  <motion.li
+                    key={idx}
+                    className="flex items-start"
+                    variants={itemVariants}
+                  >
                     <img
                       src="/list-icon.webp"
                       alt="list icon"
@@ -81,9 +112,9 @@ export default function Tier3Package() {
                       loading="lazy"
                     />
                     <span className="text-gray-100">{item}</span>
-                  </li>
+                  </motion.li>
                 ))}
-              </ul>
+              </motion.ul>
             </div>
             {/* Deliverables */}
             <div>
@@ -91,9 +122,19 @@ export default function Tier3Package() {
                 Deliverables
               </h3>
               <div className="h-1 w-24 bg-yellow-500 mb-4 rounded"></div>
-              <ul className="space-y-4">
+              <motion.ul
+                className="space-y-4"
+                variants={listVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: false, amount: 0.2 }}
+              >
                 {deliverables.map((item, idx) => (
-                  <li key={idx} className="flex items-start">
+                  <motion.li
+                    key={idx}
+                    className="flex items-start"
+                    variants={itemVariants}
+                  >
                     <img
                       src="/list-icon.webp"
                       alt="list icon"
@@ -101,9 +142,9 @@ export default function Tier3Package() {
                       loading="lazy"
                     />
                     <span className="text-gray-100">{item}</span>
-                  </li>
+                  </motion.li>
                 ))}
-              </ul>
+              </motion.ul>
             </div>
           </div>
         </Container>
