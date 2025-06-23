@@ -19,7 +19,6 @@ export default function Page() {
           <div className="relative z-10">
             <ContactHero />
             <WhatWeBelieve />
-            <ContactUs />
             <Footer />
           </div>
         </div>
