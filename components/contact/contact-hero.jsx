@@ -35,7 +35,7 @@ export default function ContactHero() {
           className="md:mt-8 text-white item-center md:items-start justify-start text-center md:text-left"
           />
         </motion.div>
-        <ContactUs size="sm" variant="gray-card" animateOnce={true} />
+        <ContactUs size="sm" variant="gray-card" />
       </div>
     </Container>
     </>
