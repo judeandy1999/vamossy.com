@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { uniqueSolutions } from '@/data/data';
+import { atomicaAfterData } from '@/data/data'; // Add this import
 import { Settings, Target, Bot, ClipboardCheck, Package } from 'lucide-react';
 import Title from "@/components/ui/title";
 import Container from "@/components/ui/container";
@@ -155,8 +156,11 @@ export default function UniqueSolutions() {
                   <button className="text-gray-400 hover:text-gray-600 text-xs">Edit</button>
                 </div>
               </div>
-              <pre className="text-gray-800 text-xs leading-relaxed whitespace-pre-wrap font-mono">
-                {uniqueSolutions.beforeAfter.after.code}
+              <pre
+                className="text-gray-800 text-sm leading-relaxed whitespace-pre-wrap font-mono overflow-y-auto"
+                style={{ maxHeight: 340 }}
+              >
+                {atomicaAfterData}
               </pre>
             </div>
           </motion.div>
