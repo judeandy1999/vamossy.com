@@ -41,7 +41,13 @@ export default function BeAnEarlyAdopter() {
           ))}
         </div>
         <div className="text-gray-200 text-lg md:text-xl font-light max-w-2xl mx-auto mb-8">
-          {earlyAdopter.planVsAutomate}
+          {earlyAdopter.planVsAutomate.map((part, idx) =>
+            part.highlight ? (
+              <span key={idx} className="text-yellow-400 font-semibold">{part.text}</span>
+            ) : (
+              <span key={idx}>{part.text}</span>
+            )
+          )}
         </div>
       </div>
     </Container>
