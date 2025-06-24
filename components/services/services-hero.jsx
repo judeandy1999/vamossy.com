@@ -8,7 +8,7 @@ export default function ServicesHero() {
   return (
     <Container
       variant="transparent-gradient"
-      className="h-[100vh] flex flex-col justify-center items-center bg-gradient-to-b from-background to-transparent relative"
+      className="h-[100vh] flex flex-col justify-center items-center"
     >
       <motion.div
         className="relative z-10 flex flex-col items-center justify-center text-center gap-4"
