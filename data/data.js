@@ -1091,21 +1091,25 @@ export const expertiseData = [
 export const ourProcess = [
   {
     step: '1',
+    icon: '/services-images/diagnosis.webp',
     title: 'Diagnosis',
     description: 'Deep discovery, audit, and stakeholder interviews',
   },
   {
     step: '2',
+    icon: '/services-images/blueprint.webp',
     title: 'Blueprint',
     description: 'Custom solution maps + prioritization frameworks',
   },
   {
     step: '3',
+    icon: '/services-images/prototyping.webp',
     title: 'Prototyping & Enablement',
     description: 'Guided execution or full rollout',
   },
   {
     step: '4',
+    icon: '/services-images/transfer.webp',
     title: 'Capability Transfer',
     description: 'Internal systems, documentation, and training',
   },
@@ -1141,8 +1145,19 @@ export const earlyAdopter = {
       description: " Automation, custom GPTs, workflow design, AI stack integration",
     },
   ],
-  planVsAutomate:
-    "While most firms help you plan, and tech consultants help you automate, we do both — so your business grows smarter and faster without the friction, gaps, or hand-offs.",
+
+  planVsAutomate: [
+    { text: "While most firms help you ", highlight: false },
+    { text: "plan", highlight: true },
+    { text: ", and tech consultants help you ", highlight: false },
+    { text: "automate", highlight: true },
+    { text: ", we do both — so your business grows ", highlight: false },
+    { text: "smarter", highlight: true },
+    { text: " and ", highlight: false },
+    { text: "faster", highlight: true },
+    { text: " without the friction, gaps, or hand-offs.", highlight: false },
+  ],
+
   image: "/services-images/talk-with-us-portrait.webp",
   sideText: "Talk with us!",
   sideText1:
