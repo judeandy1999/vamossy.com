@@ -22,9 +22,8 @@ export default function TierPackage({
   };
 
   return (
-    <Container variant="transparent-gradient">
+    <Container variant="gray-gradient">
       <div className="max-w-6xl mx-auto px-4">
-        <Container variant="gray-gradient" className="border border-yellow-400 rounded-2xl shadow-xl p-6 sm:p-10 md:p-14">
           {/* Header */}
 
           <Title variant="h2" title={title} animationVariant="topToBottom" underlineEffect={true}/>
@@ -141,7 +140,6 @@ export default function TierPackage({
               </motion.ul>
             </div>
           </div>
-        </Container>
       </div>
     </Container>
   );
