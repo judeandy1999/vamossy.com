@@ -79,7 +79,7 @@ export default function Title({
       case 'h4':
         return `${baseClasses} ${underlineEffectClasses} text-sm !flex-row !mb-0 !md:mb-4 text-gray-200 md:text-xl lg:text-2xl mt-2 font-light md:max-w-[60%]`;
       case 'h5':
-        return `${baseClasses} ${underlineEffectClasses} text-sm !flex-row !mb-0 !md:mb-4 text-gray-200 md:text-xl lg:text-2xl mt-2 font-light`;
+        return `${baseClasses} ${underlineEffectClasses} text-xl !flex-row !mb-0 !md:mb-4 text-gray-200 md:text-xl lg:text-2xl mt-2 font-light`;
       case 'h6':
         return `${baseClasses} ${underlineEffectClasses} text-sm !flex-row !mb-0 !md:mb-4 text-gray-200 md:text-xl lg:text-xl mt-2 font-light`;
       default:
@@ -95,7 +95,7 @@ export default function Title({
       variants={getAnimationVariant(animationVariant)}
        initial="hidden"
        whileInView="visible"
-      viewport={{ once: false, amount: 0.3 }}
+      viewport={{ once: false, amount: 0 }}
     >
       {typewriter ? (
         <Typewriter
