@@ -1,11 +1,11 @@
 'use client';
 
 import { motion } from "framer-motion";
-import { tieredServices } from '@/data/data';
+import { tieredServicesPage } from '@/data/data';
 import { Check, Minus, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import Title from "@/components/ui/title";
-import Container from "../ui/container";
+import Container from "@/components/ui/container";
 
 export default function TieredServices() {
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -93,8 +93,8 @@ export default function TieredServices() {
     
     <Container variant="gradient" isTable={true}>
       {/* Title */}
-      <Title title={tieredServices.title} variant="h2" />
-      <Title title={tieredServices.subtitle} variant="h2" />
+      <Title title={tieredServicesPage.title} variant="h2" />
+      <Title title={tieredServicesPage.subtitle} variant="h2" />
 
       {/* Mobile Scroll Hint */}
       <div className="block lg:hidden mb-4">
@@ -150,11 +150,11 @@ export default function TieredServices() {
         {/* Header Row */}
           <div className="grid grid-cols-4 bg-yellow-500">
             <div className="flex items-center p-4 md:p-8 border-r border-gray-600">
-              <h4 className="text-gray-900 text-lg md:text-lg lg:text-xl font-semibold">
-                Feature / Deliverable
+              <h4 className="text-gray-900 text-lg md:text-xl lg:text-2xl font-semibold">
+                Service Name
               </h4>
             </div>
-            {tieredServices.tiers.map((tier) => (
+            {tieredServicesPage.tiers.map((tier) => (
               <div key={tier.id} className="p-4 md:p-8 text-center border-r border-gray-600 last:border-r-0">
                 <div className="mb-4">
                   <img 
@@ -178,14 +178,29 @@ export default function TieredServices() {
             <div className="p-4 md:p-8 bg-gray-700 border-r border-gray-600">
               <h6 className="text-lg font-semibold text-white">Ideal For</h6>
             </div>
-            {tieredServices.tiers.map((tier) => (
+            {tieredServicesPage.tiers.map((tier) => (
               <div key={tier.id} className="p-4 md:p-8 bg-gray-800 border-r border-gray-600 last:border-r-0">
                 <p className="text-gray-300 text-md md:text-lg lg:text-xl font-light">{tier.idealFor}</p>
               </div>
             ))}
           </motion.div>
 
-          {/* Core Offer*/}
+          {/* Partnership Type Row */}
+          <motion.div 
+            className="grid grid-cols-4 border-b border-gray-600"
+            variants={rowVariants}
+          >
+            <div className="p-4 md:p-8 bg-gray-700 border-r border-gray-600">
+              <h6 className="text-lg font-semibold text-white">Partnership Type</h6>
+            </div>
+            {tieredServicesPage.tiers.map((tier) => (
+              <div key={tier.id} className="p-4 md:p-8 bg-gray-800 border-r border-gray-600 last:border-r-0">
+                <p className="text-gray-300 text-md md:text-lg lg:text-xl font-light">{tier.partnershipType}</p>
+              </div>
+            ))}
+          </motion.div>
+
+          {/* Core Offer Row */}
           <motion.div 
             className="grid grid-cols-4 border-b border-gray-600"
             variants={rowVariants}
@@ -193,7 +208,7 @@ export default function TieredServices() {
             <div className="p-4 md:p-8 bg-gray-700 border-r border-gray-600">
               <h6 className="text-lg font-semibold text-white">Core Offer</h6>
             </div>
-            {tieredServices.tiers.map((tier) => (
+            {tieredServicesPage.tiers.map((tier) => (
               <div key={tier.id} className="p-4 md:p-8 bg-gray-800 border-r border-gray-600 last:border-r-0">
                 <p className="text-gray-300 text-md md:text-lg lg:text-xl font-light">{tier.coreOffer}</p>
               </div>
@@ -208,41 +223,88 @@ export default function TieredServices() {
             <div className="p-4 md:p-8 bg-gray-700 border-r border-gray-600">
               <h6 className="text-lg font-semibold text-white">Investment</h6>
             </div>
-            {tieredServices.tiers.map((tier) => (
+            {tieredServicesPage.tiers.map((tier) => (
               <div key={tier.id} className="p-4 md:p-8 bg-gray-800 border-r border-gray-600 last:border-r-0">
                 <p className="text-gray-300 text-md md:text-lg lg:text-xl font-light">{tier.investment}</p>
               </div>
             ))}
           </motion.div>
 
-          {/* Feature Rows */}
+          {/* Duration Row */}
           <motion.div 
             className="grid grid-cols-4 border-b border-gray-600"
             variants={rowVariants}
           >
             <div className="p-4 md:p-8 bg-gray-700 border-r border-gray-600">
-              <h6 className="text-lg font-semibold text-white">Funnel Audit (GPT-Powered)</h6>
+              <h6 className="text-lg font-semibold text-white">Duration</h6>
             </div>
-            {tieredServices.tiers.map((tier) => (
+            {tieredServicesPage.tiers.map((tier) => (
               <div key={tier.id} className="p-4 md:p-8 bg-gray-800 border-r border-gray-600 last:border-r-0">
-                {renderFeatureValue(tier.features["Funnel Audit (GPT-Powered)"])}
+                <p className="text-gray-300 text-md md:text-lg lg:text-xl font-light">{tier.duration}</p>
               </div>
             ))}
           </motion.div>
 
+          {/* Type Of Collaboration Row */}
+          <motion.div 
+            className="grid grid-cols-4 border-b border-gray-600"
+            variants={rowVariants}
+          >
+            <div className="p-4 md:p-8 bg-gray-700 border-r border-gray-600">
+              <h6 className="text-lg font-semibold text-white">Type of Collaboration</h6>
+            </div>
+            {tieredServicesPage.tiers.map((tier) => (
+              <div key={tier.id} className="p-4 md:p-8 bg-gray-800 border-r border-gray-600 last:border-r-0">
+                <p className="text-gray-300 text-md md:text-lg lg:text-xl font-light">{tier.typeOfCollaboration}</p>
+              </div>
+            ))}
+          </motion.div>
+
+          {/* AI Advantages Row */}
+          <motion.div 
+            className="grid grid-cols-4 border-b border-gray-600"
+            variants={rowVariants}
+          >
+            <div className="p-4 md:p-8 bg-gray-700 border-r border-gray-600">
+              <h6 className="text-lg font-semibold text-white">AI Advantages</h6>
+            </div>
+            {tieredServicesPage.tiers.map((tier) => (
+              <div key={tier.id} className="p-4 md:p-8 bg-gray-800 border-r border-gray-600 last:border-r-0">
+                <p className="text-gray-300 text-md md:text-lg lg:text-xl font-light">{tier.aiAdvantages}</p>
+              </div>
+            ))}
+          </motion.div>
+
+          {/* Consultations Row */}
+          <motion.div 
+            className="grid grid-cols-4 border-b border-gray-600"
+            variants={rowVariants}
+          >
+            <div className="p-4 md:p-8 bg-gray-700 border-r border-gray-600">
+              <h6 className="text-lg font-semibold text-white">Consultations</h6>
+            </div>
+            {tieredServicesPage.tiers.map((tier) => (
+              <div key={tier.id} className="p-4 md:p-8 bg-gray-800 border-r border-gray-600 last:border-r-0">
+                <p className="text-gray-300 text-md md:text-lg lg:text-xl font-light">{tier.consultations}</p>
+              </div>
+            ))}
+          </motion.div>
+
+          {/* Deliverables Row */}
           <motion.div 
             className="grid grid-cols-4"
             variants={rowVariants}
           >
             <div className="p-4 md:p-8 bg-gray-700 border-r border-gray-600">
-              <h6 className="text-lg font-semibold text-white">Full KPI + Marketing Activity Audit</h6>
+              <h6 className="text-lg font-semibold text-white">Deliverables</h6>
             </div>
-            {tieredServices.tiers.map((tier) => (
+            {tieredServicesPage.tiers.map((tier) => (
               <div key={tier.id} className="p-4 md:p-8 bg-gray-800 border-r border-gray-600 last:border-r-0">
-                {renderFeatureValue(tier.features["Full KPI + Marketing Activity Audit"])}
+                <p className="text-gray-300 text-md md:text-lg lg:text-xl font-light">{tier.deliverables}</p>
               </div>
             ))}
           </motion.div>
+
         </div>
       </motion.div>
       </div>
