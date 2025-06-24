@@ -471,48 +471,59 @@ export const tieredServices = {
   tiers: [
     {
       id: 1,
-      name: "Tier 1",
+      name: "Growth Map",
       icon: "/homepage/tier1.webp",
-      idealFor: "Sample text. Click to select the Text Element.",
-      coreOffer: "Sample text. Click to select the Text Element.",
-      investment: "Sample text. Click to select the Text Element.",
-      features: {
-        "Funnel Audit (GPT-Powered)": "included",
-        "Full KPI + Marketing Activity Audit": "partial"
-      }
+      idealFor: "$0–$50k/mo brands",
+      partnershipType: "We provide all the help we can to inform you about all your opportunities, and make sure you gain a 360 degree understanding of your market.",
+      coreOffer: "Gain comprehensive competitive knowledge, with all of your growth opportunities. (Check deliverables below)",
+      investment: "$3k–$5k",
+      duration: "1 week sprint",
+      typeOfCollaboration: "Acquire extensive competitive information, and Consult with us up to 4 times about your opportunities.",
+      aiAdvantages: "100+ Pages of Top Quality Competitive Information, unmatched 360 Degree Insight.",
+      consultations: "Up to 4 times over a week",
+      deliverables: "Funnel Audit (GPT-Powered), Full KPI + Marketing Activity Audit, Lifecycle Growth Playbooks. (PDF Download)",
     },
+
     {
       id: 2,
-      name: "Tier 2",
+      name: "Growth Collaboration",
       icon: "/homepage/tier2.webp",
-      idealFor: "Sample text. Click to select the Text Element.",
-      coreOffer: "Sample text. Click to select the Text Element.",
-      investment: "Sample text. Click to select the Text Element.",
-      features: {
-        "Funnel Audit (GPT-Powered)": "included",
-        "Full KPI + Marketing Activity Audit": "included"
-      }
+      idealFor: "$50k–$250k/mo brands",
+      partnershipType: "After providing the Growth Map service, we will be fully committed to help you gain as much competitive advantage as you possibly can in the specified timeframe.",
+      coreOffer: "Taking advantage of your growth opportunities, executing  projects with our support, with extraordinary ROI (Check deliverables below)",
+      investment: "$8k–$15k (sprint)",
+      duration: "3-6 months",
+      typeOfCollaboration: "After evaluating and prioritizing your growth projects, we will make sure that they are properly and effectively executed in a 3-6 month sprint, with. weekly consultations.",
+      aiAdvantages: "AI is the assurance that the highest ROI projects will be prioritized, specified, and executed, taking maximum advantage of the 3-6 month sprint.",
+      consultations: "Starts with the 4-times Growth Map, then weekly, for 3-6 months.",
+      deliverables: "All included from the Growth Map, alongside your growth execution plan, specifications, Project management prompts, or any custom need. In addition we provide Prompt Packages. (PDF Download)",
     },
+
     {
       id: 3,
-      name: "Tier 3",
+      name: "Superior Leadership Engineering",
       icon: "/homepage/tier3.webp",
-      idealFor: "Sample text. Click to select the Text Element.",
-      coreOffer: "Sample text. Click to select the Text Element.",
-      investment: "Sample text. Click to select the Text Element.",
-      features: {
-        "Funnel Audit (GPT-Powered)": "included",
-        "Full KPI + Marketing Activity Audit": "included",
-        "Deep audit": "Deep audit (incl. LTV, retention)"
-      }
+      idealFor: "250k$+/mo brands, including enterprises",
+      partnershipType: "We are 100% committed to your business success, and treat your business as we would treat our own. We consider ourselves the extension of your company, and provide all the value we possibly can.",
+      coreOffer: "We will engineer an automated powerhouse,  with self-growing competitive advantage at its core. (Check deliverables below)",
+      investment: "$20k–$50k initial investment / $7k+/mo retainer",
+      duration: "Mid to long term",
+      typeOfCollaboration: "We will completely re-engineer your organization, using uniquely improved best practices, maximal automation, and embedded self-improvement, alongside full role enablement.",
+      aiAdvantages: "We rethink and redesign your entire organization from AI Atoms. Your KPIs, SOPs, projects, tasks, know-how are all AI Agents now, each with the goal to help you gain advantage, alongside custom built AI tools, tailored for your needs. +Full role enablement, extraordinary motivational system, and automated, peak-performance management.",
+      consultations: "Initially as many times as necessary to implement transformations, then weekly, with project leadership included.",
+      deliverables: "All included from the previous 2 services, + a Full All-Inclusive Company Wiki filled with cutting-edge content, maximal automation, growth oriented, self-enhancing agent prompts for literally all elements of your business. (PDF Download)",
     }
   ],
   featureRows: [
     "Ideal For",
-    "Core Offer",
-    "Investment", 
-    "Funnel Audit (GPT-Powered)",
-    "Full KPI + Marketing Activity Audit"
+    "Partnership Type",
+    "Core Offer", 
+    "Investment",
+    "Duration",
+    "Type of Collaboration",
+    "AI Advantages",
+    "Consultations",
+    "Deliverables",
   ]
 };
 
@@ -1019,14 +1030,14 @@ Across adaptive tone, urgency logic, and behavioral insights, ATOMICA delivers e
 
 🧬 Atomic Capabilities – AI Submodules
 
-| Module                | Function                                               |
-|-----------------------|--------------------------------------------------------|
-| 🧩 Persuasion Core    | Extracts product benefits, handles objections, deploys urgency |
-| 📈 Behavioral Optimizer | Analyzes behavior/session metadata to time messaging  |
-| 💌 Channel Synthesizer | Tailors copy per medium (Email, SMS, Ad)              |
-| 🔁 Sequence Evolver   | Continuously tests and ranks CTA + subject line variants |
-| 📦 Product Story Engine | Builds micro-narratives from product data            |
-| 🧠 Self-Feedback Loop | Learns from engagement & recovery data to evolve prompts |
+| Module                | Function                                               
+|-----------------------|-------------------------------------------|
+| 🧩 Persuasion Core    | Extracts product benefits, handles objections, deploys urgency 
+| 📈 Behavioral Optimizer | Analyzes behavior/session metadata to time messaging  
+| 💌 Channel Synthesizer | Tailors copy per medium (Email, SMS, Ad)              
+| 🔁 Sequence Evolver   | Continuously tests and ranks CTA + subject line variants 
+| 📦 Product Story Engine | Builds micro-narratives from product data            
+| 🧠 Self-Feedback Loop | Learns from engagement & recovery data to evolve prompts 
 
 
 📝 Prompt Framework
@@ -1050,7 +1061,7 @@ ALWAYS learn after execution using performance KPIs:
 
 🔁 Self-Learning Workflow
 
-graph TD
+Graph TD
 A[Abandonment Event] --> B[Extract Data]
 B --> C[Generate Sequences]
 C --> D[Deliver Messages via Channels]
