@@ -20,18 +20,18 @@ const cardVariants = {
 
 export default function ExpertiseSection() {
   return (
-    <Container variant="gray">
+    <Container variant="gray-gradient">
 
-      <Title className="text-yellow-400" variant="h2" title="Our Expertise Framework"/>
+      <Title underlineEffect={true} variant="h2" title="Our Expertise Framework"/>
       <Title variant="h5" title="We organize our consulting capabilities into four core verticals:"/>
       
-      <div className="grid md:grid-cols-2 gap-10">
+      <div className="grid md:grid-cols-2 gap-10 mt-10">
         {expertiseData.map((item, index) => {
           const Icon = item.icon;
           return (
             <motion.div
               key={index}
-              className="bg-[#151B2C] p-6 rounded-2xl border border-yellow-500 shadow-lg"
+              className="bg-[#151B2C] p-6 rounded-2xl shadow-lg"
               custom={index}
               initial="hidden"
               whileInView="visible"
