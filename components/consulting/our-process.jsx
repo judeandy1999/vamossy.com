@@ -26,7 +26,7 @@ const stepIcons = [
 
 export default function OurProcess() {
   return (
-    <Container variant="transparent-gradient" >
+    <Container variant="transparent-gradient" className="items-center min-h-[80vh]">
       <div className="flex flex-col items-center">
         <Title variant="h2" title="Our Process" underlineEffect={true} className="!mb-10"/>
         <div className="w-full flex flex-col md:flex-row md:flex-wrap md:justify-center gap-8 mx-auto">
@@ -37,7 +37,7 @@ export default function OurProcess() {
             >
               {/* Icon Circle */}
               <div className={`flex items-center justify-center rounded-full border-3 ${stepBorderColors[idx]} bg-[#151B2C] w-16 h-16 mr-6`}>
-                <span className={`text-3xl ${stepIconBgColors[idx]}`}>{stepIcons[idx]}</span>
+                <span className={`text-3xl ${stepIconBgColors[idx]}`}>{idx + 1}</span>
               </div>
               {/* Step Content */}
               <div className="flex flex-col flex-1">
