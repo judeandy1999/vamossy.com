@@ -20,8 +20,9 @@ export default function Tier2Package() {
   };
 
   return (
-    <Container variant="gray-gradient" className="py-16 lg:py-24">
+    <Container variant="transparent-gradient" className="py-16 lg:py-24">
       <div className="max-w-6xl mx-auto px-4">
+        <Container variant="gray-gradient" className="border border-yellow-400 rounded-2xl shadow-xl p-6 sm:p-10 md:p-14">
         <div className="p-6 sm:p-10 md:p-14">
           {/* Header */}
           <div className="text-center mb-8 sm:mb-10 md:mb-12">
@@ -148,6 +149,7 @@ export default function Tier2Package() {
             </div>
           </div>
         </div>
+        </Container>
       </div>
     </Container>
   );
