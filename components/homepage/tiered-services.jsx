@@ -114,7 +114,7 @@ export default function TieredServices() {
         className="bg-gray-800/50 backdrop-blur-sm rounded-2xl overflow-auto border border-gray-700/50 scrollbar-always-visible"
         initial="hidden"
         whileInView="visible"
-        viewport={{ amount: 0.3 }}
+        viewport={{ amount: 0 }}
         variants={tableVariants}
         style={{
           scrollbarWidth: 'thin',

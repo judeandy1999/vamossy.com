@@ -2,8 +2,10 @@ import ServicesHero from '@/components/services/services-hero';
 import Footer from '@/components/shared/footer';
 import TieredServices from '@/components/services/tiered-services-page';
 import TierPackagesSection from '@/components/services/tier-package-section';
-import BonusAssets from '@/components/services/bonus-assets';
 import ProofThroughPerspective from "@/components/homepage/proof-through-perspective";
+import BeAnEarlyAdopter from '@/components/services/be-an-early-adopter';
+import TalkWithUs from '@/components/services/talk-with-us';
+import ContactUs from '@/components/homepage/contact-us';
 
 export default function Page() {
   return (
@@ -19,9 +21,11 @@ export default function Page() {
       <div className="relative z-10">
         <ServicesHero />
         <TieredServices />
+        <BeAnEarlyAdopter />
+        <TalkWithUs />
         <ProofThroughPerspective />
         <TierPackagesSection />
-        <BonusAssets />
+        <ContactUs />
         <Footer />
       </div>
     </div>
