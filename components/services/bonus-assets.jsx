@@ -24,7 +24,7 @@ const cardVariants = {
 
 export default function BonusAssets() {
   return (
-    <Container variant="gray-gradient" className="py-16 lg:py-24">
+    <Container variant="transparent-gradient" className="py-16 lg:py-24">
       <motion.div
         className="relative w-full"
         initial="hidden"
@@ -57,11 +57,12 @@ export default function BonusAssets() {
           <div className="text-lg md:text-2xl font-medium text-gray-200 text-center mb-10">
             (All Tiers)
           </div>
+
           <div className="flex flex-col gap-6">
             {bonusAssets.map((item, idx) => (
               <motion.div
                 key={idx}
-                className="flex flex-col md:flex-row items-start md:items-center border border-yellow-400 rounded-xl px-6 py-5 transition-all duration-200 shadow-none"
+                className="bg-gray-900 flex flex-col md:flex-row items-start md:items-center border border-yellow-400 rounded-xl px-6 py-5 transition-all duration-200 shadow-none"
                 custom={idx}
                 initial="hidden"
                 whileInView="visible"
