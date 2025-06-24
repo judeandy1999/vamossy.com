@@ -66,10 +66,9 @@ export default function TieredServices() {
 
   return (
     
-    <Container variant="gradient" isTable={true}>
+    <Container variant="gray-gradient" isTable={true}>
       {/* Title */}
       <Title title={tieredServicesPage.title} variant="h2" />
-      <Title title={tieredServicesPage.subtitle} variant="h2" />
 
       {/* Mobile Scroll Hint */}
       <div className="block lg:hidden mb-4">
