@@ -4,6 +4,7 @@ import ConsultingHero from '@/components/consulting/consulting-hero';
 import ExpertiseSection from '@/components/consulting/expertise-framework';
 import OurProcess from '@/components/consulting/our-process';
 import WhyClientsWorkWithUs from '@/components/consulting/why-clients-work-with-us';
+import LetsBuild from '@/components/consulting/lets-build';
 
 
 export default function Page() {
@@ -20,8 +21,9 @@ export default function Page() {
       <div className="relative z-10">
         <ConsultingHero />
         <ExpertiseSection />
-        <WhyClientsWorkWithUs />
         <OurProcess />
+        <WhyClientsWorkWithUs />
+        <LetsBuild />
         <Footer />
       </div>
     </div>
