@@ -1,7 +1,6 @@
 import { ourProcess } from '@/data/data';
 import Title from '@/components/ui/title'; 
 import Container from '@/components/ui/container';
-import { FaSearch, FaLightbulb, FaCogs, FaRocket } from "react-icons/fa";
 
 const stepBorderColors = [
   "border-yellow-400",
@@ -15,13 +14,6 @@ const stepIconBgColors = [
   "text-blue-400",
   "text-blue-400",
   "text-yellow-400"
-];
-
-const stepIcons = [
-  <FaSearch key="search" />,
-  <FaLightbulb key="lightbulb" />,
-  <FaCogs key="cogs" />,
-  <FaRocket key="rocket" />
 ];
 
 export default function OurProcess() {
