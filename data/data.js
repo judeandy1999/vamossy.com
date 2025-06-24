@@ -599,8 +599,8 @@ export const testimonials = {
 // Services page data starts here
 
 export const tieredServicesPage = {
-  title: "AI GROWTH ENGINE",
-  subtitle: "TIERED SERVICES",
+  title: "Our Solutions",
+  subtitle: "Get Unique Advantages",
   tiers: [
     {
       id: 1,
