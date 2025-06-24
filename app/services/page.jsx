@@ -3,6 +3,7 @@ import Footer from '@/components/shared/footer';
 import TieredServices from '@/components/services/tiered-services-page';
 import TierPackagesSection from '@/components/services/tier-package-section';
 import BonusAssets from '@/components/services/bonus-assets';
+import ProofThroughPerspective from "@/components/homepage/proof-through-perspective";
 
 export default function Page() {
   return (
@@ -18,6 +19,7 @@ export default function Page() {
       <div className="relative z-10">
         <ServicesHero />
         <TieredServices />
+        <ProofThroughPerspective />
         <TierPackagesSection />
         <BonusAssets />
         <Footer />
