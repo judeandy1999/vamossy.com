@@ -29,9 +29,8 @@ export default function Tier3Package() {
   };
 
   return (
-    <Container variant="transparent-gradient" className="py-16 lg:py-24">
+    <Container variant="gray-gradient" className="py-16 lg:py-24">
       <div className="max-w-6xl mx-auto px-4">
-        <Container variant="gray-gradient" className="border border-yellow-400 rounded-2xl shadow-xl p-6 sm:p-10 md:p-14">
           {/* Header */}
           <Title variant="h2" title={title} underlineEffect={true}/>
           <Title variant="h5" title={subtitle} className="!mb-4"/>
@@ -147,7 +146,6 @@ export default function Tier3Package() {
               </motion.ul>
             </div>
           </div>
-        </Container>
       </div>
     </Container>
   );
