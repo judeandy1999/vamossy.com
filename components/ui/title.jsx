@@ -11,6 +11,7 @@ export default function Title({
   titlePosition = 'center', 
   animationVariant = 'topToBottom',
   className ='',
+  isAnimationEnabled = true,
 }) {
 
   const topToBottom = {
@@ -92,7 +93,7 @@ export default function Title({
   return (
     <MotionComponent
       className={getClasses(variant)}
-      variants={getAnimationVariant(animationVariant)}
+      variants={isAnimationEnabled && getAnimationVariant(animationVariant)}
        initial="hidden"
        whileInView="visible"
       viewport={{ once: false, amount: 0 }}

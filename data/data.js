@@ -628,7 +628,7 @@ export const tieredServices = {
 
     {
       id: 3,
-      name: "Superior Leadership Engineering",
+      name: "Leadership Engineering",
       icon: "/homepage/tier3.webp",
       idealFor: "250k$+/mo brands, including enterprises",
       partnershipType: "We are 100% committed to your business success, and treat your business as we would treat our own. We consider ourselves the extension of your company, and provide all the value we possibly can.",
@@ -760,7 +760,7 @@ export const tieredServicesPage = {
 
     {
       id: 3,
-      name: "Superior Leadership Engineering",
+      name: "Leadership Engineering",
       icon: "/homepage/tier3.webp",
       idealFor: "250k$+/mo brands, including enterprises",
       partnershipType: "We are 100% committed to your business success, and treat your business as we would treat our own. We consider ourselves the extension of your company, and provide all the value we possibly can.",
@@ -950,12 +950,13 @@ export const whatWeBelieve = {
 };
 
 export const founder = {
-  name: "Gergo Vamosy",
+  name: "Gergo Vamossy",
   title: "Founder",
   image: "/about/founder.webp", 
-  intro: `I have started this agency to fix the two biggest problems I saw in eCommerce consulting: people guessing, and people bluffing.`,
+  intro: `I have started this company to fix the two biggest problems I saw in eCommerce consulting: people guessing, and people bluffing.`,
   bio: `I have built this practice after 11 years being a large eCommerce store owner/founder, and then 9 years in becoming a SEO, and an eCommerce digital marketing specialist. By adding prompt engineering to this package, I managed to create better performing marketing campaigns than ever before, and we evolved into a multidisciplinary team that combines strategic foresight, real funnel experience, and GPT-native execution systems.`,
-  closing: `You're not hiring just a strategist.`
+  closing: `You're not hiring just a strategist.`,
+  closing2: `You're getting access to a prompt-engineered growth engine designed around outcomes, not billable hours.`,
 };
 
 export const agencyComparison = {
