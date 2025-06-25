@@ -80,7 +80,9 @@ async function handlePost(req, res, user, userRole) {
         frequency,
         notification_type,
         assigned_user_id,
-        created_by: user.id
+        created_by: user.id,
+        completed_at: null,
+        status: 'pending',
       })
       .select()
       .single();
@@ -99,11 +101,6 @@ async function handlePost(req, res, user, userRole) {
 
 async function handlePut(req, res, user, userRole) {
   try {
-    // Check if user is admin
-    if (userRole !== 'admin') {
-      return res.status(403).json({ error: 'Only admins can update tasks' });
-    }
-
     const { id, ...updates } = req.body;
 
     const { data, error } = await supabase
