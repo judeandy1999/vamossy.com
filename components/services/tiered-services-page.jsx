@@ -69,6 +69,9 @@ export default function TieredServices() {
     <Container variant="gray-gradient" isTable={true}>
       {/* Title */}
       <Title title={tieredServicesPage.title} variant="h2" />
+      {tieredServicesPage.subtitle && (
+        <Title title={tieredServicesPage.subtitle} variant="h2" />
+      )}
 
       {/* Mobile Scroll Hint */}
       <div className="block lg:hidden mb-4">
@@ -119,166 +122,77 @@ export default function TieredServices() {
           scrollbarWidth: 'thin',
           scrollbarColor: '#fbbf24 #374151',
         }}
+        ref={scrollContainerRef}
+        onScroll={checkScrollability}
       >
         <div className="min-w-3xl ">
-        {/* Header Row */}
-          <div className="grid grid-cols-4 bg-yellow-500">
+          {/* Header Row */}
+          <div className="grid grid-cols-4 bg-yellow-500 h-65 items-stretch">
             <div className="flex items-center p-4 md:p-8 border-r border-gray-600">
-              <h4 className="text-gray-900 text-lg md:text-xl lg:text-2xl font-bold">
+              <h4 className="text-gray-900 text-2xl md:text-2xl lg:text-3xl font-bold">
                 Service Name
               </h4>
             </div>
             {tieredServicesPage.tiers.map((tier) => (
-              <div key={tier.id} className="p-4 md:p-8 text-center border-r border-gray-600 last:border-r-0">
-                <div className="mb-4">
+              <div
+                key={tier.id}
+                className="p-4 md:p-3 text-center border-r border-gray-600 last:border-r-0 flex flex-col items-center justify-start h-full"
+              >
+                <div className="mb-4 w-full flex justify-center">
                   <img 
                     src={tier.icon} 
                     alt={tier.name}
-                    className="w-22 h-22 mx-auto mb-2 rounded-xl shadow-lg"
+                    className="w-32 h-32 mx-auto mb-2 rounded-xl shadow-lg"
                   />
                 </div>
-                <h5 className="text-xl md:text-2xl font-semibold text-gray-900">
+                <h5 className="text-2xl md:text-3xl font-semibold text-gray-900 break-words w-full">
                   {tier.name}
                 </h5>
               </div>
             ))}
           </div>
 
-          {/* Ideal For Row */}
-          <motion.div 
-            className="grid grid-cols-4 border-b border-gray-600"
+      {/* Table Rows */}
+      {[
+        {label: "Ideal For", key: "idealFor"},
+        {label: "Partnership Type", key: "partnershipType"},
+        {label: "Core Offer", key: "coreOffer"},
+        {label: "Investment", key: "investment"},
+        {label: "Duration", key: "duration"},
+        {label: "Type of Collaboration", key: "typeOfCollaboration"},
+        {label: "AI Advantages", key: "aiAdvantages"},
+        {label: "Consultations", key: "consultations"},
+        {label: "Deliverables", key: "deliverables"},
+      ].map((row, idx) => (
+          <motion.div
+            key={row.key}
+            className={`grid grid-cols-4 border-b border-gray-600 h-48 items-stretch ${
+              idx % 2 === 1 ? 'bg-yellow-500' : 'bg-gray-800'
+            } ${idx === 8 ? '' : ''}`}
             variants={rowVariants}
           >
-            <div className="p-4 md:p-8 bg-gray-700 border-r border-gray-600">
-              <h6 className="text-lg font-semibold text-white">Ideal For</h6>
+            <div className={`p-4 md:p-8 border-r border-gray-600 flex items-center font-semibold ${
+              idx % 2 === 1 ? 'text-gray-900' : 'text-white'
+            }`}>
+              <h6 className="text-2xl">{row.label}</h6>
             </div>
             {tieredServicesPage.tiers.map((tier) => (
-              <div key={tier.id} className="p-4 md:p-8 bg-gray-800 border-r border-gray-600 last:border-r-0">
-                <p className="text-gray-300 text-md md:text-lg lg:text-xl font-light">{tier.idealFor}</p>
+              <div
+                key={tier.id}
+                className={`p-4 md:p-8 border-r border-gray-600 last:border-r-0 flex items-stretch justify-center overflow-y-auto ${
+                  idx % 2 === 1 ? 'text-gray-900' : 'text-gray-300'
+                }`}
+              >
+                <div className="w-full">
+                  <p className="text-md md:text-lg lg:text-xl font-light w-full">
+                    {tier[row.key]}
+                  </p>
+                  <div className="h-4" />
+                </div>
               </div>
             ))}
           </motion.div>
-
-          {/* Partnership Type Row */}
-          <motion.div 
-            className="grid grid-cols-4 border-b border-gray-600"
-            variants={rowVariants}
-          >
-            <div className="p-4 md:p-8 bg-gray-700 border-r border-gray-600">
-              <h6 className="text-lg font-semibold text-white">Partnership Type</h6>
-            </div>
-            {tieredServicesPage.tiers.map((tier) => (
-              <div key={tier.id} className="p-4 md:p-8 bg-gray-800 border-r border-gray-600 last:border-r-0">
-                <p className="text-gray-300 text-md md:text-lg lg:text-xl font-light">{tier.partnershipType}</p>
-              </div>
             ))}
-          </motion.div>
-
-          {/* Core Offer Row */}
-          <motion.div 
-            className="grid grid-cols-4 border-b border-gray-600"
-            variants={rowVariants}
-          >
-            <div className="p-4 md:p-8 bg-gray-700 border-r border-gray-600">
-              <h6 className="text-lg font-semibold text-white">Core Offer</h6>
-            </div>
-            {tieredServicesPage.tiers.map((tier) => (
-              <div key={tier.id} className="p-4 md:p-8 bg-gray-800 border-r border-gray-600 last:border-r-0">
-                <p className="text-gray-300 text-md md:text-lg lg:text-xl font-light">{tier.coreOffer}</p>
-              </div>
-            ))}
-          </motion.div>
-
-          {/* Investment Row */}
-          <motion.div 
-            className="grid grid-cols-4 border-b border-gray-600"
-            variants={rowVariants}
-          >
-            <div className="p-4 md:p-8 bg-gray-700 border-r border-gray-600">
-              <h6 className="text-lg font-semibold text-white">Investment</h6>
-            </div>
-            {tieredServicesPage.tiers.map((tier) => (
-              <div key={tier.id} className="p-4 md:p-8 bg-gray-800 border-r border-gray-600 last:border-r-0">
-                <p className="text-gray-300 text-md md:text-lg lg:text-xl font-light">{tier.investment}</p>
-              </div>
-            ))}
-          </motion.div>
-
-          {/* Duration Row */}
-          <motion.div 
-            className="grid grid-cols-4 border-b border-gray-600"
-            variants={rowVariants}
-          >
-            <div className="p-4 md:p-8 bg-gray-700 border-r border-gray-600">
-              <h6 className="text-lg font-semibold text-white">Duration</h6>
-            </div>
-            {tieredServicesPage.tiers.map((tier) => (
-              <div key={tier.id} className="p-4 md:p-8 bg-gray-800 border-r border-gray-600 last:border-r-0">
-                <p className="text-gray-300 text-md md:text-lg lg:text-xl font-light">{tier.duration}</p>
-              </div>
-            ))}
-          </motion.div>
-
-          {/* Type Of Collaboration Row */}
-          <motion.div 
-            className="grid grid-cols-4 border-b border-gray-600"
-            variants={rowVariants}
-          >
-            <div className="p-4 md:p-8 bg-gray-700 border-r border-gray-600">
-              <h6 className="text-lg font-semibold text-white">Type of Collaboration</h6>
-            </div>
-            {tieredServicesPage.tiers.map((tier) => (
-              <div key={tier.id} className="p-4 md:p-8 bg-gray-800 border-r border-gray-600 last:border-r-0">
-                <p className="text-gray-300 text-md md:text-lg lg:text-xl font-light">{tier.typeOfCollaboration}</p>
-              </div>
-            ))}
-          </motion.div>
-
-          {/* AI Advantages Row */}
-          <motion.div 
-            className="grid grid-cols-4 border-b border-gray-600"
-            variants={rowVariants}
-          >
-            <div className="p-4 md:p-8 bg-gray-700 border-r border-gray-600">
-              <h6 className="text-lg font-semibold text-white">AI Advantages</h6>
-            </div>
-            {tieredServicesPage.tiers.map((tier) => (
-              <div key={tier.id} className="p-4 md:p-8 bg-gray-800 border-r border-gray-600 last:border-r-0">
-                <p className="text-gray-300 text-md md:text-lg lg:text-xl font-light">{tier.aiAdvantages}</p>
-              </div>
-            ))}
-          </motion.div>
-
-          {/* Consultations Row */}
-          <motion.div 
-            className="grid grid-cols-4 border-b border-gray-600"
-            variants={rowVariants}
-          >
-            <div className="p-4 md:p-8 bg-gray-700 border-r border-gray-600">
-              <h6 className="text-lg font-semibold text-white">Consultations</h6>
-            </div>
-            {tieredServicesPage.tiers.map((tier) => (
-              <div key={tier.id} className="p-4 md:p-8 bg-gray-800 border-r border-gray-600 last:border-r-0">
-                <p className="text-gray-300 text-md md:text-lg lg:text-xl font-light">{tier.consultations}</p>
-              </div>
-            ))}
-          </motion.div>
-
-          {/* Deliverables Row */}
-          <motion.div 
-            className="grid grid-cols-4"
-            variants={rowVariants}
-          >
-            <div className="p-4 md:p-8 bg-gray-700 border-r border-gray-600">
-              <h6 className="text-lg font-semibold text-white">Deliverables</h6>
-            </div>
-            {tieredServicesPage.tiers.map((tier) => (
-              <div key={tier.id} className="p-4 md:p-8 bg-gray-800 border-r border-gray-600 last:border-r-0">
-                <p className="text-gray-300 text-md md:text-lg lg:text-xl font-light">{tier.deliverables}</p>
-              </div>
-            ))}
-          </motion.div>
-
         </div>
       </motion.div>
       </div>
