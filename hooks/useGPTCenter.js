@@ -9,26 +9,8 @@ export function useGPTCenter(session = null) {
   const [loading, setLoading] = useState(true);
   const [userRole, setUserRole] = useState('worker');
   const [executingTasks, setExecutingTasks] = useState(new Set());
+  const [updatingTasks, setUpdatingTasks] = useState(new Set());
   const { showToast } = useToast();
-
-  useEffect(() => {
-    fetchUserRole();
-    if (session?.user) {
-      fetchTasks();
-    }
-  }, [session]);
-
-  const fetchUserRole = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const role = await getUserRole(user.email);
-        setUserRole(role);
-      }
-    } catch (err) {
-      showToast('Failed to fetch user role', 'error');
-    }
-  };
 
   const fetchTasks = useCallback(async () => {
     if (!session?.user) return;
@@ -56,6 +38,178 @@ export function useGPTCenter(session = null) {
       setLoading(false);
     }
   }, [session, showToast]);
+
+  useEffect(() => {
+    fetchUserRole();
+    if (session?.user) {
+      fetchTasks();
+    }
+  }, [session]);
+
+  const updateTaskStatus = useCallback(async (taskId, status, completedAt) => {
+    if (updatingTasks.has(taskId)) return;
+
+    setUpdatingTasks(prev => new Set([...prev, taskId]));
+    
+    try {
+      const { data: { session: currentSession }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError || !currentSession) {
+        throw new Error('Not authenticated');
+      }
+
+      const response = await fetch('/api/gpt-center/tasks', {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${currentSession.access_token}`,
+          'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
+        },
+        body: JSON.stringify({
+          id: taskId,
+          status: status,
+          completed_at: completedAt || null
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `HTTP ${response.status}`);
+      }
+
+      showToast(`Task status updated to ${status.replace('_', ' ')}!`, 'success');
+      await fetchTasks();
+      
+    } catch (err) {
+      showToast('Failed to update task status', 'error');
+      throw err;
+    } finally {
+      setUpdatingTasks(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(taskId);
+        return newSet;
+      });
+    }
+  }, [session, fetchTasks, showToast, updatingTasks]);
+
+  // Separate function to check and reset tasks without circular dependency
+  const checkAndResetTasks = useCallback(async () => {
+    if (!tasks.length || !session?.user) return;
+
+    const now = new Date();
+    const tasksToReset = [];
+
+    tasks.forEach(task => {
+      if (task.status === 'completed' && task.completed_at) {
+        const completedAt = new Date(task.completed_at);
+        let shouldReset = false;
+
+        switch (task.frequency?.toLowerCase()) {
+          case 'five-minutes':
+            const fiveMinInMs = 5 * 60 * 1000;
+            shouldReset = (now - completedAt) >= fiveMinInMs;
+            break;
+          case 'hourly':
+            const hourInMs = 60 * 60 * 1000;
+            shouldReset = (now - completedAt) >= hourInMs;
+            break;
+          case 'daily':
+            shouldReset = completedAt.toDateString() !== now.toDateString();
+            break;
+          case 'weekly':
+            const getNextMonday = (date) => {
+              const nextMonday = new Date(date);
+              const dayOfWeek = date.getDay();
+              const daysUntilNextMonday = dayOfWeek === 0 ? 1 : 8 - dayOfWeek;
+              nextMonday.setDate(date.getDate() + daysUntilNextMonday);
+              nextMonday.setHours(0, 0, 0, 0);
+              return nextMonday;
+            };
+            
+            const nextMondayAfterCompletion = getNextMonday(completedAt);
+            shouldReset = now >= nextMondayAfterCompletion;
+            break;
+          case 'monthly':
+            shouldReset = completedAt.getMonth() !== now.getMonth() || 
+                         completedAt.getFullYear() !== now.getFullYear();
+            break;
+        }
+
+        if (shouldReset) {
+          tasksToReset.push(task.id);
+        }
+      }
+    });
+
+    // Reset eligible tasks directly without using updateTaskStatus to avoid circular dependency
+    if (tasksToReset.length > 0) {
+      try {
+        const { data: { session: currentSession }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError || !currentSession) {
+          console.error('Not authenticated for task reset');
+          return;
+        }
+
+        // Reset multiple tasks at once
+        for (const taskId of tasksToReset) {
+          try {
+            const response = await fetch('/api/gpt-center/tasks', {
+              method: 'PUT',
+              headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${currentSession.access_token}`,
+                'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
+              },
+              body: JSON.stringify({
+                id: taskId,
+                status: 'pending',
+                completed_at: null
+              })
+            });
+
+            if (!response.ok) {
+              console.error(`Failed to reset task ${taskId}:`, await response.text());
+            }
+          } catch (error) {
+            console.error(`Failed to reset task ${taskId}:`, error);
+          }
+        }
+
+        // Refresh tasks after resetting
+        await fetchTasks();
+        console.log(`Reset ${tasksToReset.length} eligible tasks`);
+        
+      } catch (error) {
+        console.error('Failed to reset tasks:', error);
+      }
+    }
+  }, [tasks, session, fetchTasks]);
+
+  // Effect to periodically check for tasks that need to be reset
+  useEffect(() => {
+    if (!tasks.length) return;
+
+    // Check immediately when tasks change
+    checkAndResetTasks();
+
+    // Set up interval to check every 30 seconds (more frequent for testing)
+    const interval = setInterval(checkAndResetTasks, 30000);
+    
+    return () => clearInterval(interval);
+  }, [tasks, checkAndResetTasks]);
+
+  const fetchUserRole = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const role = await getUserRole(user.email);
+        setUserRole(role);
+      }
+    } catch (err) {
+      showToast('Failed to fetch user role', 'error');
+    }
+  };
 
   const fetchEvaluations = useCallback(async (filter = 'all', sortBy = 'created_at') => {
     if (!session?.user) return;
@@ -89,7 +243,7 @@ export function useGPTCenter(session = null) {
     }
 
     const accessToken = session?.access_token;
-    
+    console.log('Creating task with data:', taskData);
     try {
       const response = await fetch('/api/gpt-center/tasks', {
         method: 'POST',
@@ -206,7 +360,7 @@ export function useGPTCenter(session = null) {
     return data.path;
   }, []);
 
-  const uploadLog = useCallback(async ({ taskId, logContent, file }) => {
+  const uploadLog = useCallback(async ({ taskId, logContent, evaluationPrompt, file }) => {
     if (!session?.user) {
       throw new Error('Not authenticated');
     }
@@ -267,6 +421,7 @@ export function useGPTCenter(session = null) {
             logId: logData.id,
             taskId: parseInt(taskId),
             logContent: logContent?.trim(),
+            evaluationPrompt: evaluationPrompt?.trim(),
             fileUrl
           })
         });
@@ -293,10 +448,13 @@ export function useGPTCenter(session = null) {
     loading,
     userRole,
     executingTasks,
+    updatingTasks,
     fetchTasks,
     fetchEvaluations,
     createTask,
     executeTask,
-    uploadLog
+    uploadLog,
+    updateTaskStatus,
+    checkAndResetTasks,
   };
 }
