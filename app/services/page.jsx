@@ -6,6 +6,7 @@ import ProofThroughPerspective from "@/components/homepage/proof-through-perspec
 import BeAnEarlyAdopter from '@/components/services/be-an-early-adopter';
 import TalkWithUs from '@/components/services/talk-with-us';
 import ContactUs from '@/components/homepage/contact-us';
+import ServicesLiveCaseStudies from '@/components/services/article-services';
 
 export default function Page() {
   return (
@@ -25,7 +26,8 @@ export default function Page() {
         <TalkWithUs />
         <ProofThroughPerspective />
         <TierPackagesSection />
-        <ContactUs />
+        <ServicesLiveCaseStudies />
+        <ContactUs variant={'gray-gradient'} cardVariant={'normal'} />
         <Footer />
       </div>
     </div>
