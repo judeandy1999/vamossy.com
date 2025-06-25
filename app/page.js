@@ -7,6 +7,7 @@ import ContactUs from "@/components/homepage/contact-us";
 import UniqueSolutions from "@/components/homepage/unique-solutions";
 import TieredServices from "@/components/homepage/tiered-services";
 import ProofThroughPerspective from "@/components/homepage/proof-through-perspective";
+import LiveCaseStudies from "@/components/homepage/article-section";
 
 export default function Home() {
     return (
@@ -26,7 +27,8 @@ export default function Home() {
           <UniqueSolutions />
           <TieredServices />
           <ProofThroughPerspective />
-          <ContactUs />
+          <LiveCaseStudies />
+          <ContactUs/>
           <Footer />
         </div>
       </div>
