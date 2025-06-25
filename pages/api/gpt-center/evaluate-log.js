@@ -17,7 +17,7 @@ export default async function handler(req, res) {
       return res.status(401).json({ error: authError });
     }
 
-    const { logId, taskId, logContent, fileUrl } = req.body;
+    const { logId, taskId, logContent, evaluationPrompt, fileUrl } = req.body;
 
     if (!logId || !taskId) {
       return res.status(400).json({ error: 'Missing required fields: logId and taskId' });
@@ -61,7 +61,9 @@ export default async function handler(req, res) {
     }
 
     // Create evaluation prompt
-    const evaluationPrompt = `
+    const evaluationPromptToUse = `
+Please evaluate the following task completion log and provide structured feedback.
+The evaluation should be based on the following evaluation prompt:${evaluationPrompt}
 You are an expert task evaluator. Please evaluate the following task completion log and provide structured feedback.
 
 Task Details:
@@ -106,7 +108,7 @@ Respond with ONLY the JSON object, no additional text or formatting.
           },
           {
             role: 'user',
-            content: evaluationPrompt
+            content: evaluationPromptToUse
           }
         ],
         max_tokens: 1500,
