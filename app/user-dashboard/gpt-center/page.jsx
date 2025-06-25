@@ -16,10 +16,12 @@ export default function GPTCenterPage() {
     evaluations, 
     loading, 
     executingTasks,
+    updatingTasks,
     fetchTasks, 
     fetchEvaluations, 
     createTask,
     executeTask,
+    updateTaskStatus,
     uploadLog 
   } = useGPTCenter(session);
   const [activeTab, setActiveTab] = useState('tasks');
@@ -74,8 +76,8 @@ export default function GPTCenterPage() {
           <TaskList 
             tasks={tasks} 
             onTaskUpdate={fetchTasks}
-            executeTask={executeTask}
-            executingTasks={executingTasks}
+            updateTaskStatus={updateTaskStatus}
+            updatingTasks={updatingTasks}
           />
         )}
         {activeTab === 'upload' && (
