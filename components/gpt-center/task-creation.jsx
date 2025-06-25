@@ -125,6 +125,8 @@ export default function TaskCreation({ createTask }) {
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
               <option value="once">One Time</option>
+              <option value="five-minutes">Every 5 minutes</option>
+              <option value="hourly">Hourly</option>
               <option value="daily">Daily</option>
               <option value="weekly">Weekly</option>
               <option value="monthly">Monthly</option>

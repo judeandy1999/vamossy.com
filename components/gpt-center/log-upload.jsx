@@ -9,6 +9,7 @@ export default function LogUpload({ tasks, uploadLog }) {
   const { showToast } = useToast();
   const [selectedTask, setSelectedTask] = useState('');
   const [logContent, setLogContent] = useState('');
+  const [evaluationPrompt, setEvaluationPrompt] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploading, setUploading] = useState(false);
 
@@ -22,6 +23,7 @@ export default function LogUpload({ tasks, uploadLog }) {
   const resetForm = () => {
     setSelectedTask('');
     setLogContent('');
+    setEvaluationPrompt('');
     setSelectedFile(null);
     const fileInput = document.getElementById('file-upload');
     if (fileInput) fileInput.value = '';
@@ -41,6 +43,7 @@ export default function LogUpload({ tasks, uploadLog }) {
       await uploadLog({
         taskId: selectedTask,
         logContent,
+        evaluationPrompt,
         file: selectedFile
       });
 
@@ -104,6 +107,22 @@ export default function LogUpload({ tasks, uploadLog }) {
           />
           <p className="mt-1 text-sm text-gray-500">
             Provide details about how you completed the task, what tools you used, and any results or insights.
+          </p>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Evaluation Prompt
+          </label>
+          <textarea
+            value={evaluationPrompt}
+            onChange={(e) => setEvaluationPrompt(e.target.value)}
+            rows={8}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            placeholder="How would you like the AI to evaluate your log? What specific aspects should it focus on?"
+          />
+          <p className="mt-1 text-sm text-gray-500">
+            Provide custom instructions for how you want the AI to evaluate your log.
           </p>
         </div>
 
