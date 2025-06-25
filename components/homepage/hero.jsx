@@ -29,8 +29,12 @@ export default function Hero() {
     setShowCalendar(false);
   };
 
-  const handleSubmitBrief = () => {
-    // Redirect to the brief submission page
+  const handleSubmitBrief = (e) => {
+    e.preventDefault();
+    const contactSection = document.getElementById('contact');
+    if (contactSection) {
+      contactSection.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   return (
