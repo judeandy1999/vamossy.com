@@ -3,21 +3,23 @@
 import Image from "next/image";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
+import Container from "@/components/ui/container";
+import Title from "@/components/ui/title";
 
 export default function FounderCard({ founder }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { margin: "-100px" });
 
   return (
-    <section className="relative py-20 md:py-28 bg-gray-800 px-6">
-      <div className="max-w-6xl mx-auto" ref={ref}>
+    <Container variant="transparent-gradient" className="py-16">
+      <div className=" mx-auto" ref={ref}>
         <motion.div
           className="text-center mb-16"
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7 }}
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+          <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
             Meet The Founder
           </h2>
           <div className="h-1 w-20 bg-yellow-400 mx-auto" />
@@ -36,7 +38,7 @@ export default function FounderCard({ founder }) {
               animate={isInView ? { opacity: 1, scale: 1 } : {}}
               transition={{ duration: 0.8, delay: 0.4 }}
             >
-              <div className="relative w-64 h-80 rounded-2xl overflow-hidden border-2 border-yellow-400/50 shadow-2xl">
+              <div className="relative w-74 h-110 rounded-2xl overflow-hidden border-2 border-yellow-400/50 shadow-2xl">
                 <Image
                   src={founder.image}
                   alt={founder.name}
@@ -55,10 +57,10 @@ export default function FounderCard({ founder }) {
               transition={{ duration: 0.8, delay: 0.5 }}
             >
               <div className="space-y-4">
-                <h3 className="text-xl md:text-2xl font-bold text-white">
+                <h3 className="text-xl md:text-3xl font-bold text-white">
                   {founder.name}
                 </h3>
-                <p className="text-yellow-400 font-semibold">
+                <p className="text-lg md:text-xl text-yellow-400 font-semibold">
                   {founder.intro}
                 </p>
               </div>
@@ -72,14 +74,17 @@ export default function FounderCard({ founder }) {
               </div>
 
               <div className="pt-4 border-t border-gray-700">
-                <p className="text-yellow-400 font-semibold text-lg">
+                <p className="text-yellow-400 font-semibold text-lg md:text-xl">
                   {founder.closing}
+                </p>
+                <p className="text-white font-semibold text-lg md:text-xl">
+                  {founder.closing2}
                 </p>
               </div>
             </motion.div>
           </div>
         </motion.div>
       </div>
-    </section>
+    </Container>
   );
 }
