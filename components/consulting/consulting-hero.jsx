@@ -6,7 +6,7 @@ import Container from "@/components/ui/container";
 export default function ConsultingHero() {
 
   return (
-    <Container variant="transparent-gradient" className="h-[100vh]">
+    <Container variant="transparent" className="h-[100vh]">
       <motion.div
         className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6"
         initial="hidden"
