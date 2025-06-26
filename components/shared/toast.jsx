@@ -4,7 +4,7 @@ import { useToast } from '@/contexts/toast-context';
 import { X, CheckCircle, AlertCircle, Info } from 'lucide-react';
 
 export default function Toast() {
-  const { toast } = useToast();
+  const { toast, hideToast } = useToast();
 
   if (!toast.visible) return null;
 
@@ -38,10 +38,7 @@ export default function Toast() {
       {getIcon(toast.type)}
       <span className="flex-1 text-sm font-medium">{toast.message}</span>
       <button
-        onClick={() => {
-          setIsVisible(false);
-          setTimeout(onClose, 300);
-        }}
+        onClick={hideToast}
         className="text-gray-500 hover:text-gray-700 transition-colors"
       >
         <X size={16} />
