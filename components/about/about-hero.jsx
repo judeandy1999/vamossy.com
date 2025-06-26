@@ -9,7 +9,7 @@ export default function AboutHero() {
   const isInView = useInView(ref, { margin: "-100px" });
 
   return (
-    <Container variant="transparent-gradient" className="relative flex items-center h-[100vh] overflow-hidden">
+    <Container variant="transparent" className="relative flex items-center h-[100vh] overflow-hidden">
       <div
         className="relative z-20 flex flex-col items-center justify-center text-center px-6 mx-auto"
         ref={ref}
