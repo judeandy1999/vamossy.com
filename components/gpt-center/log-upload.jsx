@@ -179,7 +179,7 @@ export default function LogUpload({ tasks, uploadLog }) {
           <button
             type="submit"
             disabled={uploading}
-            className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+            className="cursor-pointer bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
           >
             {uploading ? (
               <>
@@ -188,7 +188,7 @@ export default function LogUpload({ tasks, uploadLog }) {
               </>
             ) : (
               <>
-                <Send className="h-4 w-4 mr-2" />
+                <Send className="cursor-pointer h-4 w-4 mr-2" />
                 Upload Log
               </>
             )}
