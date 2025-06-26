@@ -14,18 +14,25 @@ export default function AiSystemsWorkCards({ cards }) {
       {cards.map((card, idx) => (
         <motion.div
           key={idx}
-          className="bg-[#23272f] rounded-2xl shadow-xl border border-[#2e3748] p-8 flex flex-col items-center transition-transform hover:-translate-y-2 hover:shadow-2xl duration-200"
+          className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 flex flex-col items-center shadow-lg hover:shadow-yellow-400/20 transition-all duration-300 hover:-translate-y-2"
           initial={{ opacity: 0, y: 40 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, delay: 0.1 + idx * 0.12 }}
         >
-          <img
-            src={card.image}
-            alt={card.title}
-            className="w-32 h-32 object-cover mb-6 rounded-xl border-2 border-[#1e90ff] shadow-lg"
-          />
-          <h3 className="text-xl font-bold text-white mb-3 text-center">{card.title}</h3>
-          <p className="text-gray-300 text-center">{card.description}</p>
+          <div className="w-38 h-38 mb-6 rounded-xl border-2 border-yellow-400/60 shadow-yellow-400/20 shadow-lg overflow-hidden flex items-center justify-center bg-gray-900/80">
+            <img
+              src={card.image}
+              alt={card.title}
+              className="object-cover w-full h-full"
+              draggable={false}
+            />
+          </div>
+          <h3 className="text-white text-2xl md:text-3xl font-semibold mb-3 text-center leading-tight">
+            {card.title}
+          </h3>
+          <p className="text-gray-300 text-base md:text-lg text-center font-light">
+            {card.description}
+          </p>
         </motion.div>
       ))}
     </div>
