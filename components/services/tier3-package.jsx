@@ -36,11 +36,19 @@ export default function Tier3Package() {
           <Title variant="h5" title={subtitle} className="!mb-4"/>
 
           {/* Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-            {tier3.cards.map((card, idx) => (
-              <div
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12"
+            variants={listVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, amount: 0.2 }}
+          >
+            {cards.map((card, idx) => (
+              <motion.div
                 key={idx}
                 className="w-full bg-transparent border border-yellow-400 rounded-2xl shadow p-6 flex flex-col items-center"
+                variants={itemVariants}
+                transition={{ type: "spring", stiffness: 200, damping: 15 }}
               >
                 <div className="w-14 h-14 sm:w-16 sm:h-16 mb-4 flex items-center justify-center rounded-full p-1">
                   <img
@@ -50,22 +58,22 @@ export default function Tier3Package() {
                     loading="lazy"
                   />
                 </div>
-                <Title variant="h3-full" title={card.label} />
-                <Title variant="h6" title={card.description}/>
-              </div>
+                <Title variant="h3-full" title={card.label} isAnimationEnabled={false} />
+                <Title variant="h6" title={card.description} isAnimationEnabled={false}/>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
 
           {/* Features Section */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* What's Included + Embedded AI Systems */}
+            {/* What's Included & Deliverables */}
             <div>
-              <h3 className="text-2xl font-bold text-white mb-2 flex items-center">
+              <h3 className="text-2xl md:text-3xl font-semibold text-white mb-2 flex items-center">
                 What's Included
               </h3>
               <div className="h-1 w-24 bg-yellow-500 mb-4 rounded"></div>
               <motion.ul
-                className="space-y-4 mb-8"
+                className="space-y-4"
                 variants={listVariants}
                 initial="hidden"
                 whileInView="visible"
@@ -83,41 +91,11 @@ export default function Tier3Package() {
                       className="mt-1 mr-2 w-5 h-4 object-contain"
                       loading="lazy"
                     />
-                    <span className="text-gray-100">{item}</span>
+                    <span className="text-gray-100 text-xl">{item}</span>
                   </motion.li>
                 ))}
               </motion.ul>
-              <h3 className="text-2xl font-bold text-white mb-2 flex items-center">
-                Embedded AI Systems
-              </h3>
-              <div className="h-1 w-24 bg-yellow-500 mb-4 rounded"></div>
-              <motion.ul
-                className="space-y-4"
-                variants={listVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: false, amount: 0.2 }}
-              >
-                {embeddedAISystems.map((item, idx) => (
-                  <motion.li
-                    key={idx}
-                    className="flex items-start"
-                    variants={itemVariants}
-                  >
-                    <img
-                      src="/list-icon.webp"
-                      alt="list icon"
-                      className="mt-1 mr-2 w-5 h-4 object-contain"
-                      loading="lazy"
-                    />
-                    <span className="text-gray-100">{item}</span>
-                  </motion.li>
-                ))}
-              </motion.ul>
-            </div>
-            {/* Deliverables */}
-            <div>
-              <h3 className="text-2xl font-bold text-white mb-2 flex items-center">
+              <h3 className="text-2xl md:text-3xl font-semibold text-white mb-2 flex items-center mt-8">
                 Deliverables
               </h3>
               <div className="h-1 w-24 bg-yellow-500 mb-4 rounded"></div>
@@ -140,7 +118,37 @@ export default function Tier3Package() {
                       className="mt-1 mr-2 w-5 h-4 object-contain"
                       loading="lazy"
                     />
-                    <span className="text-gray-100">{item}</span>
+                    <span className="text-gray-100 text-xl">{item}</span>
+                  </motion.li>
+                ))}
+              </motion.ul>
+            </div>
+            {/* Embedded AI Systems */}
+            <div>
+              <h3 className="text-2xl md:text-3xl font-semibold text-white mb-2 flex items-center">
+                Embedded AI Systems
+              </h3>
+              <div className="h-1 w-24 bg-yellow-500 mb-4 rounded"></div>
+              <motion.ul
+                className="space-y-4"
+                variants={listVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: false, amount: 0.2 }}
+              >
+                {embeddedAISystems.map((item, idx) => (
+                  <motion.li
+                    key={idx}
+                    className="flex items-start"
+                    variants={itemVariants}
+                  >
+                    <img
+                      src="/list-icon.webp"
+                      alt="list icon"
+                      className="mt-1 mr-2 w-5 h-4 object-contain"
+                      loading="lazy"
+                    />
+                    <span className="text-gray-100 text-xl">{item}</span>
                   </motion.li>
                 ))}
               </motion.ul>
