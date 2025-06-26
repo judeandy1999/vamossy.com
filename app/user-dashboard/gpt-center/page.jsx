@@ -1,64 +1,30 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAuthWithRedirect } from '@/hooks/useAuthWithRedirect';
-import { supabase } from '@/utils/client';
+import { useGPTCenter } from '@/hooks/useGPTCenter';
 import TaskList from '@/components/gpt-center/task-list';
 import TaskCreation from '@/components/gpt-center/task-creation';
 import LogUpload from '@/components/gpt-center/log-upload';
 import EvaluationTable from '@/components/gpt-center/evaluation-table';
 import Spinner from '@/components/ui/spinner';
-import { useToast } from '@/contexts/toast-context';
 
 export default function GPTCenterPage() {
-  const { session, status } = useAuthWithRedirect();
-  const { showToast } = useToast();
+  const { session, status, role } = useAuthWithRedirect();
+  const { 
+    tasks, 
+    evaluations, 
+    loading, 
+    executingTasks,
+    updatingTasks,
+    fetchTasks, 
+    fetchEvaluations, 
+    createTask,
+    executeTask,
+    updateTaskStatus,
+    uploadLog 
+  } = useGPTCenter(session);
   const [activeTab, setActiveTab] = useState('tasks');
-  const [userRole, setUserRole] = useState('worker');
-  const [tasks, setTasks] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (session?.user) {
-      fetchUserRole();
-      fetchTasks();
-    }
-  }, [session]);
-
-  const fetchUserRole = async () => {
-    try {
-      const { data: userData, error } = await supabase
-        .from('users')
-        .select('role')
-        .eq('email', session.user.email)
-        .single();
-      
-      if (!error && userData) {
-        setUserRole(userData.role);
-      }
-    } catch (err) {
-      console.error('Error fetching user role:', err);
-    }
-  };
-
-  const fetchTasks = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('tasks')
-        .select('*')
-        .eq('assigned_user_id', session.user.id)
-        .eq('is_active', true)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setTasks(data || []);
-    } catch (err) {
-      console.error('Error fetching tasks:', err);
-      showToast('Failed to load tasks', 'error');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   if (status === 'loading' || loading) {
     return <Spinner />;
@@ -73,7 +39,7 @@ export default function GPTCenterPage() {
   ];
 
   const visibleTabs = tabs.filter(tab => 
-    tab.role === 'all' || (tab.role === 'admin' && userRole === 'admin')
+    tab.role === 'all' || (tab.role === 'admin' && role === 'admin')
   );
 
   return (
@@ -107,18 +73,28 @@ export default function GPTCenterPage() {
       {/* Tab Content */}
       <div className="min-h-96">
         {activeTab === 'tasks' && (
-          <TaskList tasks={tasks} onTaskUpdate={fetchTasks} />
+          <TaskList 
+            tasks={tasks} 
+            onTaskUpdate={fetchTasks}
+            updateTaskStatus={updateTaskStatus}
+            updatingTasks={updatingTasks}
+          />
         )}
         {activeTab === 'upload' && (
-          <LogUpload tasks={tasks} />
+          <LogUpload tasks={tasks} uploadLog={uploadLog} />
         )}
         {activeTab === 'evaluations' && (
-          <EvaluationTable userRole={userRole} />
+          <EvaluationTable 
+            userRole={role} 
+            evaluations={evaluations}
+            fetchEvaluations={fetchEvaluations}
+            loading={loading}
+          />
         )}
-        {activeTab === 'create' && userRole === 'admin' && (
-          <TaskCreation onTaskCreated={fetchTasks} />
+        {activeTab === 'create' && role === 'admin' && (
+          <TaskCreation createTask={createTask} />
         )}
-        {activeTab === 'manage' && userRole === 'admin' && (
+        {activeTab === 'manage' && role === 'admin' && (
           <div>Admin Management Panel - Coming Soon</div>
         )}
       </div>

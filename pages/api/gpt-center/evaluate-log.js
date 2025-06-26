@@ -2,14 +2,7 @@ import { supabase } from '@/utils/client';
 import { authenticate } from '@/lib/authMiddleware';
 import { verifySupabaseAuth } from '@/utils/verifySupabaseAuth';
 
-export default async function handler(req, res) {
-  console.log('=== Evaluate Log API Called ===');
-  console.log('Method:', req.method);
-  console.log('Headers:', {
-    authorization: req.headers.authorization ? 'present' : 'missing',
-    internal: req.headers['x-internal-request'] ? 'present' : 'missing'
-  });
-  
+export default async function handler(req, res) {  
   if (!authenticate(req, res)) return;
 
   if (req.method !== 'POST') {
@@ -24,10 +17,7 @@ export default async function handler(req, res) {
       return res.status(401).json({ error: authError });
     }
 
-    console.log('User authenticated:', user.id);
-
-    const { logId, taskId, logContent, fileUrl } = req.body;
-    console.log('Request body:', { logId, taskId, logContent: logContent ? 'present' : 'missing', fileUrl });
+    const { logId, taskId, logContent, evaluationPrompt, fileUrl } = req.body;
 
     if (!logId || !taskId) {
       return res.status(400).json({ error: 'Missing required fields: logId and taskId' });
@@ -71,7 +61,9 @@ export default async function handler(req, res) {
     }
 
     // Create evaluation prompt
-    const evaluationPrompt = `
+    const evaluationPromptToUse = `
+Please evaluate the following task completion log and provide structured feedback.
+The evaluation should be based on the following evaluation prompt:${evaluationPrompt}
 You are an expert task evaluator. Please evaluate the following task completion log and provide structured feedback.
 
 Task Details:
@@ -116,7 +108,7 @@ Respond with ONLY the JSON object, no additional text or formatting.
           },
           {
             role: 'user',
-            content: evaluationPrompt
+            content: evaluationPromptToUse
           }
         ],
         max_tokens: 1500,
