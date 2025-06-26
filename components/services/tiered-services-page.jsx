@@ -111,90 +111,86 @@ export default function TieredServices() {
           <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-gray-900 to-transparent z-10 pointer-events-none"></div>
         )}
 
-      {/* Services Table */}
-      <motion.div
-        className="bg-gray-800/50 backdrop-blur-sm rounded-2xl overflow-auto border border-gray-700/50 scrollbar-always-visible"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ amount: 0 }}
-        variants={tableVariants}
-        style={{
-          scrollbarWidth: 'thin',
-          scrollbarColor: '#fbbf24 #374151',
-        }}
-        ref={scrollContainerRef}
-        onScroll={checkScrollability}
-      >
-        <div className="min-w-3xl ">
-          {/* Header Row */}
-          <div className="grid grid-cols-4 bg-yellow-500 h-65 items-stretch">
-            <div className="flex items-center p-4 md:p-8 border-r border-gray-600">
-              <h4 className="text-gray-900 text-2xl md:text-2xl lg:text-3xl font-bold">
-                Service Name
-              </h4>
-            </div>
-            {tieredServicesPage.tiers.map((tier) => (
-              <div
-                key={tier.id}
-                className="p-4 md:p-3 text-center border-r border-gray-600 last:border-r-0 flex flex-col items-center justify-start h-full"
-              >
-                <div className="mb-4 w-full flex justify-center">
-                  <img 
-                    src={tier.icon} 
-                    alt={tier.name}
-                    className="w-32 h-32 mx-auto mb-2 rounded-xl shadow-lg"
-                  />
-                </div>
-                <h5 className="text-2xl md:text-3xl font-semibold text-gray-900 break-words w-full">
-                  {tier.name}
-                </h5>
-              </div>
-            ))}
-          </div>
-
-      {/* Table Rows */}
-      {[
-        {label: "Ideal For", key: "idealFor"},
-        {label: "Partnership Type", key: "partnershipType"},
-        {label: "Core Offer", key: "coreOffer"},
-        {label: "Investment", key: "investment"},
-        {label: "Duration", key: "duration"},
-        {label: "Type of Collaboration", key: "typeOfCollaboration"},
-        {label: "AI Advantages", key: "aiAdvantages"},
-        {label: "Consultations", key: "consultations"},
-        {label: "Deliverables", key: "deliverables"},
-      ].map((row, idx) => (
+        {/* Services Table */}
+        <div
+          ref={scrollContainerRef}
+          className="overflow-x-auto overflow-y-hidden rounded-2xl custom-scrollbar"
+          onScroll={checkScrollability}
+          tabIndex={0}
+          style={{ WebkitOverflowScrolling: 'touch', scrollbarWidth: 'thin', scrollbarColor: '#fbbf24 #374151' }}
+        >
           <motion.div
-            key={row.key}
-            className={`grid grid-cols-4 border-b border-gray-600 h-48 items-stretch ${
-              idx % 2 === 1 ? 'bg-yellow-500' : 'bg-gray-800'
-            } ${idx === 8 ? '' : ''}`}
-            variants={rowVariants}
+            className="bg-gray-800/50 backdrop-blur-sm rounded-2xl min-w-[900px] border border-gray-700/50"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ amount: 0 }}
+            variants={tableVariants}
           >
-            <div className={`p-4 md:p-8 border-r border-gray-600 flex items-center font-semibold ${
-              idx % 2 === 1 ? 'text-gray-900' : 'text-white'
-            }`}>
-              <h6 className="text-2xl">{row.label}</h6>
-            </div>
-            {tieredServicesPage.tiers.map((tier) => (
-              <div
-                key={tier.id}
-                className={`p-4 md:p-8 border-r border-gray-600 last:border-r-0 flex items-stretch justify-center overflow-y-auto ${
-                  idx % 2 === 1 ? 'text-gray-900' : 'text-gray-300'
-                }`}
-              >
-                <div className="w-full">
-                  <p className="text-md md:text-lg lg:text-xl font-light w-full">
-                    {tier[row.key]}
-                  </p>
-                  <div className="h-4" />
+            <div className="min-w-3xl">
+              {/* Header Row */}
+              <div className="grid grid-cols-4 bg-yellow-500 h-50 items-stretch rounded-t-3xl shadow-xl overflow-hidden">
+                <div className="flex items-center justify-center p-8 border-r border-gray-600 rounded-tl-3xl">
+                  <h4 className="text-gray-900 text-3xl md:text-4xl font-black tracking-tight">
+                    Service Name
+                  </h4>
                 </div>
+                {tieredServicesPage.tiers.map((tier, idx) => (
+                  <div
+                    key={tier.id}
+                    className={`flex items-center justify-center p-8 border-r border-gray-600 last:border-r-0 h-full
+                      ${idx === tieredServicesPage.tiers.length - 1 ? 'rounded-tr-3xl' : ''}
+                    `}
+                  >
+                    <h5 className="text-3xl md:text-4xl font-black text-gray-900 w-full tracking-tight">
+                      {tier.name}
+                    </h5>
+                  </div>
+                ))}
               </div>
-            ))}
+
+              {/* Table Rows */}
+              {[
+                { label: "Ideal For", key: "idealFor" },
+                { label: "Partnership Type", key: "partnershipType" },
+                { label: "Core Offer", key: "coreOffer" },
+                { label: "Investment", key: "investment" },
+                { label: "Duration", key: "duration" },
+                { label: "Type of Collaboration", key: "typeOfCollaboration" },
+                { label: "AI Advantages", key: "aiAdvantages" },
+                { label: "Consultations", key: "consultations" },
+                { label: "Deliverables", key: "deliverables" },
+              ].map((row, idx) => (
+                <motion.div
+                  key={row.key}
+                  className={`grid min-h-[250px] grid-cols-4 border-b border-gray-700 items-stretch text-sm md:text-base lg:text-lg ${
+                    idx % 2 === 1 ? 'bg-yellow-500/10' : 'bg-gray-800/80'
+                  }`}
+                  variants={rowVariants}
+                >
+                  <div className={`p-4 md:p-8 border-r border-gray-700 flex items-center font-semibold h-full justify-start ${
+                    idx % 2 === 1 ? 'text-white' : 'text-white'
+                  }`}>
+                    <h6 className="text-lg md:text-2xl text-left">{row.label}</h6>
+                  </div>
+                  {tieredServicesPage.tiers.map((tier) => (
+                    <div
+                      key={tier.id}
+                      className={`items-center p-2 md:p-6 border-r border-gray-700 last:border-r-0 flex h-full ${
+                        idx % 2 === 1 ? 'text-white' : 'text-gray-200'
+                      }`}
+                    >
+                      <div className="w-full">
+                        <p className="text-md md:text-lg lg:text-xl font-light w-full">
+                          {tier[row.key]}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </motion.div>
+              ))}
+            </div>
           </motion.div>
-            ))}
         </div>
-      </motion.div>
       </div>
     </Container>
   );
