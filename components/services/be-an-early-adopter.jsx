@@ -43,9 +43,26 @@ export default function BeAnEarlyAdopter() {
         <div className="text-gray-200 text-xl md:text-2xl font-light max-w-3xl mx-auto">
           {earlyAdopter.planVsAutomate.map((part, idx) =>
             part.highlight ? (
-              <span key={idx} className="text-yellow-400 font-semibold">{part.text}</span>
+              <motion.span
+                key={idx}
+                className="text-yellow-400 font-semibold"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: idx * 0.08 }}
+                viewport={{ once: false, amount: 0.3 }}
+              >
+                {part.text}
+              </motion.span>
             ) : (
-              <span key={idx}>{part.text}</span>
+              <motion.span
+                key={idx}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: idx * 0.08 }}
+                viewport={{ once: false, amount: 0.3 }}
+              >
+                {part.text}
+              </motion.span>
             )
           )}
         </div>
