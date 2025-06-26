@@ -20,9 +20,9 @@ export default function Tier2Package() {
   };
 
   return (
-    <Container variant="transparent-gradient" className="py-16 lg:py-24">
+    <Container variant="transparent-gradient">
       <div className="max-w-6xl mx-auto px-4">
-        <Container variant="gray-gradient" className="border border-yellow-400 rounded-2xl shadow-xl p-6 sm:p-10 md:p-14">
+        <Container variant="gray-gradient" className="border border-yellow-400 rounded-2xl shadow-xl">
         <div className="p-6 sm:p-10 md:p-14">
           {/* Header */}
           <div className="text-center mb-8 sm:mb-10 md:mb-12">
@@ -38,7 +38,13 @@ export default function Tier2Package() {
           </div>
 
           {/* Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12"
+            variants={listVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, amount: 0.2 }}
+          >
             {tier2.cards.map((card, idx) => (
               <motion.div
                 key={idx}
@@ -58,13 +64,13 @@ export default function Tier2Package() {
                 <Title variant="h6" title={card.description} isAnimationEnabled={false}/>
               </motion.div>
             ))}
-          </div>
+          </motion.div>
 
           {/* Features Section */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* What's Included */}
             <div>
-              <h3 className="text-2xl font-bold text-white mb-2 flex items-center">
+              <h3 className="text-2xl md:text-3xl font-semibold text-white mb-2 flex items-center">
                 What's Included
               </h3>
               <div className="h-1 w-24 bg-yellow-500 mb-4 rounded"></div>
@@ -87,11 +93,11 @@ export default function Tier2Package() {
                       className="mt-1 mr-2 w-5 h-4 object-contain"
                       loading="lazy"
                     />
-                    <span className="text-gray-100">{item}</span>
+                    <span className="text-gray-100 text-xl">{item}</span>
                   </motion.li>
                 ))}
               </motion.ul>
-              <h3 className="text-2xl font-bold text-white mb-2 flex items-center mt-10">
+              <h3 className="text-2xl md:text-3xl font-semibold text-white mb-2 flex items-center mt-10">
                 Embedded AI Systems
               </h3>
               <div className="h-1 w-24 bg-yellow-500 mb-4 rounded"></div>
@@ -114,14 +120,14 @@ export default function Tier2Package() {
                       className="mt-1 mr-2 w-5 h-4 object-contain"
                       loading="lazy"
                     />
-                    <span className="text-gray-100">{item}</span>
+                    <span className="text-gray-100 text-xl">{item}</span>
                   </motion.li>
                 ))}
               </motion.ul>
             </div>
             {/* Deliverables */}
             <div>
-              <h3 className="text-2xl font-bold text-white mb-2 flex items-center">
+              <h3 className="text-2xl md:text-3xl font-semibold text-white mb-2 flex items-center">
                 Deliverables
               </h3>
               <div className="h-1 w-24 bg-yellow-500 mb-4 rounded"></div>
@@ -144,7 +150,7 @@ export default function Tier2Package() {
                       className="mt-1 mr-2 w-5 h-4 object-contain"
                       loading="lazy"
                     />
-                    <span className="text-gray-100">{item}</span>
+                    <span className="text-gray-100 text-xl">{item}</span>
                   </motion.li>
                 ))}
               </motion.ul>
