@@ -28,7 +28,7 @@ export default function AboutBeliefSection() {
   const isInView = useInView(ref, { margin: "-100px" });
 
   return (
-    <Container variant="gray-gradient">
+    <Container variant="gray">
       <div className="relative z-20 mx-auto w-full" ref={ref}>
         <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-16 md:gap-y-20 relative">
           {/* Center vertical line */}
