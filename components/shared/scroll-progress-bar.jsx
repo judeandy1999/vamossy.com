@@ -38,7 +38,7 @@ export default function ScrollProgressBar() {
   return (
     <div className="w-full h-1 bg-transparent">
       <div
-        className="h-1 transition-none bg-gradient-to-r from-yellow-800 to-yellow-400"
+        className="h-1 transition-none bg-gradient-to-r from-yellow-800 to-yellow-400 rounded-e-full"
         style={{ width: `${scroll}%` }}
       />
     </div>
