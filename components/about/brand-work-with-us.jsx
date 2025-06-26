@@ -36,7 +36,7 @@ function SectionCard({ title, items, delay = 0 }) {
             transition={{ duration: 0.5, delay: 0.2 + idx * 0.1 }}
           >
             <div className="w-2 h-2 bg-yellow-400 rounded-full mt-3 flex-shrink-0" />
-            <span className="text-gray-300 text-base md:text-lg leading-relaxed">
+            <span className="text-gray-300 text-lg md:text-xl leading-relaxed">
               {item}
             </span>
           </motion.li>
