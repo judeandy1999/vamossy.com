@@ -120,7 +120,7 @@ export default function TieredServices() {
           style={{ WebkitOverflowScrolling: 'touch', scrollbarWidth: 'thin', scrollbarColor: '#fbbf24 #374151' }}
         >
           <motion.div
-            className="bg-gray-800/50 backdrop-blur-sm rounded-2xl min-w-[900px] border border-gray-700/50"
+            className="bg-gray-800/60 backdrop-blur-sm rounded-2xl min-w-[900px] border border-gray-700/50"
             initial="hidden"
             whileInView="visible"
             viewport={{ amount: 0 }}
