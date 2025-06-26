@@ -20,30 +20,29 @@ export default function LetsBuild() {
 
     return (
         <Container variant="transparent-gradient">
-            <div className="flex justify-center items-center min-h-[70vh]">
-                <div className="w-full">
-                    <div className="rounded-3xlm px-6 py-12 md:px-16 flex flex-col items-center gap-8">
-                        <Title
-                            variant="h2"
-                            title="Let's Build Smart Growth Systems Together"
-                            className="mb-2 text-center"
-                        />
-                        <Title
-                            title="We work best with ambitious brands, product-led founders, and internal teams looking to operate at the edge of marketing innovation."
-                            className="text-lg md:text-xl text-gray-200 text-center mb-4 font-normal"
-                            variant="h4"
-                        />
-                        <div className="w-full flex justify-center">
-                            <HeroButton
-                                onClick={handleBookNowClick}
-                                icon={Check}
-                                delay={0.2}
-                                className="w-full max-w-xs"
-                            >
-                                Book a Consulting Discovery Call
-                            </HeroButton>
-                        </div>
-                    </div>
+            {/* Animated background shape */}
+            <div className="absolute inset-0 flex justify-center items-center pointer-events-none z-0">
+            </div>
+            <div className="relative flex flex-col justify-center items-center min-h-[50vh] w-full px-4 z-10 animate-fade-in">
+                <Title
+                    variant="h2"
+                    title="Let's Build Smart Growth Systems Together"
+                    className="mb-6 text-center text-5xl md:text-6xl font-extrabold text-white drop-shadow-[0_4px_24px_rgba(0,0,0,0.5)]"
+                />
+                <Title
+                    title="We work best with ambitious brands, product-led founders, and internal teams looking to operate at the edge of marketing innovation."
+                    className="!text-2xl md:text-2xl text-gray-200 text-center !mt-0 !mb-4"
+                    variant="h4"
+                />
+                <div className="flex justify-center w-full">
+                    <HeroButton
+                        onClick={handleBookNowClick}
+                        icon={Check}
+                        delay={0.2}
+                        className="w-full max-w-[380px] text-lg font-semibold shadow-lg"
+                    >
+                        Book a Consulting Discovery Call
+                    </HeroButton>
                 </div>
             </div>
             <HubSpotCalendar
