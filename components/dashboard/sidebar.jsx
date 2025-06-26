@@ -20,8 +20,7 @@ import {
 } from 'lucide-react'
 
 const navItems = [
-  { label: 'Dashboard', href: '/user-dashboard', icon: Home, roles: ['admin', 'user', 'worker'] },
-  // { label: 'GPT Center', href: '/user-dashboard/gpt-center', icon: Bot, roles: ['admin', 'worker'] },
+  { label: 'Dashboard', href: '/user-dashboard', icon: Home, roles: ['admin', 'worker'] },
   { label: 'Create Article', href: '/user-dashboard/create-article', icon: PenTool, roles: ['admin'] },
   { label: 'Options', href: '/user-dashboard/options', icon: Settings, roles: ['admin'] },
   { label: 'Billing & Payments', href: '/dashboard/billing', icon: CreditCard, roles: ['user'] },
