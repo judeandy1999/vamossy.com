@@ -62,7 +62,7 @@ export default function TierPackage({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* What's Included */}
             <div>
-              <h3 className="text-2xl font-bold text-white mb-2 flex items-center">
+              <h3 className="text-2xl md:text-3xl font-semibold text-white mb-2 flex items-center">
                 What's Included
               </h3>
               <div className="h-1 w-24 bg-yellow-500 mb-4 rounded"></div>
@@ -85,14 +85,14 @@ export default function TierPackage({
                       className="mt-1 mr-2 w-5 h-4 object-contain"
                       loading="lazy"
                     />
-                    <span className="text-gray-100">{item}</span>
+                    <span className="text-gray-100 text-xl">{item}</span>
                   </motion.li>
                 ))}
               </motion.ul>
             </div>
             {/* Embedded AI Systems & Deliverables */}
             <div>
-              <h3 className="text-2xl font-bold text-white mb-2 flex items-center">
+              <h3 className="text-2xl md:text-3xl font-semibold text-white mb-2 flex items-center">
                 Embedded AI Systems
               </h3>
               <div className="h-1 w-24 bg-yellow-500 mb-4 rounded"></div>
@@ -115,11 +115,11 @@ export default function TierPackage({
                       className="mt-1 mr-2 w-5 h-4 object-contain"
                       loading="lazy"
                     />
-                    <span className="text-gray-100">{item}</span>
+                    <span className="text-gray-100 text-xl">{item}</span>
                   </motion.li>
                 ))}
               </motion.ul>
-              <h3 className="text-2xl font-bold text-white mb-2 flex items-center">
+              <h3 className="text-2xl md:text-3xl font-semibold text-white mb-2 flex items-center">
                 Deliverables
               </h3>
               <div className="h-1 w-24 bg-yellow-500 mb-4 rounded"></div>
@@ -142,7 +142,7 @@ export default function TierPackage({
                       className="mt-1 mr-2 w-5 h-4 object-contain"
                       loading="lazy"
                     />
-                    <span className="text-gray-100">{item}</span>
+                    <span className="text-gray-100 text-xl">{item}</span>
                   </motion.li>
                 ))}
               </motion.ul>
