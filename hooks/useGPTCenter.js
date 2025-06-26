@@ -6,6 +6,7 @@ import { getUserRole } from '@/utils/getUserRole';
 export function useGPTCenter(session = null) {
   const [tasks, setTasks] = useState([]);
   const [evaluations, setEvaluations] = useState([]);
+  const [evaluationLoading, setEvaluationLoading] = useState(true);
   const [loading, setLoading] = useState(true);
   const [userRole, setUserRole] = useState('worker');
   const [executingTasks, setExecutingTasks] = useState(new Set());
@@ -186,14 +187,11 @@ export function useGPTCenter(session = null) {
     }
   }, [tasks, session, fetchTasks]);
 
-  // Effect to periodically check for tasks that need to be reset
   useEffect(() => {
     if (!tasks.length) return;
 
-    // Check immediately when tasks change
     checkAndResetTasks();
 
-    // Set up interval to check every 30 seconds (more frequent for testing)
     const interval = setInterval(checkAndResetTasks, 30000);
     
     return () => clearInterval(interval);
@@ -214,7 +212,6 @@ export function useGPTCenter(session = null) {
   const fetchEvaluations = useCallback(async (filter = 'all', sortBy = 'created_at') => {
     if (!session?.user) return;
     const accessToken = session?.access_token;
-    
     try {
       const params = new URLSearchParams({ filter, sortBy });
       const response = await fetch(`/api/gpt-center/evaluations?${params}`, {
@@ -229,6 +226,7 @@ export function useGPTCenter(session = null) {
       
       if (response.ok) {
         setEvaluations(data.evaluations || []);
+        setEvaluationLoading(false);
       } else {
         throw new Error(data.error);
       }
@@ -446,6 +444,7 @@ export function useGPTCenter(session = null) {
     tasks,
     evaluations,
     loading,
+    evaluationLoading,
     userRole,
     executingTasks,
     updatingTasks,
