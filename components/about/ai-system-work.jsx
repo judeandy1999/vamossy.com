@@ -3,23 +3,29 @@ import React, { useRef } from "react";
 import { aiSystemsWorkCards } from "../../data/data";
 import AiSystemsWorkCards from "./ai-systems-work-cards";
 import { motion, useInView } from "framer-motion";
+import Container from "@/components/ui/container";
+import Title from "@/components/ui/title";
 
 export default function AiSystemWork() {
   const ref = useRef(null);
   const isInView = useInView(ref, { margin: "-100px" });
 
   return (
-    <section className="w-full min-h-screen py-16 px-4 mt-10">
-      <motion.h2
+    <Container>
+      <motion.div
         ref={ref}
-        className="text-4xl md:text-5xl font-extrabold text-white text-center mb-12 drop-shadow-lg"
         initial={{ opacity: 0, y: 40 }}
         animate={isInView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.7 }}
+        className="mb-12"
       >
-        Some of our many AI Systems at Work
-      </motion.h2>
+        <Title
+          title="Some of our many AI Systems at Work"
+          variant="h2"
+          className="text-4xl md:text-5xl font-extrabold text-white text-center drop-shadow-lg"
+        />
+      </motion.div>
       <AiSystemsWorkCards cards={aiSystemsWorkCards} />
-    </section>
+    </Container>
   );
 }
