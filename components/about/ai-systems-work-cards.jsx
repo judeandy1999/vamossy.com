@@ -14,7 +14,7 @@ export default function AiSystemsWorkCards({ cards }) {
       {cards.map((card, idx) => (
         <motion.div
           key={idx}
-          className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 flex flex-col items-center shadow-lg hover:shadow-yellow-400/20 transition-all duration-300 hover:-translate-y-2"
+          className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 flex flex-col items-center shadow-lg"
           initial={{ opacity: 0, y: 40 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, delay: 0.1 + idx * 0.12 }}
