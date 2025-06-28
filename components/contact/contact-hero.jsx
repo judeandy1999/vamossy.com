@@ -20,19 +20,19 @@ export default function ContactHero() {
           <Title
           title="Let’s Map Your Growth System"
           animationVariant="topToBottom"
-          className="md:mb-6 text-white item-center md:items-start justify-start text-center md:text-left"
+          className="md:mb-6 text-gray-300 item-center md:items-start justify-start text-center md:text-left"
           />
           <Title
           variant="h5"
           title="This is your first step toward a more intelligent, scalable, AI-augmented growth strategy."
           animationVariant="leftToRight"
-          className="md:mb-4 text-white item-center md:items-start justify-start text-center md:text-left"
+          className="md:mb-4 text-gray-300 item-center md:items-start justify-start text-center md:text-left"
           />
           <Title
           variant="h5"
           title="Whether you’re dealing with plateaued revenue, fragmented funnels, or too much manual work, you’re here because you know your eCommerce business can perform better — smarter. We’re here to engineer that next level with you."
           animationVariant="rightToLeft"
-          className="md:mt-8 text-white item-center md:items-start justify-start text-center md:text-left"
+          className="md:mt-8 text-gray-300 item-center md:items-start justify-start text-center md:text-left"
           />
         </motion.div>
         <ContactUs size="sm" variant="gray-card" />
