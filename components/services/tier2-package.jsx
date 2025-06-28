@@ -21,21 +21,21 @@ export default function Tier2Package() {
 
   return (
     <Container variant="transparent-gradient">
-      <div className="max-w-6xl mx-auto px-4">
+      <div className="max-w-7xl px-4">
         <Container variant="gray-gradient" className="border border-yellow-400 rounded-2xl shadow-xl">
-        <div className="p-6 sm:p-10 md:p-14">
+        <div className="p-6 sm:p-5 md:p-8">
           {/* Header */}
-          <div className="text-center mb-8 sm:mb-10 md:mb-12">
             <Title
               variant="h2"
               title={tier2.title}
               underlineEffect={true}
               className="mb-2"
             />
-            <div className="text-base sm:text-xl md:text-2xl font-medium text-gray-200">
-              {tier2.subtitle}
-            </div>
-          </div>
+            <Title 
+              variant="h5" 
+              title={tier2.subtitle} 
+              className="!mb-4"
+            />
 
           {/* Cards */}
           <motion.div
@@ -61,7 +61,7 @@ export default function Tier2Package() {
                   />
                 </div>
                 <Title variant="h3-full" title={card.label} isAnimationEnabled={false}/>
-                <Title variant="h6" title={card.description} isAnimationEnabled={false}/>
+                <Title variant="h5" title={card.description} isAnimationEnabled={false}/>
               </motion.div>
             ))}
           </motion.div>
@@ -70,7 +70,7 @@ export default function Tier2Package() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* What's Included */}
             <div>
-              <h3 className="text-2xl md:text-3xl font-semibold text-white mb-2 flex items-center">
+              <h3 className="text-xl md:text-3xl font-semibold text-gray-300 mb-2 flex items-center">
                 What's Included
               </h3>
               <div className="h-1 w-24 bg-yellow-500 mb-4 rounded"></div>
@@ -93,11 +93,11 @@ export default function Tier2Package() {
                       className="mt-1 mr-2 w-5 h-4 object-contain"
                       loading="lazy"
                     />
-                    <span className="text-gray-100 text-xl">{item}</span>
+                    <span className="text-gray-100 text-lg md:text-xl">{item}</span>
                   </motion.li>
                 ))}
               </motion.ul>
-              <h3 className="text-2xl md:text-3xl font-semibold text-white mb-2 flex items-center mt-10">
+              <h3 className="text-xl md:text-3xl font-semibold text-gray-300 mb-2 flex items-center mt-10">
                 Embedded AI Systems
               </h3>
               <div className="h-1 w-24 bg-yellow-500 mb-4 rounded"></div>
@@ -120,14 +120,14 @@ export default function Tier2Package() {
                       className="mt-1 mr-2 w-5 h-4 object-contain"
                       loading="lazy"
                     />
-                    <span className="text-gray-100 text-xl">{item}</span>
+                    <span className="text-gray-100 text-lg md:text-xl">{item}</span>
                   </motion.li>
                 ))}
               </motion.ul>
             </div>
             {/* Deliverables */}
             <div>
-              <h3 className="text-2xl md:text-3xl font-semibold text-white mb-2 flex items-center">
+              <h3 className="text-xl md:text-3xl font-semibold text-gray-300 mb-2 flex items-center">
                 Deliverables
               </h3>
               <div className="h-1 w-24 bg-yellow-500 mb-4 rounded"></div>
@@ -150,7 +150,7 @@ export default function Tier2Package() {
                       className="mt-1 mr-2 w-5 h-4 object-contain"
                       loading="lazy"
                     />
-                    <span className="text-gray-100 text-xl">{item}</span>
+                    <span className="text-gray-100 text-lg md:text-xl">{item}</span>
                   </motion.li>
                 ))}
               </motion.ul>
