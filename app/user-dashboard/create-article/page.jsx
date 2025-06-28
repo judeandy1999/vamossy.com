@@ -330,7 +330,7 @@ export default function Page() {
             <button
               onClick={saveArticle}
               disabled={isSaving || !title.trim() || wikiCategory === 0}
-              className={`cursor-pointer flex items-center gap-2 px-4 py-2 rounded text-white transition ${
+              className={`cursor-pointer flex items-center gap-2 px-4 py-2 rounded text-gray-300 transition ${
                 isSaving || !title.trim() || wikiCategory === 0
                   ? 'bg-gray-300 cursor-not-allowed'
                   : 'bg-slate-500 hover:bg-slate-700'
