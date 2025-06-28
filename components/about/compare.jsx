@@ -48,10 +48,10 @@ export default function Compare() {
                 <Title
                   title={col.heading}
                   variant="h3"
-                  className="mb-0 font-semibold text-2xl md:text-3xl lg:text-4xl tracking-tight text-white whitespace-nowrap"
+                  className="mb-0 font-semibold tracking-tight text-gray-300 whitespace-nowrap"
                   isAnimationEnabled={false}
                 />
-                <div className="w-10 h-1 bg-yellow-400 rounded-full mt-3" />
+                <div className="w-15 h-1 bg-yellow-400 rounded-full mt-3" />
               </div>
               <ul className="space-y-4">
                 {col.items.map((item, i) => (
@@ -59,16 +59,16 @@ export default function Compare() {
                     key={i}
                     className="flex items-start gap-3"
                   >
-                    <span className={`text-xl mt-0.5 ${
+                    <span className={`text-lg md:text-xl mt-0.5 ${
                       item.type === "good"
                         ? "text-green-400"
                         : "text-red-400"
                     }`}>
                       {item.type === "good" ? "✓" : "✗"}
                     </span>
-                    <span className={`text-xl leading-relaxed ${
+                    <span className={`text-lg md:text-xl leading-relaxed ${
                       item.type === "good"
-                        ? "text-white"
+                        ? "text-gray-300"
                         : "text-gray-400"
                     }`}>
                       {item.text}
