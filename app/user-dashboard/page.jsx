@@ -5,6 +5,7 @@ import { useAuthWithRedirect } from '@/hooks/useAuthWithRedirect';
 import { useGPTCenter } from '@/hooks/useGPTCenter';
 import TaskList from '@/components/gpt-center/task-list';
 import TaskCreation from '@/components/gpt-center/task-creation';
+import AdminTaskManagement from '@/components/gpt-center/admin-task-management';
 import LogUpload from '@/components/gpt-center/log-upload';
 import EvaluationTable from '@/components/gpt-center/evaluation-table';
 import Spinner from '@/components/ui/spinner';
@@ -12,16 +13,19 @@ import Spinner from '@/components/ui/spinner';
 export default function Dashboard() {
   const { session, status, role } = useAuthWithRedirect();
   const { 
-    tasks, 
+    tasks,
+    allTasks,
     evaluations, 
     loading, 
     executingTasks,
     updatingTasks,
-    fetchTasks, 
+    fetchTasks,
+    fetchAllTasks,
     fetchEvaluations, 
     createTask,
-    executeTask,
     updateTaskStatus,
+    deleteTask,
+    updateTask,
     evaluationLoading,
     uploadLog 
   } = useGPTCenter(session);
@@ -96,7 +100,14 @@ export default function Dashboard() {
           <TaskCreation createTask={createTask} />
         )}
         {activeTab === 'manage' && role === 'admin' && (
-          <div>Admin Management Panel - Coming Soon</div>
+          <AdminTaskManagement 
+            allTasks={allTasks}
+            updateTaskStatus={updateTaskStatus}
+            updatingTasks={updatingTasks}
+            deleteTask={deleteTask}
+            updateTask={updateTask}
+            fetchAllTasks={fetchAllTasks}
+          />
         )}
       </div>
     </div>
