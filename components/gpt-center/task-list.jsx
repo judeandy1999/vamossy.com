@@ -170,18 +170,18 @@ export default function TaskList({ tasks, onTaskUpdate, updateTaskStatus, updati
     const canRestart = canRestartTask(task);
 
     if (task.status === 'completed' && !canRestart) {
-      return "w-full bg-gray-400 text-white px-3 py-2 rounded-md text-sm font-medium cursor-not-allowed disabled:opacity-50 flex items-center justify-center";
+      return "w-full bg-gray-400 text-gray-300 px-3 py-2 rounded-md text-sm font-medium cursor-not-allowed disabled:opacity-50 flex items-center justify-center";
     }
 
     if (task.status === 'completed' && canRestart) {
-      return "w-full bg-blue-600 text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center";
+      return "w-full bg-blue-600 text-gray-300 px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center";
     }
 
     if (task.status === 'in_progress') {
-      return "w-full bg-green-600 text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center";
+      return "w-full bg-green-600 text-gray-300 px-3 py-2 rounded-md text-sm font-medium hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center";
     }
 
-    return "w-full bg-blue-600 text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center";
+    return "w-full bg-blue-600 text-gray-300 px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center";
   };
 
   const sortTasks = (tasksToSort) => {
@@ -376,7 +376,7 @@ export default function TaskList({ tasks, onTaskUpdate, updateTaskStatus, updati
               title="Pending" 
               count={pendingTasks.length}
               bgColor="bg-blue-500"
-              textColor="text-white"
+              textColor="text-gray-300"
             />
             <div className="bg-gray-50 border border-t-0 border-gray-200 rounded-b-lg p-4 flex-1">
               <div className="space-y-4">
@@ -397,7 +397,7 @@ export default function TaskList({ tasks, onTaskUpdate, updateTaskStatus, updati
               title="In Progress" 
               count={inProgressTasks.length}
               bgColor="bg-yellow-500"
-              textColor="text-white"
+              textColor="text-gray-300"
             />
             <div className="bg-gray-50 border border-t-0 border-gray-200 rounded-b-lg p-4 flex-1">
               <div className="space-y-4">
@@ -418,7 +418,7 @@ export default function TaskList({ tasks, onTaskUpdate, updateTaskStatus, updati
               title="Completed" 
               count={completedTasks.length}
               bgColor="bg-green-500"
-              textColor="text-white"
+              textColor="text-gray-300"
             />
             <div className="bg-gray-50 border border-t-0 border-gray-200 rounded-b-lg p-4 flex-1">
               <div className="space-y-4">
