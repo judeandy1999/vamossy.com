@@ -4,17 +4,17 @@ import Container from '@/components/ui/container';
 import { Pencil, ClipboardList, Hammer, Repeat2 } from "lucide-react";
 
 const stepBorderColors = [
-  "border-yellow-400",
-  "border-blue-400",
-  "border-yellow-400",
-  "border-blue-400"
+  "border-yellow-400/50",
+  "border-blue-400/50",
+  "border-yellow-400/50",
+  "border-blue-400/50"
 ];
 
 const stepIconBgColors = [
-  "text-yellow-400",
-  "text-blue-400",
-  "text-yellow-400",
-  "text-blue-400"
+  "text-yellow-400/50",
+  "text-blue-400/50",
+  "text-yellow-400/50",
+  "text-blue-400/50"
 ];
 
 const stepIcons = [
@@ -25,10 +25,10 @@ const stepIcons = [
 ];
 
 const stepDividerColors = [
-  "bg-yellow-400",
-  "bg-blue-400",
-  "bg-yellow-400",
-  "bg-blue-400"
+  "bg-yellow-400/50",
+  "bg-blue-400/50",
+  "bg-yellow-400/50",
+  "bg-blue-400/50"
 ];
 
 export default function OurProcess() {
@@ -46,7 +46,7 @@ export default function OurProcess() {
             return (
               <div
                 key={idx}
-                className={`relative flex flex-col items-center justify-between bg-[#23283a]/80 backdrop-blur-md rounded-3xl border-2 ${borderColor} px-8 py-10 w-full min-h-[300px] shadow-2xl transition-transform duration-300 shadow-yellow-400/30 border-opacity-90`}
+                className={`relative flex flex-col items-center justify-between bg-gradient-to-br from-[#1a2139] to-[#0f1220] backdrop-blur-md rounded-3xl border-2 ${borderColor} px-8 py-10 w-full min-h-[300px] shadow-2xl transition-transform duration-300 shadow-yellow-400/30 border-opacity-90`}
                 style={{ boxShadow: '0 5px 20px 0 rgba(138, 138, 138, 0.47), 0 1.5px 8px 0 rgba(0,0,0,0.18)' }}
               >
                 {/* Icon Circle Centered with Step Number Badge */}
@@ -61,7 +61,7 @@ export default function OurProcess() {
                 {/* Step Content */}
                 <div className="flex flex-col items-center text-center flex-1 w-full">
                   <span className="sr-only">Step {idx + 1}</span>
-                  <span className="font-bold text-2xl sm:text-2xl text-white leading-tight mb-2">{step.title}</span>
+                  <span className="font-bold text-2xl sm:text-2xl text-gray-300 leading-tight mb-2">{step.title}</span>
                   <div className="text-gray-300 text-xl sm:text-xl mx-auto">{step.description}</div>
                 </div>
               </div>
