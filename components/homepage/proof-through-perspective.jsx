@@ -102,8 +102,8 @@ export default function ProofThroughPerspective() {
         : 'bg-gray-800/80 border-gray-600/50'
     }`}>
       <div className="mb-6">
-        <h3 className={`text-white text-lg md:text-lg lg:text-xl font-semibold transition-colors duration-700 ${
-          isMobile || testimonial.position === 'center' ? 'text-yellow-100' : 'text-white'
+        <h3 className={`text-gray-300 text-lg md:text-lg lg:text-xl font-semibold transition-colors duration-700 ${
+          isMobile || testimonial.position === 'center' ? 'text-yellow-100' : 'text-gray-300'
         }`}>
           {testimonial.role}
         </h3>
@@ -134,7 +134,7 @@ export default function ProofThroughPerspective() {
           isMobile || testimonial.position === 'center' ? 'bg-yellow-400/30' : 'bg-white/20'
         }`}>
           <span className={`text-2xl font-bold transition-colors duration-700 ${
-            isMobile || testimonial.position === 'center' ? 'text-yellow-200' : 'text-white'
+            isMobile || testimonial.position === 'center' ? 'text-yellow-200' : 'text-gray-300'
           }`}>"</span>
         </div>
       </div>
@@ -155,14 +155,14 @@ export default function ProofThroughPerspective() {
             onClick={prevTestimonial}
             className="absolute top-[40%] transform -translate-y-1/2 z-30 w-12 h-12 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center backdrop-blur-sm border border-white/30 transition-all duration-300"
           >
-            <ChevronLeft className="text-white" size={24} />
+            <ChevronLeft className="text-gray-300" size={24} />
           </button>
 
           <button
             onClick={nextTestimonial}
             className="absolute right-0 top-[40%] transform -translate-y-1/2 z-30 w-12 h-12 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center backdrop-blur-sm border border-white/30 transition-all duration-300"
           >
-            <ChevronRight className="text-white" size={24} />
+            <ChevronRight className="text-gray-300" size={24} />
           </button>
 
           {/* Mobile/Tablet View - Single Testimonial with Smooth Sliding */}
@@ -248,7 +248,7 @@ export default function ProofThroughPerspective() {
           <div 
             className="flex justify-center mt-6"
           >
-            <span className="text-white/60 text-sm">
+            <span className="text-gray-300/60 text-sm">
               {currentIndex + 1} of {testimonials.testimonialCards.length}
             </span>
           </div>
