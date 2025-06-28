@@ -13,6 +13,7 @@ export default async function handler(req, res) {
   }
 
   const userRole = await getUserRole(user.email);
+  const { id } = req.query;
 
   switch (req.method) {
     case 'GET':
@@ -20,9 +21,9 @@ export default async function handler(req, res) {
     case 'POST':
       return handlePost(req, res, user, userRole);
     case 'PUT':
-      return handlePut(req, res, user, userRole);
+      return handlePut(req, res, user, userRole, id);
     case 'DELETE':
-      return handleDelete(req, res, user, userRole);
+      return handleDelete(req, res, user, userRole, id);
     default:
       return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -32,17 +33,27 @@ async function handleGet(req, res, user, userRole) {
   try {
     const { all } = req.query;
 
-    let query = supabase
-      .from('tasks')
-      .select('*')
-      .eq('assigned_user_id', user.id)
-      .eq('is_active', true)
-      .order('created_at', { ascending: false });
-
-    if (all && userRole === 'admin') {
+    let query;
+    
+    if (all === 'true' && userRole === 'admin') {
       query = supabase
         .from('tasks')
-        .select('*, users(email, name)')
+        .select(`
+          *,
+          users!tasks_assigned_user_id_fkey (
+            id,
+            email,
+            name,
+            role
+          )
+        `)
+        .eq('is_active', true)
+        .order('created_at', { ascending: false });
+    } else {
+      query = supabase
+        .from('tasks')
+        .select('*')
+        .eq('assigned_user_id', user.id)
         .eq('is_active', true)
         .order('created_at', { ascending: false });
     }
@@ -102,31 +113,91 @@ async function handlePost(req, res, user, userRole) {
 async function handlePut(req, res, user, userRole) {
   try {
     const { id, ...updates } = req.body;
+    
+    if (!id) {
+      return res.status(400).json({ error: 'Task ID is required' });
+    }
+
+    console.log('Updating task:', { taskId: id, updates, userRole });
+
+    const isStatusUpdate = updates.hasOwnProperty('status') && Object.keys(updates).length <= 3;
+    const isFullUpdate = updates.hasOwnProperty('title') || updates.hasOwnProperty('description');
+
+    if (isFullUpdate) {
+      if (userRole !== 'admin') {
+        return res.status(403).json({ error: 'Only admins can update task details' });
+      }
+
+      if (updates.title && !updates.title.trim()) {
+        return res.status(400).json({ error: 'Title cannot be empty' });
+      }
+      if (updates.description && !updates.description.trim()) {
+        return res.status(400).json({ error: 'Description cannot be empty' });
+      }
+
+      console.log('Performing full task update');
+    } else if (isStatusUpdate) {
+      if (userRole !== 'admin') {
+        const { data: taskCheck, error: checkError } = await supabase
+          .from('tasks')
+          .select('assigned_user_id')
+          .eq('id', id)
+          .eq('is_active', true)
+          .single();
+
+        if (checkError || !taskCheck) {
+          return res.status(404).json({ error: 'Task not found' });
+        }
+
+        if (taskCheck.assigned_user_id !== user.id) {
+          return res.status(403).json({ error: 'You can only update your own tasks' });
+        }
+      }
+
+      console.log('Performing status update');
+    } else {
+      return res.status(400).json({ error: 'Invalid update data' });
+    }
+
+    const updateData = {
+      ...updates,
+      updated_at: new Date().toISOString()
+    };
 
     const { data, error } = await supabase
       .from('tasks')
-      .update(updates)
+      .update(updateData)
       .eq('id', id)
+      .eq('is_active', true)
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      console.error('Supabase update error:', error);
+      throw error;
+    }
 
+    if (!data) {
+      return res.status(404).json({ error: 'Task not found or already deleted' });
+    }
+
+    console.log('Task updated successfully:', data.id);
     return res.status(200).json({ task: data });
   } catch (error) {
     console.error('Error updating task:', error);
-    return res.status(500).json({ error: 'Failed to update task' });
+    return res.status(500).json({ 
+      error: 'Failed to update task',
+      details: error.message 
+    });
   }
 }
 
-async function handleDelete(req, res, user, userRole) {
+async function handleDelete(req, res, user, userRole, id) {
   try {
     // Check if user is admin
     if (userRole !== 'admin') {
       return res.status(403).json({ error: 'Only admins can delete tasks' });
     }
-
-    const { id } = req.query;
 
     const { error } = await supabase
       .from('tasks')
