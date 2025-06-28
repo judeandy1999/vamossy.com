@@ -96,7 +96,7 @@ export default function UniqueSolutions() {
                   
                   {/* Content */}
                   <div className="flex-1">
-                    <h3 className="lg:mb-4 text-white text-lg md:text-lg lg:text-xl font-semibold">
+                    <h3 className="lg:mb-4 text-gray-300 text-lg md:text-lg lg:text-xl font-semibold">
                       {feature.title}
                     </h3>
                     <p className="text-gray-300 text-md md:text-lg lg:text-xl font-light">
