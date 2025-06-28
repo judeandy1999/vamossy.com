@@ -207,7 +207,7 @@ export default function AccountSettings() {
               <button
                 type="submit"
                 disabled={isLoading || !currentPassword || !newPassword || !confirmPassword}
-                className={`flex items-center gap-2 px-4 py-2 rounded-md text-white font-medium transition-colors ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-md text-gray-300 font-medium transition-colors ${
                   isLoading || !currentPassword || !newPassword || !confirmPassword
                     ? 'bg-gray-400 cursor-not-allowed'
                     : 'bg-yellow-500 hover:bg-yellow-600'
@@ -246,7 +246,7 @@ export default function AccountSettings() {
                 href={`https://myaccount.${oauthProvider.toLowerCase()}.com`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block mt-3 text-sm bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition-colors"
+                className="inline-block mt-3 text-sm bg-blue-600 text-gray-300 px-3 py-1 rounded hover:bg-blue-700 transition-colors"
               >
                 Manage {oauthProvider} Account
               </a>
