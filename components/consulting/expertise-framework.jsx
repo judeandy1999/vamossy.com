@@ -3,18 +3,34 @@ import { expertiseData } from '@/data/data';
 import { motion } from "framer-motion";
 import Title from '@/components/ui/title';
 import Container from "@/components/ui/container";
-import { Download } from "lucide-react";
+import { Download, ArrowRight } from "lucide-react";
 
 const cardVariants = {
-  hidden: { opacity: 0, y: 40 },
+  hidden: { opacity: 0, y: 60, scale: 0.95 },
   visible: (i) => ({
     opacity: 1,
     y: 0,
+    scale: 1,
     transition: {
       delay: i * 0.15,
-      duration: 0.6,
+      duration: 0.8,
       type: "spring",
-      stiffness: 60,
+      stiffness: 80,
+      damping: 20,
+    },
+  }),
+};
+
+const deliverableVariants = {
+  hidden: { opacity: 0, x: -20 },
+  visible: (i) => ({
+    opacity: 1,
+    x: 0,
+    transition: {
+      delay: 0.5 + i * 0.1,
+      duration: 0.5,
+      type: "spring",
+      stiffness: 100,
     },
   }),
 };
@@ -22,65 +38,78 @@ const cardVariants = {
 export default function ExpertiseSection() {
   return (
     <Container variant="gray">
-      <div className="mb-12 lg:mb-16">
+      <div className="mb-16 lg:mb-20">
         <Title
           underlineEffect={true}
           variant="h2"
           title="Our Expertise Framework"
-          className="text-white text-3xl md:text-4xl lg:text-5xl font-extrabold text-center drop-shadow-lg"
+          className="text-gray-300 text-4xl md:text-5xl lg:text-6xl font-extrabold text-center drop-shadow-2xl"
         />
         <Title
           variant="h5"
           title="We organize our consulting capabilities into four core verticals"
-          className="text-gray-200 text-center mt-4 text-lg lg:text-2xl mx-auto"
+          className="text-gray-300 text-center mt-6 text-xl lg:text-2xl mx-auto max-w-4xl leading-relaxed"
         />
       </div>
       
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 max-w-7xl mx-auto">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 max-w-7xl mx-auto">
         {expertiseData.map((item, index) => {
           const Icon = item.icon;
           return (
             <motion.div
               key={index}
-              className="bg-gradient-to-br from-[#1a2139] via-[#151b2e] to-[#0f1220] p-6 lg:p-8 rounded-2xl shadow-2xl border border-[#2a3451] flex flex-col h-full backdrop-blur-sm"
+              className="bg-gradient-to-br from-[#1e2749]/20 via-[#1a2139]/20 to-[#151b2e]/20 p-8 lg:p-10 rounded-3xl shadow-2xl border border-[#2a3451] flex flex-col h-full backdrop-blur-sm relative overflow-hidden"
               custom={index}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: false, amount: 0.2 }}
               variants={cardVariants}
             >
+              {/* Subtle gradient overlay for hover effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/5 to-transparent opacity-0 rounded-3xl" />
+              
               {/* Header Section */}
-              <div className="mb-4">
-                <div className="flex items-center gap-3 mb-3">
-                  <Icon className="text-yellow-400 text-3xl" />
-                  <h3 className="text-white text-2xl lg:text-2xl font-semibold m-0">
-                    {item.title}
-                  </h3>
+              <div className="relative z-10 mb-6">
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="p-3 bg-gradient-to-br from-yellow-400/80 to-yellow-500/80 rounded-2xl shadow-lg group-hover:shadow-yellow-400/30">
+                    <Icon className="text-black text-2xl lg:text-3xl" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-gray-300 text-2xl lg:text-3xl font-bold mb-2 group-hover:text-yellow-500">
+                      {item.title}
+                    </h3>
+                    <div className="w-12 h-1 bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-full group-hover:w-16 " />
+                  </div>
                 </div>
-                <p className="text-gray-300 text-xl lg:text-2xl leading-relaxed mb-3">
+                <p className="text-gray-300 text-lg lg:text-xl leading-relaxed mb-6 group-hover:text-gray-200">
                   {item.description}
                 </p>
-                <p className="text-white text-xl lg:text-2xl font-semibold m-0"> 
-                  Deliverables include:
-                </p>
+                <div className="flex items-center gap-2 mb-4">
+                  <ArrowRight className="text-yellow-400 w-5 h-5" />
+                  <p className="text-gray-300 text-lg lg:text-xl font-semibold"> 
+                    Deliverables include:
+                  </p>
+                </div>
               </div>
               
               {/* Deliverables Section */}
-              <div className="flex flex-col gap-3">
+              <div className="relative z-10 flex flex-col gap-4">
                 {item.deliverables.map((deliverable, i) => (
                   <motion.button
                     key={i}
-                    className="w-full flex items-center gap-3 text-left text-lg lg:text-xl bg-gradient-to-r from-yellow-500 to-yellow-400 hover:from-yellow-400 hover:to-yellow-300 focus:from-yellow-400 focus:to-yellow-300 text-black py-3 px-4 lg:px-5 rounded-xl transition-all duration-300 font-medium shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-yellow-300/50 focus:ring-offset-2 focus:ring-offset-transparent group"
+                    className="w-full flex items-center gap-4 text-left text-md lg:text-lg bg-[#302c2c] border-1 border-yellow-200/50 hover:from-yellow-400/50 hover:to-yellow-300/50 focus:from-yellow-400 focus:to-yellow-300 text-gray-300 py-4 px-5 lg:px-6 rounded-2xl font-medium shadow-lg hover:shadow-xl hover:shadow-gray-600/20 focus:outline-none focus:ring-2 focus:ring-yellow-300/50 focus:ring-offset-2 focus:ring-offset-transparent"
                     onClick={() => alert(`Download: ${deliverable}`)} // Replace with real logic
-                    initial={{ opacity: 0, x: 30 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.3 + i * 0.1, duration: 0.4 }}
+                    custom={i}
+                    initial="hidden"
+                    whileInView="visible"
+                    variants={deliverableVariants}
                     viewport={{ once: false, amount: 0.2 }}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
                   >
-                    <Download className="w-4 h-4 lg:w-5 lg:h-5 text-black/80 group-hover:text-black transition-colors duration-200" />
-                    <span className="flex-1 leading-tight">{deliverable}</span>
+                    <div className="p-2 bg-black/10 rounded-xl border-1 border-yellow-200/50 group-hover/button:bg-black/20">
+                      <Download className="w-4 h-4 lg:w-5 lg:h-5 text-gray-300 group-hover/button:text-black" />
+                    </div>
+                    <span className="flex-1 leading-relaxed font-medium">{deliverable}</span>
+                    <ArrowRight className="w-4 h-4 text-gray-300 group-hover/button:text-black group-hover/button:translate-x-1" />
                   </motion.button>
                 ))}
               </div>
