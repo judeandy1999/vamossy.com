@@ -21,7 +21,7 @@ function SectionCard({ title, items, delay = 0 }) {
         <Title
           title={title}
           variant="h2"
-          className="text-2xl md:text-3xl font-bold text-white mb-4 !px-0 !mb-4"
+          className="text-xl !md:text-xl !font-semibold text-gray-300 mb-4 !px-0 !mb-4"
           isAnimationEnabled={false}
         />
         <div className="h-1 w-16 bg-yellow-400" />
@@ -35,8 +35,8 @@ function SectionCard({ title, items, delay = 0 }) {
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.2 + idx * 0.1 }}
           >
-            <div className="w-2 h-2 bg-yellow-400 rounded-full mt-3 flex-shrink-0" />
-            <span className="text-gray-300 text-lg md:text-xl leading-relaxed">
+            <div className="w-3 h-3 bg-yellow-400 rounded-full mt-2 flex-shrink-0" />
+            <span className="text-gray-300 text-md md:text-xl leading-relaxed">
               {item}
             </span>
           </motion.li>
