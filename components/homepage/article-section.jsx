@@ -93,7 +93,7 @@ export default function LiveCaseStudies() {
                 variants={cardVariants}
               >
                 <div className="bg-gray-800/70 backdrop-blur-sm rounded-xl p-6 border border-gray-600/50">
-                  <h3 className="text-xl font-bold text-white mb-3">
+                  <h3 className="text-xl font-bold text-gray-300 mb-3">
                     {study.title}
                   </h3>
                   
@@ -152,7 +152,7 @@ export default function LiveCaseStudies() {
                 variants={cardVariants}
               >
                 <div className="bg-gray-800/70 backdrop-blur-sm rounded-xl p-6 border border-gray-600/50 ">
-                  <h3 className="text-xl font-bold text-white mb-3 ">
+                  <h3 className="text-xl font-bold text-gray-300 mb-3 ">
                     {study.title}
                   </h3>
                   
