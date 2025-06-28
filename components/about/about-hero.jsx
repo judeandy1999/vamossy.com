@@ -23,7 +23,7 @@ export default function AboutHero() {
         <Title
           title="FROM PROMPT TO PROFIT"
           variant="h2"
-          className="text-white text-3xl md:text-5xl font-bold"
+          className="text-gray-300 text-3xl md:text-5xl font-bold"
           animationVariant="topToBottom"
         />
         <Title
@@ -40,17 +40,17 @@ export default function AboutHero() {
           transition={{ duration: 0.7, delay: 0.5 }}
         >
           {[
-            { number: "11+", label: "Years eCommerce Experience" },
             { number: "9+", label: "Years Digital Marketing" },
+            { number: "11+", label: "Years eCommerce Experience" },
           ].map((stat, idx) => (
             <div
               key={idx}
-              className="flex-1 py-8 text-center border border-yellow-400 p-6 rounded-xl bg-yellow-500/10 shadow-lg mx-1"
+              className="flex p-5 flex-row md:flex-col items-center justify-center flex-1 md:py-8 text-center border border-yellow-400 py-2 md:p-6 rounded-xl bg-yellow-500/10 shadow-lg mx-1 min-w-[300px] md:min-w-[250px]"
             >
-              <div className="text-3xl md:text-4xl font-extrabold text-yellow-400 mb-2 drop-shadow">
+              <div className="text-2xl md:text-4xl font-extrabold text-yellow-400 mb-0 md:mb-2 drop-shadow md:mr-0 mr-3">
                 {stat.number}
               </div>
-              <div className="text-lg md:text-2xl text-gray-200 font-medium">
+              <div className="text-sm md:text-2xl text-gray-200 font-medium text-center">
                 {stat.label}
               </div>
             </div>
