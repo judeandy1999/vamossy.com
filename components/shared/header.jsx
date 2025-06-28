@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { navItems } from '@/data/data';
 import { useAuthWithRedirect } from '@/hooks/useAuthWithRedirect';
-import { signOut } from '@/utils/authService';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
@@ -132,6 +131,7 @@ export default function Header() {
                 <Link
                   key={item.name}
                   href={item.href}
+                  onClick={() => setIsMobileMenuOpen(false)}
                   className={`transition-colors duration-300 ${
                     pathname === item.href ? 'text-yellow-400' : 'text-gray-300 hover:text-yellow-400'
                   }`}
@@ -145,6 +145,7 @@ export default function Header() {
                 <Link
                   key="dashboard"
                   href='/user-dashboard'
+                  onClick={() => setIsMobileMenuOpen(false)}
                   className={`transition-colors duration-300 ${
                     pathname === 'user-dashboard' ? 'text-yellow-400' : 'text-gray-300 hover:text-yellow-400'
                   }`}
