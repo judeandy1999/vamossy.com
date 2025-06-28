@@ -12,6 +12,7 @@ export default function EditTaskModal({ task, isOpen, onClose, onUpdate }) {
     title: '',
     description: '',
     gpt_url: '',
+    evaluation_prompt: '',
     frequency: 'daily',
     notification_type: 'popup',
     assigned_user_id: ''
@@ -24,6 +25,7 @@ export default function EditTaskModal({ task, isOpen, onClose, onUpdate }) {
         title: task.title || '',
         description: task.description || '',
         gpt_url: task.gpt_url || '',
+        evaluation_prompt: task.evaluation_prompt || '',
         frequency: task.frequency || 'daily',
         notification_type: task.notification_type || 'popup',
         assigned_user_id: task.assigned_user_id || ''
@@ -130,6 +132,20 @@ export default function EditTaskModal({ task, isOpen, onClose, onUpdate }) {
                 />
                 <ExternalLink className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
               </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Evaluation Prompt
+              </label>
+              <textarea
+                value={formData.evaluation_prompt}
+                onChange={(e) => setFormData({ ...formData, evaluation_prompt: e.target.value })}
+                rows={4}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Describe what needs to be done..."
+                required
+              />
             </div>
 
             {/* Frequency and Notification Type */}
