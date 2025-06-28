@@ -1,4 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
+'use client';
+
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/utils/client';
 import { useToast } from '@/contexts/toast-context';
 
@@ -7,6 +9,9 @@ export function useUsers() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const { showToast } = useToast();
+  
+  const showToastRef = useRef(showToast);
+  showToastRef.current = showToast;
 
   const fetchUsers = useCallback(async () => {
     setLoading(true);
@@ -38,15 +43,16 @@ export function useUsers() {
     } catch (err) {
       console.error('Error fetching users:', err);
       setError(err.message);
-      showToast('Failed to load users', 'error');
+      showToastRef.current('Failed to load users', 'error');
     } finally {
       setLoading(false);
     }
-  }, [showToast]);
+  }, []); // Empty dependency array
 
+  // Only fetch once on mount
   useEffect(() => {
     fetchUsers();
-  }, [fetchUsers]);
+  }, []); // Empty dependency array
 
   return {
     users,
