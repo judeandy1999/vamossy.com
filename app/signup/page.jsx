@@ -144,7 +144,7 @@ export default function SignupPage() {
             </button>
             <a
               href="/login"
-              className="mt-2 inline-block bg-yellow-400 hover:bg-yellow-500 text-white rounded-full py-2 px-4 font-medium transition-colors"
+              className="mt-2 inline-block bg-yellow-400 hover:bg-yellow-500 text-gray-300 rounded-full py-2 px-4 font-medium transition-colors"
             >
               Go to Login
             </a>
@@ -198,7 +198,7 @@ export default function SignupPage() {
             <button
               type="submit"
               disabled={loading}
-              className="bg-yellow-400 hover:bg-yellow-500 text-white rounded-full py-2 font-medium transition-colors"
+              className="bg-yellow-400 hover:bg-yellow-500 text-gray-300 rounded-full py-2 font-medium transition-colors"
             >
               {loading ? 'Signing up...' : 'Sign up'}
             </button>
