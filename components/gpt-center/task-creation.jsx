@@ -2,7 +2,6 @@
 import { useUsers } from '@/hooks/useUsers';
 
 import { useState } from 'react';
-import { supabase } from '@/utils/client';
 import { useToast } from '@/contexts/toast-context';
 import { Plus, Users, Clock, Bell, ExternalLink } from 'lucide-react';
 
@@ -187,11 +186,13 @@ export default function TaskCreation({ createTask }) {
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
               <option value="">Unassigned</option>
-              {users.map((user) => (
-                <option key={user.id} value={user.id}>
-                  {user.name || user.email} ({user.role})
-                </option>
-              ))}
+              {users
+                .filter(user => user.role === 'admin' || user.role === 'worker')
+                .map((user) => (
+                  <option key={user.id} value={user.id}>
+                    {user.name || user.email} ({user.role})
+                  </option>
+                ))}
             </select>
           )}
         </div>
