@@ -1,6 +1,7 @@
 import { whyClientsWorkWithUs } from '@/data/data';
 import Title from '@/components/ui/title'; 
 import Container from '@/components/ui/container';
+import { Check } from 'lucide-react';
 
 export default function WhyClientsWorkWithUs() {
   return (
@@ -17,13 +18,12 @@ export default function WhyClientsWorkWithUs() {
             >
               
               {/* Minimal outlined checkmark icon */}
-              <span className="flex items-center justify-center w-10 h-10 rounded-full border border-yellow-400/70 bg-[#181f36]">
-                <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="#facc15" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="11" cy="11" r="10" stroke="#facc15" strokeWidth="2.2" fill="none"/>
-                  <path d="M7 12l3 3 5-5" />
-                </svg>
+              <span className="flex items-center justify-center w-16 h-16 border-yellow-400/70">
+                <div className='rounded-full border-2 border-yellow-400/70 p-2 bg-yellow-400/10 flex items-center justify-center p-1'>
+                  <Check className="w-5 h-5 text-yellow-400" />
+                </div>
               </span>
-              <span className="text-xl md:text-2xl text-white leading-relaxed tracking-normal">
+              <span className="text-xl md:text-2xl text-gray-300 leading-relaxed tracking-normal">
                 {item}
               </span>
             </div>
