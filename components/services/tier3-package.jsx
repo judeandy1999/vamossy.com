@@ -59,7 +59,7 @@ export default function Tier3Package() {
                   />
                 </div>
                 <Title variant="h3-full" title={card.label} isAnimationEnabled={false} />
-                <Title variant="h6" title={card.description} isAnimationEnabled={false}/>
+                <Title variant="h5" title={card.description} isAnimationEnabled={false}/>
               </motion.div>
             ))}
           </motion.div>
@@ -68,7 +68,7 @@ export default function Tier3Package() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* What's Included & Deliverables */}
             <div>
-              <h3 className="text-2xl md:text-3xl font-semibold text-white mb-2 flex items-center">
+              <h3 className="text-xl md:text-3xl font-semibold text-gray-300 mb-2 flex items-center">
                 What's Included
               </h3>
               <div className="h-1 w-24 bg-yellow-500 mb-4 rounded"></div>
@@ -91,11 +91,11 @@ export default function Tier3Package() {
                       className="mt-1 mr-2 w-5 h-4 object-contain"
                       loading="lazy"
                     />
-                    <span className="text-gray-100 text-xl">{item}</span>
+                    <span className="text-gray-100 text-lg md:text-xl">{item}</span>
                   </motion.li>
                 ))}
               </motion.ul>
-              <h3 className="text-2xl md:text-3xl font-semibold text-white mb-2 flex items-center mt-8">
+              <h3 className="text-xl md:text-3xl font-semibold text-gray-300 mb-2 flex items-center mt-8">
                 Deliverables
               </h3>
               <div className="h-1 w-24 bg-yellow-500 mb-4 rounded"></div>
@@ -118,14 +118,14 @@ export default function Tier3Package() {
                       className="mt-1 mr-2 w-5 h-4 object-contain"
                       loading="lazy"
                     />
-                    <span className="text-gray-100 text-xl">{item}</span>
+                    <span className="text-gray-100 text-lg md:text-xl">{item}</span>
                   </motion.li>
                 ))}
               </motion.ul>
             </div>
             {/* Embedded AI Systems */}
             <div>
-              <h3 className="text-2xl md:text-3xl font-semibold text-white mb-2 flex items-center">
+              <h3 className="text-xl md:text-3xl font-semibold text-gray-300 mb-2 flex items-center">
                 Embedded AI Systems
               </h3>
               <div className="h-1 w-24 bg-yellow-500 mb-4 rounded"></div>
@@ -148,7 +148,7 @@ export default function Tier3Package() {
                       className="mt-1 mr-2 w-5 h-4 object-contain"
                       loading="lazy"
                     />
-                    <span className="text-gray-100 text-xl">{item}</span>
+                    <span className="text-gray-100 text-lg md:text-xl">{item}</span>
                   </motion.li>
                 ))}
               </motion.ul>
