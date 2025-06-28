@@ -36,7 +36,7 @@ export default function WhatWeBelieve() {
           variant="h2"
           title="What We Believe"
           underlineEffect={true}
-          className="mb-10 text-white text-center"
+          className="mb-10 text-gray-300 text-center"
         />
         <motion.div
           className="relative h-full mb-10 p-4 sm:p-8 bg-gray-800/50 backdrop-blur-sm border-2 border-yellow-500/50 rounded-2xl"
@@ -58,7 +58,7 @@ export default function WhatWeBelieve() {
                 <div className="relative w-7 h-7 sm:w-12 sm:h-12 flex-shrink-0 flex items-center justify-center">
                   <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-full animate-pulse opacity-75"></div>
                   <div className="relative w-full h-full bg-gradient-to-r from-yellow-600 to-yellow-400 rounded-full flex items-center justify-center shadow-lg shadow-yellow-500/25">
-                    <Play size={16} className="text-white sm:w-6 sm:h-6" />
+                    <Play size={16} className="text-gray-300 sm:w-6 sm:h-6" />
                   </div>
                 </div>
                 <span className="flex-1 min-w-0 text-base sm:text-lg text-gray-100 leading-snug">
@@ -91,7 +91,7 @@ export default function WhatWeBelieve() {
           ]).map((step, idx) => (
             <motion.div
               key={idx}
-              className="flex flex-col md:flex-row items-center md:items-center justify-center relative"
+              className="flex flex-col md:-ml-5 md:flex-row items-center md:items-center justify-center relative"
               custom={idx}
               initial="hidden"
               whileInView="visible"
@@ -101,30 +101,30 @@ export default function WhatWeBelieve() {
               {/* Circle background with number */}
               <div
                 className={`
-                  w-20 h-20 md:w-28 md:h-28
+                  w-25 h-25 md:w-28 md:h-28
                   rounded-full flex items-center justify-center
-                  font-bold text-2xl md:text-5xl
-                  z-0 bg-gray-600 text-yellow-500/60
-                  mb-4 md:mb-0
-                  md:absolute md:left-0 md:top-1/2 md:-translate-y-1/2
+                  font-semibold text-2xl md:text-4xl
+                  -z-10 md:z-0 bg-gray-600 text-yellow-500/60
+                  -mb-15 md:mb-0
+                  md:absolute md:left-0 md:ml-3 md:top-1/2 md:-translate-y-1/2
                 `}
               >
-                <span className="">{step.number}</span>
+                <span className="-mt-12 md:mt-0">{step.number}</span>
               </div>
               {/* Card */}
               <div
                 className={`
                   flex items-center justify-center bg-gray-800 backdrop-blur-sm relative
-                  rounded-2xl p-4 border-2 border-gray-600
-                  flex-col min-h-[140px] w-full
+                  rounded-2xl p-4 md:pt-4 border-2 border-gray-600
+                  flex-col md:min-h-[140px] w-full
                   md:ml-24
                 `}
               >
-                <div className="font-semibold mb-2 text-gray-300 text-center md:text-left">
+                <div className="font-semibold text-md mb-2 text-gray-300 text-center md:text-left">
                   {step.text}
                 </div>
                 {step.list && (
-                  <ul className="text-xs text-gray-300 text-left">
+                  <ul className="text-sm text-gray-300 text-left">
                     {step.list.map((li, i) => (
                       <li key={i}>• {li}</li>
                     ))}
