@@ -11,31 +11,33 @@ export default function ContactHero() {
     <>
     <Container variant="transparent-gradient" className="min-h-[100vh] flex items-center justify-center overflow-hidden">
       {/* Content */}
-      <div className="flex flex-col md:flex-row items-center">
+      <div className="flex flex-col lg:flex-row items-center gap-8 w-full">
         <motion.div
-          className="pt-16 md:pt-0 relative z-1 h-full flex flex-col items-center md:items-start justify-start lg:max-w-[60%] md:pr-8"
+          className="pt-16 md:pt-8 lg:pt-0 relative z-1 h-full flex flex-col items-center md:items-center lg:items-start justify-start lg:max-w-[60%] lg:pr-8 px-4 md:px-6 lg:px-0"
           initial="hidden"
           animate="visible"
         >
           <Title
-          title="Let’s Map Your Growth System"
+          title="Let's Map Your Growth System"
           animationVariant="topToBottom"
-          className="md:mb-6 text-gray-300 item-center md:items-start justify-start text-center md:text-left"
+          className="mb-4 md:mb-6 text-gray-300 text-center lg:text-left"
           />
           <Title
           variant="h5"
           title="This is your first step toward a more intelligent, scalable, AI-augmented growth strategy."
           animationVariant="leftToRight"
-          className="md:mb-4 text-gray-300 item-center md:items-start justify-start text-center md:text-left"
+          className="mb-4 md:mb-6 text-gray-300 text-center lg:text-left"
           />
           <Title
           variant="h5"
-          title="Whether you’re dealing with plateaued revenue, fragmented funnels, or too much manual work, you’re here because you know your eCommerce business can perform better — smarter. We’re here to engineer that next level with you."
+          title="Whether you're dealing with plateaued revenue, fragmented funnels, or too much manual work, you're here because you know your eCommerce business can perform better — smarter. We're here to engineer that next level with you."
           animationVariant="rightToLeft"
-          className="md:mt-8 text-gray-300 item-center md:items-start justify-start text-center md:text-left"
+          className="mb-6 md:mb-8 lg:mt-8 text-gray-300 text-center lg:text-left"
           />
         </motion.div>
-        <ContactUs size="sm" variant="gray-card" />
+        <div className="w-full lg:w-auto lg:flex-shrink-0 px-4 md:px-6 lg:px-0">
+          <ContactUs size="sm" variant="gray-card" />
+        </div>
       </div>
     </Container>
     </>
