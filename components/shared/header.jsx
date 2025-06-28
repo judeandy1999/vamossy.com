@@ -111,7 +111,7 @@ export default function Header() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
-              className="md:hidden bg-black/70 backdrop-blur-sm text-white fixed top-0 left-0 right-0 py-6 px-6 space-y-4 flex flex-col items-center"
+              className="md:hidden bg-black/70 backdrop-blur-sm text-gray-300 fixed top-0 left-0 right-0 py-6 px-6 space-y-4 flex flex-col items-center"
             >
               <motion.button
                 onClick={() => setIsMobileMenuOpen(false)}
@@ -133,7 +133,7 @@ export default function Header() {
                   key={item.name}
                   href={item.href}
                   className={`transition-colors duration-300 ${
-                    pathname === item.href ? 'text-yellow-400' : 'text-white hover:text-yellow-400'
+                    pathname === item.href ? 'text-yellow-400' : 'text-gray-300 hover:text-yellow-400'
                   }`}
                 >
                   {item.name}
@@ -146,7 +146,7 @@ export default function Header() {
                   key="dashboard"
                   href='/user-dashboard'
                   className={`transition-colors duration-300 ${
-                    pathname === 'user-dashboard' ? 'text-yellow-400' : 'text-white hover:text-yellow-400'
+                    pathname === 'user-dashboard' ? 'text-yellow-400' : 'text-gray-300 hover:text-yellow-400'
                   }`}
                 >
                   Go to Dashboard
