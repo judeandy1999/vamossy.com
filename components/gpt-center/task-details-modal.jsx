@@ -4,7 +4,7 @@ import { X, Clock, ExternalLink, Calendar, User, Bell, Tag } from 'lucide-react'
 import TaskButton from './task-button';
 import { canRestartTask, getNextAvailableTime, formatNextAvailableDate } from '@/utils/task-utils';
 
-export default function TaskDetailsModal({ task, isOpen, onClose, updateTaskStatus, updatingTasks }) {
+export default function TaskDetailsModal({ task, isOpen, onClose, updateTaskStatus, updatingTasks, isButtonDisplayed = true }) {
   if (!isOpen || !task) return null;
 
   const canRestart = canRestartTask(task);
@@ -203,14 +203,16 @@ export default function TaskDetailsModal({ task, isOpen, onClose, updateTaskStat
                 Close
               </button>
               
-              <div className="w-48">
-                <TaskButton
-                  task={task}
-                  onAction={handleTaskAction}
-                  isUpdating={updatingTasks?.has(task.id)}
-                  canRestart={canRestart}
-                />
-              </div>
+              {isButtonDisplayed && (
+                <div className="w-48">
+                  <TaskButton
+                    task={task}
+                    onAction={handleTaskAction}
+                    isUpdating={updatingTasks?.has(task.id)}
+                    canRestart={canRestart}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>
