@@ -1,6 +1,7 @@
 import { supabase } from '@/utils/client';
 import { authenticate } from '@/lib/authMiddleware';
 import { verifySupabaseAuth } from '@/utils/verifySupabaseAuth';
+import { getUserRole } from '@/utils/getUserRole';
 
 export default async function handler(req, res) {
   if (!authenticate(req, res)) return;
@@ -16,6 +17,9 @@ export default async function handler(req, res) {
 
   try {
     const { filter = 'all', sortBy = 'created_at' } = req.query;
+    
+    // Get user role
+    const userRole = await getUserRole(user.email);
 
     // Calculate date filter
     let dateFilter = null;
@@ -37,26 +41,23 @@ export default async function handler(req, res) {
         dateFilter = null;
     }
 
-    // Build query
     let query = supabase
       .from('evaluations')
       .select(`
         *,
         tasks (id, title, description),
-        task_logs (id, log_content, file_url)
+        task_logs (id, log_content, file_url),
+        users (id, email, name, role)
       `);
 
-    // Add user filter (admin can see all, workers see only their own)
-    if (user.role !== 'admin') {
+    if (userRole !== 'admin') {
       query = query.eq('user_id', user.id);
     }
 
-    // Add date filter
     if (dateFilter) {
       query = query.gte('created_at', dateFilter.toISOString());
     }
 
-    // Add sorting
     query = query.order(sortBy, { ascending: false });
 
     const { data, error } = await query;
