@@ -13,6 +13,7 @@ export default function TaskCreation({ createTask }) {
     title: '',
     description: '',
     gpt_url: '',
+    evaluation_prompt: '',
     frequency: 'daily',
     notification_type: 'popup',
     assigned_user_id: ''
@@ -36,6 +37,7 @@ export default function TaskCreation({ createTask }) {
         title: '',
         description: '',
         gpt_url: '',
+        evaluation_prompt: '',
         frequency: 'daily',
         notification_type: 'popup',
         assigned_user_id: ''
@@ -110,6 +112,19 @@ export default function TaskCreation({ createTask }) {
             />
             <ExternalLink className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
           </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Evaluation Prompt
+          </label>
+          <textarea
+            value={formData.evaluation_prompt}
+            onChange={(e) => setFormData({ ...formData, evaluation_prompt: e.target.value })}
+            rows={4}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            placeholder="How would you like the AI to evaluate this task? What specific aspects should it focus on?"
+          />
         </div>
 
         {/* Frequency and Notification Type */}
