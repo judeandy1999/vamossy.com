@@ -7,6 +7,7 @@ import TaskDetailsModal from './task-details-modal';
 import EditTaskModal from './edit-task-modal';
 import Modal from '@/components/ui/modal';
 import EvaluationDetailsModal from './evaluation-details-modal';
+import Spinner from '@/components/ui/spinner';
 
 export default function AdminTaskManagement({ 
   allTasks,
@@ -286,9 +287,7 @@ export default function AdminTaskManagement({
 
   if (loading && allTasks.length === 0) {
     return (
-      <div className="flex justify-center items-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
+      <Spinner />
     );
   }
 
