@@ -8,6 +8,7 @@ import Title from "@/components/ui/title";
 import Container from "@/components/ui/container";
 
 export default function TieredServices() {
+
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
   const scrollContainerRef = useRef(null);
@@ -129,8 +130,8 @@ export default function TieredServices() {
             <div className="min-w-3xl">
               {/* Header Row */}
               <div className="grid grid-cols-4 bg-yellow-500 h-50 items-stretch rounded-t-3xl shadow-xl overflow-hidden">
-                <div className="flex items-center justify-center p-8 border-r border-gray-600 rounded-tl-3xl">
-                  <h4 className="text-gray-900 text-3xl md:text-4xl font-black tracking-tight">
+                <div className="flex items-center justify-left p-8 border-r border-gray-600 rounded-tl-3xl">
+                  <h4 className="text-gray-900 text-2xl md:text-4xl font-black tracking-tight">
                     Service Name
                   </h4>
                 </div>
@@ -141,7 +142,7 @@ export default function TieredServices() {
                       ${idx === tieredServicesPage.tiers.length - 1 ? 'rounded-tr-3xl' : ''}
                     `}
                   >
-                    <h5 className="text-3xl md:text-4xl font-black text-gray-900 w-full tracking-tight">
+                    <h5 className="text-2xl md:text-4xl font-black text-gray-900 w-full tracking-tight">
                       {tier.name}
                     </h5>
                   </div>
@@ -162,13 +163,13 @@ export default function TieredServices() {
               ].map((row, idx) => (
                 <motion.div
                   key={row.key}
-                  className={`grid min-h-[250px] grid-cols-4 border-b border-gray-700 items-stretch text-sm md:text-base lg:text-lg ${
+                  className={`grid min-h-[150px] md:min-h-[250px] grid-cols-4 border-b border-gray-700 items-stretch text-sm md:text-base lg:text-lg ${
                     idx % 2 === 1 ? 'bg-yellow-500/10' : 'bg-gray-800/80'
                   }`}
                   variants={rowVariants}
                 >
                   <div className={`p-4 md:p-8 border-r border-gray-700 flex items-center font-semibold h-full justify-start ${
-                    idx % 2 === 1 ? 'text-white' : 'text-white'
+                    idx % 2 === 1 ? 'text-gray-300' : 'text-gray-300'
                   }`}>
                     <h6 className="text-lg md:text-2xl text-left">{row.label}</h6>
                   </div>
@@ -176,7 +177,7 @@ export default function TieredServices() {
                     <div
                       key={tier.id}
                       className={`items-center p-2 md:p-6 border-r border-gray-700 last:border-r-0 flex h-full ${
-                        idx % 2 === 1 ? 'text-white' : 'text-gray-200'
+                        idx % 2 === 1 ? 'text-gray-300' : 'text-gray-200'
                       }`}
                     >
                       <div className="w-full">
