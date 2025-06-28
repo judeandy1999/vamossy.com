@@ -16,8 +16,7 @@ export default function Dashboard() {
     tasks,
     allTasks,
     evaluations, 
-    loading, 
-    executingTasks,
+    loading,
     updatingTasks,
     fetchTasks,
     fetchAllTasks,
@@ -107,6 +106,9 @@ export default function Dashboard() {
             deleteTask={deleteTask}
             updateTask={updateTask}
             fetchAllTasks={fetchAllTasks}
+            evaluations={evaluations}
+            fetchEvaluations={fetchEvaluations}
+            evaluationLoading={evaluationLoading}
           />
         )}
       </div>
