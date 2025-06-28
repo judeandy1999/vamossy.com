@@ -41,7 +41,7 @@ export default function ResetPasswordForm() {
             <button
               type="submit"
               disabled={loading || !otpVerified}
-              className="bg-yellow-400 hover:bg-yellow-500 text-white rounded-full py-2 font-medium transition-colors"
+              className="bg-yellow-400 hover:bg-yellow-500 text-gray-300 rounded-full py-2 font-medium transition-colors"
             >
               {loading ? <Spinner size="small" /> : 'Reset Password'}
             </button>
