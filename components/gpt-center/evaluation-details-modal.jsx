@@ -162,7 +162,7 @@ export default function EvaluationDetailsModal({ evaluation, isOpen, onClose }) 
               <FileText className="h-5 w-5 mr-2" />
               Submitted Log
             </h3>
-            <div className="bg-gray-50 rounded-lg p-4 border">
+            <div className="overflow-scroll bg-gray-50 rounded-lg p-4 border">
               {evaluation.task_logs?.log_content ? (
                 <div className="space-y-3">
                   <div>

@@ -96,6 +96,14 @@ export default function TaskDetailsModal({ task, isOpen, onClose, updateTaskStat
               </p>
             </div>
 
+            {/* Evaluation Prompt */}
+            <div className="mb-6">
+              <h4 className="text-sm font-medium text-gray-700 mb-2">Evaluation Prompt</h4>
+              <p className="text-gray-600 leading-relaxed">
+                {task.evaluation_prompt || 'No evaluation prompt provided'}
+              </p>
+            </div>
+
             {/* Task Info Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               {/* Frequency */}
