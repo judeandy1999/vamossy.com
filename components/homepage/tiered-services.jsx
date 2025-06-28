@@ -2,10 +2,10 @@
 
 import { motion } from "framer-motion";
 import { tieredServices } from '@/data/data';
-import { Check, Minus, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import Title from "@/components/ui/title";
-import Container from "../ui/container";
+import Container from "@/components/ui/container";
 
 export default function TieredServices() {
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -64,34 +64,18 @@ export default function TieredServices() {
     },
   };
 
-  const renderFeatureValue = (value) => {
-    if (value === "included") {
-      return (
-        <div className="flex justify-center">
-          <Check className="text-yellow-500" size={24} />
-        </div>
-      );
-    } else if (value === "partial") {
-      return (
-        <div className="flex justify-center">
-          <Minus className="text-yellow-500" size={24} />
-        </div>
-      );
-    } else if (value) {
-      return (
-        <div className="text-center">
-          <Check className="text-yellow-500 mx-auto mb-2" size={24} />
-          <p className="text-white text-sm">{value}</p>
-        </div>
-      );
-    } else {
-      return null;
-    }
-  };
+  const rowHeights = [
+    200, // Core Offer
+    180,  // Duration
+    100, // Type of Collaboration
+    160, // AI Advantages
+    220,  // Consultations
+    140, // Deliverables
+  ];
 
   return (
     
-    <Container variant="gradient">
+    <Container variant="gradient" isTable={true}>
       {/* Title */}
       <Title title={tieredServices.title} variant="h2" />
       <Title title={tieredServices.subtitle} variant="h2" />
@@ -134,117 +118,84 @@ export default function TieredServices() {
           <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-gray-900 to-transparent z-10 pointer-events-none"></div>
         )}
 
-      {/* Services Table */}
-      <motion.div
-        className="bg-gray-800/50 backdrop-blur-sm rounded-2xl overflow-auto border border-gray-700/50 scrollbar-always-visible"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
-        variants={tableVariants}
-        style={{
-          scrollbarWidth: 'thin',
-          scrollbarColor: '#fbbf24 #374151'
-        }}
-      >
-        <div className="min-w-3xl ">
-        {/* Header Row */}
-          <div className="grid grid-cols-4 bg-yellow-500">
-            <div className="flex items-center p-4 md:p-8 border-r border-gray-600">
-              <h4 className="text-gray-900 text-lg md:text-lg lg:text-xl font-semibold">
-                Feature / Deliverable
-              </h4>
-            </div>
-            {tieredServices.tiers.map((tier) => (
-              <div key={tier.id} className="p-4 md:p-8 text-center border-r border-gray-600 last:border-r-0">
-                <div className="mb-4">
-                  <img 
-                    src={tier.icon} 
-                    alt={tier.name}
-                    className="w-22 h-22 mx-auto mb-2 rounded-xl shadow-lg"
-                  />
+        {/* Services Table */}
+        <div
+          ref={scrollContainerRef}
+          className="overflow-x-auto overflow-y-hidden rounded-2xl custom-scrollbar"
+          onScroll={checkScrollability}
+          tabIndex={0}
+          style={{ WebkitOverflowScrolling: 'touch' }}
+        >
+          <motion.div
+            className="bg-gray-800/50 backdrop-blur-sm rounded-2xl min-w-[900px] border border-gray-700/50"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ amount: 0 }}
+            variants={tableVariants}
+            style={{
+              scrollbarWidth: 'thin',
+              scrollbarColor: '#fbbf24 #374151',
+            }}
+          >
+            <div className="min-w-3xl ">
+              {/* Header Row */}
+              <div className="grid grid-cols-4 bg-yellow-500 h-50 items-stretch rounded-t-3xl shadow-xl overflow-hidden">
+                <div className="flex items-center justify-center p-8 border-r border-gray-600 rounded-tl-3xl">
+                  <h4 className="text-gray-900 text-2xl md:text-4xl font-black tracking-tight">
+                    Our Solutions
+                  </h4>
                 </div>
-                <h5 className="text-xl md:text-2xl font-bold text-gray-900">
-                  {tier.name}
-                </h5>
+                {tieredServices.tiers.map((tier, idx) => (
+                  <div
+                    key={tier.id}
+                    className={`flex items-center justify-center p-8 border-r border-gray-600 last:border-r-0 h-full
+                      ${idx === tieredServices.tiers.length - 1 ? 'rounded-tr-3xl' : ''}
+                    `}
+                  >
+                    <h5 className="text-2xl md:text-4xl font-black text-gray-900 w-full tracking-tight">
+                      {tier.name}
+                    </h5>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
 
-          {/* Ideal For Row */}
-          <motion.div 
-            className="grid grid-cols-4 border-b border-gray-600"
-            variants={rowVariants}
-          >
-            <div className="p-4 md:p-8 bg-gray-700 border-r border-gray-600">
-              <h6 className="text-lg font-semibold text-white">Ideal For</h6>
+              {/* Table Rows */}
+              {[
+                { label: "Core Offer", key: "coreOffer" },
+                { label: "Duration", key: "duration" },
+                { label: "Type of Collaboration", key: "typeOfCollaboration" },
+                { label: "AI Advantages", key: "aiAdvantages" },
+                { label: "Consultations", key: "consultations" },
+                { label: "Deliverables", key: "deliverables" },
+              ].map((row, idx) => (
+                <motion.div
+                  key={row.key}
+                  className={`grid min-h-[150px] md:min-h-[200px] grid-cols-4 border-b border-gray-700 items-stretch text-sm md:text-base lg:text-lg ${
+                    idx % 2 === 1 ? 'bg-yellow-500/10' : 'bg-gray-800/80'
+                  }`}
+                  variants={rowVariants}
+                >
+                  <div className={`p-4 md:p-8 border-r border-gray-700 flex items-center font-semibold h-full justify-start ${
+                    idx % 2 === 1 ? 'text-gray-300' : 'text-gray-300'
+                  }`}>
+                    <h6 className="text-lg md:text-2xl text-left">{row.label}</h6>
+                  </div>
+                  {tieredServices.tiers.map((tier) => (
+                    <div
+                      key={tier.id}
+                      className={`items-center p-2 md:p-6 border-r border-gray-700 last:border-r-0 flex h-full ${
+                        idx % 2 === 1 ? 'text-gray-300' : 'text-gray-200'
+                      }`}
+                    >
+                      {/* Render the cell content directly */}
+                      {tier[row.key]}
+                    </div>
+                  ))}
+                </motion.div>
+              ))}
             </div>
-            {tieredServices.tiers.map((tier) => (
-              <div key={tier.id} className="p-4 md:p-8 bg-gray-800 border-r border-gray-600 last:border-r-0">
-                <p className="text-gray-300 text-md md:text-lg lg:text-xl font-light">{tier.idealFor}</p>
-              </div>
-            ))}
-          </motion.div>
-
-          {/* Core Offer*/}
-          <motion.div 
-            className="grid grid-cols-4 border-b border-gray-600"
-            variants={rowVariants}
-          >
-            <div className="p-4 md:p-8 bg-gray-700 border-r border-gray-600">
-              <h6 className="text-lg font-semibold text-white">Core Offer</h6>
-            </div>
-            {tieredServices.tiers.map((tier) => (
-              <div key={tier.id} className="p-4 md:p-8 bg-gray-800 border-r border-gray-600 last:border-r-0">
-                <p className="text-gray-300 text-md md:text-lg lg:text-xl font-light">{tier.coreOffer}</p>
-              </div>
-            ))}
-          </motion.div>
-
-          {/* Investment Row */}
-          <motion.div 
-            className="grid grid-cols-4 border-b border-gray-600"
-            variants={rowVariants}
-          >
-            <div className="p-4 md:p-8 bg-gray-700 border-r border-gray-600">
-              <h6 className="text-lg font-semibold text-white">Investment</h6>
-            </div>
-            {tieredServices.tiers.map((tier) => (
-              <div key={tier.id} className="p-4 md:p-8 bg-gray-800 border-r border-gray-600 last:border-r-0">
-                <p className="text-gray-300 text-md md:text-lg lg:text-xl font-light">{tier.investment}</p>
-              </div>
-            ))}
-          </motion.div>
-
-          {/* Feature Rows */}
-          <motion.div 
-            className="grid grid-cols-4 border-b border-gray-600"
-            variants={rowVariants}
-          >
-            <div className="p-4 md:p-8 bg-gray-700 border-r border-gray-600">
-              <h6 className="text-lg font-semibold text-white">Funnel Audit (GPT-Powered)</h6>
-            </div>
-            {tieredServices.tiers.map((tier) => (
-              <div key={tier.id} className="p-4 md:p-8 bg-gray-800 border-r border-gray-600 last:border-r-0">
-                {renderFeatureValue(tier.features["Funnel Audit (GPT-Powered)"])}
-              </div>
-            ))}
-          </motion.div>
-
-          <motion.div 
-            className="grid grid-cols-4"
-            variants={rowVariants}
-          >
-            <div className="p-4 md:p-8 bg-gray-700 border-r border-gray-600">
-              <h6 className="text-lg font-semibold text-white">Full KPI + Marketing Activity Audit</h6>
-            </div>
-            {tieredServices.tiers.map((tier) => (
-              <div key={tier.id} className="p-4 md:p-8 bg-gray-800 border-r border-gray-600 last:border-r-0">
-                {renderFeatureValue(tier.features["Full KPI + Marketing Activity Audit"])}
-              </div>
-            ))}
           </motion.div>
         </div>
-      </motion.div>
       </div>
     </Container>
   );

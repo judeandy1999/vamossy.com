@@ -54,7 +54,7 @@ export default function BlogPage() {
           <div className="flex justify-center mt-10">
             <button
               onClick={loadMore}
-              className="px-6 py-2 bg-slate-600 text-white rounded hover:bg-slate-700 transition"
+              className="px-6 py-2 bg-slate-600 text-gray-300 rounded hover:bg-slate-700 transition"
             >
               Load More
             </button>

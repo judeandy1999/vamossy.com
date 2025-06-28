@@ -4,8 +4,9 @@ export default function Container({
   children, 
   className = '',
   variant = 'default',
+  isTable = false,
 }) {
-  
+
   const getVariantClasses = (variant) => {
     switch (variant) {
       case 'transparent':
@@ -24,8 +25,11 @@ export default function Container({
         return `bg-transparent`;
     }
   };
+
 console.log(variant);
-  const containerClasses = `py-8 lg:py-16 px-4 relative w-full overflow-hidden flex flex-row justify-center ${getVariantClasses(variant)} ${className}`;
+  const containerClasses = `py-8 lg:py-16 px-4 relative w-full overflow-hidden flex flex-row justify-center 
+                            ${getVariantClasses(variant)} 
+                            ${className} ${isTable && 'py-8 lg:py-24 px-4 !block'}`;
 
   return (
     <section className={containerClasses}>
@@ -45,3 +49,4 @@ console.log(variant);
     </section>
   );
 }
+

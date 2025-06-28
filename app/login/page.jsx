@@ -108,7 +108,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading || hubSpotLoading}
-            className="bg-[#f4c30f] hover:bg-yellow-500 text-white rounded-full py-2 font-medium transition-colors"
+            className="bg-[#f4c30f] hover:bg-yellow-500 text-gray-300 rounded-full py-2 font-medium transition-colors"
           >
             {loading || hubSpotLoading ? 'Logging in...' : 'Sign in'}
           </button>

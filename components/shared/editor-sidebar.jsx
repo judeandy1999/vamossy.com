@@ -50,7 +50,7 @@ export default function EditorSidebar({
         <h2 className="text-lg font-semibold text-slate-800">Articles</h2>
         <button
           onClick={startNewArticle}
-          className="cursor-pointer flex items-center gap-1 bg-slate-600 hover:bg-slate-700 text-white rounded px-2 py-1 text-sm transition"
+          className="cursor-pointer flex items-center gap-1 bg-slate-600 hover:bg-slate-700 text-gray-300 rounded px-2 py-1 text-sm transition"
         >
           <FilePlus size={16} /> New
         </button>

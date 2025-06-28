@@ -87,7 +87,7 @@ export default function Sidebar() {
               href={href}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors group relative ${
                 pathname === href
-                  ? 'bg-yellow-500 text-white font-medium shadow-sm'
+                  ? 'bg-yellow-500 text-gray-300 font-medium shadow-sm'
                   : 'text-slate-600 hover:bg-gray-50 hover:text-slate-800'
               }`}
               title={isCollapsed ? label : ''}
@@ -95,7 +95,7 @@ export default function Sidebar() {
               <Icon 
                 size={20} 
                 className={`flex-shrink-0 ${
-                  pathname === href ? 'text-white' : 'text-slate-500 group-hover:text-slate-700'
+                  pathname === href ? 'text-gray-300' : 'text-slate-500 group-hover:text-slate-700'
                 }`} 
               />
               {!isCollapsed && (
@@ -104,7 +104,7 @@ export default function Sidebar() {
               
               {/* Tooltip for collapsed state */}
               {isCollapsed && (
-                <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-sm rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50">
+                <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-gray-300 text-sm rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50">
                   {label}
                   <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-2 h-2 bg-gray-900 rotate-45"></div>
                 </div>

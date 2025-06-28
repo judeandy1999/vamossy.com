@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { uniqueSolutions } from '@/data/data';
+import { atomicaAfterData } from '@/data/data'; // Add this import
 import { Settings, Target, Bot, ClipboardCheck, Package } from 'lucide-react';
 import Title from "@/components/ui/title";
 import Container from "@/components/ui/container";
@@ -95,7 +96,7 @@ export default function UniqueSolutions() {
                   
                   {/* Content */}
                   <div className="flex-1">
-                    <h3 className="lg:mb-4 text-white text-lg md:text-lg lg:text-xl font-semibold">
+                    <h3 className="lg:mb-4 text-gray-300 text-lg md:text-lg lg:text-xl font-semibold">
                       {feature.title}
                     </h3>
                     <p className="text-gray-300 text-md md:text-lg lg:text-xl font-light">
@@ -155,8 +156,11 @@ export default function UniqueSolutions() {
                   <button className="text-gray-400 hover:text-gray-600 text-xs">Edit</button>
                 </div>
               </div>
-              <pre className="text-gray-800 text-xs leading-relaxed whitespace-pre-wrap font-mono">
-                {uniqueSolutions.beforeAfter.after.code}
+              <pre
+                className="text-gray-800 text-sm leading-relaxed whitespace-pre-wrap font-mono overflow-y-auto"
+                style={{ maxHeight: 340 }}
+              >
+                {atomicaAfterData}
               </pre>
             </div>
           </motion.div>

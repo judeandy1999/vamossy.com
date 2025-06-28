@@ -11,6 +11,7 @@ export default function Title({
   titlePosition = 'center', 
   animationVariant = 'topToBottom',
   className ='',
+  isAnimationEnabled = true,
 }) {
 
   const topToBottom = {
@@ -65,7 +66,7 @@ export default function Title({
   const getClasses = (variant) => {
     const baseClasses = `${titlePosition === 'center' ? 'items-center text-center' : titlePosition === 'left' ? 'md:items-start md:text-left' : 'md:items-end md:text-right' } ${className} mb-2 md:mb-4 flex flex-col justify-center px-6 text-gray-100 leading-tight`;
     const underlineEffectClasses = underlineEffect
-      && `${animationVariant === 'leftToRight' ? 'bg-gradient-to-l' : 'bg-gradient-to-r'} from-white via-white to-yellow-200 bg-clip-text text-transparent md:max-w-full`;
+      && `${animationVariant === 'leftToRight' ? 'bg-gradient-to-l' : 'bg-gradient-to-r'} from-gray-300 via-gray-300 to-yellow-200 bg-clip-text text-transparent md:max-w-full`;
     
     switch (variant) {
       case 'h1':
@@ -79,7 +80,7 @@ export default function Title({
       case 'h4':
         return `${baseClasses} ${underlineEffectClasses} text-sm !flex-row !mb-0 !md:mb-4 text-gray-200 md:text-xl lg:text-2xl mt-2 font-light md:max-w-[60%]`;
       case 'h5':
-        return `${baseClasses} ${underlineEffectClasses} text-sm !flex-row !mb-0 !md:mb-4 text-gray-200 md:text-xl lg:text-2xl mt-2 font-light`;
+        return `${baseClasses} ${underlineEffectClasses} text-xl !flex-row !mb-0 !md:mb-4 text-gray-200 md:text-xl lg:text-2xl mt-2 font-light`;
       case 'h6':
         return `${baseClasses} ${underlineEffectClasses} text-sm !flex-row !mb-0 !md:mb-4 text-gray-200 md:text-xl lg:text-xl mt-2 font-light`;
       default:
@@ -92,10 +93,10 @@ export default function Title({
   return (
     <MotionComponent
       className={getClasses(variant)}
-      variants={getAnimationVariant(animationVariant)}
+      variants={isAnimationEnabled && getAnimationVariant(animationVariant)}
        initial="hidden"
        whileInView="visible"
-      viewport={{ once: false, amount: 0.3 }}
+      viewport={{ once: false, amount: 0 }}
     >
       {typewriter ? (
         <Typewriter

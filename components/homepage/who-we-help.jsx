@@ -103,13 +103,13 @@ export default function WhoWeHelp() {
 							<div className="relative w-7 h-7 lg:w-12 lg:h-12 flex-shrink-0 mt-2">
 								<div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-full animate-pulse opacity-75"></div>
 								<div className="relative w-full h-full bg-gradient-to-r from-yellow-600 to-yellow-400 rounded-full flex items-center justify-center shadow-lg shadow-yellow-500/25">
-									<Play size={18} className="text-white" />
+									<Play size={18} className="text-gray-300" />
 								</div>
 							</div>
 
 							{/* Content */}
 							<div className="flex-1 pt-2 lg:pt-4">
-								<h3 className="text-white text-lg md:text-lg lg:text-xl font-semibold">
+								<h3 className="text-gray-300 text-lg md:text-lg lg:text-xl font-semibold">
 									{client.title}
 								</h3>
 								<div className="flex md:pl-8 items-center space-x-4">
@@ -177,7 +177,7 @@ export default function WhoWeHelp() {
 								<span className="text-lg md:text-xl font-semibold text-gray-900">{step.number}</span>
 							</div>
 							
-							<h3 className="lg:mb-4 text-white text-lg md:text-lg lg:text-xl font-semibold">
+							<h3 className="lg:mb-4 text-gray-300 text-lg md:text-lg lg:text-xl font-semibold">
 								{step.title}
 							</h3>
 							

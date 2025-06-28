@@ -5,7 +5,7 @@ import { useState } from "react";
 import Button from "@/components/ui/button";
 import Container from "@/components/ui/container";
 
-export default function ContactUs({ variant, size = 'lg'}) {
+export default function ContactUs({ variant, size = 'lg', cardVariant }) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -72,13 +72,13 @@ export default function ContactUs({ variant, size = 'lg'}) {
     // Handle form submission logic here
     console.log('Form submitted:', formData);
   };
-
-  variant = variant || 'gray-gradient';
+  
+  variant = variant || 'transparent-gradient';
+  cardVariant = cardVariant || 'normal';
 console.log(variant);
   return (
     <Container variant={variant}>
-      <div className="relative max-w-3xl mx-auto">
-        
+      <div className="relative mx-auto">
         {/* Header Section */}
         <motion.div
           className="text-center mb-4 md:mb-6"

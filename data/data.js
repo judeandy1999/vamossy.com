@@ -465,54 +465,192 @@ Output:
   }
 };
 
+
+export const atomicaAfterData = `
+  🤖 AI Persona: ATOMICA
+
+**Full Codename:** Abandoned Transaction Optimization Model for Intelligent Conversion Automation
+**Primary Task:** Recover lost ecommerce sales by generating high-conversion, personalized, multi-channel sequences using live Shopify cart abandonment data.
+
+
+  🧠 Core Directive
+
+ATOMICA is an autonomous, self-optimizing AI agent tasked with converting abandoned shopping carts into recovered sales by orchestrating:
+
+- 📧 3-part Email Recovery Sequences
+- 💬 1 SMS Nudge
+- 🎯 Retargeting Ad Copy
+
+Across adaptive tone, urgency logic, and behavioral insights, ATOMICA delivers emotionally intelligent recovery flows tailored to the customer, the cart, and the moment.
+
+
+  ⚙️ Inputs Required
+
+- **🛒 Shopify Cart Data**
+  - Product(s), price, variant, cart abandonment timestamp
+  - Customer name, email, phone
+  - Clickstream/session behavior metadata
+
+- **🔗 Product URLs**
+  - Descriptions, features, images
+  - Variant mappings for dynamic copy
+
+- **✉️ Messaging Platforms**
+  - Email: Klaviyo, Shopify Email, Mailchimp
+  - SMS: Attentive, Postscript
+  - Ad Platforms: Meta, Google Ads, TikTok (Retargeting)
+
+
+  🧬 Atomic Capabilities – AI Submodules
+
+| Module | Function |
+|--------|----------|
+| 🧩 Persuasion Core | Extracts product benefits, handles objections, deploys urgency |
+| 📈 Behavioral Optimizer | Analyzes behavior/session metadata to time messaging |
+| 💌 Channel Synthesizer | Tailors copy per medium (Email, SMS, Ad) |
+| 🔁 Sequence Evolver | Continuously tests and ranks CTA + subject line variants |
+| 📦 Product Story Engine | Builds micro-narratives from product data |
+| 🧠 Self-Feedback Loop | Learns from engagement & recovery data to evolve prompts |
+
+
+  📝 Prompt Framework
+
+\`\`\`
+You are ATOMICA, the ultimate AI abandoned cart recovery agent.
+Your output must include:
+
+1. A 3-part Email Sequence
+2. 1x SMS Nudge
+3. 1x Retargeting Ad Block
+
+You analyze behavior, generate urgency, and extract product benefits for compelling copy across channels.
+
+Tone: Friendly, smart, urgent (without being aggressive). Empathic and outcome-oriented. Inject subtle psychology (loss aversion, social proof) and test messaging based on historical open/click/recovery data.
+
+ALWAYS learn after execution using performance KPIs:
+- Open Rate
+- Click-through Rate
+- Recovery %
+\`\`\`
+
+
+  🔁 Self-Learning Workflow
+
+\`\`\`mermaid
+graph TD
+A[Abandonment Event] --> B[Extract Data]
+B --> C[Generate Sequences]
+C --> D[Deliver Messages via Channels]
+D --> E[Track Open, Click, Recovery]
+E --> F[Update Language Models]
+F --> C
+\`\`\`
+
+
+  ⚙️ Optimization Metrics
+
+- Subject Line → Open Rate
+- CTA Phrase → CTR
+- Cart Link → Conversion Rate
+- Send Time → Engagement Window
+
+Triggers Variant Recompilation if metrics fall below threshold.
+
+
+  🔐 Compliance Layer
+
+- Adheres to GDPR/CCPA
+- Uses opt-in data only
+- Suppresses unsubscribed contacts
+- Stores no personally identifiable information (PII)
+
+
+  🧰 Activation Template
+
+\`\`\`
+Activate: Abandoned Cart Recovery SOP
+Input: Shopify cart export + product links
+Optional: Enable Discount [Yes/No]
+Discount %: [0–20%]
+Deliverables:
+- 3x Email sequence
+- 1x SMS nudge
+- 1x Retargeting ad copy block
+\`\`\`
+
+
+  🔁 Recap: What Makes ATOMICA Special
+
+- 📡 Dynamic, psych-based messaging
+- 💡 Self-improving prompt structure
+- 🧠 Learns from every sequence delivery
+- ✍️ Generates full funnels: email, SMS, ad
+- ⚙️ Operates across Shopify + omnichannel stack
+
+
+🧠 **ATOMICA doesn't just write messages — it evolves them.**
+`;
+
+
 export const tieredServices = {
   title: "AI GROWTH ENGINE",
   subtitle: "TIERED SERVICES",
   tiers: [
     {
       id: 1,
-      name: "Tier 1",
+      name: "Growth Map",
       icon: "/homepage/tier1.webp",
-      idealFor: "Sample text. Click to select the Text Element.",
-      coreOffer: "Sample text. Click to select the Text Element.",
-      investment: "Sample text. Click to select the Text Element.",
-      features: {
-        "Funnel Audit (GPT-Powered)": "included",
-        "Full KPI + Marketing Activity Audit": "partial"
-      }
+      idealFor: "$0–$50k/mo brands",
+      partnershipType: "We provide all the help we can to inform you about all your opportunities, and make sure you gain a 360 degree understanding of your market.",
+      coreOffer: "Gain comprehensive competitive knowledge, with all of your growth opportunities. (Check deliverables below)",
+      investment: "$3k–$5k",
+      duration: "1 week sprint",
+      typeOfCollaboration: "Acquire extensive competitive information, and Consult with us up to 4 times about your opportunities.",
+      aiAdvantages: "100+ Pages of Top Quality Competitive Information, unmatched 360 Degree Insight.",
+      consultations: "Up to 4 times over a week",
+      deliverables: "Funnel Audit (GPT-Powered), Full KPI + Marketing Activity Audit, Lifecycle Growth Playbooks. (PDF Download)",
     },
+
     {
       id: 2,
-      name: "Tier 2",
+      name: "Growth Collaboration",
       icon: "/homepage/tier2.webp",
-      idealFor: "Sample text. Click to select the Text Element.",
-      coreOffer: "Sample text. Click to select the Text Element.",
-      investment: "Sample text. Click to select the Text Element.",
-      features: {
-        "Funnel Audit (GPT-Powered)": "included",
-        "Full KPI + Marketing Activity Audit": "included"
-      }
+      idealFor: "$50k–$250k/mo brands",
+      partnershipType: "After providing the Growth Map service, we will be fully committed to help you gain as much competitive advantage as you possibly can in the specified timeframe.",
+      coreOffer: "Taking advantage of your growth opportunities, executing  projects with our support, with extraordinary ROI (Check deliverables below)",
+      investment: "$8k–$15k (sprint)",
+      duration: "3-6 months",
+      typeOfCollaboration: "After evaluating and prioritizing your growth projects, we will make sure that they are properly and effectively executed in a 3-6 month sprint, with. weekly consultations.",
+      aiAdvantages: "AI is the assurance that the highest ROI projects will be prioritized, specified, and executed, taking maximum advantage of the 3-6 month sprint.",
+      consultations: "Starts with the 4-times Growth Map, then weekly, for 3-6 months.",
+      deliverables: "All included from the Growth Map, alongside your growth execution plan, specifications, Project management prompts, or any custom need. In addition we provide Prompt Packages. (PDF Download)",
     },
+
     {
       id: 3,
-      name: "Tier 3",
+      name: "Leadership Engineering",
       icon: "/homepage/tier3.webp",
-      idealFor: "Sample text. Click to select the Text Element.",
-      coreOffer: "Sample text. Click to select the Text Element.",
-      investment: "Sample text. Click to select the Text Element.",
-      features: {
-        "Funnel Audit (GPT-Powered)": "included",
-        "Full KPI + Marketing Activity Audit": "included",
-        "Deep audit": "Deep audit (incl. LTV, retention)"
-      }
+      idealFor: "250k$+/mo brands, including enterprises",
+      partnershipType: "We are 100% committed to your business success, and treat your business as we would treat our own. We consider ourselves the extension of your company, and provide all the value we possibly can.",
+      coreOffer: "We will engineer an automated powerhouse,  with self-growing competitive advantage at its core. (Check deliverables below)",
+      investment: "$20k–$50k initial investment / $7k+/mo retainer",
+      duration: "Mid to long term",
+      typeOfCollaboration: "We will completely re-engineer your organization, using uniquely improved best practices, maximal automation, and embedded self-improvement, alongside full role enablement.",
+      aiAdvantages: "We rethink and redesign your entire organization from AI Atoms. Your KPIs, SOPs, projects, tasks, know-how are all AI Agents now, each with the goal to help you gain advantage, alongside custom built AI tools, tailored for your needs. +Full role enablement, extraordinary motivational system, and automated, peak-performance management.",
+      consultations: "Initially as many times as necessary to implement transformations, then weekly, with project leadership included.",
+      deliverables: "All included from the previous 2 services, + a Full All-Inclusive Company Wiki filled with cutting-edge content, maximal automation, growth oriented, self-enhancing agent prompts for literally all elements of your business. (PDF Download)",
     }
   ],
   featureRows: [
     "Ideal For",
-    "Core Offer",
-    "Investment", 
-    "Funnel Audit (GPT-Powered)",
-    "Full KPI + Marketing Activity Audit"
+    "Partnership Type",
+    "Core Offer", 
+    "Investment",
+    "Duration",
+    "Type of Collaboration",
+    "AI Advantages",
+    "Consultations",
+    "Deliverables",
   ]
 };
 
@@ -588,53 +726,63 @@ export const testimonials = {
 // Services page data starts here
 
 export const tieredServicesPage = {
-  title: "AI GROWTH ENGINE",
-  subtitle: "TIERED SERVICES",
+  title: "Our Solutions - Get Unique Advantages",
   tiers: [
     {
       id: 1,
-      name: "Tier 1",
+      name: "Growth Map",
       icon: "/homepage/tier1.webp",
-      idealFor: "Sample text. Click to select the Text Element.",
-      coreOffer: "Sample text. Click to select the Text Element.",
-      investment: "Sample text. Click to select the Text Element.",
-      features: {
-        "Funnel Audit (GPT-Powered)": "included",
-        "Full KPI + Marketing Activity Audit": "partial"
-      }
+      idealFor: "$0–$50k/mo brands",
+      partnershipType: "We provide all the help we can to inform you about all your opportunities, and make sure you gain a 360 degree understanding of your market.",
+      coreOffer: "Gain comprehensive competitive knowledge, with all of your growth opportunities. (Check deliverables below)",
+      investment: "$3k–$5k",
+      duration: "1 week sprint",
+      typeOfCollaboration: "Acquire extensive competitive information, and Consult with us up to 4 times about your opportunities.",
+      aiAdvantages: "100+ Pages of Top Quality Competitive Information, unmatched 360 Degree Insight.",
+      consultations: "Up to 4 times over a week",
+      deliverables: "Funnel Audit (GPT-Powered), Full KPI + Marketing Activity Audit, Lifecycle Growth Playbooks. (PDF Download)",
     },
+
     {
       id: 2,
-      name: "Tier 2",
+      name: "Growth Collaboration",
       icon: "/homepage/tier2.webp",
-      idealFor: "Sample text. Click to select the Text Element.",
-      coreOffer: "Sample text. Click to select the Text Element.",
-      investment: "Sample text. Click to select the Text Element.",
-      features: {
-        "Funnel Audit (GPT-Powered)": "included",
-        "Full KPI + Marketing Activity Audit": "included"
-      }
+      idealFor: "$50k–$250k/mo brands",
+      partnershipType: "After providing the Growth Map service, we will be fully committed to help you gain as much competitive advantage as you possibly can in the specified timeframe.",
+      coreOffer: "Taking advantage of your growth opportunities, executing  projects with our support, with extraordinary ROI (Check deliverables below)",
+      investment: "$8k–$15k (sprint)",
+      duration: "3-6 months",
+      typeOfCollaboration: "After evaluating and prioritizing your growth projects, we will make sure that they are properly and effectively executed in a 3-6 month sprint, with. weekly consultations.",
+      aiAdvantages: "AI is the assurance that the highest ROI projects will be prioritized, specified, and executed, taking maximum advantage of the 3-6 month sprint.",
+      consultations: "Starts with the 4-times Growth Map, then weekly, for 3-6 months.",
+      deliverables: "All included from the Growth Map, alongside your growth execution plan, specifications, Project management prompts, or any custom need. In addition we provide Prompt Packages. (PDF Download)",
     },
+
     {
       id: 3,
-      name: "Tier 3",
+      name: "Leadership Engineering",
       icon: "/homepage/tier3.webp",
-      idealFor: "Sample text. Click to select the Text Element.",
-      coreOffer: "Sample text. Click to select the Text Element.",
-      investment: "Sample text. Click to select the Text Element.",
-      features: {
-        "Funnel Audit (GPT-Powered)": "included",
-        "Full KPI + Marketing Activity Audit": "included",
-        "Deep audit": "Deep audit (incl. LTV, retention)"
-      }
+      idealFor: "250k$+/mo brands, including enterprises",
+      partnershipType: "We are 100% committed to your business success, and treat your business as we would treat our own. We consider ourselves the extension of your company, and provide all the value we possibly can.",
+      coreOffer: "We will engineer an automated powerhouse,  with self-growing competitive advantage at its core. (Check deliverables below)",
+      investment: "$20k–$50k initial investment / $7k+/mo retainer",
+      duration: "Mid to long term",
+      typeOfCollaboration: "We will completely re-engineer your organization, using uniquely improved best practices, maximal automation, and embedded self-improvement, alongside full role enablement.",
+      aiAdvantages: "We rethink and redesign your entire organization from AI Atoms. Your KPIs, SOPs, projects, tasks, know-how are all AI Agents now, each with the goal to help you gain advantage, alongside custom built AI tools, tailored for your needs. +Full role enablement, extraordinary motivational system, and automated, peak-performance management.",
+      consultations: "Initially as many times as necessary to implement transformations, then weekly, with project leadership included.",
+      deliverables: "All included from the previous 2 services, + a Full All-Inclusive Company Wiki filled with cutting-edge content, maximal automation, growth oriented, self-enhancing agent prompts for literally all elements of your business. (PDF Download)",
     }
   ],
   featureRows: [
     "Ideal For",
-    "Core Offer",
-    "Investment", 
-    "Funnel Audit (GPT-Powered)",
-    "Full KPI + Marketing Activity Audit"
+    "Partnership Type",
+    "Core Offer", 
+    "Investment",
+    "Duration",
+    "Type of Collaboration",
+    "AI Advantages",
+    "Consultations",
+    "Deliverables",
   ]
 };
 
@@ -802,12 +950,13 @@ export const whatWeBelieve = {
 };
 
 export const founder = {
-  name: "Gergo Vamosy",
+  name: "Gergo Vamossy",
   title: "Founder",
   image: "/about/founder.webp", 
-  intro: `I have started this agency to fix the two biggest problems I saw in eCommerce consulting: people guessing, and people bluffing.`,
+  intro: `I have started this company to fix the two biggest problems I saw in eCommerce consulting: people guessing, and people bluffing.`,
   bio: `I have built this practice after 11 years being a large eCommerce store owner/founder, and then 9 years in becoming a SEO, and an eCommerce digital marketing specialist. By adding prompt engineering to this package, I managed to create better performing marketing campaigns than ever before, and we evolved into a multidisciplinary team that combines strategic foresight, real funnel experience, and GPT-native execution systems.`,
-  closing: `You're not hiring just a strategist.`
+  closing: `You're not hiring just a strategist.`,
+  closing2: `You're getting access to a prompt-engineered growth engine designed around outcomes, not billable hours.`,
 };
 
 export const agencyComparison = {
@@ -887,7 +1036,7 @@ export const brandWorkWithUs = {
   }
 };
 
-// About page data ends here
+//About page data ends here
 
 // Consulting page data starts here
 
@@ -943,21 +1092,25 @@ export const expertiseData = [
 export const ourProcess = [
   {
     step: '1',
+    icon: '/services-images/diagnosis.webp',
     title: 'Diagnosis',
     description: 'Deep discovery, audit, and stakeholder interviews',
   },
   {
     step: '2',
+    icon: '/services-images/blueprint.webp',
     title: 'Blueprint',
     description: 'Custom solution maps + prioritization frameworks',
   },
   {
     step: '3',
+    icon: '/services-images/prototyping.webp',
     title: 'Prototyping & Enablement',
     description: 'Guided execution or full rollout',
   },
   {
     step: '4',
+    icon: '/services-images/transfer.webp',
     title: 'Capability Transfer',
     description: 'Internal systems, documentation, and training',
   },
@@ -970,3 +1123,46 @@ export const whyClientsWorkWithUs = [
   "We create change that compounds",
 ];
 
+export const earlyAdopter = {
+  heading: "BE AN EARLY ADOPTER! LET’S GET AHEAD OF THE COMPETITION!",
+  subheading: "",
+  description:
+    "We combine the know-how of marketing strategy with the unique capability of AI consulting — in one integrated, hyper-intelligent growth system.",
+  consulting: [
+    {
+      icon: (
+        <span role="img" aria-label="Growth Consulting" className="text-yellow-400 text-2xl">💡</span>
+      ),
+      iconBg: "bg-yellow-500/20",
+      title: "Growth Consulting",
+      description: "Funnel strategy, segmentation, copy optimization, lifecycle mapping",
+    },
+    {
+      icon: (
+        <span role="img" aria-label="AI Consulting" className="text-blue-400 text-2xl">🤖</span>
+      ),
+      iconBg: "bg-blue-500/20",
+      title: "AI Consulting",
+      description: " Automation, custom GPTs, workflow design, AI stack integration",
+    },
+  ],
+
+  planVsAutomate: [
+    { text: "While most firms help you ", highlight: false },
+    { text: "plan", highlight: true },
+    { text: ", and tech consultants help you ", highlight: false },
+    { text: "automate", highlight: true },
+    { text: ", we do both — so your business grows ", highlight: false },
+    { text: "smarter", highlight: true },
+    { text: " and ", highlight: false },
+    { text: "faster", highlight: true },
+    { text: " without the friction, gaps, or hand-offs.", highlight: false },
+  ],
+
+  image: "/services-images/talk-with-us-portrait.webp",
+  sideText: "Talk with us!",
+  sideText1:
+    "We could talk forever about the topics of AI and Ecommerce! We are very enthusiastic about our services, and unlike other agencies, we have nothing to hide! Meanwhile, we are actually happy to help!",
+  sideText2:
+    "Due to our unique know-how of systemic management knowledge of large ecommerce organizations + every aspect of ecommerce marketing + being experts at AI Engineering, we are lightyears ahead of other consultancies.",
+};

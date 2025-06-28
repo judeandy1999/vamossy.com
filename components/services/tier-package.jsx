@@ -22,20 +22,27 @@ export default function TierPackage({
   };
 
   return (
-    <Container variant="transparent-gradient">
+    <Container variant="gray-gradient">
       <div className="max-w-6xl mx-auto px-4">
-        <Container variant="gray-gradient" className="border border-yellow-400 rounded-2xl shadow-xl p-6 sm:p-10 md:p-14">
           {/* Header */}
 
           <Title variant="h2" title={title} animationVariant="topToBottom" underlineEffect={true}/>
           <Title variant="h5" title={subtitle} className="!mb-4"/>
 
           {/* Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12"
+            variants={listVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, amount: 0.2 }}
+          >
             {cards.map((card, idx) => (
-              <div
+              <motion.div
                 key={idx}
                 className="w-full bg-transparent border border-yellow-400 rounded-2xl shadow p-6 flex flex-col items-center"
+                variants={itemVariants}
+                transition={{ type: "spring", stiffness: 200, damping: 15 }}
               >
                 <div className="w-14 h-14 sm:w-16 sm:h-16 mb-4 flex items-center justify-center rounded-full p-1">
                   <img
@@ -45,17 +52,17 @@ export default function TierPackage({
                     loading="lazy"
                   />
                 </div>
-                <Title variant="h3-full" title={card.label} />
-                <Title variant="h6" title={card.description} />
-              </div>
+                <Title variant="h3-full" title={card.label} isAnimationEnabled={false} />
+                <Title variant="h5" title={card.description} isAnimationEnabled={false}/>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
 
           {/* Features Section */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* What's Included */}
             <div>
-              <h3 className="text-2xl font-bold text-white mb-2 flex items-center">
+              <h3 className="text-xl md:text-3xl font-semibold text-gray-300 mb-2 flex items-center">
                 What's Included
               </h3>
               <div className="h-1 w-24 bg-yellow-500 mb-4 rounded"></div>
@@ -78,14 +85,14 @@ export default function TierPackage({
                       className="mt-1 mr-2 w-5 h-4 object-contain"
                       loading="lazy"
                     />
-                    <span className="text-gray-100">{item}</span>
+                    <span className="text-gray-100 text-lg md:text-xl">{item}</span>
                   </motion.li>
                 ))}
               </motion.ul>
             </div>
             {/* Embedded AI Systems & Deliverables */}
             <div>
-              <h3 className="text-2xl font-bold text-white mb-2 flex items-center">
+              <h3 className="text-xl md:text-3xl font-semibold text-gray-300 mb-2 flex items-center">
                 Embedded AI Systems
               </h3>
               <div className="h-1 w-24 bg-yellow-500 mb-4 rounded"></div>
@@ -108,11 +115,11 @@ export default function TierPackage({
                       className="mt-1 mr-2 w-5 h-4 object-contain"
                       loading="lazy"
                     />
-                    <span className="text-gray-100">{item}</span>
+                    <span className="text-gray-100 text-lg md:text-xl">{item}</span>
                   </motion.li>
                 ))}
               </motion.ul>
-              <h3 className="text-2xl font-bold text-white mb-2 flex items-center">
+              <h3 className="text-xl md:text-3xl font-semibold text-gray-300 mb-2 flex items-center">
                 Deliverables
               </h3>
               <div className="h-1 w-24 bg-yellow-500 mb-4 rounded"></div>
@@ -135,13 +142,12 @@ export default function TierPackage({
                       className="mt-1 mr-2 w-5 h-4 object-contain"
                       loading="lazy"
                     />
-                    <span className="text-gray-100">{item}</span>
+                    <span className="text-gray-100 text-lg md:text-xl">{item}</span>
                   </motion.li>
                 ))}
               </motion.ul>
             </div>
           </div>
-        </Container>
       </div>
     </Container>
   );

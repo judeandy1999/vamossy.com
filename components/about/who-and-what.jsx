@@ -2,12 +2,14 @@
 import React, { useRef } from "react";
 import { whoWeAre, whatWeBelieve } from "@/data/data";
 import { motion, useInView } from "framer-motion";
+import Container from "@/components/ui/container";
+import Title from "@/components/ui/title";
 
 const ListIcon = () => (
   <img
     src="/list-icon.webp"
     alt=""
-    className="w-5 h-5 mt-1 flex-shrink-0"
+    className="w-4 h-4 md:w-5 md:h-5 mt-1 flex-shrink-0"
     draggable={false}
   />
 );
@@ -26,26 +28,18 @@ export default function AboutBeliefSection() {
   const isInView = useInView(ref, { margin: "-100px" });
 
   return (
-    <section className="relative overflow-hidden px-2 sm:px-6 lg:px-12 py-20 md:py-28 bg-[#373535]">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm z-10" />
-      <div className="relative z-20 max-w-7xl mx-auto w-full" ref={ref}>
-        <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-16 md:gap-y-20">
+    <Container variant="gray">
+      <div className="relative z-20 mx-auto w-full" ref={ref}>
+        <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-16 md:gap-y-20 relative">
+          {/* Center vertical line */}
+          <div className="hidden md:block absolute inset-y-0 left-1/2 -translate-x-1/2 w-px bg-gradient-to-b from-yellow-400/70 via-yellow-400/30 to-yellow-400/70 opacity-80" />
           {/* Who We Are */}
-          <div className="max-w-2xl w-full mx-auto">
-            <motion.h2
-              className="text-white text-3xl md:text-4xl font-bold mb-2"
-              initial={{ opacity: 0, y: 30 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.7 }}
-            >
-              {whoWeAre.title}
-            </motion.h2>
-            <motion.div
-              className="h-1 w-28 bg-yellow-400 mb-8"
-              initial={{ scaleX: 0 }}
-              animate={isInView ? { scaleX: 1 } : {}}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              style={{ originX: 0 }}
+          <div className="w-full mx-auto">
+            <Title
+              title={whoWeAre.title}
+              variant="h2"
+              underlineEffect={true}
+              className="mb-2"
             />
             <div className="flex flex-col gap-6">
               {whoWeAre.items.map((item, idx) => (
@@ -60,27 +54,18 @@ export default function AboutBeliefSection() {
                   <span className="mr-3 flex items-center">
                     <ListIcon />
                   </span>
-                  <span className="text-white text-base md:text-lg font-medium leading-relaxed">{item}</span>
+                  <span className="text-gray-300 text-md md:text-xl font-medium leading-relaxed">{item}</span>
                 </motion.div>
               ))}
             </div>
           </div>
           {/* What We Believe */}
-          <div className="max-w-2xl w-full mx-auto">
-            <motion.h2
-              className="text-white text-3xl md:text-4xl font-bold mb-2"
-              initial={{ opacity: 0, y: 30 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.7, delay: 0.1 }}
-            >
-              {whatWeBelieve.title}
-            </motion.h2>
-            <motion.div
-              className="h-1 w-28 bg-yellow-400 mb-8"
-              initial={{ scaleX: 0 }}
-              animate={isInView ? { scaleX: 1 } : {}}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              style={{ originX: 0 }}
+          <div className="w-full mx-auto">
+            <Title
+              title={whatWeBelieve.title}
+              variant="h2"
+              underlineEffect={true}
+              className="mb-2"
             />
             <div className="flex flex-col gap-6">
               {whatWeBelieve.items.map((item, idx) => (
@@ -95,13 +80,13 @@ export default function AboutBeliefSection() {
                   <span className="mr-3 flex items-center">
                     <ListIcon />
                   </span>
-                  <span className="text-white text-base md:text-lg font-medium leading-relaxed">{item}</span>
+                  <span className="text-gray-300 text-md md:text-xl font-medium leading-relaxed">{item}</span>
                 </motion.div>
               ))}
             </div>
           </div>
         </div>
       </div>
-    </section>
+    </Container>
   );
 }

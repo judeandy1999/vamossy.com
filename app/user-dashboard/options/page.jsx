@@ -167,7 +167,7 @@ export default function Page() {
               />
               <button
                 onClick={handleAddWiki}
-                className="flex items-center gap-1 bg-slate-500 text-white px-4 py-2 rounded hover:bg-slate-700 transition"
+                className="flex items-center gap-1 bg-slate-500 text-gray-300 px-4 py-2 rounded hover:bg-slate-700 transition"
               >
                 <Plus size={16} /> Add Wiki
               </button>
@@ -235,7 +235,7 @@ export default function Page() {
                   />
                   <button
                     onClick={handleAddTab}
-                    className="flex items-center gap-1 bg-slate-500 text-white px-4 py-2 rounded hover:bg-slate-700 transition"
+                    className="flex items-center gap-1 bg-slate-500 text-gray-300 px-4 py-2 rounded hover:bg-slate-700 transition"
                   >
                     <Plus size={16} /> Add Tab
                   </button>
