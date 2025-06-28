@@ -73,7 +73,7 @@ export default function BonusAssets() {
                 <div className="font-bold text-yellow-400 text-lg md:text-xl min-w-[220px] mb-2 md:mb-0 md:mr-6">
                   {item.asset}
                 </div>
-                <div className="text-white text-base md:text-lg font-medium">
+                <div className="text-gray-300 text-base md:text-lg font-medium">
                   {item.use}
                 </div>
               </motion.div>
