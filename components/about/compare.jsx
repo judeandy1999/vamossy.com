@@ -15,7 +15,7 @@ export default function Compare() {
     >
       <div className="relative mx-auto" ref={ref}>
         <motion.div
-          className="text-center mb-10"
+          className="text-center mb-8 md:mb-10"
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7 }}
@@ -35,25 +35,25 @@ export default function Compare() {
           />
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 justify-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 justify-center">
           {agencyComparison.columns.map((col, idx) => (
             <motion.div
               key={col.heading}
-              className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 transition-all duration-300 w-full mx-auto"
+              className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 md:p-8 transition-all duration-300 w-full mx-auto"
               initial={{ opacity: 0, y: 40 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.7, delay: 0.1 + idx * 0.1 }}
             >
-              <div className="flex flex-col items-center mb-8">
+              <div className="flex flex-col items-center mb-6 md:mb-8">
                 <Title
                   title={col.heading}
                   variant="h3"
-                  className="mb-0 font-semibold tracking-tight text-gray-300 whitespace-nowrap"
+                  className="mb-0 font-semibold tracking-tight text-gray-300 whitespace-nowrap text-xl md:text-3xl"
                   isAnimationEnabled={false}
                 />
-                <div className="w-15 h-1 bg-yellow-400 rounded-full mt-3" />
+                <div className="w-12 md:w-15 h-1 bg-yellow-400 rounded-full mt-3" />
               </div>
-              <ul className="space-y-4">
+              <ul className="space-y-3 md:space-y-4">
                 {col.items.map((item, i) => (
                   <li
                     key={i}
@@ -66,7 +66,7 @@ export default function Compare() {
                     }`}>
                       {item.type === "good" ? "✓" : "✗"}
                     </span>
-                    <span className={`text-lg md:text-xl leading-relaxed ${
+                    <span className={`text-md md:text-lg lg:text-xl leading-relaxed ${
                       item.type === "good"
                         ? "text-gray-300"
                         : "text-gray-400"
