@@ -5,7 +5,7 @@ import { useState } from 'react';
 import Title from "@/components/ui/title";
 import Container from "@/components/ui/container";
 import HeroButton from "@/components/ui/hero-button";
-import HubSpotCalendar from "@/components/ui/hubspot-calendar";
+import GoogleCalendarModal from "@/components/ui/google-calendar";
 
 export default function Hero() {
   const [showCalendar, setShowCalendar] = useState(false);
@@ -74,7 +74,7 @@ export default function Hero() {
         
       </Container>
 
-      <HubSpotCalendar 
+      <GoogleCalendarModal 
         isOpen={showCalendar} 
         onClose={handleCloseCalendar} 
       />
