@@ -12,10 +12,26 @@ export default function ConsultingHero() {
         initial="hidden"
         animate="visible"
       >
-        <Title variant="h2" title="Strategic Intelligence &amp; Growth Enablement for AI-Driven Brands" className="text-white text-3xl md:text-6xl lg:text-7xl font-bold" />
-        <Title variant="h3" title="We specialize in diagnosing complex business challenges and delivering high-performance solutions at the intersection of AI, ecommerce, and digital strategy. Complexity into Clarity" />
-        <Title variant="h5" title="Our consulting division is designed for brands seeking to evolve intelligently — not just scale blindly." />
-        <Title variant="h5" title="We don't offer generic playbooks. We engineer outcomes." />
+        <Title 
+            variant="h2" 
+            title="Strategic Intelligence &amp; Growth Enablement for AI-Driven Brands" 
+            className="text-gray-300 text-3xl md:text-5xl font-semibold" 
+        />
+        <Title 
+            className='text-gray-300'
+            variant="h3" 
+            title="We specialize in diagnosing complex business challenges and delivering high-performance solutions at the intersection of AI, ecommerce, and digital strategy. Complexity into Clarity" 
+        />
+        <Title 
+            className='!mt-0 !mb-4'
+            variant="h4" 
+            title="Our consulting division is designed for brands seeking to evolve intelligently — not just scale blindly." 
+        />
+        <Title 
+            className='!mt-0 !mb-4'
+            variant="h4" 
+            title="We don't offer generic playbooks. We engineer outcomes." 
+        />
 
       </motion.div>
     </Container>
