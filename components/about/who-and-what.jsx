@@ -9,7 +9,7 @@ const ListIcon = () => (
   <img
     src="/list-icon.webp"
     alt=""
-    className="w-5 h-5 mt-1 flex-shrink-0"
+    className="w-4 h-4 md:w-5 md:h-5 mt-1 flex-shrink-0"
     draggable={false}
   />
 );
@@ -54,7 +54,7 @@ export default function AboutBeliefSection() {
                   <span className="mr-3 flex items-center">
                     <ListIcon />
                   </span>
-                  <span className="text-white text-lg md:text-xl font-medium leading-relaxed">{item}</span>
+                  <span className="text-gray-300 text-md md:text-xl font-medium leading-relaxed">{item}</span>
                 </motion.div>
               ))}
             </div>
@@ -80,7 +80,7 @@ export default function AboutBeliefSection() {
                   <span className="mr-3 flex items-center">
                     <ListIcon />
                   </span>
-                  <span className="text-white text-lg md:text-xl font-medium leading-relaxed">{item}</span>
+                  <span className="text-gray-300 text-md md:text-xl font-medium leading-relaxed">{item}</span>
                 </motion.div>
               ))}
             </div>
