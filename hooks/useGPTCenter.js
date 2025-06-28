@@ -5,6 +5,7 @@ import { getUserRole } from '@/utils/getUserRole';
 
 export function useGPTCenter(session = null) {
   const [tasks, setTasks] = useState([]);
+  const [allTasks, setAllTasks] = useState([]);
   const [evaluations, setEvaluations] = useState([]);
   const [evaluationLoading, setEvaluationLoading] = useState(true);
   const [loading, setLoading] = useState(true);
@@ -40,12 +41,108 @@ export function useGPTCenter(session = null) {
     }
   }, [session, showToast]);
 
+  const fetchAllTasks = useCallback(async () => {
+    if (!session?.user) return;
+    const accessToken = session?.access_token;
+    
+    try {
+      const response = await fetch('/api/gpt-center/tasks?all=true', {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch tasks');
+      }
+
+      const data = await response.json();
+      setAllTasks(data.tasks || []);
+      return data.tasks || [];
+    } catch (error) {
+      console.error('Error fetching all tasks:', error);
+      showToast('Failed to fetch tasks', 'error');
+      throw error;
+    }
+  }, [session, showToast]);
+
   useEffect(() => {
     fetchUserRole();
     if (session?.user) {
       fetchTasks();
     }
   }, [session]);
+
+  const deleteTask = useCallback(async (taskId) => {
+  try {
+    const { data: { session: currentSession }, error: sessionError } = await supabase.auth.getSession();
+    
+    if (sessionError || !currentSession) {
+      throw new Error('Not authenticated');
+    }
+
+    const response = await fetch(`/api/gpt-center/tasks/${taskId}`, {
+      method: 'DELETE',
+      headers: { 
+        'Authorization': `Bearer ${currentSession.access_token}`,
+        'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
+      }
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `HTTP ${response.status}`);
+    }
+
+    showToast('Task deleted successfully!', 'success');
+    
+    await fetchTasks();
+    if (userRole === 'admin') {
+      await fetchAllTasks();
+    }
+    
+  } catch (err) {
+    showToast('Failed to delete task', 'error');
+    throw err;
+  }
+}, [session, fetchTasks, fetchAllTasks, userRole, showToast]);
+
+  const updateTask = useCallback(async (taskData) => {
+    try {
+      const { data: { session: currentSession }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError || !currentSession) {
+        throw new Error('Not authenticated');
+      }
+
+      const response = await fetch('/api/gpt-center/tasks', {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${currentSession.access_token}`,
+          'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
+        },
+        body: JSON.stringify(taskData)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `HTTP ${response.status}`);
+      }
+
+      showToast('Task updated successfully!', 'success');
+      
+      await fetchTasks();
+      if (userRole === 'admin') {
+        await fetchAllTasks();
+      }
+      
+    } catch (err) {
+      showToast('Failed to update task', 'error');
+      throw err;
+    }
+  }, [session, fetchTasks, fetchAllTasks, userRole, showToast]);
 
   const updateTaskStatus = useCallback(async (taskId, status, completedAt) => {
     if (updatingTasks.has(taskId)) return;
@@ -79,7 +176,11 @@ export function useGPTCenter(session = null) {
       }
 
       showToast(`Task status updated to ${status.replace('_', ' ')}!`, 'success');
+      
       await fetchTasks();
+      if (userRole === 'admin') {
+        await fetchAllTasks();
+      }
       
     } catch (err) {
       showToast('Failed to update task status', 'error');
@@ -91,9 +192,8 @@ export function useGPTCenter(session = null) {
         return newSet;
       });
     }
-  }, [session, fetchTasks, showToast, updatingTasks]);
+  }, [session, fetchTasks, fetchAllTasks, userRole, showToast, updatingTasks]);
 
-  // Separate function to check and reset tasks without circular dependency
   const checkAndResetTasks = useCallback(async () => {
     if (!tasks.length || !session?.user) return;
 
@@ -142,7 +242,6 @@ export function useGPTCenter(session = null) {
       }
     });
 
-    // Reset eligible tasks directly without using updateTaskStatus to avoid circular dependency
     if (tasksToReset.length > 0) {
       try {
         const { data: { session: currentSession }, error: sessionError } = await supabase.auth.getSession();
@@ -152,7 +251,6 @@ export function useGPTCenter(session = null) {
           return;
         }
 
-        // Reset multiple tasks at once
         for (const taskId of tasksToReset) {
           try {
             const response = await fetch('/api/gpt-center/tasks', {
@@ -177,15 +275,17 @@ export function useGPTCenter(session = null) {
           }
         }
 
-        // Refresh tasks after resetting
         await fetchTasks();
+        if (userRole === 'admin') {
+          await fetchAllTasks();
+        }
         console.log(`Reset ${tasksToReset.length} eligible tasks`);
         
       } catch (error) {
         console.error('Failed to reset tasks:', error);
       }
     }
-  }, [tasks, session, fetchTasks]);
+  }, [tasks, session, fetchTasks, fetchAllTasks, userRole]);
 
   useEffect(() => {
     if (!tasks.length) return;
@@ -257,6 +357,9 @@ export function useGPTCenter(session = null) {
       
       if (response.ok) {
         await fetchTasks();
+        if (userRole === 'admin') {
+          await fetchAllTasks();
+        }
         showToast('Task created successfully!', 'success');
         return data.task;
       } else {
@@ -266,72 +369,10 @@ export function useGPTCenter(session = null) {
       showToast('Failed to create task', 'error');
       throw err;
     }
-  }, [session, fetchTasks, showToast]);
-
-  const executeTask = useCallback(async (task) => {
-    if (executingTasks.has(task.id)) return;
-
-    setExecutingTasks(prev => new Set([...prev, task.id]));
-    
-    try {
-      const { data: { session: currentSession }, error: sessionError } = await supabase.auth.getSession();
-      
-      if (sessionError || !currentSession) {
-        throw new Error('Not authenticated');
-      }
-
-      const response = await fetch('/api/gpt-center/execute-task', {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${currentSession.access_token}`,
-          'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
-        },
-        body: JSON.stringify({
-          taskId: task.id,
-          description: task.description,
-          gptUrl: task.gpt_url
-        })
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || `HTTP ${response.status}`);
-      }
-
-      const result = await response.json();
-      
-      if (task.notification_type === 'popup' || task.notification_type === 'both') {
-        showToast(`Task "${task.title}" executed successfully!`, 'success');
-      }
-      
-      if (task.notification_type === 'sound' || task.notification_type === 'both') {
-        try {
-          const audio = new Audio('/notification.mp3');
-          audio.play().catch(() => {});
-        } catch (err) {
-          console.log('Audio notification failed');
-        }
-      }
-
-      await fetchTasks();
-      return result;
-    } catch (err) {
-      console.error('Task execution error:', err);
-      showToast(`Failed to execute task: ${err.message}`, 'error');
-      throw err;
-    } finally {
-      setExecutingTasks(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(task.id);
-        return newSet;
-      });
-    }
-  }, [executingTasks, fetchTasks, showToast]);
+  }, [session, fetchTasks, fetchAllTasks, userRole, showToast]);
 
   const uploadFileToStorage = useCallback(async (file) => {
-    // Validate file type and size
-    const maxSize = 10 * 1024 * 1024; // 10MB
+    const maxSize = 10 * 1024 * 1024;
     const allowedTypes = [
       'text/plain', 
       'text/markdown', 
@@ -372,7 +413,6 @@ export function useGPTCenter(session = null) {
     }
 
     try {
-      // Get current session for authentication
       const { data: { session: currentSession }, error: sessionError } = await supabase.auth.getSession();
       
       if (sessionError || !currentSession) {
@@ -382,7 +422,6 @@ export function useGPTCenter(session = null) {
       const user = currentSession.user;
       let fileUrl = null;
 
-      // Upload file if provided
       if (file) {
         try {
           fileUrl = await uploadFileToStorage(file);
@@ -442,18 +481,20 @@ export function useGPTCenter(session = null) {
 
   return {
     tasks,
+    allTasks,
     evaluations,
     loading,
     evaluationLoading,
     userRole,
-    executingTasks,
     updatingTasks,
     fetchTasks,
+    fetchAllTasks,
     fetchEvaluations,
     createTask,
-    executeTask,
     uploadLog,
     updateTaskStatus,
     checkAndResetTasks,
+    deleteTask,
+    updateTask,
   };
 }
