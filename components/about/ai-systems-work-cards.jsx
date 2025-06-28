@@ -19,7 +19,7 @@ export default function AiSystemsWorkCards({ cards }) {
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, delay: 0.1 + idx * 0.12 }}
         >
-          <div className="w-38 h-38 mb-6 rounded-xl border-2 border-yellow-400/60 shadow-yellow-400/20 shadow-lg overflow-hidden flex items-center justify-center bg-gray-900/80">
+          <div className="w-30 h-27 md:w-38 md:h-38 mb-6 rounded-xl border-2 border-yellow-400/60 shadow-yellow-400/20 shadow-lg overflow-hidden flex items-center justify-center bg-gray-900/80">
             <img
               src={card.image}
               alt={card.title}
@@ -27,10 +27,10 @@ export default function AiSystemsWorkCards({ cards }) {
               draggable={false}
             />
           </div>
-          <h3 className="text-white text-2xl md:text-3xl font-semibold mb-3 text-center leading-tight">
+          <h3 className="text-gray-300 text-xl md:text-3xl font-semibold mb-3 text-center leading-tight">
             {card.title}
           </h3>
-          <p className="text-gray-300 text-base md:text-lg text-center font-light">
+          <p className="text-gray-300 text-lg md:text-lg text-center font-light">
             {card.description}
           </p>
         </motion.div>
