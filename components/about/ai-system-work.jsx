@@ -22,7 +22,7 @@ export default function AiSystemWork() {
         <Title
           title="Some of our many AI Systems at Work"
           variant="h2"
-          className="text-4xl md:text-5xl font-extrabold text-white text-center drop-shadow-lg"
+          className="text-4xl md:text-5xl font-extrabold text-gray-300 text-center drop-shadow-lg"
         />
       </motion.div>
       <AiSystemsWorkCards cards={aiSystemsWorkCards} />
