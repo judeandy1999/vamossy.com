@@ -1,7 +1,6 @@
-// components/gpt-center/log-upload.jsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useToast } from '@/contexts/toast-context';
 import { Upload, FileText, Send } from 'lucide-react';
 
@@ -12,6 +11,10 @@ export default function LogUpload({ tasks, uploadLog }) {
   const [evaluationPrompt, setEvaluationPrompt] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploading, setUploading] = useState(false);
+
+  const completedTasks = useMemo(() => {
+    return tasks?.filter(task => task.status === 'completed') || [];
+  }, [tasks]);
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -40,17 +43,16 @@ export default function LogUpload({ tasks, uploadLog }) {
     setUploading(true);
 
     try {
+      console.log(selectedTask)
       await uploadLog({
         taskId: selectedTask,
         logContent,
-        evaluationPrompt,
+        evaluationPrompt: selectedTask.evaluation_prompt,
         file: selectedFile
       });
 
-      // Reset form on success
       resetForm();
     } catch (error) {
-      // Error handling is done in the hook
       console.error('Upload error:', error);
     } finally {
       setUploading(false);
@@ -85,7 +87,7 @@ export default function LogUpload({ tasks, uploadLog }) {
             required
           >
             <option value="">Choose a task...</option>
-            {tasks?.map((task) => (
+            {completedTasks?.map((task) => (
               <option key={task.id} value={task.id}>
                 {task.title}
               </option>
@@ -110,7 +112,7 @@ export default function LogUpload({ tasks, uploadLog }) {
           </p>
         </div>
 
-        <div>
+        {/* <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Evaluation Prompt
           </label>
@@ -124,10 +126,10 @@ export default function LogUpload({ tasks, uploadLog }) {
           <p className="mt-1 text-sm text-gray-500">
             Provide custom instructions for how you want the AI to evaluate your log.
           </p>
-        </div>
+        </div> */}
 
         {/* File Upload */}
-        <div>
+        {/* <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Attach File (Optional)
           </label>
@@ -172,7 +174,7 @@ export default function LogUpload({ tasks, uploadLog }) {
               </button>
             </div>
           )}
-        </div>
+        </div> */}
 
         {/* Submit Button */}
         <div className="flex justify-end">

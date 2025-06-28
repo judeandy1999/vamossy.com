@@ -75,37 +75,36 @@ export function useGPTCenter(session = null) {
   }, [session]);
 
   const deleteTask = useCallback(async (taskId) => {
-  try {
-    const { data: { session: currentSession }, error: sessionError } = await supabase.auth.getSession();
-    
-    if (sessionError || !currentSession) {
-      throw new Error('Not authenticated');
-    }
-
-    const response = await fetch(`/api/gpt-center/tasks/${taskId}`, {
-      method: 'DELETE',
-      headers: { 
-        'Authorization': `Bearer ${currentSession.access_token}`,
-        'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
+    try {
+      const { data: { session: currentSession }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError || !currentSession) {
+        throw new Error('Not authenticated');
       }
-    });
+      const response = await fetch(`/api/gpt-center/tasks?id=${taskId}`, {
+        method: 'DELETE',
+        headers: { 
+          'Authorization': `Bearer ${currentSession.access_token}`,
+          'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
+        }
+      });
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error || `HTTP ${response.status}`);
-    }
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `HTTP ${response.status}`);
+      }
 
-    showToast('Task deleted successfully!', 'success');
-    
-    await fetchTasks();
-    if (userRole === 'admin') {
-      await fetchAllTasks();
+      showToast('Task deleted successfully!', 'success');
+      
+      await fetchTasks();
+      if (userRole === 'admin') {
+        await fetchAllTasks();
+      }
+      
+    } catch (err) {
+      showToast('Failed to delete task', 'error');
+      throw err;
     }
-    
-  } catch (err) {
-    showToast('Failed to delete task', 'error');
-    throw err;
-  }
 }, [session, fetchTasks, fetchAllTasks, userRole, showToast]);
 
   const updateTask = useCallback(async (taskData) => {

@@ -75,7 +75,7 @@ async function handlePost(req, res, user, userRole) {
       return res.status(403).json({ error: 'Only admins can create tasks' });
     }
 
-    const { title, description, gpt_url, frequency, notification_type, assigned_user_id } = req.body;
+    const { title, description, gpt_url, evaluation_prompt, frequency, notification_type, assigned_user_id } = req.body;
 
     // Validate required fields
     if (!title || !description) {
@@ -88,6 +88,7 @@ async function handlePost(req, res, user, userRole) {
         title,
         description,
         gpt_url,
+        evaluation_prompt,
         frequency,
         notification_type,
         assigned_user_id,
@@ -118,8 +119,6 @@ async function handlePut(req, res, user, userRole) {
       return res.status(400).json({ error: 'Task ID is required' });
     }
 
-    console.log('Updating task:', { taskId: id, updates, userRole });
-
     const isStatusUpdate = updates.hasOwnProperty('status') && Object.keys(updates).length <= 3;
     const isFullUpdate = updates.hasOwnProperty('title') || updates.hasOwnProperty('description');
 
@@ -131,11 +130,11 @@ async function handlePut(req, res, user, userRole) {
       if (updates.title && !updates.title.trim()) {
         return res.status(400).json({ error: 'Title cannot be empty' });
       }
+
       if (updates.description && !updates.description.trim()) {
         return res.status(400).json({ error: 'Description cannot be empty' });
       }
 
-      console.log('Performing full task update');
     } else if (isStatusUpdate) {
       if (userRole !== 'admin') {
         const { data: taskCheck, error: checkError } = await supabase
@@ -154,7 +153,6 @@ async function handlePut(req, res, user, userRole) {
         }
       }
 
-      console.log('Performing status update');
     } else {
       return res.status(400).json({ error: 'Invalid update data' });
     }
@@ -173,7 +171,6 @@ async function handlePut(req, res, user, userRole) {
       .single();
 
     if (error) {
-      console.error('Supabase update error:', error);
       throw error;
     }
 
@@ -181,10 +178,8 @@ async function handlePut(req, res, user, userRole) {
       return res.status(404).json({ error: 'Task not found or already deleted' });
     }
 
-    console.log('Task updated successfully:', data.id);
     return res.status(200).json({ task: data });
   } catch (error) {
-    console.error('Error updating task:', error);
     return res.status(500).json({ 
       error: 'Failed to update task',
       details: error.message 
@@ -194,11 +189,9 @@ async function handlePut(req, res, user, userRole) {
 
 async function handleDelete(req, res, user, userRole, id) {
   try {
-    // Check if user is admin
     if (userRole !== 'admin') {
       return res.status(403).json({ error: 'Only admins can delete tasks' });
     }
-
     const { error } = await supabase
       .from('tasks')
       .update({ is_active: false })
@@ -208,7 +201,6 @@ async function handleDelete(req, res, user, userRole, id) {
 
     return res.status(200).json({ success: true });
   } catch (error) {
-    console.error('Error deleting task:', error);
     return res.status(500).json({ error: 'Failed to delete task' });
   }
 }

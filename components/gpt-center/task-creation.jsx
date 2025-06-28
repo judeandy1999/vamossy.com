@@ -2,7 +2,6 @@
 import { useUsers } from '@/hooks/useUsers';
 
 import { useState } from 'react';
-import { supabase } from '@/utils/client';
 import { useToast } from '@/contexts/toast-context';
 import { Plus, Users, Clock, Bell, ExternalLink } from 'lucide-react';
 
@@ -13,6 +12,7 @@ export default function TaskCreation({ createTask }) {
     title: '',
     description: '',
     gpt_url: '',
+    evaluation_prompt: '',
     frequency: 'daily',
     notification_type: 'popup',
     assigned_user_id: ''
@@ -36,6 +36,7 @@ export default function TaskCreation({ createTask }) {
         title: '',
         description: '',
         gpt_url: '',
+        evaluation_prompt: '',
         frequency: 'daily',
         notification_type: 'popup',
         assigned_user_id: ''
@@ -112,6 +113,19 @@ export default function TaskCreation({ createTask }) {
           </div>
         </div>
 
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Evaluation Prompt
+          </label>
+          <textarea
+            value={formData.evaluation_prompt}
+            onChange={(e) => setFormData({ ...formData, evaluation_prompt: e.target.value })}
+            rows={4}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            placeholder="How would you like the AI to evaluate this task? What specific aspects should it focus on?"
+          />
+        </div>
+
         {/* Frequency and Notification Type */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
@@ -172,11 +186,13 @@ export default function TaskCreation({ createTask }) {
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
               <option value="">Unassigned</option>
-              {users.map((user) => (
-                <option key={user.id} value={user.id}>
-                  {user.name || user.email} ({user.role})
-                </option>
-              ))}
+              {users
+                .filter(user => user.role === 'admin' || user.role === 'worker')
+                .map((user) => (
+                  <option key={user.id} value={user.id}>
+                    {user.name || user.email} ({user.role})
+                  </option>
+                ))}
             </select>
           )}
         </div>
