@@ -3,6 +3,9 @@
 import { Play, CheckCircle } from 'lucide-react';
 
 export default function TaskButton({ task, onAction, isUpdating, canRestart }) {
+  const assignment = Array.isArray(task.task_assignments) ? task.task_assignments[0] : null;
+  const status = assignment?.status;
+
   const getButtonContent = () => {
     if (isUpdating) {
       return (
@@ -13,7 +16,7 @@ export default function TaskButton({ task, onAction, isUpdating, canRestart }) {
       );
     }
 
-    if (task.status === 'completed' && canRestart) {
+    if (status === 'completed' && canRestart) {
       return (
         <>
           <Play className="h-4 w-4 mr-1" />
@@ -22,7 +25,7 @@ export default function TaskButton({ task, onAction, isUpdating, canRestart }) {
       );
     }
 
-    if (task.status === 'completed') {
+    if (status === 'completed') {
       return (
         <>
           <CheckCircle className="h-4 w-4 mr-1" />
@@ -31,7 +34,7 @@ export default function TaskButton({ task, onAction, isUpdating, canRestart }) {
       );
     }
 
-    if (task.status === 'in_progress') {
+    if (status === 'in_progress') {
       return (
         <>
           <CheckCircle className="h-4 w-4 mr-1" />
@@ -49,22 +52,22 @@ export default function TaskButton({ task, onAction, isUpdating, canRestart }) {
   };
 
   const getButtonStyle = () => {
-    if (task.status === 'completed' && !canRestart) {
+    if (status === 'completed' && !canRestart) {
       return "cursor-pointer w-full bg-gray-400 text-white px-3 py-2 rounded-md text-sm font-medium cursor-not-allowed disabled:opacity-50 flex items-center justify-center";
     }
 
-    if (task.status === 'completed' && canRestart) {
+    if (status === 'completed' && canRestart) {
       return "cursor-pointer w-full bg-blue-600 text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center";
     }
 
-    if (task.status === 'in_progress') {
+    if (status === 'in_progress') {
       return "cursor-pointer w-full bg-green-600 text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center";
     }
 
     return "cursor-pointer w-full bg-blue-600 text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center";
   };
 
-  const isDisabled = isUpdating || (task.status === 'completed' && !canRestart);
+  const isDisabled = isUpdating || (status === 'completed' && !canRestart);
 
   return (
     <button
