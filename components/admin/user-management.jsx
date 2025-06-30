@@ -16,7 +16,6 @@ import {
   AlertCircle
 } from 'lucide-react';
 import Spinner from '@/components/ui/spinner';
-import RoleChangeModal from '@/components/ui/role-change-modal';
 import Image from 'next/image';
 
 const ROLE_CONFIG = {
@@ -54,10 +53,8 @@ export default function UserManagement() {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [newRole, setNewRole] = useState('');
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [updating, setUpdating] = useState(false);
+  const [updatingUserId, setUpdatingUserId] = useState(null);
   const [feedback, setFeedback] = useState({ type: '', message: '' });
 
   const getDisplayName = (currentUser) => {
@@ -93,30 +90,23 @@ export default function UserManagement() {
   const filteredUsers = searchUsers(searchTerm);
   const displayUsers = roleFilter === 'all' ? filteredUsers : filterUsersByRole(roleFilter);
 
-  const handleRoleChange = (user) => {
-    setSelectedUser(user);
-    setNewRole(user.role);
-    setIsModalOpen(true);
-  };
+  const handleRoleChange = async (user, newRole) => {
+    if (!user || !newRole || newRole === user.role) return;
 
-  const confirmRoleUpdate = async () => {
-    if (!selectedUser || !newRole || newRole === selectedUser.role) return;
-
-    setUpdating(true);
+    setUpdatingUserId(user.id);
     try {
-      await updateUserRole(selectedUser.id, newRole);
+      await updateUserRole(user.id, newRole);
       setFeedback({
         type: 'success',
-        message: `Successfully updated ${selectedUser.email} to ${ROLE_CONFIG[newRole].label}`
+        message: `Successfully updated ${user.email} to ${ROLE_CONFIG[newRole].label}`
       });
-      setIsModalOpen(false);
     } catch (err) {
       setFeedback({
         type: 'error',
         message: err.message
       });
     } finally {
-      setUpdating(false);
+      setUpdatingUserId(null);
     }
 
     // Clear feedback after 5 seconds
@@ -256,22 +246,45 @@ export default function UserManagement() {
         </div>
 
         {/* Users Table */}
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/2">
-                  User
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">
-                  Current Role
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+        <div className="relative">
+          <div 
+            className="max-h-140 overflow-y-auto border-t border-gray-200"
+            style={{
+              scrollbarWidth: 'thin',
+              scrollbarColor: '#D1D5DB #F3F4F6'
+            }}
+          >
+            <style jsx>{`
+              div::-webkit-scrollbar {
+                width: 8px;
+              }
+              div::-webkit-scrollbar-track {
+                background: #F3F4F6;
+                border-radius: 4px;
+              }
+              div::-webkit-scrollbar-thumb {
+                background: #D1D5DB;
+                border-radius: 4px;
+              }
+              div::-webkit-scrollbar-thumb:hover {
+                background: #9CA3AF;
+              }
+            `}</style>
+            <table className="w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50 sticky top-0 z-20 shadow-sm">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/2 bg-gray-50">
+                    User
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4 bg-gray-50">
+                    Current Role
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4 bg-gray-50">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
               {displayUsers.length === 0 ? (
                 <tr>
                   <td colSpan="3" className="px-6 py-12 text-center text-gray-500">
@@ -326,68 +339,80 @@ export default function UserManagement() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium w-1/4">
                       <div className="flex gap-2">
-                        <button
-                          onClick={() => handleRoleChange(user)}
-                          disabled={user.id === session?.user?.id}
-                          className={`inline-flex items-center gap-1 px-3 py-1 rounded-md text-sm transition-colors ${
-                            user.id === session?.user?.id
-                              ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                              : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
-                          }`}
-                        >
-                          <Shield className="h-3 w-3" />
-                          {user.id === session?.user?.id ? 'You' : 'Change Role'}
-                        </button>
+                        {user.id === session?.user?.id ? (
+                          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-md text-sm bg-gray-100 text-gray-400">
+                            <Shield className="h-3 w-3" />
+                            You
+                          </span>
+                        ) : (
+                          <div className="relative group isolate">
+                            {/* Role Icon Display */}
+                            <div className="absolute left-2 top-1/2 transform -translate-y-1/2 pointer-events-none z-10">
+                              {(() => {
+                                const config = ROLE_CONFIG[user.role] || ROLE_CONFIG.user;
+                                const Icon = config.icon;
+                                return <Icon className="h-3 w-3 text-gray-600" />;
+                              })()}
+                            </div>
+                            
+                            <select
+                              value={user.role}
+                              onChange={(e) => handleRoleChange(user, e.target.value)}
+                              disabled={updatingUserId === user.id}
+                              className={`relative z-0 w-28 pl-6 pr-6 py-1.5 rounded-md text-xs font-medium border focus:outline-none appearance-none transition-all duration-200 ${
+                                updatingUserId === user.id
+                                  ? 'opacity-50 cursor-not-allowed border-gray-200 bg-gray-50'
+                                  : user.role === 'admin'
+                                  ? 'border-red-200 bg-red-50 text-red-700 hover:border-red-300 focus:border-red-400 focus:ring-1 focus:ring-red-100'
+                                  : user.role === 'worker'
+                                  ? 'border-blue-200 bg-blue-50 text-blue-700 hover:border-blue-300 focus:border-blue-400 focus:ring-1 focus:ring-blue-100'
+                                  : 'border-green-200 bg-green-50 text-green-700 hover:border-green-300 focus:border-green-400 focus:ring-1 focus:ring-green-100'
+                              } group-hover:shadow-sm`}
+                            >
+                              {Object.entries(ROLE_CONFIG).map(([roleKey, config]) => (
+                                <option 
+                                  key={roleKey} 
+                                  value={roleKey}
+                                  className="py-2 px-3 text-gray-900 bg-white"
+                                >
+                                  {config.label}
+                                </option>
+                              ))}
+                            </select>
+                            
+                            {/* Custom Dropdown Arrow or Loading Spinner */}
+                            <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                              {updatingUserId === user.id ? (
+                                <div className="animate-spin rounded-full h-3 w-3 border border-blue-500 border-t-transparent"></div>
+                              ) : (
+                                <div className="transition-transform duration-200 group-hover:scale-110">
+                                  <svg className="h-3 w-3 text-gray-500 group-hover:text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                  </svg>
+                                </div>
+                              )}
+                            </div>
+                            
+                            {/* Subtle glow effect on focus */}
+                            <div className={`absolute inset-0 rounded-md pointer-events-none transition-opacity duration-200 ${
+                              user.role === 'admin'
+                                ? 'bg-red-400 opacity-0 group-hover:opacity-3'
+                                : user.role === 'worker'
+                                ? 'bg-blue-400 opacity-0 group-hover:opacity-3'
+                                : 'bg-green-400 opacity-0 group-hover:opacity-3'
+                            }`}></div>
+                          </div>
+                        )}
                       </div>
                     </td>
                   </tr>
                 ))
               )}
             </tbody>
-          </table>
+            </table>
+          </div>
         </div>
       </div>
-
-      {/* Role Change Modal */}
-      <RoleChangeModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onConfirm={confirmRoleUpdate}
-        isLoading={updating}
-        title="Change User Role"
-      >
-        <div className="space-y-4">
-          <div>
-            <p className="text-sm text-gray-600">
-              You are about to change the role for <strong>{selectedUser?.email}</strong>
-            </p>
-          </div>
-          
-          <div className="space-y-3">
-            <label className="text-sm font-medium text-gray-700">Select New Role:</label>
-            {Object.entries(ROLE_CONFIG).map(([roleKey, config]) => (
-              <div key={roleKey} className="flex items-start space-x-3">
-                <input
-                  type="radio"
-                  id={roleKey}
-                  name="role"
-                  value={roleKey}
-                  checked={newRole === roleKey}
-                  onChange={(e) => setNewRole(e.target.value)}
-                  className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
-                />
-                <label htmlFor={roleKey} className="flex-1 cursor-pointer">
-                  <div className="flex items-center gap-2 mb-1">
-                    <config.icon className="h-4 w-4" />
-                    <span className="font-medium">{config.label}</span>
-                  </div>
-                  <p className="text-xs text-gray-500">{config.description}</p>
-                </label>
-              </div>
-            ))}
-          </div>
-        </div>
-      </RoleChangeModal>
     </div>
   );
 }
