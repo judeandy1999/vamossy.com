@@ -10,7 +10,6 @@ export function useGPTCenter(session = null) {
   const [evaluationLoading, setEvaluationLoading] = useState(true);
   const [loading, setLoading] = useState(true);
   const [userRole, setUserRole] = useState('worker');
-  const [executingTasks, setExecutingTasks] = useState(new Set());
   const [updatingTasks, setUpdatingTasks] = useState(new Set());
   const { showToast } = useToast();
 
@@ -28,6 +27,7 @@ export function useGPTCenter(session = null) {
       });
 
       const data = await response.json();
+      console.log('Fetched tasks:', data);
       
       if (response.ok) {
         setTasks(data.tasks || []);
@@ -165,7 +165,8 @@ export function useGPTCenter(session = null) {
         body: JSON.stringify({
           id: taskId,
           status: status,
-          completed_at: completedAt || null
+          completed_at: completedAt || null,
+          user_id: currentSession.user.id
         })
       });
 
@@ -200,46 +201,53 @@ export function useGPTCenter(session = null) {
     const tasksToReset = [];
 
     tasks.forEach(task => {
-      if (task.status === 'completed' && task.completed_at) {
-        const completedAt = new Date(task.completed_at);
-        let shouldReset = false;
+    const assignment = Array.isArray(task.task_assignments) ? task.task_assignments[0] : null;
+    if (!assignment) return;
 
-        switch (task.frequency?.toLowerCase()) {
-          case 'five-minutes':
-            const fiveMinInMs = 5 * 60 * 1000;
-            shouldReset = (now - completedAt) >= fiveMinInMs;
-            break;
-          case 'hourly':
-            const hourInMs = 60 * 60 * 1000;
-            shouldReset = (now - completedAt) >= hourInMs;
-            break;
-          case 'daily':
-            shouldReset = completedAt.toDateString() !== now.toDateString();
-            break;
-          case 'weekly':
-            const getNextMonday = (date) => {
-              const nextMonday = new Date(date);
-              const dayOfWeek = date.getDay();
-              const daysUntilNextMonday = dayOfWeek === 0 ? 1 : 8 - dayOfWeek;
-              nextMonday.setDate(date.getDate() + daysUntilNextMonday);
-              nextMonday.setHours(0, 0, 0, 0);
-              return nextMonday;
-            };
-            
-            const nextMondayAfterCompletion = getNextMonday(completedAt);
-            shouldReset = now >= nextMondayAfterCompletion;
-            break;
-          case 'monthly':
-            shouldReset = completedAt.getMonth() !== now.getMonth() || 
-                         completedAt.getFullYear() !== now.getFullYear();
-            break;
+    const { status, completed_at } = assignment;
+
+    if (status === 'completed' && completed_at) {
+      const completedAt = new Date(completed_at);
+      let shouldReset = false;
+
+      switch (task.frequency?.toLowerCase()) {
+        case 'five-minutes':
+          const fiveMinInMs = 5 * 60 * 1000;
+          shouldReset = (now - completedAt) >= fiveMinInMs;
+          break;
+        case 'hourly':
+          const hourInMs = 60 * 60 * 1000;
+          shouldReset = (now - completedAt) >= hourInMs;
+          break;
+        case 'daily':
+          shouldReset = completedAt.toDateString() !== now.toDateString();
+          break;
+        case 'weekly':
+          const getNextMonday = (date) => {
+            const nextMonday = new Date(date);
+            const dayOfWeek = date.getDay();
+            const daysUntilNextMonday = dayOfWeek === 0 ? 1 : 8 - dayOfWeek;
+            nextMonday.setDate(date.getDate() + daysUntilNextMonday);
+            nextMonday.setHours(0, 0, 0, 0);
+            return nextMonday;
+          };
+          const nextMondayAfterCompletion = getNextMonday(completedAt);
+          shouldReset = now >= nextMondayAfterCompletion;
+          break;
+        case 'monthly':
+          shouldReset = completedAt.getMonth() !== now.getMonth() || 
+                      completedAt.getFullYear() !== now.getFullYear();
+          break;
         }
 
         if (shouldReset) {
-          tasksToReset.push(task.id);
-        }
+        tasksToReset.push({
+          taskId: task.id,
+          userId: assignment.user_id
+        });
       }
-    });
+    }
+  });
 
     if (tasksToReset.length > 0) {
       try {
@@ -250,7 +258,7 @@ export function useGPTCenter(session = null) {
           return;
         }
 
-        for (const taskId of tasksToReset) {
+        for (const { taskId, userId } of tasksToReset) {
           try {
             const response = await fetch('/api/gpt-center/tasks', {
               method: 'PUT',
@@ -262,7 +270,8 @@ export function useGPTCenter(session = null) {
               body: JSON.stringify({
                 id: taskId,
                 status: 'pending',
-                completed_at: null
+                completed_at: null,
+                user_id: userId
               })
             });
 
@@ -371,34 +380,75 @@ export function useGPTCenter(session = null) {
   }, [session, fetchTasks, fetchAllTasks, userRole, showToast]);
 
   const uploadFileToStorage = useCallback(async (file) => {
-    const maxSize = 10 * 1024 * 1024;
-    const allowedTypes = [
-      'text/plain', 
-      'text/markdown', 
-      'application/pdf',
-      'application/msword',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-    ];
+  
+  const maxSize = 10 * 1024 * 1024;
+  const allowedTypes = [
+    'text/plain', 
+    'text/markdown', 
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+  ];
 
-    if (file.size > maxSize) {
-      throw new Error('File size must be less than 10MB');
-    }
+  if (file.size > maxSize) {
+    throw new Error('File size exceeds 10MB limit');
+  }
 
-    if (!allowedTypes.includes(file.type)) {
-      throw new Error('Invalid file type. Please upload text, markdown, PDF, or Word documents.');
-    }
+  if (!allowedTypes.includes(file.type)) {
+    throw new Error(`Invalid file type: ${file.type}. Allowed: TXT, MD, PDF, DOC, DOCX`);
+  }
 
-    const fileName = `logs/${Date.now()}_${file.name}`;
+  const timestamp = Date.now();
+  const cleanName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+  const fileName = `logs/${timestamp}_${cleanName}`;
+  
+  try {
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
     
+    if (sessionError || !session) {
+      throw new Error('Authentication required for file upload');
+    }
+
     const { data, error } = await supabase.storage
       .from('task-logs')
-      .upload(fileName, file);
+      .upload(fileName, file, {
+        cacheControl: '3600',
+        upsert: false,
+        duplex: 'half'
+      });
 
-    if (error) throw error;
+    if (error) {
+      if (error.statusCode === 403) {
+        throw new Error('Storage access denied. Check bucket policies and authentication.');
+      }
+      
+      if (error.statusCode === 404) {
+        throw new Error('Storage bucket not found or inaccessible.');
+      }
+      
+      if (error.message?.toLowerCase().includes('policy')) {
+        throw new Error('Storage policy violation. Check RLS policies.');
+      }
+      
+      if (error.message?.toLowerCase().includes('bucket')) {
+        throw new Error('Storage bucket error. Check bucket configuration.');
+      }
+      
+      throw new Error(`Storage upload failed: ${error.message || 'Unknown error'}`);
+    }
+    
+    if (!data || !data.path) {
+      throw new Error('Upload completed but no file path returned');
+    }
+    
     return data.path;
-  }, []);
+    
+  } catch (error) {
+    throw error;
+  }
+}, []);
 
-  const uploadLog = useCallback(async ({ taskId, logContent, evaluationPrompt, file }) => {
+  const uploadLog = useCallback(async ({ taskId, logContent, evaluationPrompt, file, fileContent }) => {
     if (!session?.user) {
       throw new Error('Not authenticated');
     }
@@ -424,7 +474,6 @@ export function useGPTCenter(session = null) {
       if (file) {
         try {
           fileUrl = await uploadFileToStorage(file);
-          console.log('File uploaded:', fileUrl);
         } catch (fileError) {
           showToast('Failed to upload file, but will save log content', 'warning');
         }
@@ -458,7 +507,8 @@ export function useGPTCenter(session = null) {
             taskId: parseInt(taskId),
             logContent: logContent?.trim(),
             evaluationPrompt: evaluationPrompt?.trim(),
-            fileUrl
+            fileUrl,
+            fileContent: fileContent?.trim() || null
           })
         });
 
@@ -478,6 +528,30 @@ export function useGPTCenter(session = null) {
     }
   }, [session, uploadFileToStorage, showToast]);
 
+  const deleteEvaluation = useCallback(async (evaluationId) => {
+  if (!session?.user) return;
+  const accessToken = session?.access_token;
+  
+  try {
+    const response = await fetch(`/api/gpt-center/delete-evaluation/${evaluationId}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
+      },
+    });
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `HTTP ${response.status}`);
+    }
+    showToast('Evaluation deleted successfully', 'success');
+    await fetchEvaluations('all', 'created_at');
+  } catch (error) {
+    showToast('Failed to delete evaluation', 'error');
+    throw error;
+  }
+}, [fetchEvaluations, showToast]);
+
   return {
     tasks,
     allTasks,
@@ -495,5 +569,6 @@ export function useGPTCenter(session = null) {
     checkAndResetTasks,
     deleteTask,
     updateTask,
+    deleteEvaluation
   };
 }
