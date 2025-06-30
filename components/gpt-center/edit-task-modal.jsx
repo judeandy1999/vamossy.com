@@ -15,7 +15,7 @@ export default function EditTaskModal({ task, isOpen, onClose, onUpdate }) {
     evaluation_prompt: '',
     frequency: 'daily',
     notification_type: 'popup',
-    assigned_user_id: ''
+    assigned_user_ids: []
   });
   const [loading, setLoading] = useState(false);
 
@@ -28,7 +28,9 @@ export default function EditTaskModal({ task, isOpen, onClose, onUpdate }) {
         evaluation_prompt: task.evaluation_prompt || '',
         frequency: task.frequency || 'daily',
         notification_type: task.notification_type || 'popup',
-        assigned_user_id: task.assigned_user_id || ''
+        assigned_user_ids: Array.isArray(task.task_assignments)
+          ? task.task_assignments.map(a => a.user_id)
+          : []
       });
     }
   }, [task, isOpen]);
@@ -43,8 +45,8 @@ export default function EditTaskModal({ task, isOpen, onClose, onUpdate }) {
         return;
       }
 
-      if (!formData.assigned_user_id) {
-        showToast('Please select a user to assign the task to', 'error');
+      if (!formData.assigned_user_ids.length) {
+        showToast('Please select at least one user to assign the task to', 'error');
         return;
       }
 
@@ -86,7 +88,7 @@ export default function EditTaskModal({ task, isOpen, onClose, onUpdate }) {
           </div>
 
           {/* Content */}
-          <form onSubmit={handleSubmit} className="px-6 py-4 space-y-6">
+          <form onSubmit={handleSubmit} className="max-h-[70vh] overflow-scroll px-6 py-4 space-y-6">
             {/* Title */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -120,7 +122,7 @@ export default function EditTaskModal({ task, isOpen, onClose, onUpdate }) {
             {/* GPT URL */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                GPT Project Link
+                Project Link
               </label>
               <div className="relative">
                 <input
@@ -186,30 +188,45 @@ export default function EditTaskModal({ task, isOpen, onClose, onUpdate }) {
               </div>
             </div>
 
-            {/* User Assignment */}
+            {/* User Assignment as Checklist */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <Users className="inline h-4 w-4 mr-1" />
-                Assign To User *
+                Assign To Users *
               </label>
               {usersLoading ? (
                 <div className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-500">
                   Loading users...
                 </div>
               ) : (
-                <select
-                  value={formData.assigned_user_id}
-                  onChange={(e) => setFormData({ ...formData, assigned_user_id: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  required
-                >
-                  <option value="">Select a user</option>
-                  {users.map((user) => (
-                    <option key={user.id} value={user.id}>
-                      {user.name || user.email} ({user.role})
-                    </option>
-                  ))}
-                </select>
+                <div className="border border-gray-300 rounded-md p-3 max-h-56 overflow-y-auto">
+                  {users
+                    .filter(user => user.role === 'admin' || user.role === 'worker')
+                    .map((user) => (
+                      <label key={user.id} className="flex items-center gap-2 mb-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          value={user.id}
+                          checked={formData.assigned_user_ids.includes(user.id)}
+                          onChange={e => {
+                            const checked = e.target.checked;
+                            setFormData(prev => ({
+                              ...prev,
+                              assigned_user_ids: checked
+                                ? [...prev.assigned_user_ids, user.id]
+                                : prev.assigned_user_ids.filter(id => id !== user.id)
+                            }));
+                          }}
+                        />
+                        <span>
+                          {user.name || user.email} <span className="text-xs text-gray-500">({user.role})</span>
+                        </span>
+                      </label>
+                    ))}
+                  {users.length === 0 && (
+                    <div className="text-gray-400 text-sm">No users available</div>
+                  )}
+                </div>
               )}
             </div>
           </form>
