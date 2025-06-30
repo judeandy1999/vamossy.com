@@ -14,7 +14,7 @@ export default function UserTable({
     <div className="bg-white rounded-lg shadow">
       <div className="relative">
         <div 
-          className="max-h-120 overflow-y-auto border-t border-gray-200"
+          className="max-h-140 overflow-y-auto border-t border-gray-200"
           style={{
             scrollbarWidth: 'thin',
             scrollbarColor: '#D1D5DB #F3F4F6'
