@@ -103,8 +103,6 @@ async function handlePost(req, res, user, userRole) {
         frequency,
         notification_type,
         created_by: user.id,
-        completed_at: null,
-        status: 'pending',
         is_active: true,
       })
       .select()
