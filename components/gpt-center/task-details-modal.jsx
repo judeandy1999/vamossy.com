@@ -1,24 +1,30 @@
 'use client';
 
-import { X, Clock, ExternalLink, Calendar, User, Bell, Tag } from 'lucide-react';
+import { X, Clock, ExternalLink, Calendar, Bell } from 'lucide-react';
 import TaskButton from './task-button';
 import { canRestartTask, getNextAvailableTime, formatNextAvailableDate } from '@/utils/task-utils';
 
 export default function TaskDetailsModal({ task, isOpen, onClose, updateTaskStatus, updatingTasks, isButtonDisplayed = true }) {
   if (!isOpen || !task) return null;
 
-  const canRestart = canRestartTask(task);
-  const nextAvailable = getNextAvailableTime(task);
+  const assignment = Array.isArray(task.task_assignments) ? task.task_assignments[0] : null;
+  const status = assignment?.status;
+  const completed_at = assignment?.completed_at;
+  const user_id = assignment?.user_id;
+
+  const canRestart = canRestartTask(task, assignment);
+  const nextAvailable = getNextAvailableTime(task, assignment);
   const formattedNextDate = formatNextAvailableDate(nextAvailable);
 
   const handleTaskAction = async () => {
     try {
-      if (task.status === 'completed' && canRestart) {
-        await updateTaskStatus(task.id, 'pending');
-      } else if (task.status === 'in_progress') {
-        await updateTaskStatus(task.id, 'completed', new Date().toISOString());
+      if (!assignment) return;
+      if (status === 'completed' && canRestart) {
+        await updateTaskStatus(task.id, 'pending', null, user_id);
+      } else if (status === 'in_progress') {
+        await updateTaskStatus(task.id, 'completed', new Date().toISOString(), user_id);
       } else {
-        await updateTaskStatus(task.id, 'in_progress');
+        await updateTaskStatus(task.id, 'in_progress', null, user_id);
       }
     } catch (error) {
       console.error('Error updating task status:', error);
@@ -31,9 +37,7 @@ export default function TaskDetailsModal({ task, isOpen, onClose, updateTaskStat
       'in_progress': { bg: 'bg-yellow-100', text: 'text-yellow-800', label: 'In Progress' },
       'completed': { bg: 'bg-green-100', text: 'text-green-800', label: 'Completed' },
     };
-    
     const config = statusConfig[status] || statusConfig['pending'];
-    
     return (
       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${config.bg} ${config.text}`}>
         {config.label}
@@ -57,9 +61,7 @@ export default function TaskDetailsModal({ task, isOpen, onClose, updateTaskStat
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="!flex backdrop-blur-xs bg-black/20 items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
         {/* Backdrop */}
-        <div 
-          onClick={onClose}
-        />
+        <div onClick={onClose} />
 
         {/* Modal */}
         <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
@@ -84,7 +86,7 @@ export default function TaskDetailsModal({ task, isOpen, onClose, updateTaskStat
                 <h2 className="text-xl font-semibold text-gray-900 flex-1 mr-4">
                   {task.title}
                 </h2>
-                {getStatusBadge(task.status)}
+                {getStatusBadge(status)}
               </div>
             </div>
 
@@ -149,13 +151,13 @@ export default function TaskDetailsModal({ task, isOpen, onClose, updateTaskStat
               </div>
 
               {/* Completion Date */}
-              {task.status === 'completed' && task.completed_at && (
+              {status === 'completed' && completed_at && (
                 <div className="flex items-center">
                   <Calendar className="h-5 w-5 text-gray-400 mr-3" />
                   <div>
                     <div className="text-sm font-medium text-gray-700">Completed</div>
                     <div className="text-sm text-gray-600">
-                      {new Date(task.completed_at).toLocaleString('en-US', {
+                      {new Date(completed_at).toLocaleString('en-US', {
                         year: 'numeric',
                         month: 'long',
                         day: 'numeric',
@@ -171,7 +173,7 @@ export default function TaskDetailsModal({ task, isOpen, onClose, updateTaskStat
             {/* GPT Link */}
             {task.gpt_url && (
               <div className="mb-6">
-                <h4 className="text-sm font-medium text-gray-700 mb-2">GPT Project Link</h4>
+                <h4 className="text-sm font-medium text-gray-700 mb-2">Project Link</h4>
                 <a 
                   href={task.gpt_url} 
                   target="_blank" 
@@ -179,13 +181,13 @@ export default function TaskDetailsModal({ task, isOpen, onClose, updateTaskStat
                   className="inline-flex items-center text-blue-600 hover:text-blue-800 transition-colors"
                 >
                   <ExternalLink className="h-4 w-4 mr-2" />
-                  Open GPT Project
+                  Open Project
                 </a>
               </div>
             )}
 
             {/* Next Available Time */}
-            {task.status === 'completed' && !canRestart && nextAvailable && (
+            {status === 'completed' && !canRestart && nextAvailable && (
               <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
                 <h4 className="text-sm font-medium text-blue-800 mb-1">Next Available</h4>
                 <p className="text-blue-900 font-semibold">{formattedNextDate}</p>
