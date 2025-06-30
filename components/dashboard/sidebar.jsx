@@ -16,14 +16,16 @@ import {
   ChevronLeft,
   ChevronRight,
   Bot,
-  Zap
+  Zap,
+  Users
 } from 'lucide-react'
 
 const navItems = [
   { label: 'Dashboard', href: '/user-dashboard', icon: Home, roles: ['admin', 'worker'] },
   { label: 'Create Article', href: '/user-dashboard/create-article', icon: PenTool, roles: ['admin'] },
+  { label: 'Role Management', href: '/user-dashboard/user-management', icon: Users, roles: ['admin'] },
   { label: 'Options', href: '/user-dashboard/options', icon: Settings, roles: ['admin'] },
-  { label: 'Billing & Payments', href: '/dashboard/billing', icon: CreditCard, roles: ['user'] },
+  { label: 'Billing & Payments', href: '/dashboard/billing', icon: CreditCard, roles: ['admin', 'user'] },
   { label: 'Asset Library', href: '/dashboard/assets', icon: FolderOpen, roles: ['admin', 'user'] },
   { label: 'FAQ', href: '/dashboard/faq', icon: HelpCircle, roles: ['admin', 'user', 'worker'] },
 ]
@@ -87,7 +89,7 @@ export default function Sidebar() {
               href={href}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors group relative ${
                 pathname === href
-                  ? 'bg-yellow-500 text-gray-300 font-medium shadow-sm'
+                  ? 'bg-yellow-500 text-white font-medium shadow-sm'
                   : 'text-slate-600 hover:bg-gray-50 hover:text-slate-800'
               }`}
               title={isCollapsed ? label : ''}
@@ -95,7 +97,7 @@ export default function Sidebar() {
               <Icon 
                 size={20} 
                 className={`flex-shrink-0 ${
-                  pathname === href ? 'text-gray-300' : 'text-slate-500 group-hover:text-slate-700'
+                  pathname === href ? 'text-white' : 'text-slate-500 group-hover:text-slate-700'
                 }`} 
               />
               {!isCollapsed && (
