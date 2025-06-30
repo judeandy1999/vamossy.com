@@ -1,12 +1,21 @@
 'use client';
 
 import TaskColumn from './task-column';
-import { filterTasksByStatus } from '@/utils/task-utils';
 
 export default function TaskBoard({ tasks, updateTaskStatus, updatingTasks, onCardClick }) {
-  const pendingTasks = filterTasksByStatus(tasks, ['pending', 'Not Started', null]);
-  const inProgressTasks = filterTasksByStatus(tasks, ['in_progress']);
-  const completedTasks = filterTasksByStatus(tasks, ['completed']);
+  // Use assignment status for filtering
+  const getAssignmentStatus = task =>
+    Array.isArray(task.task_assignments) ? task.task_assignments[0]?.status : undefined;
+
+  const pendingTasks = tasks.filter(
+    task => ['pending', 'Not Started', null, ''].includes(getAssignmentStatus(task))
+  );
+  const inProgressTasks = tasks.filter(
+    task => getAssignmentStatus(task) === 'in_progress'
+  );
+  const completedTasks = tasks.filter(
+    task => getAssignmentStatus(task) === 'completed'
+  );
 
   const columns = [
     {
