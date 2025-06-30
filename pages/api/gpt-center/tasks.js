@@ -37,24 +37,33 @@ async function handleGet(req, res, user, userRole) {
     
     if (all === 'true' && userRole === 'admin') {
       query = supabase
-        .from('tasks')
-        .select(`
-          *,
-          users!tasks_assigned_user_id_fkey (
-            id,
-            email,
+      .from('tasks')
+      .select(`
+        *,
+        task_assignments (
+          user_id,
+          status,
+          users (
             name,
-            role
+            email
           )
-        `)
-        .eq('is_active', true)
-        .order('created_at', { ascending: false });
+        )
+      `)
+      .eq('is_active', true)
+      .order('created_at', { ascending: false });
     } else {
       query = supabase
         .from('tasks')
-        .select('*')
-        .eq('assigned_user_id', user.id)
+        .select(`
+          *,
+          task_assignments!inner (
+            user_id,
+            status,
+            completed_at
+          )
+        `)
         .eq('is_active', true)
+        .eq('task_assignments.user_id', user.id)
         .order('created_at', { ascending: false });
     }
 
@@ -70,19 +79,21 @@ async function handleGet(req, res, user, userRole) {
 
 async function handlePost(req, res, user, userRole) {
   try {    
-    // Check if user is admin
     if (userRole !== 'admin') {
       return res.status(403).json({ error: 'Only admins can create tasks' });
     }
 
-    const { title, description, gpt_url, evaluation_prompt, frequency, notification_type, assigned_user_id } = req.body;
+    const { title, description, gpt_url, evaluation_prompt, frequency, notification_type, assigned_user_ids } = req.body;
 
-    // Validate required fields
     if (!title || !description) {
       return res.status(400).json({ error: 'Title and description are required' });
     }
+    if (!Array.isArray(assigned_user_ids) || assigned_user_ids.length === 0) {
+      return res.status(400).json({ error: 'At least one user must be assigned' });
+    }
 
-    const { data, error } = await supabase
+    // Insert the task (without assigned_user_id)
+    const { data: task, error: taskError } = await supabase
       .from('tasks')
       .insert({
         title,
@@ -91,20 +102,33 @@ async function handlePost(req, res, user, userRole) {
         evaluation_prompt,
         frequency,
         notification_type,
-        assigned_user_id,
         created_by: user.id,
         completed_at: null,
         status: 'pending',
+        is_active: true,
       })
       .select()
       .single();
 
-    if (error) {
-      console.error('Supabase error:', error);
-      throw error;
+    if (taskError) {
+      console.error('Supabase error:', taskError);
+      throw taskError;
+    }
+    
+    const assignments = assigned_user_ids.map(user_id => ({
+      task_id: task.id,
+      user_id,
+    }));
+
+    const { error: assignError } = await supabase
+      .from('task_assignments')
+      .insert(assignments);
+
+    if (assignError) {
+      return res.status(500).json({ error: 'Failed to assign users to task' });
     }
 
-    return res.status(201).json({ task: data });
+    return res.status(201).json({ task });
   } catch (error) {
     console.error('Error creating task:', error);
     return res.status(500).json({ error: 'Failed to create task' });
@@ -113,7 +137,7 @@ async function handlePost(req, res, user, userRole) {
 
 async function handlePut(req, res, user, userRole) {
   try {
-    const { id, ...updates } = req.body;
+    const { id, assigned_user_ids, ...updates } = req.body;
     
     if (!id) {
       return res.status(400).json({ error: 'Task ID is required' });
@@ -136,25 +160,25 @@ async function handlePut(req, res, user, userRole) {
       }
 
     } else if (isStatusUpdate) {
-      if (userRole !== 'admin') {
-        const { data: taskCheck, error: checkError } = await supabase
-          .from('tasks')
-          .select('assigned_user_id')
-          .eq('id', id)
-          .eq('is_active', true)
-          .single();
+      const { status, user_id, completed_at } = updates;
 
-        if (checkError || !taskCheck) {
-          return res.status(404).json({ error: 'Task not found' });
-        }
+      const updateFields = {
+        status,
+        completed_at
+      };
 
-        if (taskCheck.assigned_user_id !== user.id) {
-          return res.status(403).json({ error: 'You can only update your own tasks' });
-        }
+      const { data: updatedAssignments, error: assignmentError } = await supabase
+        .from('task_assignments')
+        .update(updateFields)
+        .eq('task_id', id)
+        .eq('user_id', user_id)
+        .select();
+
+      if (assignmentError || !updatedAssignments || updatedAssignments.length === 0) {
+        return res.status(404).json({ error: 'Task not found' });
+      } else {
+        return res.status(200).json({ task: updatedAssignments[0] });
       }
-
-    } else {
-      return res.status(400).json({ error: 'Invalid update data' });
     }
 
     const updateData = {
@@ -162,7 +186,7 @@ async function handlePut(req, res, user, userRole) {
       updated_at: new Date().toISOString()
     };
 
-    const { data, error } = await supabase
+    const { data: updatedTask, error } = await supabase
       .from('tasks')
       .update(updateData)
       .eq('id', id)
@@ -174,11 +198,37 @@ async function handlePut(req, res, user, userRole) {
       throw error;
     }
 
-    if (!data) {
+    if (!updatedTask) {
       return res.status(404).json({ error: 'Task not found or already deleted' });
     }
 
-    return res.status(200).json({ task: data });
+    if (Array.isArray(assigned_user_ids)) {
+      const { error: deleteError } = await supabase
+        .from('task_assignments')
+        .delete()
+        .eq('task_id', id);
+
+      if (deleteError) {
+        return res.status(500).json({ error: 'Failed to remove previous assignees' });
+      }
+
+      if (assigned_user_ids.length > 0) {
+        const assignments = assigned_user_ids.map(user_id => ({
+          task_id: id,
+          user_id,
+        }));
+
+        const { error: assignError } = await supabase
+          .from('task_assignments')
+          .insert(assignments);
+
+        if (assignError) {
+          return res.status(500).json({ error: 'Failed to assign users to task' });
+        }
+      }
+    }
+
+    return res.status(200).json({ task: updatedTask });
   } catch (error) {
     return res.status(500).json({ 
       error: 'Failed to update task',
@@ -189,18 +239,34 @@ async function handlePut(req, res, user, userRole) {
 
 async function handleDelete(req, res, user, userRole, id) {
   try {
+    if (!id) {
+      return res.status(400).json({ error: 'Task ID is required' });
+    }
+
     if (userRole !== 'admin') {
       return res.status(403).json({ error: 'Only admins can delete tasks' });
     }
-    const { error } = await supabase
+
+    const { error: assignmentError } = await supabase
+      .from('task_assignments')
+      .delete()
+      .eq('task_id', id);
+
+    if (assignmentError) {
+      return res.status(500).json({ error: 'Failed to delete task assignments' });
+    }
+
+    const { error: taskError } = await supabase
       .from('tasks')
-      .update({ is_active: false })
+      .delete()
       .eq('id', id);
 
-    if (error) throw error;
+    if (taskError) {
+      return res.status(500).json({ error: 'Failed to delete task' });
+    }
 
     return res.status(200).json({ success: true });
   } catch (error) {
-    return res.status(500).json({ error: 'Failed to delete task' });
+    return res.status(500).json({ error: 'Failed to delete task', details: error.message });
   }
 }
