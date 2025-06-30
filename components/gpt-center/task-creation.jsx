@@ -15,7 +15,7 @@ export default function TaskCreation({ createTask }) {
     evaluation_prompt: '',
     frequency: 'daily',
     notification_type: 'popup',
-    assigned_user_id: ''
+    assigned_user_ids: [] // <-- change to array
   });
   const [loading, setLoading] = useState(false);
   const [showUserSelect, setShowUserSelect] = useState(false);
@@ -23,15 +23,15 @@ export default function TaskCreation({ createTask }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    
+
     try {
-      if (!formData.assigned_user_id) {
-        showToast('Please select a user to assign the task to', 'error');
+      if (!formData.assigned_user_ids.length) {
+        showToast('Please select at least one user to assign the task to', 'error');
         return;
       }
 
       await createTask(formData);
-      
+
       setFormData({
         title: '',
         description: '',
@@ -39,7 +39,7 @@ export default function TaskCreation({ createTask }) {
         evaluation_prompt: '',
         frequency: 'daily',
         notification_type: 'popup',
-        assigned_user_id: ''
+        assigned_user_ids: []
       });
       setShowUserSelect(false);
     } catch (error) {
@@ -99,7 +99,7 @@ export default function TaskCreation({ createTask }) {
         {/* GPT URL */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            GPT Project Link
+            Project Link
           </label>
           <div className="relative">
             <input
@@ -107,7 +107,7 @@ export default function TaskCreation({ createTask }) {
               value={formData.gpt_url}
               onChange={(e) => setFormData({ ...formData, gpt_url: e.target.value })}
               className="w-full px-3 py-2 pl-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="https://chatgpt.com/g/..."
+              placeholder="https://www.projectlink.com/g/..."
             />
             <ExternalLink className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
           </div>
@@ -164,13 +164,12 @@ export default function TaskCreation({ createTask }) {
           </div>
         </div>
 
-        {/* User Assignment */}
+        {/* User Assignment as Checklist */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             <Users className="inline h-4 w-4 mr-1" />
-            Assign To User
+            Assign To Users
           </label>
-          
           {!showUserSelect ? (
             <button
               type="button"
@@ -180,20 +179,34 @@ export default function TaskCreation({ createTask }) {
               Click to load users...
             </button>
           ) : (
-            <select
-              value={formData.assigned_user_id}
-              onChange={(e) => setFormData({ ...formData, assigned_user_id: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="">Unassigned</option>
+            <div className="border border-gray-300 rounded-md p-3 max-h-56 overflow-y-auto">
               {users
                 .filter(user => user.role === 'admin' || user.role === 'worker')
                 .map((user) => (
-                  <option key={user.id} value={user.id}>
-                    {user.name || user.email} ({user.role})
-                  </option>
+                  <label key={user.id} className="flex items-center gap-2 mb-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      value={user.id}
+                      checked={formData.assigned_user_ids.includes(user.id)}
+                      onChange={e => {
+                        const checked = e.target.checked;
+                        setFormData(prev => ({
+                          ...prev,
+                          assigned_user_ids: checked
+                            ? [...prev.assigned_user_ids, user.id]
+                            : prev.assigned_user_ids.filter(id => id !== user.id)
+                        }));
+                      }}
+                    />
+                    <span>
+                      {user.name || user.email} <span className="text-xs text-gray-500">({user.role})</span>
+                    </span>
+                  </label>
                 ))}
-            </select>
+              {users.length === 0 && (
+                <div className="text-gray-400 text-sm">No users available</div>
+              )}
+            </div>
           )}
         </div>
 
