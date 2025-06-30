@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Filter } from 'lucide-react';
 import { useToast } from '@/contexts/toast-context';
 import TaskDetailsModal from './task-details-modal';
 import EditTaskModal from './edit-task-modal';
@@ -22,7 +21,8 @@ export default function AdminTaskManagement({
   fetchAllTasks,
   evaluations,
   fetchEvaluations,
-  evaluationLoading
+  evaluationLoading,
+  deleteEvaluation
 }) {
   const { showToast } = useToast();
   const [activeSection, setActiveSection] = useState('tasks');
@@ -46,6 +46,9 @@ export default function AdminTaskManagement({
   const [taskToDelete, setTaskToDelete] = useState(null);
   const [deleting, setDeleting] = useState(false);
   const [hasInitialized, setHasInitialized] = useState(false);
+  const [isDeleteEvaluationModalOpen, setIsDeleteEvaluationModalOpen] = useState(false);
+  const [evaluationToDelete, setEvaluationToDelete] = useState(null);
+  const [deletingEvaluation, setDeletingEvaluation] = useState(false);
 
   useEffect(() => {
     if (!hasInitialized && allTasks.length === 0) {
@@ -175,6 +178,19 @@ export default function AdminTaskManagement({
     }
   };
 
+  const confirmDeleteEvaluation = async () => {
+    if (!evaluationToDelete) return;
+    setDeletingEvaluation(true);
+    try {
+      await deleteEvaluation(evaluationToDelete.id);
+      setIsDeleteEvaluationModalOpen(false);
+      setEvaluationToDelete(null);
+    } catch (error) {
+    } finally {
+      setDeletingEvaluation(false);
+    }
+  };
+
   const handleTaskUpdate = async (updatedTask) => {
     try {
       await updateTask(updatedTask);
@@ -190,6 +206,11 @@ export default function AdminTaskManagement({
   const handleViewEvaluation = (evaluation) => {
     setSelectedEvaluation(evaluation);
     setIsEvaluationModalOpen(true);
+  };
+
+  const handleDeleteEvaluation = (evaluation) => {
+    setEvaluationToDelete(evaluation);
+    setIsDeleteEvaluationModalOpen(true);
   };
 
   const handleRefresh = async () => {
@@ -268,6 +289,7 @@ export default function AdminTaskManagement({
           setScoreFilter={setScoreFilter}
           uniqueEvaluationUsers={uniqueEvaluationUsers}
           onViewEvaluation={handleViewEvaluation}
+          onDeleteEvaluation={handleDeleteEvaluation}
         />
       )}
 
@@ -312,6 +334,17 @@ export default function AdminTaskManagement({
         onConfirm={confirmDelete}
         target={{ type: 'task', name: taskToDelete?.title }}
         isLoading={deleting}
+      />
+
+      <Modal
+        isOpen={isDeleteEvaluationModalOpen}
+        onClose={() => {
+          setIsDeleteEvaluationModalOpen(false);
+          setEvaluationToDelete(null);
+        }}
+        onConfirm={confirmDeleteEvaluation}
+        target={{ type: 'evaluation', name: evaluationToDelete?.tasks?.title || 'Evaluation' }}
+        isLoading={deletingEvaluation}
       />
     </div>
   );
