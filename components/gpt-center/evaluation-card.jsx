@@ -1,8 +1,8 @@
 'use client';
 
-import { Calendar, Star, FileText } from 'lucide-react';
+import { Calendar, Star, FileText, Trash2 } from 'lucide-react';
 
-export default function EvaluationCard({ evaluation, onCardClick }) {
+export default function EvaluationCard({ evaluation, onCardClick, onDelete }) {
   const getScoreColor = (score) => {
     if (score >= 90) return 'text-green-600 bg-green-50';
     if (score >= 80) return 'text-blue-600 bg-blue-50';
@@ -38,11 +38,19 @@ export default function EvaluationCard({ evaluation, onCardClick }) {
     }
   };
 
+  const handleDeleteClick = (e) => {
+    e.stopPropagation();
+    if (onDelete) {
+      onDelete(evaluation.id);
+    }
+  };
+
   return (
     <div 
-      className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer hover:border-blue-300"
+      className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer hover:border-blue-300 relative"
       onClick={handleCardClick}
     >
+
       {/* Header */}
       <div className="flex justify-between items-start mb-4">
         <div className="flex-1">
@@ -58,6 +66,17 @@ export default function EvaluationCard({ evaluation, onCardClick }) {
         <div className={`px-2 py-1 rounded-full text-xs font-medium ${getScoreColor(evaluation.score)}`}>
           {evaluation.score}/100
         </div>
+
+        {/* Delete Button */}
+        {onDelete && (
+          <button
+            onClick={handleDeleteClick}
+            className="ml-2 mt-1 text-red-500 hover:text-red-700 transition-colors"
+            title="Delete Evaluation"
+          >
+            <Trash2 size={18} />
+          </button>
+        )}
       </div>
 
       {/* Score Stars */}
