@@ -16,7 +16,8 @@ export default function EvaluationsSection({
   scoreFilter,
   setScoreFilter,
   uniqueEvaluationUsers,
-  onViewEvaluation
+  onViewEvaluation,
+  onDeleteEvaluation
 }) {
   return (
     <>
@@ -44,6 +45,7 @@ export default function EvaluationsSection({
         evaluations={evaluations}
         evaluationLoading={evaluationLoading}
         onViewEvaluation={onViewEvaluation}
+        onDeleteEvaluation={onDeleteEvaluation}
       />
     </>
   );
