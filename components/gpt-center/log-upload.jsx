@@ -10,16 +10,115 @@ export default function LogUpload({ tasks, uploadLog }) {
   const [logContent, setLogContent] = useState('');
   const [evaluationPrompt, setEvaluationPrompt] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
+  const [fileContent, setFileContent] = useState('');
   const [uploading, setUploading] = useState(false);
+  const [dragActive, setDragActive] = useState(false);
+  const [fileError, setFileError] = useState('');
 
   const completedTasks = useMemo(() => {
-    return tasks?.filter(task => task.status === 'completed') || [];
+    return (
+      tasks?.filter(
+        (task) =>
+          Array.isArray(task.task_assignments) &&
+          task.task_assignments[0]?.status === 'completed'
+      ) || []
+    );
   }, [tasks]);
 
-  const handleFileChange = (event) => {
+  const validateFile = (file) => {
+    const maxSize = 10 * 1024 * 1024;
+    const allowedTypes = [
+      'text/plain', 
+      'text/markdown', 
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    ];
+
+    if (file.size > maxSize) {
+      return 'File size must be less than 10MB';
+    }
+
+    if (!allowedTypes.includes(file.type)) {
+      return 'Invalid file type. Please upload TXT, MD, PDF, or DOC files.';
+    }
+
+    return null;
+  };
+
+  const readFileContent = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      
+      reader.onload = (event) => {
+        resolve(event.target.result);
+      };
+      
+      reader.onerror = (error) => {
+        reject(error);
+      };
+
+      if (file.type === 'application/pdf') {
+        reader.readAsArrayBuffer(file);
+      } else {
+        reader.readAsText(file);
+      }
+    });
+  };
+
+  const handleFileChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
+      const error = validateFile(file);
+      if (error) {
+        setFileError(error);
+        showToast(error, 'error');
+        return;
+      }
+      setFileError('');
       setSelectedFile(file);
+      
+      try {
+        const content = await readFileContent(file);
+        setFileContent(content);
+      } catch (error) {
+        showToast('Error reading file content', 'error');
+      }
+    }
+  };
+
+  const handleDrag = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const file = e.dataTransfer.files[0];
+      const error = validateFile(file);
+      if (error) {
+        setFileError(error);
+        showToast(error, 'error');
+        return;
+      }
+      setFileError('');
+      setSelectedFile(file);
+      
+      try {
+        const content = await readFileContent(file);
+        setFileContent(content);
+      } catch (error) {
+        showToast('Error reading file content', 'error');
+      }
     }
   };
 
@@ -28,6 +127,8 @@ export default function LogUpload({ tasks, uploadLog }) {
     setLogContent('');
     setEvaluationPrompt('');
     setSelectedFile(null);
+    setFileContent('');
+    setFileError('');
     const fileInput = document.getElementById('file-upload');
     if (fileInput) fileInput.value = '';
   };
@@ -43,12 +144,12 @@ export default function LogUpload({ tasks, uploadLog }) {
     setUploading(true);
 
     try {
-      console.log(selectedTask)
       await uploadLog({
         taskId: selectedTask,
         logContent,
-        evaluationPrompt: selectedTask.evaluation_prompt,
-        file: selectedFile
+        evaluationPrompt: evaluationPrompt,
+        file: selectedFile,
+        fileContent: fileContent
       });
 
       resetForm();
@@ -61,6 +162,7 @@ export default function LogUpload({ tasks, uploadLog }) {
 
   const removeFile = () => {
     setSelectedFile(null);
+    setFileContent('');
     const fileInput = document.getElementById('file-upload');
     if (fileInput) fileInput.value = '';
   };
@@ -112,30 +214,26 @@ export default function LogUpload({ tasks, uploadLog }) {
           </p>
         </div>
 
-        {/* <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Evaluation Prompt
-          </label>
-          <textarea
-            value={evaluationPrompt}
-            onChange={(e) => setEvaluationPrompt(e.target.value)}
-            rows={8}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            placeholder="How would you like the AI to evaluate your log? What specific aspects should it focus on?"
-          />
-          <p className="mt-1 text-sm text-gray-500">
-            Provide custom instructions for how you want the AI to evaluate your log.
-          </p>
-        </div> */}
-
-        {/* File Upload */}
-        {/* <div>
+        {/* Enhanced File Upload */}
+        <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Attach File (Optional)
           </label>
-          <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md hover:border-gray-400 transition-colors">
+          <div 
+            className={`mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-md transition-colors ${
+              dragActive 
+                ? 'border-blue-400 bg-blue-50' 
+                : fileError 
+                  ? 'border-red-300 bg-red-50' 
+                  : 'border-gray-300 hover:border-gray-400'
+            }`}
+            onDragEnter={handleDrag}
+            onDragLeave={handleDrag}
+            onDragOver={handleDrag}
+            onDrop={handleDrop}
+          >
             <div className="space-y-1 text-center">
-              <Upload className="mx-auto h-12 w-12 text-gray-400" />
+              <Upload className={`mx-auto h-12 w-12 ${fileError ? 'text-red-400' : 'text-gray-400'}`} />
               <div className="flex text-sm text-gray-600">
                 <label
                   htmlFor="file-upload"
@@ -155,6 +253,11 @@ export default function LogUpload({ tasks, uploadLog }) {
               <p className="text-xs text-gray-500">
                 TXT, MD, PDF, DOC up to 10MB
               </p>
+              {fileError && (
+                <p className="text-xs text-red-600 mt-1">
+                  {fileError}
+                </p>
+              )}
             </div>
           </div>
           
@@ -174,7 +277,7 @@ export default function LogUpload({ tasks, uploadLog }) {
               </button>
             </div>
           )}
-        </div> */}
+        </div>
 
         {/* Submit Button */}
         <div className="flex justify-end">
