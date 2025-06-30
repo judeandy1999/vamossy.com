@@ -50,7 +50,6 @@ export default function UserManagement() {
     getUserStats,
     searchUsers,
     filterUsersByRole,
-    fetchUsers
   } = useUserManagement(session);
 
   const [searchTerm, setSearchTerm] = useState('');
