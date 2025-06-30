@@ -315,15 +315,15 @@ export default function Page() {
         isReachingEnd={isReachingEnd}
         loadMore={loadMore}
         startNewArticle={startNewArticle}
-          setSelectedArticle={setSelectedArticle}
-          selectedArticleId={selectedArticle?.id}
-          handleDelete={handleDelete}
-          error={error}
-          newlyCreatedId={newlyCreatedId}
-        />
+        setSelectedArticle={setSelectedArticle}
+        selectedArticleId={selectedArticle?.id}
+        handleDelete={handleDelete}
+        error={error}
+        newlyCreatedId={newlyCreatedId}
+      />
 
-        {/* Content Editor */}
-        <div className="flex-1 p-6 overflow-y-auto">
+      {/* Content Editor */}
+      <div className="flex-1 p-6 overflow-y-auto">
         <div className="bg-white shadow rounded-lg p-6 mb-4">
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-2xl font-semibold text-slate-800">{isEditing ? 'Edit Article' : 'New Article'}</h1>
