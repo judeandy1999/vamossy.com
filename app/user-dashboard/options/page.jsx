@@ -96,15 +96,15 @@ export default function Page() {
 
   return (
     <div className="bg-gray-50 min-h-screen py-10">
-      <Modal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onConfirm={confirmDelete}
-        target={deleteTarget}
-        isLoading={deleting}
-      />
+    <Modal
+      isOpen={isModalOpen}
+      onClose={() => setIsModalOpen(false)}
+      onConfirm={confirmDelete}
+      target={deleteTarget}
+      isLoading={deleting}
+    />
 
-      <div className="max-w-6xl mx-auto px-4 text-slate-800">
+    <div className="max-w-6xl mx-auto px-4 text-slate-800">
         <h1 className="text-3xl font-bold mb-8 text-center">Wiki & Tab Management</h1>
 
         {/* Two-column layout */}
@@ -243,9 +243,8 @@ export default function Page() {
                 {tabError && <p className="text-red-500 mt-2">{tabError}</p>}
               </>
             )}
-          </section>
-        </div>
-      </div>
+          </section>      </div>
     </div>
+  </div>
   );
 }
