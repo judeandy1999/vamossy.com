@@ -1,6 +1,6 @@
 'use client';
 
-import { X, Star, FileText, Calendar, User, Target } from 'lucide-react';
+import { X, Star, FileText, Calendar, User, Target, Download } from 'lucide-react';
 
 export default function EvaluationDetailsModal({ evaluation, isOpen, onClose }) {
   if (!isOpen || !evaluation) return null;
@@ -47,6 +47,47 @@ export default function EvaluationDetailsModal({ evaluation, isOpen, onClose }) 
         {score}/100
       </span>
     );
+  };
+
+  const downloadFile = async (fileUrl, fileName) => {
+    try {
+      console.log('=== DOWNLOAD DEBUG ===');
+      console.log('Original file URL:', fileUrl);
+      console.log('Requested fileName:', fileName);
+      
+      const response = await fetch(`/api/download-file?path=${encodeURIComponent(fileUrl)}`, {
+        method: 'GET',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName || 'downloaded-file';
+      
+      document.body.appendChild(link);
+      link.click();
+      
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+      console.log('File downloaded successfully');
+    } catch (error) {
+      console.error('Download error:', error);
+      alert(`Failed to download file: ${error.message}`);
+    }
+  };
+
+  const getFileNameFromUrl = (url) => {
+    if (!url) return 'Unknown file';
+    const parts = url.split('/');
+    const fileName = parts[parts.length - 1];
+    return fileName.replace(/^\d+_/, '');
   };
 
   return (
@@ -115,6 +156,15 @@ export default function EvaluationDetailsModal({ evaluation, isOpen, onClose }) 
             </div>
           </div>
 
+          <div className="mb-6">
+            <h3 className="text-lg font-medium text-gray-900 mb-3">File Analysis</h3>
+            <div className="bg-gray-50 rounded-lg p-4">
+              <p className="text-gray-700 whitespace-pre-wrap">
+                {evaluation.evaluator_response?.parsed?.workanalysis || 'No analysis provided'}
+              </p>
+            </div>
+          </div>
+
           {/* Additional Details */}
           {evaluation.evaluator_response?.parsed && (
             <div className="grid md:grid-cols-2 gap-6 mb-6">
@@ -162,7 +212,7 @@ export default function EvaluationDetailsModal({ evaluation, isOpen, onClose }) 
               <FileText className="h-5 w-5 mr-2" />
               Submitted Log
             </h3>
-            <div className="overflow-scroll bg-gray-50 rounded-lg p-4 border">
+            <div className="overflow-scroll bg-gray-50 rounded-lg p-4 border border-gray-200">
               {evaluation.task_logs?.log_content ? (
                 <div className="space-y-3">
                   <div>
@@ -175,16 +225,31 @@ export default function EvaluationDetailsModal({ evaluation, isOpen, onClose }) 
                   {evaluation.task_logs.file_url && (
                     <div className="pt-3 border-t border-gray-200">
                       <h4 className="font-medium text-gray-700 mb-2">Attached File:</h4>
-                      <div className="flex items-center gap-2">
-                        <FileText className="h-4 w-4 text-gray-500" />
-                        <span className="text-sm text-gray-600">
-                          {evaluation.task_logs.file_name || 'Uploaded file'}
-                        </span>
-                        {evaluation.task_logs.file_size && (
-                          <span className="text-xs text-gray-500">
-                            ({(evaluation.task_logs.file_size / 1024).toFixed(1)} KB)
-                          </span>
-                        )}
+                      
+                      <div className="flex items-center justify-between p-3 rounded-lg">
+                        <div className="flex items-center gap-2">
+                          <FileText className="h-4 w-4 text-gray-500" />
+                          <div className="flex flex-col">
+                            <span className="text-sm text-gray-700 font-medium">
+                              {getFileNameFromUrl(evaluation.task_logs.file_url)}
+                            </span>
+                            {evaluation.task_logs.file_size && (
+                              <span className="text-xs text-gray-500">
+                                {(evaluation.task_logs.file_size / 1024).toFixed(1)} KB
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => downloadFile(
+                            evaluation.task_logs.file_url,
+                            getFileNameFromUrl(evaluation.task_logs.file_url)
+                          )}
+                          className="cursor-pointer flex items-center gap-1 px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                        >
+                          <Download className="h-4 w-4" />
+                          Download
+                        </button>
                       </div>
                     </div>
                   )}
