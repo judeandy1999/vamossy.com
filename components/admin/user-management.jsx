@@ -3,15 +3,16 @@
 import { useState } from 'react';
 import { useUserManagement } from '@/hooks/useUserManagement';
 import { useAuthWithRedirect } from '@/hooks/useAuthWithRedirect';
+import { useToast } from '@/contexts/toast-context';
 import { Users } from 'lucide-react';
 import Spinner from '@/components/ui/spinner';
 import UserStatsCards from './user-stats-cards';
 import UserFilters from './user-filters';
 import UserTable from './user-table';
-import FeedbackMessage from './feedback-message';
 
 export default function UserManagement() {
   const { role: currentUserRole, session, status } = useAuthWithRedirect();
+  const { showToast } = useToast();
   const {
     users,
     loading,
@@ -25,7 +26,6 @@ export default function UserManagement() {
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
   const [updatingUserId, setUpdatingUserId] = useState(null);
-  const [feedback, setFeedback] = useState({ type: '', message: '' });
 
   const handleRoleChange = async (user, newRole) => {
     if (!user || !newRole || newRole === user.role) return;
@@ -33,21 +33,12 @@ export default function UserManagement() {
     setUpdatingUserId(user.id);
     try {
       await updateUserRole(user.id, newRole);
-      setFeedback({
-        type: 'success',
-        message: `Successfully updated ${user.email} to ${newRole.charAt(0).toUpperCase() + newRole.slice(1)}`
-      });
+      showToast(`Successfully updated ${user.email} to ${newRole.charAt(0).toUpperCase() + newRole.slice(1)}`, 'success');
     } catch (err) {
-      setFeedback({
-        type: 'error',
-        message: err.message
-      });
+      showToast(err.message || 'Failed to update user role', 'error');
     } finally {
       setUpdatingUserId(null);
     }
-
-    // Clear feedback after 5 seconds
-    setTimeout(() => setFeedback({ type: '', message: '' }), 5000);
   };
 
   // Show loading spinner while authentication is being verified or data is loading
@@ -78,9 +69,6 @@ export default function UserManagement() {
           </p>
         </div>
       </div>
-
-      {/* Feedback Messages */}
-      <FeedbackMessage feedback={feedback} />
 
       {/* Stats Cards */}
       <UserStatsCards stats={stats} />
