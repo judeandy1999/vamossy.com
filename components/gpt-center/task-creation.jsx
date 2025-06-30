@@ -15,7 +15,7 @@ export default function TaskCreation({ createTask }) {
     evaluation_prompt: '',
     frequency: 'daily',
     notification_type: 'popup',
-    assigned_user_ids: [] // <-- change to array
+    assigned_user_ids: []
   });
   const [loading, setLoading] = useState(false);
   const [showUserSelect, setShowUserSelect] = useState(false);
