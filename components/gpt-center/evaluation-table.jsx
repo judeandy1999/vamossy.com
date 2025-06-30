@@ -5,24 +5,22 @@ import { Filter, FileText } from 'lucide-react';
 import Spinner from '../ui/spinner';
 import EvaluationCard from './evaluation-card';
 import EvaluationDetailsModal from './evaluation-details-modal';
+import Modal from '@/components/ui/modal';
 
-export default function EvaluationTable({ evaluations, fetchEvaluations, loading }) {
+export default function EvaluationTable({ evaluations, fetchEvaluations, loading, onDelete }) {
   const [filter, setFilter] = useState('all');
   const [sortBy, setSortBy] = useState('created_at');
   const [selectedEvaluation, setSelectedEvaluation] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [evaluationToDelete, setEvaluationToDelete] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     if (fetchEvaluations) {
       fetchEvaluations(filter, sortBy);
     }
   }, [fetchEvaluations]);
-
-  useEffect(() => {
-    if (fetchEvaluations) {
-      fetchEvaluations(filter, sortBy);
-    }
-  }, [filter, sortBy]);
 
   const handleCardClick = (evaluation) => {
     setSelectedEvaluation(evaluation);
@@ -32,6 +30,24 @@ export default function EvaluationTable({ evaluations, fetchEvaluations, loading
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedEvaluation(null);
+  };
+
+  const handleDelete = (evaluation) => {
+    setEvaluationToDelete(evaluation);
+    setIsDeleteModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!evaluationToDelete) return;
+    setDeleting(true);
+    try {
+      await onDelete(evaluationToDelete);
+      setIsDeleteModalOpen(false);
+      setEvaluationToDelete(null);
+    } catch (error) {
+    } finally {
+      setDeleting(false);
+    }
   };
 
   if (loading) {
@@ -88,6 +104,7 @@ export default function EvaluationTable({ evaluations, fetchEvaluations, loading
               key={evaluation.id}
               evaluation={evaluation}
               onCardClick={handleCardClick}
+              onDelete={handleDelete}
             />
           ))}
         </div>
@@ -98,6 +115,20 @@ export default function EvaluationTable({ evaluations, fetchEvaluations, loading
         evaluation={selectedEvaluation}
         isOpen={isModalOpen}
         onClose={handleCloseModal}
+      />
+
+      <Modal
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+          setEvaluationToDelete(null);
+        }}
+        onConfirm={confirmDelete}
+        target={{
+          type: 'evaluation',
+          name: evaluationToDelete?.tasks?.title || 'Evaluation'
+        }}
+        isLoading={deleting}
       />
     </div>
   );
