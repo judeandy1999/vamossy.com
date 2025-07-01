@@ -21,11 +21,13 @@ export default function UserManagement() {
     getUserStats,
     searchUsers,
     filterUsersByRole,
+    sortUsers,
   } = useUserManagement(session);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
   const [updatingUserId, setUpdatingUserId] = useState(null);
+  const [sortOrder, setSortOrder] = useState('default');
 
   const handleRoleChange = async (user, newRole) => {
     if (!user || !newRole || newRole === user.role) return;
@@ -53,7 +55,8 @@ export default function UserManagement() {
 
   const stats = getUserStats();
   const filteredUsers = searchUsers(searchTerm);
-  const displayUsers = roleFilter === 'all' ? filteredUsers : filterUsersByRole(roleFilter);
+  const roleFilteredUsers = roleFilter === 'all' ? filteredUsers : filterUsersByRole(roleFilter);
+  const displayUsers = sortUsers(roleFilteredUsers, sortOrder);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6">
@@ -79,6 +82,8 @@ export default function UserManagement() {
         setSearchTerm={setSearchTerm}
         roleFilter={roleFilter}
         setRoleFilter={setRoleFilter}
+        sortOrder={sortOrder}
+        setSortOrder={setSortOrder}
       />
 
       {/* Users Table */}
