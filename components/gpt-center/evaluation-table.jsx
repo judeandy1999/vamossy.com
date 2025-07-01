@@ -20,7 +20,7 @@ export default function EvaluationTable({ evaluations, fetchEvaluations, loading
     if (fetchEvaluations) {
       fetchEvaluations(filter, sortBy);
     }
-  }, [fetchEvaluations]);
+  }, [filter, sortBy]);
 
   const handleCardClick = (evaluation) => {
     setSelectedEvaluation(evaluation);
