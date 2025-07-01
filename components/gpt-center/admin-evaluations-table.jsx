@@ -1,12 +1,13 @@
 'use client';
 
-import { Eye, User, Calendar, FileText, Star } from 'lucide-react';
+import { Eye, User, Calendar, FileText, Star, Trash2 } from 'lucide-react';
 
 export default function AdminEvaluationsTable({ 
   filteredEvaluations, 
   evaluations, 
   evaluationLoading, 
-  onViewEvaluation 
+  onViewEvaluation,
+  onDeleteEvaluation
 }) {
   const getScoreBadge = (score) => {
     let bgColor, textColor;
@@ -168,10 +169,20 @@ export default function AdminEvaluationsTable({
                   <td className="px-6 py-4">
                     <button
                       onClick={() => onViewEvaluation(evaluation)}
-                      className="cursor-pointer text-blue-600 hover:text-blue-800 transition-colors"
+                      className="cursor-pointer text-blue-600 hover:text-blue-800 transition-colors mr-2"
                       title="View Details"
                     >
                       <Eye className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDeleteEvaluation?.(evaluation);
+                      }}
+                      className="cursor-pointer text-red-600 hover:text-red-800 transition-colors"
+                      title="Delete Evaluation"
+                    >
+                      <Trash2 className="h-4 w-4" />
                     </button>
                   </td>
                 </tr>

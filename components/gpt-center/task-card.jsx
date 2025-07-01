@@ -5,19 +5,24 @@ import TaskButton from './task-button';
 import { canRestartTask, getNextAvailableTime, formatNextAvailableDate } from '@/utils/task-utils';
 
 export default function TaskCard({ task, updateTaskStatus, updatingTasks, onCardClick }) {
+  const assignment = Array.isArray(task.task_assignments) ? task.task_assignments[0] : null;
+  const status = assignment?.status;
+  const completed_at = assignment?.completed_at;
   const canRestart = canRestartTask(task);
   const nextAvailable = getNextAvailableTime(task);
   const formattedNextDate = formatNextAvailableDate(nextAvailable);
-
+  
   const handleTaskAction = (e) => {
-    e.stopPropagation(); // Prevent card click when button is clicked
-    
-    if (task.status === 'completed' && canRestart) {
-      updateTaskStatus(task.id, 'pending');
-    } else if (task.status === 'in_progress') {
-      updateTaskStatus(task.id, 'completed', new Date().toISOString());
+    e.stopPropagation();
+
+    if (!assignment) return;
+
+    if (status === 'completed' && canRestart) {
+      updateTaskStatus(task.id, 'pending', null, assignment.user_id);
+    } else if (status === 'in_progress') {
+      updateTaskStatus(task.id, 'completed', new Date().toISOString(), assignment.user_id);
     } else {
-      updateTaskStatus(task.id, 'in_progress');
+      updateTaskStatus(task.id, 'in_progress', null, assignment.user_id);
     }
   };
 
@@ -28,7 +33,7 @@ export default function TaskCard({ task, updateTaskStatus, updatingTasks, onCard
   };
 
   const handleLinkClick = (e) => {
-    e.stopPropagation(); // Prevent card click when GPT link is clicked
+    e.stopPropagation();
   };
 
   return (
@@ -56,13 +61,13 @@ export default function TaskCard({ task, updateTaskStatus, updatingTasks, onCard
                 onClick={handleLinkClick}
               >
                 <ExternalLink className="h-3 w-3 mr-1" />
-                GPT Link
+                Project Link
               </a>
             )}
           </div>
 
           {/* Show next available time for completed tasks */}
-          {task.status === 'completed' && !canRestart && nextAvailable && (
+          {status === 'completed' && !canRestart && nextAvailable && (
             <div className="mb-3 p-2 bg-blue-50 rounded-md border border-blue-200">
               <div className="text-xs text-blue-800 font-medium">Available again:</div>
               <div className="text-sm text-blue-900 font-semibold">{formattedNextDate}</div>
@@ -70,9 +75,9 @@ export default function TaskCard({ task, updateTaskStatus, updatingTasks, onCard
           )}
 
           {/* Show completion time for completed tasks */}
-          {task.status === 'completed' && task.completed_at && (
+          {status === 'completed' && completed_at && (
             <div className="text-xs text-gray-500 mb-3">
-              Completed: {new Date(task.completed_at).toLocaleString('en-US', {
+              Completed: {new Date(completed_at).toLocaleString('en-US', {
                 month: 'short',
                 day: 'numeric',
                 hour: '2-digit',

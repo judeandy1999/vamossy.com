@@ -26,7 +26,8 @@ export default function Dashboard() {
     deleteTask,
     updateTask,
     evaluationLoading,
-    uploadLog 
+    uploadLog,
+    deleteEvaluation
   } = useGPTCenter(session);
   const [activeTab, setActiveTab] = useState('tasks');
 
@@ -93,6 +94,7 @@ export default function Dashboard() {
             evaluations={evaluations}
             fetchEvaluations={fetchEvaluations}
             loading={evaluationLoading}
+            onDelete={deleteEvaluation}
           />
         )}
         {activeTab === 'create' && role === 'admin' && (
@@ -109,6 +111,7 @@ export default function Dashboard() {
             evaluations={evaluations}
             fetchEvaluations={fetchEvaluations}
             evaluationLoading={evaluationLoading}
+            deleteEvaluation={deleteEvaluation}
           />
         )}
       </div>

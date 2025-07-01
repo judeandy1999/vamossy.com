@@ -18,7 +18,7 @@ export default function TaskColumn({ title, tasks, bgColor, textColor, updateTas
         bgColor={bgColor}
         textColor={textColor}
       />
-      <div className="max-h-[80vh] overflow-y-auto bg-gray-50 border border-t-0 border-gray-200 rounded-b-lg p-4 flex-1">
+      <div className="min-h-[60vh] max-h-[60vh] overflow-y-auto bg-gray-50 border border-t-0 border-gray-200 rounded-b-lg p-4 flex-1">
         <div className="space-y-4">
           {tasks.length === 0 ? (
             <div className="text-center py-8 text-gray-500">

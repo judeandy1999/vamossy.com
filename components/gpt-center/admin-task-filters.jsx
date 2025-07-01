@@ -35,7 +35,7 @@ export default function AdminTaskFilters({
         </div>
 
         {/* Status Filter */}
-        <select
+        {/* <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
@@ -44,7 +44,7 @@ export default function AdminTaskFilters({
           <option value="pending">Pending</option>
           <option value="in_progress">In Progress</option>
           <option value="completed">Completed</option>
-        </select>
+        </select> */}
 
         {/* Frequency Filter */}
         <select
@@ -59,7 +59,7 @@ export default function AdminTaskFilters({
         </select>
 
         {/* User Filter */}
-        <select
+        {/* <select
           value={userFilter}
           onChange={(e) => setUserFilter(e.target.value)}
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
@@ -70,7 +70,7 @@ export default function AdminTaskFilters({
               {user.name || user.email}
             </option>
           ))}
-        </select>
+        </select> */}
       </div>
 
       {/* Task Filter Summary */}

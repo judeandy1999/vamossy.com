@@ -1,54 +1,58 @@
-export const canRestartTask = (task) => {
-  if (!task.completed_at || task.status !== 'completed') return false;
-  
-  const completedAt = new Date(task.completed_at);
+export const canRestartTask = (task, assignment = null) => {
+  if (!assignment && Array.isArray(task.task_assignments)) {
+    assignment = task.task_assignments[0];
+  }
+  if (!assignment?.completed_at || assignment.status !== 'completed') return false;
+
+  const completedAt = new Date(assignment.completed_at);
   const now = new Date();
-  
+
   switch (task.frequency?.toLowerCase()) {
     case 'five-minutes':
       const fiveMinInMs = 5 * 60 * 1000;
       return (now - completedAt) >= fiveMinInMs;
-    
+
     case 'hourly':
       const hourInMs = 60 * 60 * 1000;
       return (now - completedAt) >= hourInMs;
 
     case 'daily':
       return completedAt.toDateString() !== now.toDateString();
-    
+
     case 'weekly':
       const weekInMs = 7 * 24 * 60 * 60 * 1000;
       return (now - completedAt) >= weekInMs;
-    
+
     case 'monthly':
-      return completedAt.getMonth() !== now.getMonth() || 
+      return completedAt.getMonth() !== now.getMonth() ||
              completedAt.getFullYear() !== now.getFullYear();
-    
+
     default:
       return false;
   }
 };
 
-export const getNextAvailableTime = (task) => {
-  if (!task.completed_at || canRestartTask(task)) return null;
-  
-  const completedAt = new Date(task.completed_at);
-  
+export const getNextAvailableTime = (task, assignment = null) => {
+  if (!assignment && Array.isArray(task.task_assignments)) {
+    assignment = task.task_assignments[0];
+  }
+  if (!assignment?.completed_at || canRestartTask(task, assignment)) return null;
+
+  const completedAt = new Date(assignment.completed_at);
+
   switch (task.frequency?.toLowerCase()) {
     case 'five-minutes':
-      const nextFiveMin = new Date(completedAt.getTime() + (5 * 60 * 1000));
-      return nextFiveMin;
-    
+      return new Date(completedAt.getTime() + (5 * 60 * 1000));
+
     case 'hourly':
-      const nextHour = new Date(completedAt.getTime() + (60 * 60 * 1000));
-      return nextHour;
-      
+      return new Date(completedAt.getTime() + (60 * 60 * 1000));
+
     case 'daily':
       const nextDay = new Date(completedAt);
       nextDay.setDate(nextDay.getDate() + 1);
       nextDay.setHours(0, 0, 0, 0);
       return nextDay;
-    
+
     case 'weekly':
       const nextWeek = new Date(completedAt);
       const day = nextWeek.getDay();
@@ -56,14 +60,14 @@ export const getNextAvailableTime = (task) => {
       nextWeek.setDate(nextWeek.getDate() + daysUntilNextMonday);
       nextWeek.setHours(0, 0, 0, 0);
       return nextWeek;
-    
+
     case 'monthly':
       const nextMonth = new Date(completedAt);
       nextMonth.setMonth(nextMonth.getMonth() + 1);
       nextMonth.setDate(1);
       nextMonth.setHours(0, 0, 0, 0);
       return nextMonth;
-    
+
     default:
       return null;
   }
@@ -71,20 +75,20 @@ export const getNextAvailableTime = (task) => {
 
 export const formatNextAvailableDate = (nextAvailable) => {
   if (!nextAvailable) return '';
-  
+
   const now = new Date();
   const isToday = nextAvailable.toDateString() === now.toDateString();
   const isTomorrow = nextAvailable.toDateString() === new Date(now.getTime() + 24 * 60 * 60 * 1000).toDateString();
-  
+
   if (isToday) {
-    return `Today at ${nextAvailable.toLocaleTimeString('en-US', { 
-      hour: '2-digit', 
-      minute: '2-digit' 
+    return `Today at ${nextAvailable.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit'
     })}`;
   } else if (isTomorrow) {
-    return `Tomorrow at ${nextAvailable.toLocaleTimeString('en-US', { 
-      hour: '2-digit', 
-      minute: '2-digit' 
+    return `Tomorrow at ${nextAvailable.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit'
     })}`;
   } else {
     return nextAvailable.toLocaleString('en-US', {
@@ -106,10 +110,13 @@ export const sortTasks = (tasks, sortBy, sortOrder) => {
         aValue = new Date(a.created_at || 0);
         bValue = new Date(b.created_at || 0);
         break;
-      case 'completed_at':
-        aValue = new Date(a.completed_at || 0);
-        bValue = new Date(b.completed_at || 0);
+      case 'completed_at': {
+        const aAssignment = Array.isArray(a.task_assignments) ? a.task_assignments[0] : null;
+        const bAssignment = Array.isArray(b.task_assignments) ? b.task_assignments[0] : null;
+        aValue = new Date(aAssignment?.completed_at || 0);
+        bValue = new Date(bAssignment?.completed_at || 0);
         break;
+      }
       case 'title':
         aValue = a.title?.toLowerCase() || '';
         bValue = b.title?.toLowerCase() || '';
@@ -123,7 +130,7 @@ export const sortTasks = (tasks, sortBy, sortOrder) => {
           'weekly': 4,
           'monthly': 5,
         };
-        
+
         aValue = frequencyOrder[a.frequency?.toLowerCase()] || 999;
         bValue = frequencyOrder[b.frequency?.toLowerCase()] || 999;
         break;
@@ -137,11 +144,11 @@ export const sortTasks = (tasks, sortBy, sortOrder) => {
   });
 };
 
-export const filterTasksByStatus = (tasks, statuses) => {
+export function filterTasksByStatus(tasks, statuses) {
   return tasks.filter(task => {
-    if (statuses.includes(null) && (!task.status || task.status === '')) {
-      return true;
-    }
-    return statuses.includes(task.status);
+    const assignmentStatus = Array.isArray(task.task_assignments)
+      ? task.task_assignments[0]?.status
+      : undefined;
+    return statuses.includes(assignmentStatus);
   });
-};
+}

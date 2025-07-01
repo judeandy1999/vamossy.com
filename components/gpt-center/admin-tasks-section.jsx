@@ -37,13 +37,13 @@ export default function TasksSection({
       />
 
       {/* Task Results Summary */}
-      <div className="justify-self-end w-fit bg-white px-4 py-2 rounded-lg border border-gray-200">
+      {/* <div className="justify-self-end w-fit bg-white px-4 py-2 rounded-lg border border-gray-200">
         <p className="text-sm text-gray-600">
           Showing {filteredTasks.length} of {allTasks.length} tasks
         </p>
       </div>
 
-      <AdminTaskStatistics filteredTasks={filteredTasks} />
+      <AdminTaskStatistics filteredTasks={filteredTasks} /> */}
 
       <AdminTasksTable
         filteredTasks={filteredTasks}

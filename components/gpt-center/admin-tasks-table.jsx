@@ -54,9 +54,6 @@ export default function AdminTasksTable({
                 Assigned To
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Status
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Frequency
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -78,7 +75,7 @@ export default function AdminTasksTable({
               filteredTasks.map((task) => (
                 <tr key={task.id} className="cursor-pointer hover:bg-gray-50" onClick={() => onViewTask(task)}>
                   {/* Task Info */}
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 max-w-xs">
                     <div>
                       <div className="text-sm font-medium text-gray-900">{task.title}</div>
                       <div className="text-sm text-gray-500 truncate max-w-xs">
@@ -93,35 +90,40 @@ export default function AdminTasksTable({
                           className="inline-flex items-center text-xs text-blue-600 hover:text-blue-800 mt-1"
                         >
                           <ExternalLink className="h-3 w-3 mr-1" />
-                          GPT Link
+                          Project Link
                         </a>
                       )}
                     </div>
                   </td>
 
-                  {/* Assigned User */}
+                  {/* Assigned Users */}
                   <td className="px-6 py-4">
-                    <div className="flex items-center">
-                      <User className="h-4 w-4 text-gray-400 mr-2" />
-                      <div>
-                        <div className="text-sm font-medium text-gray-900">
-                          {task.users?.name || task.users?.email || 'Unassigned'}
-                        </div>
-                        {task.users?.email && task.users?.name && (
-                          <div className="text-xs text-gray-500">{task.users.email}</div>
-                        )}
-                      </div>
+                    <div className="flex flex-col gap-1">
+                      {(task.task_assignments && task.task_assignments.length > 0) ? (
+                        task.task_assignments.map((assignment) => (
+                          <div key={assignment.user_id} className="flex items-center">
+                            <User className="h-4 w-4 text-gray-400 mr-2" />
+                            <span className="text-sm font-medium text-gray-900">
+                              {assignment.users?.name || assignment.users?.email || 'Unknown'}
+                            </span>
+                            {assignment.users?.email && assignment.users?.name && (
+                              <span className="text-xs text-gray-500 ml-1">({assignment.users.email})</span>
+                            )}
+                            {getStatusBadge(assignment.status)}
+                            {assignment.status === 'completed' && assignment.completed_at && (
+                              <div className="text-xs text-gray-500 mt-1">
+                                {new Date(assignment.completed_at).toLocaleDateString()}
+                              </div>
+                            )}
+                          </div>
+                        ))
+                      ) : (
+                        <span className="flex text-sm font-medium text-gray-900">
+                          <User className="h-4 w-4 text-gray-400 mr-2" />
+                          Unassigned
+                        </span>
+                      )}
                     </div>
-                  </td>
-
-                  {/* Status */}
-                  <td className="px-6 py-4">
-                    {getStatusBadge(task.status)}
-                    {task.status === 'completed' && task.completed_at && (
-                      <div className="text-xs text-gray-500 mt-1">
-                        {new Date(task.completed_at).toLocaleDateString()}
-                      </div>
-                    )}
                   </td>
 
                   {/* Frequency */}
