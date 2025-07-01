@@ -50,6 +50,27 @@ export default function UserRow({
     return displayName.charAt(0).toUpperCase()
   }
 
+  const formatCreationDate = (dateString) => {
+    if (!dateString) return 'Unknown';
+    
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffTime = Math.abs(now - date);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 1) return 'Today';
+    if (diffDays === 2) return 'Yesterday';
+    if (diffDays <= 7) return `${diffDays - 1} days ago`;
+    if (diffDays <= 30) return `${Math.ceil((diffDays - 1) / 7)} weeks ago`;
+    if (diffDays <= 365) return `${Math.ceil((diffDays - 1) / 30)} months ago`;
+    
+    return date.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric' 
+    });
+  };
+
   const getRoleBadge = (role) => {
     const config = ROLE_CONFIG[role] || ROLE_CONFIG.user;
     const Icon = config.icon;
@@ -88,6 +109,9 @@ export default function UserRow({
             <div className="text-sm text-gray-500 flex items-center gap-1">
               <Mail className="h-3 w-3" />
               {user.email}
+            </div>
+            <div className="text-xs text-gray-400 mt-1">
+              Joined {formatCreationDate(user.created_at)}
             </div>
           </div>
         </div>
