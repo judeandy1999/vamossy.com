@@ -54,6 +54,22 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'No content to evaluate' });
     }
 
+    const includeWorkAnalysis = fileUrl && fileContent && fileContent.trim().length > 0;
+
+    const evaluationJsonFields = `
+{
+  "score": [number between 0-100],
+  "feedback": "[detailed feedback on the work quality, completeness, and areas for improvement]",
+  "strengths": "[what was done well]",
+  "improvements": "[specific suggestions for improvement]",
+  "completeness": "[assessment of task completion]"${
+    includeWorkAnalysis ? `,
+  "workanalysis": "[analysis of the file content]"`
+    : ''
+  }
+}
+`;
+
     const evaluationPromptToUse = `
 You are an expert task evaluator. Please evaluate the following task completion log and provide structured feedback.
 
@@ -65,14 +81,7 @@ Completed Work Log:
 ${contentToEvaluate}
 
 Please provide an evaluation in JSON format only (no markdown, no code blocks, just pure JSON):
-{
-  "score": [number between 0-100],
-  "feedback": "[detailed feedback on the work quality, completeness, and areas for improvement]",
-  "strengths": "[what was done well]",
-  "improvements": "[specific suggestions for improvement]",
-  "completeness": "[assessment of task completion]",
-  "workanalysis": "[analysis of the file content if applicable]"
-}
+${evaluationJsonFields}
 
 Consider these criteria:
 1. Task completion and adherence to requirements
