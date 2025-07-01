@@ -98,6 +98,31 @@ export function useUserManagement(session) {
     return users.filter(user => user.role === role);
   };
 
+  const sortUsers = (users, sortOrder) => {
+    if (!sortOrder || sortOrder === 'default') return users;
+    
+    const sortedUsers = [...users];
+    
+    if (sortOrder === 'alphabetical') {
+      return sortedUsers.sort((a, b) => {
+        // Sort by name first, if name doesn't exist, use email
+        const nameA = (a.name || a.email || '').toLowerCase();
+        const nameB = (b.name || b.email || '').toLowerCase();
+        return nameA.localeCompare(nameB);
+      });
+    }
+    
+    if (sortOrder === 'creation') {
+      return sortedUsers.sort((a, b) => {
+        const dateA = new Date(a.created_at || 0);
+        const dateB = new Date(b.created_at || 0);
+        return dateB - dateA; // Most recent first
+      });
+    }
+    
+    return sortedUsers;
+  };
+
   useEffect(() => {
     if (session?.user) {
       fetchUsers();
@@ -113,5 +138,6 @@ export function useUserManagement(session) {
     getUserStats,
     searchUsers,
     filterUsersByRole,
+    sortUsers,
   };
 }
