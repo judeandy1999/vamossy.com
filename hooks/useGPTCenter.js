@@ -27,7 +27,6 @@ export function useGPTCenter(session = null) {
       });
 
       const data = await response.json();
-      console.log('Fetched tasks:', data);
       
       if (response.ok) {
         setTasks(data.tasks || []);
@@ -125,21 +124,20 @@ export function useGPTCenter(session = null) {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error);
 
-      showToast('Task updated successfully!', 'success');
-
       setTasks(prevTasks =>
         prevTasks.map(task =>
-          task.id === data.task.id ? { ...task, ...data.task } : task
+          task.id === data.task.id ? data.task : task
         )
       );
       if (userRole === 'admin') {
         setAllTasks(prevTasks =>
           prevTasks.map(task =>
-            task.id === data.task.id ? { ...task, ...data.task } : task
+            task.id === data.task.id ? data.task : task
           )
         );
       }
 
+      showToast('Task updated successfully!', 'success');
     } catch (err) {
       showToast('Failed to update task', 'error');
       throw err;
@@ -173,8 +171,6 @@ export function useGPTCenter(session = null) {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error);
 
-      showToast(`Task status updated to ${status.replace('_', ' ')}!`, 'success');
-
       setTasks(prevTasks =>
         prevTasks.map(task =>
           task.id === taskId
@@ -189,7 +185,6 @@ export function useGPTCenter(session = null) {
             : task
         )
       );
-
       if (userRole === 'admin') {
         setAllTasks(prevTasks =>
           prevTasks.map(task =>
@@ -206,6 +201,8 @@ export function useGPTCenter(session = null) {
           )
         );
       }
+
+      showToast(`Task status updated to ${status.replace('_', ' ')}!`, 'success');
     } catch (err) {
       showToast('Failed to update task status', 'error');
       throw err;
