@@ -226,7 +226,28 @@ async function handlePut(req, res, user, userRole) {
       }
     }
 
-    return res.status(200).json({ task: updatedTask });
+    const { data: fullTask, error: fetchError } = await supabase
+      .from('tasks')
+      .select(`
+        *,
+        task_assignments (
+          user_id,
+          status,
+          completed_at,
+          users (
+            name,
+            email
+          )
+        )
+      `)
+      .eq('id', id)
+      .single();
+
+    if (fetchError) {
+      return res.status(500).json({ error: 'Failed to fetch updated task' });
+    }
+
+    return res.status(200).json({ task: fullTask });
   } catch (error) {
     return res.status(500).json({ 
       error: 'Failed to update task',
