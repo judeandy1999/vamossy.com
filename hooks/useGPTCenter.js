@@ -110,10 +110,7 @@ export function useGPTCenter(session = null) {
   const updateTask = useCallback(async (taskData) => {
     try {
       const { data: { session: currentSession }, error: sessionError } = await supabase.auth.getSession();
-      
-      if (sessionError || !currentSession) {
-        throw new Error('Not authenticated');
-      }
+      if (sessionError || !currentSession) throw new Error('Not authenticated');
 
       const response = await fetch('/api/gpt-center/tasks', {
         method: 'PUT',
@@ -125,23 +122,29 @@ export function useGPTCenter(session = null) {
         body: JSON.stringify(taskData)
       });
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || `HTTP ${response.status}`);
-      }
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error);
 
       showToast('Task updated successfully!', 'success');
-      
-      await fetchTasks();
+
+      setTasks(prevTasks =>
+        prevTasks.map(task =>
+          task.id === data.task.id ? { ...task, ...data.task } : task
+        )
+      );
       if (userRole === 'admin') {
-        await fetchAllTasks();
+        setAllTasks(prevTasks =>
+          prevTasks.map(task =>
+            task.id === data.task.id ? { ...task, ...data.task } : task
+          )
+        );
       }
-      
+
     } catch (err) {
       showToast('Failed to update task', 'error');
       throw err;
     }
-  }, [session, fetchTasks, fetchAllTasks, userRole, showToast]);
+  }, [session, userRole, showToast]);
 
   const updateTaskStatus = useCallback(async (taskId, status, completedAt) => {
     if (updatingTasks.has(taskId)) return;
@@ -150,10 +153,7 @@ export function useGPTCenter(session = null) {
     
     try {
       const { data: { session: currentSession }, error: sessionError } = await supabase.auth.getSession();
-      
-      if (sessionError || !currentSession) {
-        throw new Error('Not authenticated');
-      }
+      if (sessionError || !currentSession) throw new Error('Not authenticated');
 
       const response = await fetch('/api/gpt-center/tasks', {
         method: 'PUT',
@@ -170,18 +170,42 @@ export function useGPTCenter(session = null) {
         })
       });
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || `HTTP ${response.status}`);
-      }
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error);
 
       showToast(`Task status updated to ${status.replace('_', ' ')}!`, 'success');
-      
-      await fetchTasks();
+
+      setTasks(prevTasks =>
+        prevTasks.map(task =>
+          task.id === taskId
+            ? {
+              ...task,
+              task_assignments: task.task_assignments.map(assignment =>
+                assignment.user_id === currentSession.user.id
+                  ? { ...assignment, status, completed_at: completedAt || null }
+                  : assignment
+              )
+            }
+            : task
+        )
+      );
+
       if (userRole === 'admin') {
-        await fetchAllTasks();
+        setAllTasks(prevTasks =>
+          prevTasks.map(task =>
+            task.id === taskId
+              ? {
+                ...task,
+                task_assignments: task.task_assignments.map(assignment =>
+                  assignment.user_id === currentSession.user.id
+                    ? { ...assignment, status, completed_at: completedAt || null }
+                    : assignment
+                )
+              }
+            : task
+          )
+        );
       }
-      
     } catch (err) {
       showToast('Failed to update task status', 'error');
       throw err;
@@ -192,7 +216,7 @@ export function useGPTCenter(session = null) {
         return newSet;
       });
     }
-  }, [session, fetchTasks, fetchAllTasks, userRole, showToast, updatingTasks]);
+  }, [session, userRole, updatingTasks, showToast]);
 
   const checkAndResetTasks = useCallback(async () => {
     if (!tasks.length || !session?.user) return;
