@@ -17,7 +17,7 @@ export default async function handler(req, res) {
 
     const { data, error } = await supabase
       .from('users')
-      .select('id, email, name, role, avatar_url')
+      .select('id, email, name, role, avatar_url, created_at')
       .order('email');
 
     if (error) {

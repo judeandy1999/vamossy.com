@@ -8,7 +8,7 @@ export default function UserTable({
   error, 
   session, 
   handleRoleChange, 
-  updatingUserId 
+  updatingUserId
 }) {
   return (
     <div className="bg-white rounded-lg shadow">
