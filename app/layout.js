@@ -1,7 +1,9 @@
 import "./globals.css";
 import localFont from 'next/font/local';
 import Header from "@/components/shared/header";
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { CookieConsentProvider } from "@/contexts/cookie-consent-context";
+import CookieConsentBanner from "@/components/ui/cookie-consent-banner";
 
 export const metadata = {
   title: "Vamossy",
@@ -37,11 +39,14 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={proximaNova.className}>
       <body className={`${proximaNova.className}`}>
+        <CookieConsentProvider>
           <Header />
           <div className="height-[100vh] z-4">
             {children}
             <SpeedInsights />
           </div>
+          <CookieConsentBanner />
+        </CookieConsentProvider>
       </body>
     </html>
   );
