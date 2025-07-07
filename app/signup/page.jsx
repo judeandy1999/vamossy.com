@@ -122,20 +122,20 @@ export default function SignupPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 font-sans p-4">
-      <div className="bg-white/90 backdrop-blur-sm shadow-lg rounded-2xl p-8 max-w-md w-full flex flex-col gap-6 text-center">
-        <h1 className="text-3xl font-bold text-gray-800">
-          Create an <span className="text-yellow-400">Account</span>
+      <div className="bg-[#262626]/90 backdrop-blur-sm shadow-lg rounded-2xl p-8 max-w-md w-full flex flex-col gap-6 text-center">
+        <h1 className="text-3xl font-bold text-gray-100">
+          Create an <span className="text-[#f4c30f]">Account</span>
         </h1>
 
         {successMessage ? (
           <div className="flex flex-col gap-4 items-center">
-            <p className="text-green-600 text-sm">{successMessage}</p>
-            <p className="text-gray-500 text-xs">Please check your inbox and confirm your email.</p>
+            <p className="text-green-400 text-sm">{successMessage}</p>
+            <p className="text-gray-100 text-xs">Please check your inbox and confirm your email.</p>
             <button
               onClick={handleResendConfirmation}
               disabled={loading || resendCooldown > 0}
               className={`mt-2 text-xs ${
-                resendCooldown > 0 ? 'text-gray-400' : 'text-blue-500 hover:underline'
+                resendCooldown > 0 ? 'text-gray-400' : 'text-[#f4c30f] hover:underline'
               }`}
             >
               {resendCooldown > 0
@@ -144,7 +144,7 @@ export default function SignupPage() {
             </button>
             <a
               href="/login"
-              className="mt-2 inline-block bg-yellow-400 hover:bg-yellow-500 text-gray-300 rounded-full py-2 px-4 font-medium transition-colors"
+              className="mt-2 inline-block bg-[#f4c30f] hover:bg-yellow-500 text-gray-300 rounded-full py-2 px-4 font-medium transition-colors"
             >
               Go to Login
             </a>
@@ -157,7 +157,7 @@ export default function SignupPage() {
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               required
-              className="px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-sm"
+              className="text-white px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#f4c30f] text-sm"
             />
             <input
               type="text"
@@ -165,7 +165,7 @@ export default function SignupPage() {
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
               required
-              className="px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-sm"
+              className="text-white px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#f4c30f] text-sm"
             />
             <input
               type="email"
@@ -173,7 +173,7 @@ export default function SignupPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-sm"
+              className="text-white px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#f4c30f] text-sm"
             />
             <input
               type="password"
@@ -181,16 +181,16 @@ export default function SignupPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-sm"
+              className="text-white px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#f4c30f] text-sm"
             />
-            <p className="text-xs text-gray-500 -mt-2 mb-2">Password must be at least 8 characters.</p>
+            <p className="text-xs text-gray-100 -mt-2 mb-2">Password must be at least 8 characters.</p>
             <input
               type="password"
               placeholder="Repeat Password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
-              className="px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-sm"
+              className="text-white px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#f4c30f] text-sm"
             />
 
             {error && <p className="text-xs text-red-500 transition-opacity duration-500">{error}</p>}
@@ -198,7 +198,7 @@ export default function SignupPage() {
             <button
               type="submit"
               disabled={loading}
-              className="bg-yellow-400 hover:bg-yellow-500 text-gray-300 rounded-full py-2 font-medium transition-colors"
+              className="bg-[#f4c30f] hover:bg-yellow-500 text-gray-100 rounded-full py-2 font-medium transition-colors"
             >
               {loading ? 'Signing up...' : 'Sign up'}
             </button>
@@ -206,9 +206,9 @@ export default function SignupPage() {
         )}
 
         {!successMessage && (
-          <p className="text-center text-sm text-gray-600">
+          <p className="text-center text-sm text-gray-100">
             Already have an account?{' '}
-            <a href="/login" className="text-yellow-400 hover:underline">
+            <a href="/login" className="text-[#f4c30f] hover:underline">
               Log in
             </a>
           </p>
