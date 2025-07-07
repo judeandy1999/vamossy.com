@@ -74,7 +74,7 @@ export default function LoginPage() {
           className="flex items-center justify-center gap-2 bg-white border border-gray-300 rounded-full py-2 px-4 shadow-sm hover:shadow transition transform hover:scale-105"
         >
           <FcGoogle size={20} />
-          <span className="text-sm font-medium text-gray-600">Sign in with Google</span>
+          <span className="text-sm font-medium text-gray-700">Sign in with Google</span>
         </button>
 
         {/* Divider */}
@@ -90,7 +90,7 @@ export default function LoginPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-sm"
+            className="text-white px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-sm"
           />
           <input
             type="password"
@@ -98,7 +98,7 @@ export default function LoginPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-sm"
+            className="text-white px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-sm"
           />
 
           {(error || hubSpotError) && (
@@ -108,7 +108,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading || hubSpotLoading}
-            className="bg-[#f4c30f] hover:bg-yellow-500 text-gray-300 rounded-full py-2 font-medium transition-colors"
+            className="bg-[#f4c30f] hover:bg-yellow-500 text-gray-100 rounded-full py-2 font-medium transition-colors"
           >
             {loading || hubSpotLoading ? 'Logging in...' : 'Sign in'}
           </button>
