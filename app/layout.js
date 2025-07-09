@@ -63,6 +63,20 @@ export default function RootLayout({ children }) {
           src="https://www.googletagmanager.com/gtag/js?id=G-0MPGTS19F3"
           strategy="beforeInteractive"
         />
+        <Script
+          id="ga-config"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('config', 'G-0MPGTS19F3', {
+                page_title: document.title,
+                page_location: window.location.href
+              });
+            `,
+          }}
+        />
         
         <CookieConsentProvider>
           <Header />
