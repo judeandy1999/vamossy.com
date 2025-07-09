@@ -10,6 +10,7 @@ const getPageTitle = (pathname) => {
   if (pathname === '/user-dashboard') return 'Dashboard'
   if (pathname === '/user-dashboard/create-article') return 'Create Article'
   if (pathname === '/user-dashboard/user-management') return 'Role Management'
+  if (pathname === '/user-dashboard/analytics') return 'Analytics'
   if (pathname === '/user-dashboard/options') return 'Wiki & Tab Management'
   if (pathname === '/user-dashboard/account-settings') return 'Account Settings'
   if (pathname === '/dashboard/billing') return 'Billing'

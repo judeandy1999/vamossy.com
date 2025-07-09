@@ -17,7 +17,7 @@ export const CookieConsentProvider = ({ children }) => {
       setShowBanner(false);
       
       // Initialize services based on consent
-      CookieManager.initializeAnalytics();
+      CookieManager.initializeAnalytics(process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID);
       CookieManager.initializeMarketing();
       updateGoogleAnalyticsConsent(true);
     } else {
@@ -39,7 +39,7 @@ export const CookieConsentProvider = ({ children }) => {
     CookieManager.setCookie('cookieConsent', 'true', { expires: 365 }); // 1 year
     
     // Initialize analytics and marketing
-    CookieManager.initializeAnalytics();
+    CookieManager.initializeAnalytics(process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID);
     CookieManager.initializeMarketing();
     updateGoogleAnalyticsConsent(true);
   };
