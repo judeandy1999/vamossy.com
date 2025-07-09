@@ -4,10 +4,14 @@ import Header from "@/components/shared/header";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { CookieConsentProvider } from "@/contexts/cookie-consent-context";
 import CookieConsentBanner from "@/components/ui/cookie-consent-banner";
+import Script from 'next/script';
 
 export const metadata = {
   title: "Vamossy",
   description: "YOUR AI-POWERED ECOMMERCE GROWTH CONSULTING AGENCY",
+  verification: {
+    google: "NlE98BHOIRMISy-mkyutFS59QmEzKPr-EKQBgd_NdOc",
+  },
 };
 
 const proximaNova = localFont({
@@ -39,6 +43,27 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={proximaNova.className}>
       <body className={`${proximaNova.className}`}>
+        {/* Google Analytics 4 - Consent Mode */}
+        <Script
+          id="ga-consent-mode"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('consent', 'default', {
+                'analytics_storage': 'denied',
+                'ad_storage': 'denied'
+              });
+              gtag('js', new Date());
+            `,
+          }}
+        />
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-0MPGTS19F3"
+          strategy="beforeInteractive"
+        />
+        
         <CookieConsentProvider>
           <Header />
           <div className="height-[100vh] z-4">
