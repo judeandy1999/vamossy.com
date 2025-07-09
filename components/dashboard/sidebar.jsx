@@ -27,7 +27,7 @@ const navItems = [
   { label: 'Role Management', href: '/user-dashboard/user-management', icon: Users, roles: ['admin'] },
   { label: 'Analytics', href: '/user-dashboard/analytics', icon: BarChart3, roles: ['admin'] },
   { label: 'Options', href: '/user-dashboard/options', icon: Settings, roles: ['admin'] },
-  { label: 'Billing & Payments', href: '/dashboard/billing', icon: CreditCard, roles: ['admin', 'user'] },
+  { label: 'Billing & Payments', href: '/user-dashboard/billing', icon: CreditCard, roles: ['admin', 'user'] },
   { label: 'Asset Library', href: '/dashboard/assets', icon: FolderOpen, roles: ['admin', 'user'] },
   { label: 'FAQ', href: '/dashboard/faq', icon: HelpCircle, roles: ['admin', 'user', 'worker'] },
 ]
