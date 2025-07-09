@@ -109,14 +109,35 @@ export const CookieManager = {
   },
 
   // Initialize analytics based on consent
-  initializeAnalytics: () => {
+  initializeAnalytics: (measurementId) => {
     if (!CookieManager.hasConsent()) return;
     
-    // Initialize Google Analytics or other analytics services here
-    if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('consent', 'update', {
-        'analytics_storage': 'granted'
-      });
+    // Initialize Google Analytics 4
+    if (typeof window !== 'undefined' && measurementId) {
+      // Load GA4 script if not already loaded
+      if (!window.gtag) {
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
+        document.head.appendChild(script);
+
+        const inlineScript = document.createElement('script');
+        inlineScript.innerHTML = `
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', '${measurementId}', {
+            page_title: document.title,
+            page_location: window.location.href
+          });
+        `;
+        document.head.appendChild(inlineScript);
+      } else {
+        // Update consent if gtag is already loaded
+        window.gtag('consent', 'update', {
+          'analytics_storage': 'granted'
+        });
+      }
     }
   },
 
