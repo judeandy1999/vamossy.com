@@ -17,13 +17,15 @@ import {
   ChevronRight,
   Bot,
   Zap,
-  Users
+  Users,
+  BarChart3
 } from 'lucide-react'
 
 const navItems = [
   { label: 'Dashboard', href: '/user-dashboard', icon: Home, roles: ['admin', 'worker'] },
   { label: 'Create Article', href: '/user-dashboard/create-article', icon: PenTool, roles: ['admin'] },
   { label: 'Role Management', href: '/user-dashboard/user-management', icon: Users, roles: ['admin'] },
+  { label: 'Analytics', href: '/user-dashboard/analytics', icon: BarChart3, roles: ['admin'] },
   { label: 'Options', href: '/user-dashboard/options', icon: Settings, roles: ['admin'] },
   { label: 'Billing & Payments', href: '/dashboard/billing', icon: CreditCard, roles: ['admin', 'user'] },
   { label: 'Asset Library', href: '/dashboard/assets', icon: FolderOpen, roles: ['admin', 'user'] },
