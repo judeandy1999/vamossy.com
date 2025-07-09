@@ -5,14 +5,18 @@ export async function verifySupabaseAuth(req) {
   const token = authHeader?.split(' ')[1];
 
   if (!token) {
-    return { user: null, error: 'Unauthorized (no token)' };
+    return { success: false, user: null, error: 'Unauthorized (no token)' };
   }
 
-  const { data: { user }, error } = await supabase.auth.getUser(token);
+  try {
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    
+    if (error || !user) {
+      return { success: false, user: null, error: 'Unauthorized' };
+    }
 
-  if (error || !user) {
-    return { user: null, error: 'Unauthorized' };
+    return { success: true, user, error: null };
+  } catch (err) {
+    return { success: false, user: null, error: 'Unauthorized' };
   }
-
-  return { user, error: null };
 }
