@@ -12,7 +12,12 @@ const paypalOptions = {
   intent: 'capture',
 };
 
-export default function PaymentGateway({ amount = 99.99, description = 'Service Payment' }) {
+export default function PaymentGateway({ 
+  amount = 99.99, 
+  description = 'Service Payment', 
+  onSuccess,
+  credits_purchased = 1 
+}) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState(null);
   const [error, setError] = useState(null);
@@ -33,6 +38,9 @@ export default function PaymentGateway({ amount = 99.99, description = 'Service 
         },
         body: JSON.stringify({
           orderID: data.orderID,
+          credits_purchased,
+          amount,
+          description
         }),
       });
 
@@ -41,6 +49,9 @@ export default function PaymentGateway({ amount = 99.99, description = 'Service 
       if (result.success) {
         setPaymentStatus('success');
         setError(null);
+        if (onSuccess) {
+          onSuccess(result);
+        }
       } else {
         setError(result.error || 'Payment failed');
         setPaymentStatus('failed');
