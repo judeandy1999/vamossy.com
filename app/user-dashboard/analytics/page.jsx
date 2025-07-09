@@ -11,8 +11,9 @@ import DeviceAnalytics from '@/components/analytics/device-analytics';
 import TrafficSources from '@/components/analytics/traffic-sources';
 import DateRangeSelector from '@/components/analytics/date-range-selector';
 import LoadingIndicator from '@/components/analytics/loading-indicator';
-import { useState, Suspense } from 'react';
+import { useState, Suspense, useEffect } from 'react';
 import { useAnalyticsData } from '@/hooks/useAnalytics';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 
 // Skeleton components for better perceived performance
 const AnalyticsCardSkeleton = ({ className = "" }) => (
@@ -48,10 +49,39 @@ const ChartSkeleton = ({ className = "" }) => (
   </div>
 );
 
-export default function AnalyticsDashboard() {
+function AnalyticsDashboard() {
   const { status, session } = useAuthWithRedirect();
-  const [dateRange, setDateRange] = useState('7daysAgo');
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  
+  // Get date range from URL params or default to '7daysAgo'
+  const [dateRange, setDateRange] = useState(() => {
+    return searchParams.get('dateRange') || '7daysAgo';
+  });
+  
   const { data: analyticsData, loading, error, lastUpdated, cached, refresh } = useAnalyticsData(dateRange);
+
+  // Update URL when date range changes
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams);
+    if (dateRange !== '7daysAgo') {
+      params.set('dateRange', dateRange);
+    } else {
+      params.delete('dateRange');
+    }
+    
+    const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
+    router.replace(newUrl, { scroll: false });
+  }, [dateRange, searchParams, router, pathname]);
+
+  // Sync state with URL params when they change (e.g., browser back/forward)
+  useEffect(() => {
+    const urlDateRange = searchParams.get('dateRange') || '7daysAgo';
+    if (urlDateRange !== dateRange) {
+      setDateRange(urlDateRange);
+    }
+  }, [searchParams]);
 
   // Show data immediately if available, even while loading fresh data
   const hasData = analyticsData && Object.keys(analyticsData).length > 0;
@@ -152,5 +182,14 @@ export default function AnalyticsDashboard() {
         </Suspense>
       </div>
     </div>
+  );
+}
+
+// Wrap with Suspense for useSearchParams
+export default function AnalyticsDashboardPage() {
+  return (
+    <Suspense fallback={<Spinner />}>
+      <AnalyticsDashboard />
+    </Suspense>
   );
 }
