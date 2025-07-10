@@ -22,12 +22,13 @@ import {
 } from 'lucide-react'
 
 const navItems = [
-  { label: 'Dashboard', href: '/user-dashboard', icon: Home, roles: ['admin', 'worker'] },
+  { label: 'Dashboard', href: '/user-dashboard', icon: Home, roles: ['admin', 'user', 'worker'] },
   { label: 'Create Article', href: '/user-dashboard/create-article', icon: PenTool, roles: ['admin'] },
   { label: 'Role Management', href: '/user-dashboard/user-management', icon: Users, roles: ['admin'] },
   { label: 'Analytics', href: '/user-dashboard/analytics', icon: BarChart3, roles: ['admin'] },
   { label: 'Options', href: '/user-dashboard/options', icon: Settings, roles: ['admin'] },
   { label: 'Booking & Payments', href: '/user-dashboard/booking', icon: CreditCard, roles: ['admin', 'worker', 'user'] },
+  { label: 'Transactions', href: '/user-dashboard/transactions', icon: BarChart3, roles: ['admin', 'user', 'worker'] },
   { label: 'Asset Library', href: '/dashboard/assets', icon: FolderOpen, roles: ['admin', 'user'] },
   { label: 'FAQ', href: '/dashboard/faq', icon: HelpCircle, roles: ['admin', 'user', 'worker'] },
 ]

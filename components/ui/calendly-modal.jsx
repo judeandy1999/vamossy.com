@@ -112,7 +112,9 @@ export default function CalendlyModal({ isOpen, onClose, user, onBookingSuccess 
   };
 
   const createSchedulingLink = async () => {
-    if (!selectedEventType || userCredits < 1) {
+    const requiredCredits = selectedEventType?.duration === 30 ? 0.5 : 1;
+    
+    if (!selectedEventType || userCredits < requiredCredits) {
       setError('Insufficient credits or no event type selected');
       return;
     }
@@ -158,6 +160,8 @@ export default function CalendlyModal({ isOpen, onClose, user, onBookingSuccess 
       const { data: { session } } = await supabase.auth.getSession();
       const accessToken = session?.access_token;
 
+      const creditsToDeduct = selectedEventType?.duration === 30 ? 0.5 : 1;
+
       const response = await fetch('/api/users/deduct-credit', {
         method: 'POST',
         headers: {
@@ -167,7 +171,7 @@ export default function CalendlyModal({ isOpen, onClose, user, onBookingSuccess 
         },
         body: JSON.stringify({
           booking_details: bookingDetails,
-          credits_used: 1
+          credits_used: creditsToDeduct
         }),
       });
 
@@ -262,73 +266,100 @@ export default function CalendlyModal({ isOpen, onClose, user, onBookingSuccess 
     switch (step) {
       case 'loading':
         return (
-          <div className="flex flex-col items-center justify-center p-8">
-            <Spinner />
-            <p className="mt-4 text-gray-300">Loading consultation options...</p>
-          </div>
+          <Spinner />
         );
 
       case 'select':
         return (
           <div className="p-6 w-full">
-            <h3 className="text-xl font-semibold text-gray-200 mb-6 text-center">
+            <h3 className="text-xl font-semibold text-gray-900 mb-6 text-center">
               Select Consultation Type
             </h3>
             
-            {userCredits < 1 ? (
+            {userCredits < 0.5 ? (
               <div className="text-center">
-                <div className="text-yellow-400 mb-4">
+                <div className="text-gray-700 mb-4">
                   You don't have enough credits to book a consultation.
                 </div>
                 <button
                   onClick={onClose}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
                 >
                   Purchase Credits
                 </button>
               </div>
             ) : (
               <div className="space-y-4">
-                {eventTypes.map((eventType) => (
-                  <div
-                    key={eventType.uri}
-                    className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                      selectedEventType?.uri === eventType.uri
-                        ? 'border-yellow-400 bg-yellow-400/10'
-                        : 'border-gray-600 hover:border-gray-500'
-                    }`}
-                    onClick={() => handleSelectEventType(eventType)}
-                  >
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h4 className="font-medium text-gray-200">{eventType.name}</h4>
-                        <p className="text-sm text-gray-400 mt-1">
-                          Duration: {eventType.duration} minutes
-                        </p>
-                        {eventType.description && (
-                          <p className="text-sm text-gray-300 mt-2">
-                            {eventType.description}
+                {eventTypes.map((eventType) => {
+                  const requiredCredits = eventType.duration === 30 ? 0.5 : 1;
+                  const canAfford = userCredits >= requiredCredits;
+                  
+                  return (
+                    <div
+                      key={eventType.uri}
+                      className={`p-4 rounded-md border transition-all ${
+                        !canAfford 
+                          ? 'border-gray-200 bg-gray-50 opacity-60 cursor-not-allowed'
+                          : selectedEventType?.uri === eventType.uri
+                          ? 'border-blue-500 bg-blue-50 cursor-pointer'
+                          : 'border-gray-300 hover:border-gray-400 cursor-pointer'
+                      }`}
+                      onClick={() => canAfford && handleSelectEventType(eventType)}
+                    >
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h4 className={`font-medium ${canAfford ? 'text-gray-900' : 'text-gray-500'}`}>
+                            {eventType.name}
+                          </h4>
+                          <p className={`text-sm mt-1 ${canAfford ? 'text-gray-600' : 'text-gray-400'}`}>
+                            Duration: {eventType.duration} minutes
                           </p>
-                        )}
-                      </div>
-                      <div className="text-right">
-                        <div className="text-sm text-yellow-400">
-                          Uses 1 credit
+                          {eventType.description && (
+                            <p className={`text-sm mt-2 ${canAfford ? 'text-gray-700' : 'text-gray-400'}`}>
+                              {eventType.description}
+                            </p>
+                          )}
+                          {!canAfford && (
+                            <p className="text-sm text-red-600 mt-2">
+                              Insufficient credits
+                            </p>
+                          )}
+                        </div>
+                        <div className="text-right">
+                          <div className={`text-sm font-medium ${canAfford ? 'text-gray-700' : 'text-gray-400'}`}>
+                            {`${eventType.duration === 30 ? 0.5 : 1 } credit${eventType.duration === 30 ? '' : 's'}`}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
                 
                 {selectedEventType && (
                   <div className="mt-6 text-center">
-                    <button
-                      onClick={handleProceedToBooking}
-                      disabled={loading}
-                      className="px-6 py-3 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
-                    >
-                      {loading ? 'Creating booking...' : 'Proceed to Schedule'}
-                    </button>
+                    {(() => {
+                      const requiredCredits = selectedEventType.duration === 30 ? 0.5 : 1;
+                      const canAfford = userCredits >= requiredCredits;
+                      
+                      return (
+                        <button
+                          onClick={handleProceedToBooking}
+                          disabled={loading || !canAfford}
+                          className={`cursor-pointer px-6 py-3 rounded-md font-medium transition-all ${
+                            !canAfford
+                              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                              : 'bg-blue-600 text-white hover:bg-blue-700'
+                          } disabled:opacity-50 disabled:cursor-not-allowed`}
+                        >
+                          {loading 
+                            ? 'Creating booking...' 
+                            : !canAfford 
+                            ? `Need ${requiredCredits} credits` 
+                            : 'Proceed to Schedule'
+                          }
+                        </button>
+                      );
+                    })()}
                   </div>
                 )}
               </div>
@@ -342,12 +373,12 @@ export default function CalendlyModal({ isOpen, onClose, user, onBookingSuccess 
             {!calendlyScriptLoaded || !schedulingLink ? (
               <div className="flex flex-col items-center justify-center p-8 h-full">
                 <Spinner />
-                <p className="mt-4 text-gray-300">Loading booking calendar...</p>
+                <p className="mt-4 text-gray-600">Loading booking calendar...</p>
               </div>
             ) : (
-              <div className="h-[600px] w-full">
+              <div className="h-[90vh] mt-[-30px] w-full">
                 <div
-                  className="calendly-inline-widget w-full h-full bg-white rounded-lg"
+                  className="calendly-inline-widget w-full h-full bg-white rounded-md"
                   style={{ minWidth: '320px', height: '100%' }}
                 />
               </div>
@@ -363,16 +394,16 @@ export default function CalendlyModal({ isOpen, onClose, user, onBookingSuccess 
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h3 className="text-xl font-semibold text-gray-200 mb-2">Booking Confirmed!</h3>
-            <p className="text-gray-300 mb-4">
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">Booking Confirmed!</h3>
+            <p className="text-gray-600 mb-4">
               Your consultation has been scheduled successfully. You'll receive a confirmation email shortly.
             </p>
-            <p className="text-sm text-yellow-400 mb-6">
-              1 credit has been deducted. Remaining credits: {userCredits}
+            <p className="text-sm text-gray-700 mb-6 bg-gray-50 p-3 rounded-md">
+              {selectedEventType?.duration === 30 ? '0.5' : '1'} credit has been deducted. Remaining credits: {userCredits}
             </p>
             <button
               onClick={onClose}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
             >
               Close
             </button>
@@ -382,10 +413,10 @@ export default function CalendlyModal({ isOpen, onClose, user, onBookingSuccess 
       case 'error':
         return (
           <div className="p-6 text-center">
-            <div className="text-red-400 mb-4">{error}</div>
+            <div className="text-red-600 mb-4 bg-red-50 p-4 rounded-md border border-red-200">{error}</div>
             <button
               onClick={handleRetry}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
             >
               Try Again
             </button>
@@ -397,7 +428,6 @@ export default function CalendlyModal({ isOpen, onClose, user, onBookingSuccess 
     }
   };
 
-  // Cleanup event listener on unmount
   useEffect(() => {
     return () => {
       if (window.removeEventListener) {
@@ -410,7 +440,7 @@ export default function CalendlyModal({ isOpen, onClose, user, onBookingSuccess 
     <AnimatePresence>
       {isOpen && (
         <motion.div 
-          className="fixed inset-0 z-[9999] bg-black/70 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4"
+          className="fixed inset-0 z-[9999] bg-black/50 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4"
           variants={overlayVariants}
           initial="hidden"
           animate="visible"
@@ -418,29 +448,29 @@ export default function CalendlyModal({ isOpen, onClose, user, onBookingSuccess 
         >
           <motion.div
             ref={modalRef}
-            className="relative rounded-2xl shadow-2xl border border-yellow-400/20 w-full max-w-sm sm:max-w-2xl md:max-w-4xl max-h-[95vh] overflow-hidden flex flex-col bg-gradient-to-br from-[#262626] to-gray-900 backdrop-blur-lg"
+            className="relative rounded-lg shadow-xl border border-gray-300 w-full max-w-sm sm:max-w-2xl md:max-w-4xl min-h-[80vh] overflow-hidden flex flex-col bg-white"
             variants={modalVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
             style={{
               pointerEvents: 'auto',
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 193, 7, 0.2)',
+              boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
             }}
           >
             {/* Modal header */}
-            <div className="w-full h-14 sm:min-h-16 flex items-center justify-between px-4 sm:px-8 select-none relative bg-gradient-to-br from-[#262626] to-gray-900 border-b border-yellow-400/20">
+            <div className="w-full h-14 sm:min-h-16 flex items-center justify-between px-4 sm:px-8 select-none relative bg-gray-50 border-b border-gray-200">
               <div className="flex items-center space-x-4">
-                <span className="text-lg sm:text-2xl font-bold text-gray-200 tracking-wide">
+                <span className="text-lg sm:text-xl font-semibold text-gray-900">
                   Book Your Consultation
                 </span>
-                <div className="text-sm text-yellow-400">
+                <div className="text-sm text-gray-600 bg-gray-100 px-2 py-1 rounded">
                   Credits: {userCredits}
                 </div>
               </div>
               <button
                 onClick={onClose}
-                className="cursor-pointer w-8 h-8 rounded-full border-2 border-yellow-500 bg-[#262626] hover:bg-gray-800 text-yellow-500 flex items-center justify-center transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                className="cursor-pointer w-8 h-8 rounded-full border border-gray-300 bg-white hover:bg-gray-50 text-gray-600 hover:text-gray-800 flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 aria-label="Close modal"
               >
                 <X size={16} className="sm:w-5 sm:h-5" />
@@ -448,7 +478,7 @@ export default function CalendlyModal({ isOpen, onClose, user, onBookingSuccess 
             </div>
             
             {/* Modal content */}
-            <div className="flex-1 flex justify-center items-center w-full bg-[#262626] overflow-y-auto">
+            <div className="flex-1 max-h-[80vh] flex justify-center items-center w-full bg-white overflow-y-auto">
               {renderContent()}
             </div>
           </motion.div>

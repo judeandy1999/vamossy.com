@@ -14,7 +14,7 @@ import Image from 'next/image';
 export default function LoginPage() {
   const router = useRouter();
   const { status } = useAuthWithRedirect();
-  const { sendToKlaviyo, loading: hubSpotLoading, error: hubSpotError } = useSendToKlaviyo();
+  const { sendToKlaviyo, loading: klaviyoLoading, error: klaviyoError } = useSendToKlaviyo();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -101,16 +101,16 @@ export default function LoginPage() {
             className="text-white px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-sm"
           />
 
-          {(error || hubSpotError) && (
-            <p className="text-xs text-red-500">{error || hubSpotError}</p>
+          {(error || klaviyoError) && (
+            <p className="text-xs text-red-500">{error || klaviyoError}</p>
           )}
 
           <button
             type="submit"
-            disabled={loading || hubSpotLoading}
+            disabled={loading || klaviyoLoading}
             className="bg-[#f4c30f] hover:bg-yellow-500 text-gray-100 rounded-full py-2 font-medium transition-colors"
           >
-            {loading || hubSpotLoading ? 'Logging in...' : 'Sign in'}
+            {loading || klaviyoLoading ? 'Logging in...' : 'Sign in'}
           </button>
         </form>
 

@@ -27,7 +27,7 @@ export default async function handler(req, res) {
 
     const totalCredits = credits.reduce((sum, record) => sum + record.credits_remaining, 0);
 
-    if (totalCredits < 1) {
+    if (totalCredits < 0.5) {
       return res.status(400).json({ 
         error: 'Insufficient credits',
         canBook: false,
