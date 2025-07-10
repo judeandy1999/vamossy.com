@@ -2,78 +2,39 @@
 
 import { useState, useEffect } from 'react';
 import { useAuthWithRedirect } from '@/hooks/useAuthWithRedirect';
+import { useBooking } from '@/hooks/useBooking';
 import PaymentGateway from '@/components/payment/payment-gateway';
 import InvoiceGenerator from '@/components/payment/invoice-generator';
 import CalendlyModal from '@/components/ui/calendly-modal';
 import Spinner from '@/components/ui/spinner';
 import { Calendar, Package, Clock, CheckCircle, AlertTriangle, Users } from 'lucide-react';
-import { supabase } from '@/utils/client';
 
 const SINGLE_CONSULTATION_PRICE = 149.99;
 
 export default function BookingPage() {
   const { session, status } = useAuthWithRedirect();
+  const { 
+    userCredits, 
+    scheduledBookings, 
+    loading: bookingLoading, 
+    error: bookingError,
+    refreshData 
+  } = useBooking();
+  
   const [bookingMethod, setBookingMethod] = useState('single');
   const [selectedCredits, setSelectedCredits] = useState(4);
   const [paymentMethod, setPaymentMethod] = useState('instant');
   const [showCalendly, setShowCalendly] = useState(false);
   const [bookingStep, setBookingStep] = useState('select');
-  const [userCredits, setUserCredits] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [canBook, setCanBook] = useState(false);
-  const [scheduledBookings, setScheduledBookings] = useState([]);
+
+  const canBook = userCredits != 0;
 
   useEffect(() => {
     if (session?.user) {
-      fetchUserCredits();
-      fetchScheduledBookings();
+      refreshData(session.user.email).finally(() => setLoading(false));
     }
-  }, [session]);
-
-  const fetchUserCredits = async () => {
-    try {
-      const { data: { session: currentSession } } = await supabase.auth.getSession();
-      const accessToken = currentSession?.access_token;
-
-      const response = await fetch('/api/users/credits', {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setUserCredits(data.credits);
-        setCanBook(data.credits > 0);
-      }
-    } catch (error) {
-      console.error('Failed to fetch credits:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchScheduledBookings = async () => {
-    try {
-      const { data: { session: currentSession } } = await supabase.auth.getSession();
-      const accessToken = currentSession?.access_token;
-
-      const response = await fetch(`/api/calendly/scheduled-events?invitee_email=${session.user.email}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setScheduledBookings(data.collection || []);
-      }
-    } catch (error) {
-      console.error('Failed to fetch scheduled bookings:', error);
-    }
-  };
+  }, [session, refreshData]);
 
   const handleSingleBooking = () => {
     if (canBook) {
@@ -91,12 +52,11 @@ export default function BookingPage() {
   const handleCalendlyClose = () => {
     setShowCalendly(false);
     setBookingStep('select');
-    fetchUserCredits();
-    fetchScheduledBookings();
+    refreshData(session?.user?.email);
   };
 
   const handlePaymentSuccess = () => {
-    fetchUserCredits();
+    refreshData(session?.user?.email);
     setShowCalendly(true);
   };
 
@@ -109,8 +69,7 @@ export default function BookingPage() {
   };
 
   const handleBookingSuccess = async (eventData) => {
-    await fetchUserCredits();
-    await fetchScheduledBookings();
+    await refreshData(session?.user?.email);
     setShowCalendly(false);
     setBookingStep('select');
   };
@@ -133,8 +92,27 @@ export default function BookingPage() {
     return calculateTotal() - calculateSavings();
   };
 
-  if (status === 'loading' || loading) {
+  if (status === 'loading' || loading || bookingLoading) {
     return <Spinner />;
+  }
+
+  // Show error if there's a booking error
+  if (bookingError) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-md mx-auto bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+          <AlertTriangle className="w-8 h-8 text-red-600 mx-auto mb-4" />
+          <h2 className="text-lg font-semibold text-red-900 mb-2">Error Loading Booking Data</h2>
+          <p className="text-red-700 mb-4">{bookingError}</p>
+          <button 
+            onClick={() => refreshData(session?.user?.email)}
+            className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -234,7 +212,7 @@ export default function BookingPage() {
                   <h3 className="text-2xl font-semibold text-gray-900 mb-2">Single Consultation</h3>
                   <p className="text-gray-600 mb-4">Book one consultation session</p>
                   <div className="text-3xl font-bold text-gray-900 mb-4">
-                    {canBook ? 'Use 1 Credit' : `$${SINGLE_CONSULTATION_PRICE}`}
+                    {canBook ? 'Use Credit' : `$${SINGLE_CONSULTATION_PRICE}`}
                   </div>
                 </div>
                 
