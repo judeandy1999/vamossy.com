@@ -47,7 +47,7 @@ export default function Dashboard() {
     tab.role === 'all' || (tab.role === 'admin' && role === 'admin')
   );
 
-  return (
+  return role === 'user' ? (<div>Comming Soon</div>) : (
     <div className="max-w-7xl mx-auto px-4 py-6">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
