@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuthWithRedirect } from '@/hooks/useAuthWithRedirect';
 import { useGPTCenter } from '@/hooks/useGPTCenter';
 import TaskList from '@/components/gpt-center/task-list';
@@ -9,9 +9,12 @@ import AdminTaskManagement from '@/components/gpt-center/admin-task-management';
 import LogUpload from '@/components/gpt-center/log-upload';
 import EvaluationTable from '@/components/gpt-center/evaluation-table';
 import Spinner from '@/components/ui/spinner';
+import { useSendToKlaviyo } from '@/hooks/useSendToKlaviyo';
+import { getUser } from '@/utils/authService';
 
 export default function Dashboard() {
   const { session, status, role } = useAuthWithRedirect();
+  const { sendToKlaviyo, loading: klaviyoLoading, error: klaviyoError } = useSendToKlaviyo();
   const { 
     tasks,
     allTasks,
@@ -31,8 +34,34 @@ export default function Dashboard() {
   } = useGPTCenter(session);
   const [activeTab, setActiveTab] = useState('tasks');
 
-  if (status === 'loading' || loading) {
+  useEffect(() => {
+    const fetchAndSend = async () => {
+      const { user } = await getUser();
+      if (user) {
+        await sendToKlaviyo(user);
+      }
+    };
+    fetchAndSend();
+  }, []);
+
+  if (status === 'loading' || loading || !role) {
     return <Spinner />;
+  }
+
+  if (role === 'user') {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-gray-900 mb-4">Dashboard</h1>
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-8">
+            <h2 className="text-xl font-semibold text-blue-900 mb-2">Coming Soon</h2>
+            <p className="text-blue-700">
+              The dashboard features are currently being developed. Check back soon!
+            </p>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   const tabs = [
@@ -47,7 +76,7 @@ export default function Dashboard() {
     tab.role === 'all' || (tab.role === 'admin' && role === 'admin')
   );
 
-  return role === 'user' ? (<div>Comming Soon</div>) : (
+  return (
     <div className="max-w-7xl mx-auto px-4 py-6">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
