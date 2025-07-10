@@ -345,7 +345,7 @@ export default function CalendlyModal({ isOpen, onClose, user, onBookingSuccess 
                         <button
                           onClick={handleProceedToBooking}
                           disabled={loading || !canAfford}
-                          className={`px-6 py-3 rounded-md font-medium transition-all ${
+                          className={`cursor-pointer px-6 py-3 rounded-md font-medium transition-all ${
                             !canAfford
                               ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                               : 'bg-blue-600 text-white hover:bg-blue-700'
