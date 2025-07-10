@@ -7,7 +7,7 @@ import PaymentGateway from '@/components/payment/payment-gateway';
 import InvoiceGenerator from '@/components/payment/invoice-generator';
 import CalendlyModal from '@/components/ui/calendly-modal';
 import Spinner from '@/components/ui/spinner';
-import { Calendar, Package, Clock, CheckCircle, AlertTriangle, Users } from 'lucide-react';
+import { Calendar, Package, Clock, CheckCircle, AlertTriangle, ArrowLeft } from 'lucide-react';
 
 const SINGLE_CONSULTATION_PRICE = 149.99;
 
@@ -75,10 +75,6 @@ export default function BookingPage() {
 
   const handleBackToCreditSelection = () => {
     setBookingStep('credit-selection');
-  };
-
-  const handleBookAfterPayment = () => {
-    setShowCalendly(true);
   };
 
   const handleBookingSuccess = async (eventData) => {
@@ -154,34 +150,6 @@ export default function BookingPage() {
           </div>
         </div>
       </div>
-
-      {/* Scheduled Bookings Display */}
-      {scheduledBookings.length > 0 && (
-        <div className="max-w-4xl mx-auto mb-8">
-          <h2 className="text-xl font-semibold mb-4">Your Upcoming Consultations</h2>
-          <div className="space-y-3">
-            {scheduledBookings
-            .filter(booking => booking.status !== 'canceled' && booking.status !== 'cancelled')
-            .map((booking) => (
-              <div key={booking.uri} className="bg-white rounded-lg shadow p-4 border border-gray-200">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <h3 className="font-medium text-gray-900">{booking.name}</h3>
-                    <p className="text-sm text-gray-600">
-                      {new Date(booking.start_time).toLocaleString()}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
-                      {booking.status}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
       
       {bookingStep === 'select' && (
         <div className="max-w-4xl mx-auto">
@@ -398,9 +366,10 @@ export default function BookingPage() {
           <div className="mb-6">
             <button
               onClick={handleBackToSelect}
-              className="text-blue-600 hover:text-blue-800 font-medium"
+              className="cursor-pointer flex items-center text-blue-600 hover:text-blue-800 font-medium"
             >
-              ← Back
+              <ArrowLeft className="w-4 h-4 mr-1" />
+              Back
             </button>
           </div>
           
@@ -423,7 +392,7 @@ export default function BookingPage() {
                   <button
                     key={credits}
                     onClick={() => setSelectedCredits(credits)}
-                    className={`p-3 rounded-lg border-2 transition-colors ${
+                    className={`cursor-pointer p-3 rounded-lg border-2 transition-colors ${
                       selectedCredits === credits
                         ? 'border-blue-500 bg-blue-50 text-blue-700'
                         : 'border-gray-200 hover:border-gray-300'
@@ -492,7 +461,7 @@ export default function BookingPage() {
             
             <button
               onClick={handleCreditSelectionComplete}
-              className="w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors font-medium"
+              className="cursor-pointer w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors font-medium"
             >
               Continue to Payment
             </button>
@@ -505,9 +474,10 @@ export default function BookingPage() {
           <div className="mb-6">
             <button
               onClick={canBook ? handleBackToCreditSelection : handleBackToSelect}
-              className="text-blue-600 hover:text-blue-800 font-medium"
+              className="cursor-pointer flex items-center text-blue-600 hover:text-blue-800 font-medium"
             >
-              ← Back to {canBook ? 'Credit Selection' : 'Selection'}
+              <ArrowLeft className="w-4 h-4 mr-1" />
+              Back to {canBook ? 'Credit Selection' : 'Selection'}
             </button>
           </div>
           
@@ -542,33 +512,6 @@ export default function BookingPage() {
                 </p>
               </div>
             )}
-          </div>
-          
-          {/* Payment Method Selection */}
-          <div className="mb-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Choose Payment Method</h3>
-            <div className="flex space-x-4">
-              <button
-                onClick={() => setPaymentMethod('instant')}
-                className={`px-4 py-2 rounded-lg font-medium ${
-                  paymentMethod === 'instant'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                Pay Now
-              </button>
-              <button
-                onClick={() => setPaymentMethod('invoice')}
-                className={`px-4 py-2 rounded-lg font-medium ${
-                  paymentMethod === 'invoice'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                Generate Invoice
-              </button>
-            </div>
           </div>
 
           {paymentMethod === 'instant' ? (
