@@ -22,7 +22,7 @@ import {
 } from 'lucide-react'
 
 const navItems = [
-  { label: 'Dashboard', href: '/user-dashboard', icon: Home, roles: ['admin', 'worker'] },
+  { label: 'Dashboard', href: '/user-dashboard', icon: Home, roles: ['admin', 'user', 'worker'] },
   { label: 'Create Article', href: '/user-dashboard/create-article', icon: PenTool, roles: ['admin'] },
   { label: 'Role Management', href: '/user-dashboard/user-management', icon: Users, roles: ['admin'] },
   { label: 'Analytics', href: '/user-dashboard/analytics', icon: BarChart3, roles: ['admin'] },
