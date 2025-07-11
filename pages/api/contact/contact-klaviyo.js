@@ -1,5 +1,3 @@
-// pages/api/contact/contact-klaviyo.js
-
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ success: false, error: 'Method not allowed' });
@@ -7,7 +5,6 @@ export default async function handler(req, res) {
 
   let body = req.body;
 
-  // If body is a string (sometimes happens in misconfigured requests), parse it
   if (typeof body === 'string') {
     try {
       body = JSON.parse(body);
