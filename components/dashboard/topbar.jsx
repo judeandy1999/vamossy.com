@@ -9,6 +9,8 @@ import Image from 'next/image'
 const getPageTitle = (pathname) => {
   if (pathname === '/user-dashboard') return 'Dashboard'
   if (pathname === '/user-dashboard/create-article') return 'Create Article'
+  if (pathname === '/user-dashboard/user-documents') return 'Documents'
+  if (pathname === '/user-dashboard/admin-documents') return 'Upload Documents'
   if (pathname === '/user-dashboard/user-management') return 'Role Management'
   if (pathname === '/user-dashboard/analytics') return 'Analytics'
   if (pathname === '/user-dashboard/options') return 'Wiki & Tab Management'
