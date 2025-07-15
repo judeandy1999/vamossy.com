@@ -1,3 +1,18 @@
+// Helper to read raw body as string (for bodyParser: false)
+async function readBody(req) {
+  return new Promise((resolve, reject) => {
+    let data = '';
+    req.on('data', chunk => {
+      data += chunk;
+    });
+    req.on('end', () => {
+      resolve(data);
+    });
+    req.on('error', err => {
+      reject(err);
+    });
+  });
+}
 import { getSession } from '../../../lib/authMiddleware';
 import { supabaseAdmin } from '../../../utils/storageClient';
 
@@ -48,14 +63,21 @@ async function handler(req, res) {
     return res.status(200).json({ documents: data });
   }
 
-  if (req.method === 'DELETE') {
-    // Bulk delete (admin only)
+  // Bulk delete via POST with ?delete=1 for reliability
+  if (req.method === 'POST' && req.query.delete === '1') {
     if (session.user.role !== 'admin') {
       return res.status(403).json({ error: 'Forbidden' });
     }
     let ids = [];
-    if (req.body && req.body.ids) {
-      ids = req.body.ids;
+    let body;
+    try {
+      const rawBody = await readBody(req);
+      body = JSON.parse(rawBody);
+    } catch (e) {
+      return res.status(400).json({ error: 'Invalid JSON' });
+    }
+    if (body && body.ids) {
+      ids = body.ids;
     } else if (req.query.ids) {
       ids = Array.isArray(req.query.ids) ? req.query.ids : [req.query.ids];
     }
@@ -69,8 +91,23 @@ async function handler(req, res) {
     }
     // Delete from storage
     for (const doc of docs) {
-      const fileName = doc.url.split('/').pop();
-      await supabaseAdmin.storage.from('documents').remove([fileName]);
+      // Extract the full path after the bucket name in the public URL
+      // Example: https://<project>.supabase.co/storage/v1/object/public/documents/user@email.com/filename.pdf
+      let filePath = null;
+      try {
+        const url = doc.url;
+        // Try to extract after '/documents/'
+        const match = url.match(/\/documents\/(.+)$/);
+        if (match && match[1]) {
+          filePath = decodeURIComponent(match[1]);
+        } else {
+          // fallback: try to use the original fileName (may fail)
+          filePath = decodeURIComponent(url.split('/').pop());
+        }
+        await supabaseAdmin.storage.from('documents').remove([filePath]);
+      } catch (err) {
+        // ignore
+      }
     }
     // Delete from DB
     const { error: delError } = await supabaseAdmin.from('documents').delete().in('id', ids);
