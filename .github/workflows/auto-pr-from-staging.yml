@@ -1,16 +1,19 @@
 name: Auto PR from staging to main
 
 on:
-  push:
+  pull_request:
+    types:
+      - closed
     branches:
       - staging
 
 jobs:
   create-pr:
+    if: ${{ github.event.pull_request.merged == true }}
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Install GitHub CLI
@@ -34,5 +37,5 @@ jobs:
               --base main \
               --head staging \
               --title "Release to Production - $(date +'%Y-%m-%d')" \
-              --body "Auto-generated PR from staging to main after feature PR was merged." \
+              --body "Auto-generated PR from staging to main." \
               --draft
