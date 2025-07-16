@@ -43,13 +43,30 @@ export default async function handler(req, res) {
         .single();
 
       if (log && log.file_url) {
-        const match = log.file_url.match(/\/task-logs\/(.+)$/);
-        if (match && match[1]) {
-          const filePath = decodeURIComponent(match[1]);
-          try {
-            await supabaseAdmin.storage.from('task-logs').remove([filePath]);
-          } catch (err) {
+        let filePath = null;
+        if (log.file_url.startsWith('logs/')) {
+          filePath = log.file_url;
+        } else {
+          const match = log.file_url.match(/(?:\/)?task-logs\/(logs\/[^\/?#]+)$/);
+          if (match && match[1]) {
+            filePath = decodeURIComponent(match[1]);
           }
+        }
+        if (filePath) {
+          try {
+            console.log('Attempting to delete file from bucket:', filePath);
+            const removeResult = await supabaseAdmin.storage.from('task-logs').remove([filePath]);
+            console.log('Supabase remove result:', removeResult);
+            if (removeResult.error) {
+              console.error('Error deleting file from bucket:', removeResult.error.message);
+              return res.status(500).json({ error: 'Failed to delete file from bucket', details: removeResult.error.message });
+            }
+          } catch (err) {
+            console.error('Exception during file removal:', err);
+            return res.status(500).json({ error: 'Exception during file removal', details: err.message });
+          }
+        } else {
+          console.warn('File path extraction failed for:', log.file_url);
         }
       }
       
