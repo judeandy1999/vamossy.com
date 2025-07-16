@@ -8,18 +8,6 @@ import Container from "@/components/ui/container";
 
 export default function WhoWeHelp() {
 
-  const secondTitleVariants = {
-		hidden: { opacity: 0, x: 100 },
-		visible: {
-			opacity: 1,
-			x: 0,
-			transition: {
-				duration: 1,
-				ease: "easeOut",
-			},
-		},
-	};
-
 	const containerVariants = {
 		hidden: {},
 		visible: {
@@ -49,19 +37,6 @@ export default function WhoWeHelp() {
 			transition: {
 				duration: 0.6,
 				ease: "easeOut",
-			},
-		},
-	};
-
-	const ctaVariants = {
-		hidden: { opacity: 0, y: 60 },
-		visible: {
-			opacity: 1,
-			y: 0,
-			transition: {
-				duration: 0.8,
-				ease: "easeOut",
-				delay: 1,
 			},
 		},
 	};

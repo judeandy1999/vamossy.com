@@ -5,27 +5,22 @@ import { CookieManager, updateGoogleAnalyticsConsent } from '@/utils/cookieManag
 const CookieConsentContext = createContext();
 
 export const CookieConsentProvider = ({ children }) => {
-  const [consentGiven, setConsentGiven] = useState(null); // null = not decided, true = accepted, false = rejected
+  const [consentGiven, setConsentGiven] = useState(null); 
   const [showBanner, setShowBanner] = useState(false);
 
   useEffect(() => {
-    // Check if user has already accepted cookies
     const status = CookieManager.getConsentStatus();
     if (status === true) {
-      // Only set as accepted if explicitly accepted
       setConsentGiven(true);
       setShowBanner(false);
       
-      // Initialize services based on consent
       CookieManager.initializeAnalytics(process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID);
       CookieManager.initializeMarketing();
       updateGoogleAnalyticsConsent(true);
     } else {
-      // Show banner if no consent given or if previously rejected
-      // (since we don't save rejections permanently)
       const timer = setTimeout(() => {
         setShowBanner(true);
-      }, 1500); // Slightly longer delay for better page load experience
+      }, 1500); 
       return () => clearTimeout(timer);
     }
   }, []);
@@ -34,11 +29,8 @@ export const CookieConsentProvider = ({ children }) => {
     setConsentGiven(true);
     setShowBanner(false);
     localStorage.setItem('cookieConsent', 'true');
+    CookieManager.setCookie('cookieConsent', 'true', { expires: 365 }); 
     
-    // Set consent cookie
-    CookieManager.setCookie('cookieConsent', 'true', { expires: 365 }); // 1 year
-    
-    // Initialize analytics and marketing
     CookieManager.initializeAnalytics(process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID);
     CookieManager.initializeMarketing();
     updateGoogleAnalyticsConsent(true);
@@ -48,8 +40,6 @@ export const CookieConsentProvider = ({ children }) => {
     setConsentGiven(false);
     setShowBanner(false);
     
-    // Don't save rejection permanently - only for this session
-    // This allows the banner to appear again on subsequent visits
     CookieManager.clearNonEssentialCookies();
     updateGoogleAnalyticsConsent(false);
   };
@@ -58,7 +48,6 @@ export const CookieConsentProvider = ({ children }) => {
     setConsentGiven(null);
     setShowBanner(true);
     localStorage.removeItem('cookieConsent');
-    // Remove consent cookie
     CookieManager.deleteCookie('cookieConsent');
     CookieManager.clearNonEssentialCookies();
     updateGoogleAnalyticsConsent(false);

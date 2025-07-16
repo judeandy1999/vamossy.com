@@ -2,8 +2,8 @@
 
 import { motion } from "framer-motion";
 import { useState } from "react";
-import Button from "@/components/ui/button";
 import Container from "@/components/ui/container";
+import { useContactForm } from "@/hooks/useContactForm";
 
 export default function ContactUs({ variant, size = 'lg', cardVariant }) {
   const [formData, setFormData] = useState({
@@ -11,6 +11,9 @@ export default function ContactUs({ variant, size = 'lg', cardVariant }) {
     email: '',
     message: ''
   });
+  const [localError, setLocalError] = useState(""); // Add this line
+
+  const { submitContactForm, loading, error, success, resetForm } = useContactForm();
 
   const titleVariants = {
     hidden: { opacity: 0, y: -50 },
@@ -65,17 +68,39 @@ export default function ContactUs({ variant, size = 'lg', cardVariant }) {
       ...prev,
       [name]: value
     }));
+    setLocalError(""); // Clear local error on input change
   };
 
-  const handleSubmit = (e) => {
+  // Email validation helper
+  const isValidEmail = (email) => {
+    // Require at least two characters for TLD (e.g., .com, .net)
+    return /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/.test(email);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission logic here
-    console.log('Form submitted:', formData);
+
+    // Client-side email validation
+    if (!isValidEmail(formData.email)) {
+      setLocalError('Invalid email!');
+      return;
+    }
+
+    try {
+      const result = await submitContactForm(formData);
+      if (result.success) {
+        setTimeout(() => {
+          setFormData({ name: '', email: '', message: '' });
+          resetForm();
+        }, 3000);
+      }
+    } catch (err) {
+      
+    }
   };
   
   variant = variant || 'transparent-gradient';
   cardVariant = cardVariant || 'normal';
-console.log(variant);
   return (
     <Container variant={variant}>
       <div className="relative mx-auto">
@@ -143,9 +168,34 @@ console.log(variant);
               />
             </div>
 
+            {/* Status Messages */}
+            {success && (
+              <div className="text-center p-3 bg-green-100/90 backdrop-blur-sm rounded-xl border border-green-200">
+                <p className="text-green-700 text-sm font-medium">Thank you! Your message has been sent successfully.</p>
+              </div>
+            )}
+            
+            {error && (
+              <div className="text-center p-3 bg-red-100/90 backdrop-blur-sm rounded-xl border border-red-200">
+                <p className="text-red-700 text-sm font-medium">Error: {error}</p>
+              </div>
+            )}
+
+            {localError && (
+              <div className="text-center p-3 bg-red-100/90 backdrop-blur-sm rounded-xl border border-red-200">
+                <p className="text-red-700 text-sm font-medium">{localError}</p>
+              </div>
+            )}
+
             {/* Submit Button */}
             <div className="text-center">
-              <Button title="Submit" href="/" size="sm" />
+              <button
+                type="submit"
+                disabled={loading}
+                className="inline-flex items-center justify-center px-8 py-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-gray-900 font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              >
+                {loading ? 'Sending...' : 'Submit'}
+              </button>
             </div>
           </form>
         </motion.div>

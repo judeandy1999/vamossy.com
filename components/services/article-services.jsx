@@ -55,16 +55,6 @@ export default function ServicesLiveCaseStudies() {
 
   return (
     <section className="relative min-h-screen py-20 px-4 bg-transparent">
-      {/* Background tech overlay */}
-      <div 
-        className="absolute inset-0 opacity-30"
-        style={{
-          backgroundImage: "url('/homepage/tech-background.jpg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat"
-        }}
-      ></div>
       
       {/* Overlay for better text readability */}
       <div className="absolute inset-0 bg-black/40"></div>

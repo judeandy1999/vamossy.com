@@ -57,17 +57,6 @@ export default function LiveCaseStudies() {
 
   return (
     <Container variant="gray-gradient" className="relative">
-        {/* Background tech overlay */}
-        <div
-          className="absolute inset-0 opacity-30"
-        style={{
-          backgroundImage: "url('/homepage/tech-background.jpg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat"
-        }}
-      ></div>
-      
       
       <div className="relative mx-auto">
         {/* Header Section */}

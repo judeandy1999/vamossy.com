@@ -26,7 +26,6 @@ export default function Container({
     }
   };
 
-console.log(variant);
   const containerClasses = `py-8 lg:py-16 px-4 relative w-full overflow-hidden flex flex-row justify-center 
                             ${getVariantClasses(variant)} 
                             ${className} ${isTable && 'py-8 lg:py-24 px-4 !block'}`;
