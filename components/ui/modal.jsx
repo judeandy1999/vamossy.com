@@ -11,7 +11,7 @@ export default function Modal({ isOpen, onClose, onConfirm, target, isLoading })
         <div className="flex justify-end gap-2">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded"
+            className="cursor-pointer px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded"
             disabled={isLoading} // Disable button while loading
           >
             Cancel
