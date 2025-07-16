@@ -12,7 +12,6 @@ jobs:
     steps:
       - name: Check if PR was merged into staging
         if: ${{ github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'staging' }}
-        run: echo "Valid trigger: PR merged into staging."
 
       - name: Checkout code
         if: ${{ github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'staging' }}
@@ -22,7 +21,7 @@ jobs:
         if: ${{ github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'staging' }}
         run: |
           sudo apt-get update
-          sudo apt-get install gh -y
+          sudo apt-get install -y gh
 
       - name: Authenticate GitHub CLI
         if: ${{ github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'staging' }}
@@ -36,7 +35,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if gh pr list --base main --head staging --state open | grep -q staging; then
-            echo "PR from staging to main already exists."
+            echo "ℹ️ PR from staging to main already exists."
           else
             gh pr create \
               --base main \
@@ -44,4 +43,3 @@ jobs:
               --title "Release to Production - $(date +'%Y-%m-%d')" \
               --body "Auto-generated PR from staging to main after feature merge." \
               --draft
-          fi
