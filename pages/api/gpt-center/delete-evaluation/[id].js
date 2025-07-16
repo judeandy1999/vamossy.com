@@ -54,19 +54,14 @@ export default async function handler(req, res) {
         }
         if (filePath) {
           try {
-            console.log('Attempting to delete file from bucket:', filePath);
             const removeResult = await supabaseAdmin.storage.from('task-logs').remove([filePath]);
-            console.log('Supabase remove result:', removeResult);
             if (removeResult.error) {
-              console.error('Error deleting file from bucket:', removeResult.error.message);
               return res.status(500).json({ error: 'Failed to delete file from bucket', details: removeResult.error.message });
             }
           } catch (err) {
-            console.error('Exception during file removal:', err);
             return res.status(500).json({ error: 'Exception during file removal', details: err.message });
           }
         } else {
-          console.warn('File path extraction failed for:', log.file_url);
         }
       }
       
