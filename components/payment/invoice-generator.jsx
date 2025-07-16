@@ -1,12 +1,13 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { supabase } from '@/utils/client';
 import Spinner from '@/components/ui/spinner';
 import { Download, X } from 'lucide-react';
 import { getMNBExchangeRate, convertUSDToHUF } from '@/utils/mnbExchangeRate';
+import { useAuthWithRedirect } from '@/hooks/useAuthWithRedirect';
 
 export default function InvoiceGenerator({ paymentData = null, onClose = null }) {
+  const { session } = useAuthWithRedirect();
   const [isGenerating, setIsGenerating] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
@@ -185,7 +186,6 @@ export default function InvoiceGenerator({ paymentData = null, onClose = null })
     setIsGenerating(true);
     setError(null);
 
-    const { data: { session } } = await supabase.auth.getSession();
     const accessToken = session?.access_token;
 
     try {
