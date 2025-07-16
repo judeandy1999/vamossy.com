@@ -7,23 +7,31 @@ on:
 
 jobs:
   create-pr:
-    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'staging'
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Check if PR was merged into staging
+        if: ${{ github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'staging' }}
+        run: echo "Valid trigger: PR merged into staging."
+
+      - name: Checkout code
+        if: ${{ github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'staging' }}
+        uses: actions/checkout@v3
 
       - name: Install GitHub CLI
+        if: ${{ github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'staging' }}
         run: |
           sudo apt-get update
           sudo apt-get install gh -y
 
       - name: Authenticate GitHub CLI
+        if: ${{ github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'staging' }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: echo "$GH_TOKEN" | gh auth login --with-token
 
       - name: Auto-create PR to main
+        if: ${{ github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'staging' }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -34,6 +42,6 @@ jobs:
               --base main \
               --head staging \
               --title "Release to Production - $(date +'%Y-%m-%d')" \
-              --body "Auto-generated PR from staging to main after merge." \
+              --body "Auto-generated PR from staging to main after feature merge." \
               --draft
           fi
