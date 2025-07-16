@@ -1,3 +1,47 @@
+/* Admin Document Buttons */
+.admin-doc-btn {
+  min-width: 140px;
+  padding: 0.75rem 0;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px 0 rgba(0,0,0,0.04);
+  transition: background 0.15s, color 0.15s, box-shadow 0.15s, transform 0.12s;
+  outline: none;
+  border: none;
+  display: inline-block;
+  text-align: center;
+  line-height: 1.25;
+}
+.admin-doc-btn--yellow {
+  background: #e59604;
+  color: #fff;
+}
+.admin-doc-btn--yellow:hover:not(:disabled) {
+  background: #dd9001;
+}
+.admin-doc-btn--red {
+  background: #ef4444;
+  color: #fff;
+}
+.admin-doc-btn--red:hover:not(:disabled) {
+  background: #dc2626;
+}
+.admin-doc-btn:hover:not(:disabled) {
+  transform: scale(1.04);
+  box-shadow: 0 4px 16px 0 rgba(0,0,0,0.08);
+}
+.admin-doc-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+.admin-doc-btn:disabled,
+.admin-doc-btn--loading {
+  opacity: 0.7;
+  cursor: not-allowed;
+  min-width: 140px;
+  pointer-events: none;
+  box-shadow: 0 2px 8px 0 rgba(0,0,0,0.04);
+}
 @import "tailwindcss";
 
 @keyframes popIn {

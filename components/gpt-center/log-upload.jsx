@@ -220,7 +220,7 @@ export default function LogUpload({ tasks, uploadLog }) {
             Attach File (Optional)
           </label>
           <div 
-            className={`mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-md transition-colors ${
+            className={`relative mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-md transition-colors ${
               dragActive 
                 ? 'border-blue-400 bg-blue-50' 
                 : fileError 
@@ -232,22 +232,20 @@ export default function LogUpload({ tasks, uploadLog }) {
             onDragOver={handleDrag}
             onDrop={handleDrop}
           >
-            <div className="space-y-1 text-center">
+            <input
+              id="file-upload"
+              type="file"
+              onChange={handleFileChange}
+              accept=".txt,.md,.pdf,.doc,.docx"
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+              tabIndex={-1}
+            />
+            <div className="space-y-1 text-center pointer-events-none">
               <Upload className={`mx-auto h-12 w-12 ${fileError ? 'text-red-400' : 'text-gray-400'}`} />
-              <div className="flex text-sm text-gray-600">
-                <label
-                  htmlFor="file-upload"
-                  className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none"
-                >
-                  <span>Upload a file</span>
-                  <input
-                    id="file-upload"
-                    type="file"
-                    className="sr-only"
-                    onChange={handleFileChange}
-                    accept=".txt,.md,.pdf,.doc,.docx"
-                  />
-                </label>
+              <div className="flex text-sm text-gray-600 justify-center">
+                <span className="relative bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none">
+                  Upload a file
+                </span>
                 <p className="pl-1">or drag and drop</p>
               </div>
               <p className="text-xs text-gray-500">
@@ -260,7 +258,7 @@ export default function LogUpload({ tasks, uploadLog }) {
               )}
             </div>
           </div>
-          
+
           {selectedFile && (
             <div className="mt-2 flex items-center text-sm text-gray-600 bg-gray-50 p-2 rounded">
               <FileText className="h-4 w-4 mr-2" />

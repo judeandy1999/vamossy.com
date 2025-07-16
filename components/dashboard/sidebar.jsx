@@ -28,6 +28,7 @@ import {
 
 const navItems = [
   { label: 'Dashboard', href: '/user-dashboard', icon: Home, roles: ['admin', 'user', 'worker'] },
+  { label: 'Documents', href: '/user-dashboard/documents', icon: FolderOpen, roles: ['user', 'admin'] },
   { label: 'Create Article', href: '/user-dashboard/create-article', icon: PenTool, roles: ['admin'] },
   { label: 'Role Management', href: '/user-dashboard/user-management', icon: UserCheck, roles: ['admin'] },
   { label: 'Cards Management', href: '/user-dashboard/card-management', icon: Layers, roles: ['admin', 'user'] },
