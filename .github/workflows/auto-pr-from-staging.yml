@@ -2,8 +2,7 @@ name: Auto PR from staging to main
 
 on:
   pull_request:
-    types:
-      - closed
+    types: [closed]
 
 jobs:
   create-pr:
@@ -12,8 +11,7 @@ jobs:
     steps:
       - name: Check if PR was merged into staging
         if: ${{ github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'staging' }}
-        run: |
-          echo "Trigger confirmed: PR merged into staging ✅"
+        run: echo "✅ PR was merged into staging — continuing..."
 
       - name: Checkout code
         if: ${{ github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'staging' }}
