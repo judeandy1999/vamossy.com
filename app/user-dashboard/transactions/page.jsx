@@ -1,13 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/utils/client';
 import { getUserRole } from '@/utils/getUserRole';
 import { DollarSign, Calendar, User, CreditCard, FileText, Receipt } from 'lucide-react';
 import Spinner from '@/components/ui/spinner';
 import InvoiceGenerator from '@/components/payment/invoice-generator';
+import { useAuthWithRedirect } from '@/hooks/useAuthWithRedirect';
 
 export default function TransactionsPage() {
+  const { session } = useAuthWithRedirect();
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -28,7 +29,6 @@ export default function TransactionsPage() {
       setLoading(true);
       
       // Get current user
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       if (sessionError) throw sessionError;
       
       if (!session?.user) {

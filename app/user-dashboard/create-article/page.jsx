@@ -13,7 +13,6 @@ import { createArticle, updateArticle, deleteArticle } from '@/utils/articles';
 import CollapsibleTabs from '@/components/shared/collapsible-tabs';
 import { useArticleTabs } from '@/hooks/useArticleTabs';
 import { useToast } from '@/contexts/toast-context';
-import { supabase } from '@/utils/client';
 
 export default function Page() {
   const { status, session } = useAuthWithRedirect();
@@ -184,7 +183,6 @@ export default function Page() {
   };
 
   const updateTabsIndividually = async (articleId, tabs) => {
-    const { data: { session } } = await supabase.auth.getSession();
     const accessToken = session?.access_token;
 
     await fetch(`/api/tab-articles/${articleId}/delete-all`, {
@@ -220,7 +218,6 @@ export default function Page() {
   };
 
   const saveTabsIndividually = async (articleId, tabs) => {
-    const { data: { session } } = await supabase.auth.getSession();
     const accessToken = session?.access_token;
 
     for (const [tabId, tabContent] of Object.entries(tabs)) {
