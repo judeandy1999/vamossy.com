@@ -1,20 +1,16 @@
 name: Auto PR from staging to main
 
 on:
-  pull_request:
-    types:
-      - closed
+  push:
     branches:
       - staging
 
 jobs:
-  create-pr:
-    if: ${{ github.event.pull_request.merged == true }}
+  auto-create-pr:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
       - name: Install GitHub CLI
         run: |
@@ -26,16 +22,16 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: echo "$GH_TOKEN" | gh auth login --with-token
 
-      - name: Auto-create PR to main
+      - name: Create PR from staging to main
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if gh pr list --base main --head staging --state open | grep -q staging; then
-            echo "PR from staging to main already exists."
+            echo "✅ PR from staging to main already exists."
           else
             gh pr create \
               --base main \
               --head staging \
-              --title "Release to Production - $(date +'%Y-%m-%d')" \
-              --body "Auto-generated PR from staging to main." \
+              --title "🔁 Auto PR: staging to main - $(date +'%Y-%m-%d %H:%M:%S')" \
+              --body "This PR was auto-created after a push to staging." \
               --draft
