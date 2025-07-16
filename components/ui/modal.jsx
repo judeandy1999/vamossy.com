@@ -18,7 +18,7 @@ export default function Modal({ isOpen, onClose, onConfirm, target, isLoading })
           </button>
           <button
             onClick={onConfirm}
-            className={`px-4 py-2 bg-red-500 hover:bg-red-600 text-gray-300 rounded flex items-center justify-center gap-2 min-w-[80px] h-[40px] ${
+            className={`cursor-pointer px-4 py-2 bg-red-500 hover:bg-red-600 text-gray-300 rounded flex items-center justify-center gap-2 min-w-[80px] h-[40px] ${
               isLoading ? 'opacity-50 cursor-not-allowed' : ''
             }`}
             disabled={isLoading} // Disable button while loading
