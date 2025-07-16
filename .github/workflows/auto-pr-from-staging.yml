@@ -1,45 +1,38 @@
 name: Auto PR from staging to main
 
 on:
-  pull_request:
-    types: [closed]
+  push:
+    branches:
+      - staging
 
 jobs:
   create-pr:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check if PR was merged into staging
-        if: ${{ github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'staging' }}
-        run: echo "✅ PR was merged into staging — continuing..."
-
-      - name: Checkout code
-        if: ${{ github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'staging' }}
+      - name: Checkout Code
         uses: actions/checkout@v3
 
       - name: Install GitHub CLI
-        if: ${{ github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'staging' }}
         run: |
           sudo apt-get update
           sudo apt-get install -y gh
 
       - name: Authenticate GitHub CLI
-        if: ${{ github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'staging' }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: echo "$GH_TOKEN" | gh auth login --with-token
 
       - name: Auto-create PR to main
-        if: ${{ github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'staging' }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if gh pr list --base main --head staging --state open | grep -q staging; then
-            echo "ℹ️ PR from staging to main already exists."
+            echo "PR from staging to main already exists."
           else
             gh pr create \
               --base main \
               --head staging \
               --title "Release to Production - $(date +'%Y-%m-%d')" \
-              --body "Auto-generated PR from staging to main after feature merge." \
+              --body "Auto-generated PR from staging to main after feature PR was merged." \
               --draft
