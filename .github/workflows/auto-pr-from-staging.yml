@@ -6,11 +6,12 @@ on:
       - staging
 
 jobs:
-  auto-create-pr:
+  create-pr:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
       - name: Install GitHub CLI
         run: |
@@ -20,18 +21,19 @@ jobs:
       - name: Authenticate GitHub CLI
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: echo "$GH_TOKEN" | gh auth login --with-token
+        run: |
+          echo "$GH_TOKEN" | gh auth login --with-token
 
       - name: Create PR from staging to main
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if gh pr list --base main --head staging --state open | grep -q staging; then
-            echo "✅ PR from staging to main already exists."
+            echo "✅ PR already exists."
           else
             gh pr create \
               --base main \
               --head staging \
-              --title "🔁 Auto PR: staging to main - $(date +'%Y-%m-%d %H:%M:%S')" \
-              --body "This PR was auto-created after a push to staging." \
+              --title "Auto PR: staging to main" \
+              --body "Auto-generated PR after push to staging." \
               --draft
