@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Check if PR was merged into staging
         if: ${{ github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'staging' }}
+        run: |
+          echo "Trigger confirmed: PR merged into staging ✅"
 
       - name: Checkout code
         if: ${{ github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'staging' }}
