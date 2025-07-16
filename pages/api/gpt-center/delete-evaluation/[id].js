@@ -1,4 +1,5 @@
 import { supabase } from '@/utils/client';
+import { supabaseAdmin } from '@/utils/storageClient';
 import { authenticate } from '@/lib/authMiddleware';
 import { verifySupabaseAuth } from '@/utils/verifySupabaseAuth';
 
@@ -33,9 +34,37 @@ export default async function handler(req, res) {
       .eq('id', id);
 
     if (deleteEvalError) throw deleteEvalError;
-
-    // Delete connected task log
     if (evaluation.log_id) {
+
+      const { data: log, error: logError } = await supabase
+        .from('task_logs')
+        .select('id, file_url')
+        .eq('id', evaluation.log_id)
+        .single();
+
+      if (log && log.file_url) {
+        let filePath = null;
+        if (log.file_url.startsWith('logs/')) {
+          filePath = log.file_url;
+        } else {
+          const match = log.file_url.match(/(?:\/)?task-logs\/(logs\/[^\/?#]+)$/);
+          if (match && match[1]) {
+            filePath = decodeURIComponent(match[1]);
+          }
+        }
+        if (filePath) {
+          try {
+            const removeResult = await supabaseAdmin.storage.from('task-logs').remove([filePath]);
+            if (removeResult.error) {
+              return res.status(500).json({ error: 'Failed to delete file from bucket', details: removeResult.error.message });
+            }
+          } catch (err) {
+            return res.status(500).json({ error: 'Exception during file removal', details: err.message });
+          }
+        } else {
+        }
+      }
+      
       await supabase
         .from('task_logs')
         .delete()
