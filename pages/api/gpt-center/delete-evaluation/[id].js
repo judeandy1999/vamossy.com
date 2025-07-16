@@ -1,4 +1,5 @@
 import { supabase } from '@/utils/client';
+import { supabaseAdmin } from '@/utils/storageClient';
 import { authenticate } from '@/lib/authMiddleware';
 import { verifySupabaseAuth } from '@/utils/verifySupabaseAuth';
 
@@ -33,9 +34,25 @@ export default async function handler(req, res) {
       .eq('id', id);
 
     if (deleteEvalError) throw deleteEvalError;
-
-    // Delete connected task log
     if (evaluation.log_id) {
+
+      const { data: log, error: logError } = await supabase
+        .from('task_logs')
+        .select('id, file_url')
+        .eq('id', evaluation.log_id)
+        .single();
+
+      if (log && log.file_url) {
+        const match = log.file_url.match(/\/task-logs\/(.+)$/);
+        if (match && match[1]) {
+          const filePath = decodeURIComponent(match[1]);
+          try {
+            await supabaseAdmin.storage.from('task-logs').remove([filePath]);
+          } catch (err) {
+          }
+        }
+      }
+      
       await supabase
         .from('task_logs')
         .delete()
