@@ -8,7 +8,6 @@ import Container from "@/components/ui/container";
 
 
 export default function GrowWithConfidence() {
-    // Animation variants
     const containerVariants = {
         hidden: {},
         visible: {
@@ -25,12 +24,11 @@ export default function GrowWithConfidence() {
         },
     };
 
-    // Icon selection, color matches card accent (blue for 0/2, yellow for 1)
     const getStepIcon = (index) => {
         const colorClasses = [
-            "text-[#2176ff]", // Card 1 (blue)
-            "text-[#ffc72c]", // Card 2 (yellow)
-            "text-[#2176ff]"  // Card 3 (blue)
+            "text-[#2176ff]", 
+            "text-[#ffc72c]", 
+            "text-[#2176ff]"  
         ];
         const iconProps = {
             size: 44,
