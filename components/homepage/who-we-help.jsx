@@ -1,170 +1,150 @@
 'use client';
-
-import { motion } from "framer-motion";
-import { Play } from 'lucide-react';
-import { clientTypes, growthSteps } from '@/data/data';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronLeft, ChevronRight, Play } from 'lucide-react';
+import { clientTypes } from '@/data/data';
 import Title from "@/components/ui/title";
-import Container from "@/components/ui/container";
 
-export default function WhoWeHelp() {
+export default function WhoWeHelpCarousel() {
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-	const containerVariants = {
-		hidden: {},
-		visible: {
-			transition: {
-				staggerChildren: 0.2,
-			},
-		},
-	};
+  // Auto-cycle through items
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % clientTypes.length);
+    }, 4000); // Change every 4 seconds
 
-	const itemVariants = {
-		hidden: { opacity: 0, x: -70 },
-		visible: {
-			opacity: 1,
-			x: 0,
-			transition: {
-				duration: 0.6,
-				ease: "easeOut",
-			},
-		},
-	};
+    return () => clearInterval(interval);
+  }, []);
 
-	const cardVariants = {
-		hidden: { opacity: 0, y: 100 },
-		visible: {
-			opacity: 1,
-			y: 0,
-			transition: {
-				duration: 0.6,
-				ease: "easeOut",
-			},
-		},
-	};
+  const nextSlide = () => {
+    setCurrentIndex((prev) => (prev + 1) % clientTypes.length);
+  };
 
-	const arrowVariants = {
-		hidden: { opacity: 0},
-		visible: {
-			opacity: 1,
-			transition: {
-				duration: 1.5,
-				ease: "easeOut",
-			},
-		},
-	};
+  const prevSlide = () => {
+    setCurrentIndex((prev) => (prev - 1 + clientTypes.length) % clientTypes.length);
+  };
 
-	return (
-		<Container variant="gray">
-			<div className="text-center md:text-left">
-				<Title title="Who We Help" variant="h2" titlePosition="left" underlineEffect={true} animationVariant="leftToRight" />
-			</div>
-			{/* Client Types List */}
-			<motion.div
-				className="space-y-8 mb-8 lg:mb-8"
-				initial="hidden"
-				whileInView="visible"
-				viewport={{ once: false, amount: 0.2 }}
-				variants={containerVariants}
-			>
-				{clientTypes.map((client, index) => (
-					<motion.div
-						key={index}
-						className="group relative mb-4"
-						variants={itemVariants}
-					>
-						{/* Background Glow on Hover */}
+  const slideVariants = {
+    enter: {
+      x: 300,
+      opacity: 0,
+    },
+    center: {
+      x: 0,
+      opacity: 1,
+    },
+    exit: {
+      x: -300,
+      opacity: 0,
+    },
+  };
 
-						<div className="relative flex items-start space-x-6 rounded-2xl border border-transparent">
-							{/* Enhanced Yellow Circle Icon */}
-							<div className="relative w-7 h-7 lg:w-12 lg:h-12 flex-shrink-0 mt-2">
-								<div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-full animate-pulse opacity-75"></div>
-								<div className="relative w-full h-full bg-gradient-to-r from-yellow-600 to-yellow-400 rounded-full flex items-center justify-center shadow-lg shadow-yellow-500/25">
-									<Play size={18} className="text-gray-300" />
-								</div>
-							</div>
+  const transition = {
+    x: { type: 'spring', stiffness: 300, damping: 30 },
+    opacity: { duration: 0.3 },
+  };
 
-							{/* Content */}
-							<div className="flex-1 pt-2 lg:pt-4">
-								<h3 className="text-gray-300 text-lg md:text-lg lg:text-xl font-semibold">
-									{client.title}
-								</h3>
-								<div className="flex md:pl-8 items-center space-x-4">
-									<div className="w-8 h-0.5 bg-gradient-to-l from-yellow-500 to-transparent"></div>
-									<p className="text-gray-300 text-md md:text-lg lg:text-xl font-light">
-										{client.description}
-									</p>
-								</div>
-							</div>
-						</div>
-					</motion.div>
-				))}
-				<div className="text-center md:text-start mt-8">
-					<p className="text-gray-300 text-md md:text-lg lg:text-xl font-light">
-						If you're scaling and need systems, not spreadsheets - we're your unfair advantage.
-					</p>
-				</div>
-			</motion.div>
+  return (
+    <div className="w-full bg-[#101010] py-6">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+          
+          {/* Left Column - Title */}
+          <div className="text-center lg:text-left">
+            <div className="text-center md:text-left">
+              <Title title="Who We Help" variant="h2" titlePosition="left" />
+            </div>
+          </div>
 
-			{/* Enhanced Arrow Graphics */}
-			<motion.div
-				className="flex justify-center"
-				initial="hidden"
-				whileInView="visible"
-				viewport={{ once: false, amount: 0.3 }}
-				variants={arrowVariants}
-			>
-				<div className="flex space-x-3">
-					{[...Array(3)].map((_, i) => (
-						<div key={i} className="relative">
-							<div
-								className={`w-3 h-12 bg-gradient-to-b from-yellow-400 to-yellow-600 transform rotate-45 shadow-lg shadow-yellow-500/30`}
-								style={{ animationDelay: `${i * 0.2}s` }}
-							></div>
-							<div
-								className={`absolute inset-0 w-3 h-12 bg-gradient-to-b from-yellow-300 to-yellow-500 transform rotate-45 blur-sm opacity-50`}
-								style={{ animationDelay: `${i * 0.2}s` }}
-							></div>
-						</div>
-					))}
-				</div>
-			</motion.div>
+          {/* Right Column - Carousel Content */}
+          <div className="relative">
+            <div className="flex items-center justify-between">
+              {/* Navigation Controls */}
+              <div className="flex items-center space-x-3">
+                <button
+                  onClick={prevSlide}
+                  className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm border border-white/20 transition-all duration-300 group"
+                  aria-label="Previous client type"
+                >
+                  <ChevronLeft className="text-white group-hover:text-yellow-400 transition-colors" size={20} />
+                </button>
+                
+                <button
+                  onClick={nextSlide}
+                  className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm border border-white/20 transition-all duration-300 group"
+                  aria-label="Next client type"
+                >
+                  <ChevronRight className="text-white group-hover:text-yellow-400 transition-colors" size={20} />
+                </button>
+              </div>
 
-			<div className="mt-8 mb-8 text-center md:text-right">
-				<Title title="How We Drive Growth" titlePosition="right" variant="h2" underlineEffect={true} animationVariant="rightToLeft" />
-			</div>
+              {/* Indicators */}
+              <div className="flex space-x-2">
+                {clientTypes.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentIndex(index)}
+                    className={`w-2 h-1 rounded-full transition-all duration-300 ${
+                      index === currentIndex
+                        ? 'bg-yellow-400 w-6 shadow-lg shadow-yellow-400/50'
+                        : 'bg-white/40 hover:bg-white/60'
+                    }`}
+                    aria-label={`Go to client type ${index + 1}`}
+                  />
+                ))}
+              </div>
+            </div>
 
-			<motion.div
-				className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12"
-				initial="hidden"
-				whileInView="visible"
-				viewport={{ once: false, amount: 0.2 }}
-				variants={containerVariants}
-			>
-				{growthSteps.map((step, index) => (
-					<motion.div
-						key={index}
-						className="group"
-						variants={cardVariants}
-					>
-						<div className="relative h-full p-8 bg-gray-800/50 backdrop-blur-sm border-2 border-yellow-500 rounded-2xl">
-							<div className="absolute inset-0 bg-gradient-to-r from-yellow-500/5 to-yellow-600/5 rounded-2xl opacity-0"></div>
-							
-							<div className="relative w-7 h-7 lg:w-12 lg:h-12 bg-gradient-to-r from-yellow-500 to-yellow-400 rounded-full flex items-center justify-center mb-2 lg:mb-6 shadow-lg shadow-yellow-500/25">
-								<span className="text-lg md:text-xl font-semibold text-gray-900">{step.number}</span>
-							</div>
-							
-							<h3 className="lg:mb-4 text-gray-300 text-lg md:text-lg lg:text-xl font-semibold">
-								{step.title}
-							</h3>
-							
-							<p className="text-gray-300 text-md md:text-lg lg:text-xl font-light">
-								{step.description}
-							</p>
-							
-							<div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-yellow-500/50 to-transparent scale-x-0"></div>
-						</div>
-					</motion.div>
-				))}
-			</motion.div>
-		</Container>
-	);
+            {/* Carousel Content */}
+            <div className="relative h-33 overflow-hidden">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentIndex}
+                  variants={slideVariants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={transition}
+                  className="absolute inset-0 flex items-center"
+                >
+                  <div className="w-full">
+                    <div className="flex items-start space-x-2">
+                      {/* Enhanced Yellow Circle Icon */}
+                      <div className="relative w-12 h-12 flex-shrink-0 mt-2">
+                        <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-full animate-pulse opacity-75"></div>
+                        <div className="relative w-full h-full bg-gradient-to-r from-yellow-600 to-yellow-400 rounded-full flex items-center justify-center shadow-lg shadow-yellow-500/25">
+                          <Play size={18} className="text-gray-300" />
+                        </div>
+                      </div>
+
+                      {/* Content */}
+                      <div className="flex-1">
+                        <h3 className="text-gray-100 text-xl md:text-2xl lg:text-3xl font-bold mb-3">
+                          {clientTypes[currentIndex].title}
+                        </h3>
+                        <div className="flex items-center space-x-4">
+                          <div className="w-12 h-0.5 bg-gradient-to-r from-yellow-500 to-transparent"></div>
+                          <p className="text-gray-300 text-md md:text-lg lg:text-xl font-light">
+                            {clientTypes[currentIndex].description}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* Bottom Text */}
+            <div className="mt-2">
+              <p className="text-gray-300 text-base md:text-md font-light">
+                If you're scaling and need systems, not spreadsheets - we're your unfair advantage.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
