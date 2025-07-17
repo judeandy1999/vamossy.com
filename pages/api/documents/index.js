@@ -31,12 +31,11 @@ async function handler(req, res) {
 
 
   if (req.method === 'GET') {
-    // List documents (admin: all, user: own)
-    // Filters: userId, search, dateFrom, dateTo, minSize, maxSize
+
     const { userId, search, dateFrom, dateTo, minSize, maxSize } = req.query;
     let query = supabaseAdmin.from('documents').select('*');
     if (session.user.role !== 'admin') {
-      // Users can only see their own documents
+
       query = query.contains('assigned_users', [session.user.id]);
     } else if (userId) {
       query = query.contains('assigned_users', [userId]);
@@ -56,7 +55,7 @@ async function handler(req, res) {
     if (maxSize) {
       query = query.lte('size', Number(maxSize));
     }
-    const { data, error } = await query.order('created_at', { ascending: false });
+    const { data, error } = await query;
     if (error) {
       return res.status(500).json({ error: error.message });
     }
