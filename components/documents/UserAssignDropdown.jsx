@@ -1,7 +1,18 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 
 export default function UserAssignDropdown({ users, selectedUsers, setSelectedUsers, userDropdownOpen, setUserDropdownOpen, userSearch, setUserSearch }) {
   const userDropdownRef = useRef(null);
+
+  useEffect(() => {
+    if (!userDropdownOpen) return;
+    function handleClickOutside(event) {
+      if (userDropdownRef.current && !userDropdownRef.current.contains(event.target)) {
+        setUserDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [userDropdownOpen, setUserDropdownOpen]);
 
   function handleUserSelect(id) {
     setSelectedUsers(prev =>
