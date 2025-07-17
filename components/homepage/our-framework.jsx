@@ -98,7 +98,7 @@ export default function FrameworkSection() {
                   <motion.button
                     key={i}
                     className="w-full flex items-center gap-3 sm:gap-4 text-left text-sm sm:text-base md:text-lg bg-[#302c2c] border-1 border-yellow-200/50 hover:from-yellow-400/50 hover:to-yellow-300/50 focus:from-yellow-400 focus:to-yellow-300 text-gray-300 py-3 sm:py-4 px-3 sm:px-5 lg:px-6 rounded-xl sm:rounded-2xl font-medium shadow-lg hover:shadow-xl hover:shadow-gray-600/20 focus:outline-none focus:ring-2 focus:ring-yellow-300/50 focus:ring-offset-2 focus:ring-offset-transparent transition-all duration-200"
-                    onClick={() => alert(`Download: ${deliverable}`)} // Replace with real logic
+                    onClick={() => alert(`Download: ${deliverable}`)}
                     custom={i}
                     initial="hidden"
                     whileInView="visible"
