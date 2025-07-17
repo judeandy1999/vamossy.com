@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { AiOutlineEye, AiOutlineDownload } from 'react-icons/ai';
 
 export default function DocumentTable({
@@ -22,9 +22,23 @@ export default function DocumentTable({
   deleting,
   setShowDeleteConfirm
 }) {
+
+  const [sort, setSort] = useState('date');
+  const [sortedDocuments, setSortedDocuments] = useState([]);
+
+  useEffect(() => {
+    let sorted = [...documents];
+    if (sort === 'name') sorted.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+    else if (sort === 'date') sorted.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    else if (sort === 'type') sorted.sort((a, b) => a.type.localeCompare(b.type));
+    setSortedDocuments(sorted);
+  }, [documents, sort]);
+
   return (
-    <div className="overflow-x-auto mt-8 border border-gray-200 bg-white rounded shadow-sm max-h-[600px]">
-      <div className="flex flex-col md:flex-row md:items-center gap-2 px-2 py-3 border-b border-gray-100 bg-white">
+    <div className="px-2 sm:px-4 w-full">
+      {/* Everything below is the original content, now inside the small margin container */}
+      <div className="overflow-x-auto max-h-[600px]">
+        <div className="flex flex-col md:flex-row md:items-center gap-2 px-2 py-3 border-b border-gray-100 sticky top-0 bg-white z-10">
         <div className="flex items-center gap-2 mb-2 md:mb-0 min-w-[220px] relative">
           <div className="flex items-center gap-2 w-full" style={{ minWidth: 0 }}>
             <label className="text-sm text-gray-600 font-medium whitespace-nowrap">Filter by user:</label>
@@ -86,15 +100,8 @@ export default function DocumentTable({
         <div className="flex-1 flex items-center gap-2">
           <select
             className="border border-gray-300 rounded px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
-            onChange={e => {
-              const val = e.target.value;
-              let sorted = [...documents];
-              if (val === 'name') sorted.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
-              else if (val === 'date') sorted.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-              else if (val === 'type') sorted.sort((a, b) => a.type.localeCompare(b.type));
-              // setDocuments(sorted); // parent should handle this if needed
-            }}
-            defaultValue="date"
+            onChange={e => setSort(e.target.value)}
+            value={sort}
           >
             <option value="date">Sort by Date</option>
             <option value="name">Sort by Name</option>
@@ -121,9 +128,9 @@ export default function DocumentTable({
         >
           {deleting ? 'Deleting...' : 'Delete Selected'}
         </button>
-      </div>
-      <table className="w-full divide-y divide-gray-200 min-h-[180px]">
-        <thead className="bg-gray-50 sticky top-0 z-20 shadow-sm">
+        </div>
+        <table className="w-full divide-y divide-gray-200 min-h-[180px]">
+        <thead className="bg-gray-50 sticky top-[56px] z-10">
           <tr>
             <th className="px-4 py-3">
               <input
@@ -154,12 +161,12 @@ export default function DocumentTable({
             <tr>
               <td colSpan="8" className="py-4 text-center text-gray-400 text-sm">Loading...</td>
             </tr>
-          ) : documents.length === 0 ? (
+          ) : sortedDocuments.length === 0 ? (
             <tr>
               <td colSpan="8" className="py-4 text-center text-gray-500 text-sm">No documents found.</td>
             </tr>
           ) : (
-            documents.map(doc => (
+            sortedDocuments.map(doc => (
               <tr key={doc.id} className="hover:bg-gray-50">
                 <td className="px-4 py-2"><input type="checkbox" checked={selectedDocs.includes(doc.id)} onChange={() => handleSelectDoc(doc.id)} /></td>
                 <td className="px-4 py-2">{doc.name}</td>
@@ -214,7 +221,8 @@ export default function DocumentTable({
             ))
           )}
         </tbody>
-      </table>
+        </table>
+      </div>
     </div>
   );
 }
