@@ -99,71 +99,9 @@ export default function WhoWeHelp() {
 				))}
 				<div className="text-center md:text-start mt-8">
 					<p className="text-gray-300 text-md md:text-lg lg:text-xl font-light">
-						If you're scaling and need systems, not spreadsheets - we're your unfair advantage.
+						If you're scaling and need systematic solutions rather than spreadsheets - we're your unfair advantage.
 					</p>
 				</div>
-			</motion.div>
-
-			{/* Enhanced Arrow Graphics */}
-			<motion.div
-				className="flex justify-center"
-				initial="hidden"
-				whileInView="visible"
-				viewport={{ once: false, amount: 0.3 }}
-				variants={arrowVariants}
-			>
-				<div className="flex space-x-3">
-					{[...Array(3)].map((_, i) => (
-						<div key={i} className="relative">
-							<div
-								className={`w-3 h-12 bg-gradient-to-b from-yellow-400 to-yellow-600 transform rotate-45 shadow-lg shadow-yellow-500/30`}
-								style={{ animationDelay: `${i * 0.2}s` }}
-							></div>
-							<div
-								className={`absolute inset-0 w-3 h-12 bg-gradient-to-b from-yellow-300 to-yellow-500 transform rotate-45 blur-sm opacity-50`}
-								style={{ animationDelay: `${i * 0.2}s` }}
-							></div>
-						</div>
-					))}
-				</div>
-			</motion.div>
-
-			<div className="mt-8 mb-8 text-center md:text-right">
-				<Title title="How We Drive Growth" titlePosition="right" variant="h2" underlineEffect={true} animationVariant="rightToLeft" />
-			</div>
-
-			<motion.div
-				className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12"
-				initial="hidden"
-				whileInView="visible"
-				viewport={{ once: false, amount: 0.2 }}
-				variants={containerVariants}
-			>
-				{growthSteps.map((step, index) => (
-					<motion.div
-						key={index}
-						className="group"
-						variants={cardVariants}
-					>
-						<div className="relative h-full p-8 bg-gray-800/50 backdrop-blur-sm border-2 border-yellow-500 rounded-2xl">
-							<div className="absolute inset-0 bg-gradient-to-r from-yellow-500/5 to-yellow-600/5 rounded-2xl opacity-0"></div>
-							
-							<div className="relative w-7 h-7 lg:w-12 lg:h-12 bg-gradient-to-r from-yellow-500 to-yellow-400 rounded-full flex items-center justify-center mb-2 lg:mb-6 shadow-lg shadow-yellow-500/25">
-								<span className="text-lg md:text-xl font-semibold text-gray-900">{step.number}</span>
-							</div>
-							
-							<h3 className="lg:mb-4 text-gray-300 text-lg md:text-lg lg:text-xl font-semibold">
-								{step.title}
-							</h3>
-							
-							<p className="text-gray-300 text-md md:text-lg lg:text-xl font-light">
-								{step.description}
-							</p>
-							
-							<div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-yellow-500/50 to-transparent scale-x-0"></div>
-						</div>
-					</motion.div>
-				))}
 			</motion.div>
 		</Container>
 	);
