@@ -1,13 +1,10 @@
-// Utility for downloading files for user documents
 export async function downloadFile(fileUrl, fileName) {
   try {
     let path = fileUrl;
-    // If fileUrl is a public URL, extract the storage path after '/object/public/documents/'
     const match = fileUrl.match(/\/object\/public\/(documents\/[^?]+)/);
     if (match && match[1]) {
       path = match[1];
     }
-    // Always ensure 'documents/' prefix for user documents
     if (!path.startsWith('documents/')) {
       path = 'documents/' + path;
     }
