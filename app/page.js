@@ -3,11 +3,14 @@
 import Hero from "@/components/homepage/hero";
 import Footer from "@/components/shared/footer";
 import WhoWeHelp from "@/components/homepage/who-we-help";
+import GrowWithConfidence from "@/components/homepage/grow-with-confidence";
 import ContactUs from "@/components/homepage/contact-us";
 import UniqueSolutions from "@/components/homepage/unique-solutions";
 import TieredServices from "@/components/homepage/tiered-services";
 import ProofThroughPerspective from "@/components/homepage/proof-through-perspective";
 import LiveCaseStudies from "@/components/homepage/article-section";
+import WhyClients from "@/components/homepage/why-clients";
+import FrameworkSection from "@/components/homepage/our-framework";
 
 export default function Home() {
     return (
@@ -24,11 +27,13 @@ export default function Home() {
         <div className="relative">
           <Hero />
           <WhoWeHelp />
+          <GrowWithConfidence />
+          <FrameworkSection />
           <UniqueSolutions />
           <TieredServices />
           <ProofThroughPerspective />
+          <WhyClients />
           <LiveCaseStudies />
-          <ContactUs/>
           <Footer />
         </div>
       </div>
