@@ -1,65 +1,67 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../../utils/client';
 import DocumentsTable from './DocumentsTable';
 import DocumentsFilterBar from './DocumentsFilterBar';
 import { PreviewModal, DownloadModal } from './DocumentsModals';
-
-async function fetchDocuments(filters = {}) {
-  const params = new URLSearchParams(filters).toString();
-  const { data: { session } } = await supabase.auth.getSession();
-  const token = session?.access_token;
-  const res = await fetch(`/api/documents?${params}`, {
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
-  });
-  return res.json();
-}
+import { useUserDocuments } from '../../hooks/useUserDocuments';
+import { useAuthWithRedirect } from '../../hooks/useAuthWithRedirect';
+import { downloadFile } from '../../utils/documents';
 
 export default function UserDocumentsPage() {
-  const [documents, setDocuments] = useState([]);
   const [search, setSearch] = useState('');
   const [sortOrder, setSortOrder] = useState('newest');
-  const [loading, setLoading] = useState(true);
   const [showDownloadConfirm, setShowDownloadConfirm] = useState(false);
   const [downloadUrl, setDownloadUrl] = useState(null);
   const [downloadName, setDownloadName] = useState('');
-  const [previewDoc, setPreviewDoc] = useState(null); 
+  const [previewDoc, setPreviewDoc] = useState(null);
+  const { documents, loading, fetchDocuments, setDocuments } = useUserDocuments();
+  const { session } = useAuthWithRedirect();
 
   useEffect(() => {
-    loadDocuments();
-  }, []);
+    if (!session) return;
+    (async () => {
+      let docs = await fetchDocuments({}, session.access_token);
+      docs = sortDocuments(docs, sortOrder);
+      setDocuments(docs);
+    })();
+  }, [session]);
 
-  async function loadDocuments(filters = {}) {
-    setLoading(true);
-    const { documents } = await fetchDocuments(filters);
-    let docs = documents || [];
-    
-    if (sortOrder === 'newest') {
-      docs = docs.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-    } else if (sortOrder === 'oldest') {
-      docs = docs.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
-    } else if (sortOrder === 'name-az') {
-      docs = docs.sort((a, b) => a.name.localeCompare(b.name));
-    } else if (sortOrder === 'name-za') {
-      docs = docs.sort((a, b) => b.name.localeCompare(a.name));
+  function sortDocuments(docs, order) {
+    if (!docs) return [];
+    if (order === 'newest') {
+      return docs.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    } else if (order === 'oldest') {
+      return docs.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+    } else if (order === 'name-az') {
+      return docs.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (order === 'name-za') {
+      return docs.sort((a, b) => b.name.localeCompare(a.name));
     }
-    setDocuments(docs);
-    setLoading(false);
+    return docs;
   }
 
-  function handleSearch(e) {
+  async function handleSearch(e) {
     setSearch(e.target.value);
-    loadDocuments({ search: e.target.value });
+    if (!session) return;
+    let docs = await fetchDocuments({ search: e.target.value }, session.access_token);
+    docs = sortDocuments(docs, sortOrder);
+    setDocuments(docs);
   }
 
-  function handleSortChange(e) {
+  async function handleSortChange(e) {
     setSortOrder(e.target.value);
-    loadDocuments({ search });
+    if (!session) return;
+    let docs = await fetchDocuments({ search }, session.access_token);
+    docs = sortDocuments(docs, e.target.value);
+    setDocuments(docs);
   }
 
-  function handleFilterChange() {
-    loadDocuments({ search });
+  async function handleFilterChange() {
+    if (!session) return;
+    let docs = await fetchDocuments({ search }, session.access_token);
+    docs = sortDocuments(docs, sortOrder);
+    setDocuments(docs);
   }
 
   function handlePreview(url, name, type) {
@@ -82,34 +84,6 @@ export default function UserDocumentsPage() {
     setShowDownloadConfirm(false);
     setDownloadUrl(null);
     setDownloadName('');
-  }
-
-  async function downloadFile(fileUrl, fileName) {
-    try {
-      let path = fileUrl;
-      // If fileUrl is a public URL, extract the storage path after '/object/public/documents/'
-      const match = fileUrl.match(/\/object\/public\/(documents\/[^?]+)/);
-      if (match && match[1]) {
-        path = match[1];
-      }
-      // Always ensure 'documents/' prefix for user documents
-      if (!path.startsWith('documents/')) {
-        path = 'documents/' + path;
-      }
-      const response = await fetch(`/api/documents/download-documents?path=${encodeURIComponent(path)}`);
-      if (!response.ok) throw new Error('Download failed');
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = fileName || 'downloaded-file';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      alert('Failed to download file: ' + error.message);
-    }
   }
 
   function cancelDownload() {
