@@ -8,10 +8,8 @@ export function useAdminDocuments({ session, role, status }) {
   const [users, setUsers] = useState([]);
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
-  // Track the current sort value
   const sortRef = useRef('created_at');
 
-  // Fetch users (admin only)
   const fetchUsers = useCallback(async () => {
     if (role !== 'admin' || !session || status !== 'authenticated') return;
     const { data, error } = await supabase.from('users').select('id, email, name');
@@ -19,11 +17,9 @@ export function useAdminDocuments({ session, role, status }) {
     setUsers(data || []);
   }, [role, showToast, session, status]);
 
-  // Fetch documents
   const fetchDocuments = useCallback(async (filters = {}) => {
     if (!session || status !== 'authenticated') return;
     setLoading(true);
-    // Always use the latest sort value unless overridden
     let sort = filters.sort || sortRef.current || 'created_at';
     sortRef.current = sort;
     const params = new URLSearchParams({ ...filters, sort }).toString();
