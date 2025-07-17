@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js';
 import { Shield } from 'lucide-react';
 import Spinner from '@/components/ui/spinner';
-import { supabase } from '@/utils/client';
+import { useAuthWithRedirect } from '@/hooks/useAuthWithRedirect';
 
 const paypalOptions = {
   'client-id': process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID,
@@ -18,12 +18,12 @@ export default function PaymentGateway({
   onSuccess,
   credits_purchased = 1 
 }) {
+  const { session } = useAuthWithRedirect();
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState(null);
   const [error, setError] = useState(null);
 
   const handlePayPalApprove = async (data, actions) => {
-    const { data: { session } } = await supabase.auth.getSession();
     const accessToken = session?.access_token;
 
     try {

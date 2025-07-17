@@ -2,10 +2,11 @@
 import { X } from 'lucide-react';
 import React, { useRef, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { supabase } from '@/utils/client';
 import Spinner from '@/components/ui/spinner';
+import { useAuthWithRedirect } from '@/hooks/useAuthWithRedirect';
 
 export default function CalendlyModal({ isOpen, onClose, user, onBookingSuccess }) {
+  const { session } = useAuthWithRedirect();
   const modalRef = useRef(null);
   const [eventTypes, setEventTypes] = useState([]);
   const [selectedEventType, setSelectedEventType] = useState(null);
@@ -62,7 +63,6 @@ export default function CalendlyModal({ isOpen, onClose, user, onBookingSuccess 
 
   const fetchEventTypes = async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
       const accessToken = session?.access_token;
 
       const response = await fetch('/api/calendly/event-types', {
@@ -92,7 +92,6 @@ export default function CalendlyModal({ isOpen, onClose, user, onBookingSuccess 
 
   const fetchUserCredits = async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
       const accessToken = session?.access_token;
 
       const response = await fetch('/api/users/credits', {
@@ -123,7 +122,6 @@ export default function CalendlyModal({ isOpen, onClose, user, onBookingSuccess 
     setError(null);
 
     try {
-      const { data: { session } } = await supabase.auth.getSession();
       const accessToken = session?.access_token;
 
       const response = await fetch('/api/calendly/scheduling-links', {
@@ -157,7 +155,6 @@ export default function CalendlyModal({ isOpen, onClose, user, onBookingSuccess 
 
   const deductCredit = async (bookingDetails) => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
       const accessToken = session?.access_token;
 
       const creditsToDeduct = selectedEventType?.duration === 30 ? 0.5 : 1;

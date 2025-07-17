@@ -15,21 +15,27 @@ import {
   HelpCircle,
   ChevronLeft,
   ChevronRight,
-  Bot,
-  Zap,
   Users,
-  BarChart3
+  BarChart3,
+  Layers,
+  Calendar,
+  Receipt,
+  UserCheck,
+  TrendingUp,
+  Cog,
+  Wallet
 } from 'lucide-react'
 
 const navItems = [
   { label: 'Dashboard', href: '/user-dashboard', icon: Home, roles: ['admin', 'user', 'worker'] },
   { label: 'Documents', href: '/user-dashboard/documents', icon: FolderOpen, roles: ['user', 'admin'] },
   { label: 'Create Article', href: '/user-dashboard/create-article', icon: PenTool, roles: ['admin'] },
-  { label: 'Role Management', href: '/user-dashboard/user-management', icon: Users, roles: ['admin'] },
-  { label: 'Analytics', href: '/user-dashboard/analytics', icon: BarChart3, roles: ['admin'] },
-  { label: 'Options', href: '/user-dashboard/options', icon: Settings, roles: ['admin'] },
-  { label: 'Booking & Payments', href: '/user-dashboard/booking', icon: CreditCard, roles: ['admin', 'worker', 'user'] },
-  { label: 'Transactions', href: '/user-dashboard/transactions', icon: BarChart3, roles: ['admin', 'user', 'worker'] },
+  { label: 'Role Management', href: '/user-dashboard/user-management', icon: UserCheck, roles: ['admin'] },
+  { label: 'Cards Management', href: '/user-dashboard/card-management', icon: Layers, roles: ['admin', 'user'] },
+  { label: 'Analytics', href: '/user-dashboard/analytics', icon: TrendingUp, roles: ['admin'] },
+  { label: 'Options', href: '/user-dashboard/options', icon: Cog, roles: ['admin'] },
+  { label: 'Booking & Payments', href: '/user-dashboard/booking', icon: Calendar, roles: ['admin', 'worker', 'user'] },
+  { label: 'Transactions', href: '/user-dashboard/transactions', icon: Receipt, roles: ['admin', 'user', 'worker'] },
   { label: 'Asset Library', href: '/dashboard/assets', icon: FolderOpen, roles: ['admin', 'user'] },
   { label: 'FAQ', href: '/dashboard/faq', icon: HelpCircle, roles: ['admin', 'user', 'worker'] },
 ]
@@ -62,7 +68,7 @@ export default function Sidebar() {
         )}
         <button
           onClick={toggleSidebar}
-          className="p-1.5 rounded-md hover:bg-gray-100 transition-colors"
+          className="p-1.5 rounded-md hover:bg-gray-100 transition-colors cursor-pointer"
           aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
           {isCollapsed ? (
@@ -91,7 +97,7 @@ export default function Sidebar() {
             <Link
               key={href}
               href={href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors group relative ${
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors group relative cursor-pointer ${
                 pathname === href
                   ? 'bg-yellow-500 text-white font-medium shadow-sm'
                   : 'text-slate-600 hover:bg-gray-50 hover:text-slate-800'
