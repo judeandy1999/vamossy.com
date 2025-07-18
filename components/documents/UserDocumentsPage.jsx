@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import DocumentsTable from './DocumentsTable';
-import DocumentsFilterBar from './DocumentsFilterBar';
-import { PreviewModal, DownloadModal } from './DocumentsModals';
-import { useUserDocuments } from '../../hooks/useUserDocuments';
-import { useAuthWithRedirect } from '../../hooks/useAuthWithRedirect';
-import { downloadFile } from '../../utils/documents';
+import DocumentsTable from '@/components/documents/DocumentsTable';
+import DocumentsFilterBar from '@/components/documents/DocumentsFilterBar';
+import { PreviewModal, DownloadModal } from '@/components/documents/DocumentsModals';
+import { useUserDocuments } from '@/hooks/useUserDocuments';
+import { useAuthWithRedirect } from '@/hooks/useAuthWithRedirect';
+import { downloadFile } from '@/utils/documents';
 
 export default function UserDocumentsPage() {
   const [search, setSearch] = useState('');
