@@ -68,13 +68,11 @@ export default function TieredServices() {
   return (
     
     <Container variant="black" isTable={true}>
-      {/* Title */}
       <Title title={tieredServicesPage.title} variant="h2" />
       {tieredServicesPage.subtitle && (
         <Title title={tieredServicesPage.subtitle} variant="h2" />
       )}
 
-      {/* Mobile Scroll Hint */}
       <div className="block lg:hidden mb-4">
         <div className="flex items-center justify-center space-x-2 text-yellow-500">
           <ChevronLeft size={20} />
