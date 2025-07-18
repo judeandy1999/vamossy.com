@@ -4,6 +4,7 @@
 import { motion } from "framer-motion";
 import { Play } from 'lucide-react';
 import { clientTypes, growthSteps } from '@/data/data';
+import { FaSearch, FaProjectDiagram, FaShieldAlt } from 'react-icons/fa';
 import Title from "@/components/ui/title";
 import Container from "@/components/ui/container";
 
@@ -14,18 +15,6 @@ export default function HowWeDrive() {
     visible: {
       transition: {
         staggerChildren: 0.2,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, x: -70 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: {
-        duration: 0.6,
-        ease: "easeOut",
       },
     },
   };
@@ -42,62 +31,116 @@ export default function HowWeDrive() {
     },
   };
 
-  const arrowVariants = {
-    hidden: { opacity: 0},
-    visible: {
-      opacity: 1,
-      transition: {
-        duration: 1.5,
-        ease: "easeOut",
-      },
+  const brandYellow = '#FFD600';
+  const cardStyles = [
+    {
+      border: `border-[${brandYellow}]`,
+      icon: 'search',
+      number: '01',
+      dot: brandYellow,
+      iconComponent: (props) => <FaSearch {...props} style={{ color: brandYellow }} />,
     },
-  };
+    {
+      border: `border-[${brandYellow}]`,
+      icon: 'briefcase',
+      number: '02',
+      dot: brandYellow,
+      iconComponent: (props) => <FaProjectDiagram {...props} style={{ color: brandYellow }} />,
+    },
+    {
+      border: `border-[${brandYellow}]`,
+      icon: 'mountain',
+      number: '03',
+      dot: brandYellow,
+      iconComponent: (props) => <FaShieldAlt {...props} style={{ color: brandYellow }} />,
+    },
+  ];
 
   return (
-    <div
-      style={{
-        background: '#1c1c1c',
-background: 'linear-gradient(95deg, #0c111c 0%, #0d0d1b 50%, #0c111c 100%)',
-      }}
-      className="flex flex-col w-full h-full flex items-center justify-center overflow-hidden"
-    >
+    <Container className="relative w-full !pb-40" variant="transparent">
       <div className="mt-8 mb-8 text-center md:text-right">
-        <Title title="How We Drive Growth" variant="h2" />
+        <Title title="Grow with Confidence" variant="h2" />
       </div>
 
       <motion.div
-        className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 mb-12"
+        className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 mb-12"
         initial="hidden"
         whileInView="visible"
         viewport={{ once: false, amount: 0.2 }}
         variants={containerVariants}
       >
-        {growthSteps.map((step, index) => (
+        {cardStyles.map((style, index) => (
           <motion.div
             key={index}
             className="group"
             variants={cardVariants}
           >
-            <div className="relative h-full p-8 bg-gray-800/50 backdrop-blur-sm border-2 border-yellow-500 rounded-2xl">
-              <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/5 to-yellow-600/5 rounded-2xl opacity-0"></div>
-              
-              <div className="relative w-7 h-7 lg:w-12 lg:h-12 bg-gradient-to-r from-yellow-500 to-yellow-400 rounded-full flex items-center justify-center mb-2 lg:mb-6 shadow-lg shadow-yellow-500/25">
-                <span className="text-lg md:text-xl font-semibold text-gray-900">{step.number}</span>
+            <div
+              className={`relative p-12 rounded-[40px] shadow-2xl flex flex-col items-center justify-center`}
+              style={{
+                minHeight: 240,
+                boxShadow: '0 8px 48px 0 rgba(44,62,80,0.25)',
+                background: 'rgba(18,22,34,0.98)',
+                filter: 'blur(0.5px)',
+                borderTop: `2px solid ${style.dot}`,
+                borderLeft: `2px solid ${style.dot}`,
+                borderRight: '2px solid transparent',
+                borderBottom: '2px solid transparent',
+              }}
+            >
+              {/* Dotted border bottom and right (custom dots, outside the border) */}
+              <>
+                {/* Dots on right */}
+                {Array.from({ length: 13 }).map((_, i) => (
+                  <div
+                    key={`dot-right-${i}`}
+                    className="absolute"
+                    style={{
+                      right: '-12px',
+                      top: `${30 + i * 16}px`,
+                      width: '5px',
+                      height: '5px',
+                      borderRadius: '50%',
+                      background: style.dot,
+                      opacity: 0.5,
+                      zIndex: 1,
+                    }}
+                  />
+                ))}
+                {/* Dots on bottom */}
+                {Array.from({ length: 15 }).map((_, i) => (
+                  <div
+                    key={`dot-bottom-${i}`}
+                    className="absolute"
+                    style={{
+                      left: `${40 + i * 20}px`,
+                      bottom: '-12px',
+                      width: '5px',
+                      height: '5px',
+                      borderRadius: '50%',
+                      background: style.dot,
+                      opacity: 0.5,
+                      zIndex: 1,
+                    }}
+                  />
+                ))}
+              </>
+              {/* Icon */}
+              <div className="mb-6 mt-2 flex justify-center z-10">
+                {style.iconComponent && style.iconComponent({ className: 'w-14 h-14' })}
               </div>
-              
-              <h3 className="lg:mb-4 text-gray-300 text-lg md:text-lg lg:text-xl font-semibold">
-                {step.title}
+              {/* Title */}
+              <h3 className="mb-2 text-white text-xl md:text-2xl font-bold text-center tracking-wide z-10">
+                {growthSteps[index]?.title || `Diagnostics`}
               </h3>
-              
-              <p className="text-gray-300 text-md md:text-lg lg:text-xl font-light">
-                {step.description}
+              {/* Description */}
+              <p className="text-[#b3c2d4] text-base md:text-lg font-normal text-center leading-relaxed z-10">
+                {growthSteps[index]?.description || 'Deep discovery, audit, effort vs reward opportunities'}
               </p>
-              
-              <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-yellow-500/50 to-transparent scale-x-0"></div>
             </div>
           </motion.div>
         ))}
       </motion.div>
-    </div>
+    </Container>
   );
 }
