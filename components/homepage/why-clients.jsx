@@ -5,7 +5,7 @@ import { Check } from 'lucide-react';
 
 export default function WhyClients() {
   return (
-    <Container variant="gray-gradient">
+    <Container variant="black">
       <div className="flex flex-col items-center w-full mx-auto bg-transparent">
         <Title variant="h2" title="Why Clients Appreciate Us" underlineEffect={true}/>
         <p className="text-lg sm:text-xl md:text-2xl text-gray-300 text-center mb-4 sm:mb-6 md:mb-2 px-4 sm:px-6 md:px-0">Here's what sets us apart and keeps clients coming back.</p>
