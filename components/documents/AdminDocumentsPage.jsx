@@ -1,14 +1,14 @@
 "use client";
 
 import React, { useState, useRef } from 'react';
-import UserAssignDropdown from './UserAssignDropdown';
-import FileUploadArea from './FileUploadArea';
-import DocumentTable from './AdminDocumentsTable';
-import PreviewModal from './PreviewModal';
-import DownloadModal from './DownloadModal';
-import CustomModal from '../ui/CustomModal';
-import { useAdminDocuments } from '../../hooks/useAdminDocuments';
-import { useAuthWithRedirect } from '../../hooks/useAuthWithRedirect';
+import UserAssignDropdown from '@/components/documents/UserAssignDropdown';
+import FileUploadArea from '@/components/documents/FileUploadArea';
+import DocumentTable from '@/components/documents/AdminDocumentsTable';
+import PreviewModal from '@/components/documents/PreviewModal';
+import DownloadModal from '@/components/documents/DownloadModal';
+import CustomModal from '@/components/ui/CustomModal';
+import { useAdminDocuments } from '@/hooks/useAdminDocuments';
+import { useAuthWithRedirect } from '@/hooks/useAuthWithRedirect';
 
 export default function AdminDocumentsPage() {
   const { session, role: authRole, status } = useAuthWithRedirect();
