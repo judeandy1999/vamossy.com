@@ -13,6 +13,8 @@ import LiveCaseStudies from "@/components/homepage/article-section";
 import Carousel from "@/components/homepage/carousel";
 import GoogleCalendarModal from "@/components/ui/google-calendar";
 import HowWeDrive from '@/components/homepage/how-we-drive';
+import WhyClients from '@/components/homepage/why-clients';
+import FrameworkSection from '@/components/homepage/our-framework';
 
 export default function Home() {
     const [showCalendar, setShowCalendar] = useState(false);
@@ -45,7 +47,8 @@ export default function Home() {
           {/* <Hero /> */}
           <WhoWeHelp />
           <HowWeDrive />
-          <UniqueSolutions />
+          <FrameworkSection />
+          {/* <UniqueSolutions /> */}
           <TieredServices />
           <ProofThroughPerspective />
           <WhyClients />
