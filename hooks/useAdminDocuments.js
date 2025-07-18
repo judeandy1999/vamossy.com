@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { supabase } from '../utils/client';
-import { useToast } from '../contexts/toast-context';
+import { supabase } from '@/utils/client';
+import { useToast } from '@/contexts/toast-context';
 
 export function useAdminDocuments({ session, role, status }) {
   const { showToast } = useToast();
