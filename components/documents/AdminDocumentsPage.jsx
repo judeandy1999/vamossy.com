@@ -36,9 +36,7 @@ export default function AdminDocumentsPage() {
   const [userFilterDropdownOpen, setUserFilterDropdownOpen] = useState(false);
   const [userFilterSearch, setUserFilterSearch] = useState('');
   const userFilterDropdownRef = useRef(null);
-  const [sortOrder, setSortOrder] = useState('created_at');
 
-  // Use hooks for all data and actions
   const {
     users,
     documents,
@@ -151,15 +149,12 @@ export default function AdminDocumentsPage() {
     fetchDocuments({ search: value, userId: userFilter, sort: sortOrder });
   }
 
-  // Refetch documents when userFilter changes
   React.useEffect(() => {
     (async () => {
       await fetchDocuments({ search, userId: userFilter, sort: sortOrder });
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userFilter]);
 
-  // Filter documents on the frontend for exclusive assignment
   const filteredDocuments = React.useMemo(() => {
     if (!userFilter) return documents;
     return documents.filter(doc =>
@@ -178,7 +173,6 @@ export default function AdminDocumentsPage() {
     setDownloadDoc({ path: doc.url, name: doc.name });
   }
 
-  // User filter dropdown outside click
   React.useEffect(() => {
     function handleClickOutside(event) {
       if (userDropdownRef.current && !userDropdownRef.current.contains(event.target)) {
