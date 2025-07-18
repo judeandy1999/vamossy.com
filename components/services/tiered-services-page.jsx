@@ -67,7 +67,7 @@ export default function TieredServices() {
 
   return (
     
-    <Container variant="gray-gradient" isTable={true}>
+    <Container variant="black" isTable={true}>
       {/* Title */}
       <Title title={tieredServicesPage.title} variant="h2" />
       {tieredServicesPage.subtitle && (
