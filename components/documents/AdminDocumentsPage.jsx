@@ -37,6 +37,9 @@ export default function AdminDocumentsPage() {
   const [userFilterSearch, setUserFilterSearch] = useState('');
   const userFilterDropdownRef = useRef(null);
 
+  // Add sortOrder state
+  const [sortOrder, setSortOrder] = useState('desc'); // default to 'desc', change as needed
+
   const {
     users,
     documents,
@@ -250,6 +253,8 @@ export default function AdminDocumentsPage() {
         setUserFilterSearch={setUserFilterSearch}
         deleting={deleting}
         setShowDeleteConfirm={setShowDeleteConfirm}
+        sortOrder={sortOrder}
+        setSortOrder={setSortOrder}
       />
         <CustomModal
           isOpen={showDeleteConfirm}
