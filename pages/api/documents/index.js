@@ -85,7 +85,6 @@ async function handler(req, res) {
     if (fetchError) {
       return res.status(500).json({ error: fetchError.message });
     }
-    // Collect all file paths to delete (avoid duplicates)
     const filePathsToDelete = [];
     for (const doc of docs) {
       try {
@@ -95,22 +94,16 @@ async function handler(req, res) {
           const filePath = decodeURIComponent(match[1]);
           if (!filePathsToDelete.includes(filePath)) {
             filePathsToDelete.push(filePath);
-            console.log('[DELETE] Will remove file:', filePath, 'from document:', doc.id, doc.name);
           }
         } else {
-          console.warn('[SKIP] Could not extract file path from URL:', url, 'for document:', doc.id, doc.name);
         }
       } catch (err) {
-        console.error('[ERROR] Error extracting file path:', err, 'for document:', doc.id, doc.name);
       }
     }
     if (filePathsToDelete.length) {
-      console.log('[DELETE] Attempting to remove files:', filePathsToDelete);
       const { error: removeError } = await supabaseAdmin.storage.from('documents').remove(filePathsToDelete);
       if (removeError) {
-        console.error('[ERROR] Error removing files from bucket:', removeError.message);
       } else {
-        console.log('[DELETE] Successfully removed files:', filePathsToDelete);
       }
     }
     const { error: delError } = await supabaseAdmin.from('documents').delete().in('id', ids);
