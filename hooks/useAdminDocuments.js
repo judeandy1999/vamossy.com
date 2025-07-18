@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '../utils/client';
 import { useToast } from '../contexts/toast-context';
-import { useAuthWithRedirect } from './useAuthWithRedirect';
 
 export function useAdminDocuments({ session, role, status }) {
   const { showToast } = useToast();
@@ -32,7 +31,6 @@ export function useAdminDocuments({ session, role, status }) {
     setLoading(false);
   }, [session, status]);
 
-  // Upload document
   const uploadDocument = useCallback(async ({ file, userId }) => {
     if (!file || !userId || !session || status !== 'authenticated') return;
     const user = users.find(u => u.id === userId);
@@ -76,8 +74,6 @@ export function useAdminDocuments({ session, role, status }) {
     return true;
   }, [users, showToast, session, status]);
 
-  // Delete documents
-  // Accepts: ids (array), filters (object)
   const deleteDocuments = useCallback(async (ids = [], filters = {}) => {
     if (!ids.length || !session || status !== 'authenticated') return;
     const token = session?.access_token;
@@ -100,7 +96,6 @@ export function useAdminDocuments({ session, role, status }) {
     }
   }, [session, showToast, fetchDocuments, status]);
 
-  // Download document
   const downloadDocument = useCallback(async (fileUrl, fileName) => {
     if (!session || status !== 'authenticated') return;
     try {
@@ -131,7 +126,6 @@ export function useAdminDocuments({ session, role, status }) {
   useEffect(() => {
     if (session && status === 'authenticated') {
       fetchUsers();
-      // Always fetch with default sort on first load
       fetchDocuments({ sort: sortRef.current });
     }
   }, [fetchUsers, fetchDocuments, session, status]);
