@@ -36,7 +36,6 @@ export default function DocumentTable({
 
   return (
     <div className="px-2 sm:px-4 w-full">
-      {/* Everything below is the original content, now inside the small margin container */}
       <div className="overflow-x-auto max-h-[600px]">
         <div className="flex flex-col md:flex-row md:items-center gap-2 px-2 py-3 border-b border-gray-100 sticky top-0 bg-white z-10">
         <div className="flex items-center gap-2 mb-2 md:mb-0 min-w-[220px] relative">
