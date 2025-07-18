@@ -12,8 +12,8 @@ async function readBody(req) {
     });
   });
 }
-import { getSession } from '../../../lib/authMiddleware';
-import { supabaseAdmin } from '../../../utils/storageClient';
+import { getSession } from '@/lib/authMiddleware';
+import { supabaseAdmin } from '@/utils/storageClient';
 
 export const config = {
   api: {
