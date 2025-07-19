@@ -413,7 +413,7 @@ export const growthSteps = [
 export const FrameworkData = [
   {
     icon: FaChartBar,
-    title: 'We are fully transparent',
+    title: 'We Are Fully Transparent',
     description: 'Download any of our materials, and see our approach.',
     deliverables: [
       'Business Intelligence, Audit',
@@ -425,7 +425,7 @@ export const FrameworkData = [
   },
   {
     icon: FaRocket,
-    title: 'Our goal',
+    title: 'Our Goal',
     description: 'Maximizing your acquisition, conversion and retention results.',
     deliverables: [
       'Funnel, Segmentation, microintents',
