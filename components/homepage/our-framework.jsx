@@ -78,7 +78,7 @@ export default function FrameworkSection() {
                     <h3 className="text-gray-300 text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold mb-1 sm:mb-2 group-hover:text-yellow-500 leading-tight">
                       {item.title}
                     </h3>
-                    <div className="w-8 sm:w-12 h-0.5 sm:h-1 bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-full group-hover:w-12 sm:group-hover:w-16 transition-all duration-300" />
+                    <div className="w-8 sm:w-12 h-0.5 sm:h-1 bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-full group-hover:w-12 sm:group-hover:w-16" />
                   </div>
                 </div>
                 <p className="text-gray-300 text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed mb-4 sm:mb-6 group-hover:text-gray-200">
@@ -97,7 +97,7 @@ export default function FrameworkSection() {
                 {item.deliverables.map((deliverable, i) => (
                   <motion.button
                     key={i}
-                    className="w-full flex items-center gap-3 sm:gap-4 text-left text-sm sm:text-base md:text-lg bg-[#302c2c] border-1 border-yellow-200/50 hover:from-yellow-400/50 hover:to-yellow-300/50 focus:from-yellow-400 focus:to-yellow-300 text-gray-300 py-3 sm:py-4 px-3 sm:px-5 lg:px-6 rounded-xl sm:rounded-2xl font-medium shadow-lg hover:shadow-xl hover:shadow-gray-600/20 focus:outline-none focus:ring-2 focus:ring-yellow-300/50 focus:ring-offset-2 focus:ring-offset-transparent transition-all duration-200"
+                    className="w-full flex items-center gap-3 sm:gap-4 text-left text-sm sm:text-base md:text-lg bg-[#302c2c] border-1 border-yellow-200/50 hover:from-yellow-400/50 hover:to-yellow-300/50 focus:from-yellow-400 focus:to-yellow-300 text-gray-300 py-3 sm:py-4 px-3 sm:px-5 lg:px-6 rounded-xl sm:rounded-2xl font-medium shadow-lg hover:shadow-xl hover:shadow-gray-600/20"
                     onClick={() => alert(`Download: ${deliverable}`)}
                     custom={i}
                     initial="hidden"
@@ -109,7 +109,7 @@ export default function FrameworkSection() {
                       <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4 lg:w-5 lg:h-5 text-gray-300 group-hover/button:text-black" />
                     </div>
                     <span className="flex-1 leading-relaxed font-medium min-w-0 text-left pr-2">{deliverable}</span>
-                    <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-300 group-hover/button:text-black group-hover/button:translate-x-1 transition-transform duration-200 flex-shrink-0" />
+                    <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-300 group-hover/button:text-black group-hover/button:translate-x-1 flex-shrink-0" />
                   </motion.button>
                 ))}
               </div>
