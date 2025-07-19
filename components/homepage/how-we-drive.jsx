@@ -57,13 +57,13 @@ export default function HowWeDrive() {
   ];
 
   return (
-    <Container className="relative w-full !pb-40" variant="transparent">
-      <div className="mt-8 mb-8 text-center md:text-right">
+    <Container className="relative w-full !pb-24 md:!pb-40" variant="transparent">
+      <div className="mt-6 mb-6 text-center md:mt-8 md:mb-8 md:text-right">
         <Title title="Grow with Confidence" variant="h2" />
       </div>
 
       <motion.div
-        className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 mb-12"
+        className="max-w-full md:max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-8 md:mb-12 px-2 md:px-0"
         initial="hidden"
         whileInView="visible"
         viewport={{ once: false, amount: 0.2 }}
@@ -76,9 +76,9 @@ export default function HowWeDrive() {
             variants={cardVariants}
           >
             <div
-              className={`relative p-12 rounded-[40px] shadow-2xl flex flex-col items-center justify-center`}
+              className={`relative p-6 md:p-12 rounded-[28px] md:rounded-[40px] shadow-2xl flex flex-col items-center justify-center w-full`}
               style={{
-                minHeight: 240,
+                minHeight: 180,
                 boxShadow: '0 8px 48px 0 rgba(44,62,80,0.25)',
                 background: 'rgba(18,22,34,0.98)',
                 filter: 'blur(0.5px)',
@@ -97,9 +97,9 @@ export default function HowWeDrive() {
                     className="absolute"
                     style={{
                       right: '-12px',
-                      top: `${30 + i * 16}px`,
-                      width: '5px',
-                      height: '5px',
+                      top: `${18 + i * 12}px`,
+                      width: '4px',
+                      height: '4px',
                       borderRadius: '50%',
                       background: style.dot,
                       opacity: 0.5,
@@ -113,10 +113,10 @@ export default function HowWeDrive() {
                     key={`dot-bottom-${i}`}
                     className="absolute"
                     style={{
-                      left: `${40 + i * 20}px`,
+                      left: `${24 + i * 14}px`,
                       bottom: '-12px',
-                      width: '5px',
-                      height: '5px',
+                      width: '4px',
+                      height: '4px',
                       borderRadius: '50%',
                       background: style.dot,
                       opacity: 0.5,
@@ -126,15 +126,15 @@ export default function HowWeDrive() {
                 ))}
               </>
               {/* Icon */}
-              <div className="mb-6 mt-2 flex justify-center z-10">
-                {style.iconComponent && style.iconComponent({ className: 'w-14 h-14' })}
+              <div className="mb-4 md:mb-6 mt-1 md:mt-2 flex justify-center z-10">
+                {style.iconComponent && style.iconComponent({ className: 'w-10 h-10 md:w-14 md:h-14' })}
               </div>
               {/* Title */}
-              <h3 className="mb-2 text-white text-xl md:text-2xl font-bold text-center tracking-wide z-10">
+              <h3 className="mb-1 md:mb-2 text-white text-lg md:text-2xl font-bold text-center tracking-wide z-10">
                 {growthSteps[index]?.title || `Diagnostics`}
               </h3>
               {/* Description */}
-              <p className="text-[#b3c2d4] text-base md:text-lg font-normal text-center leading-relaxed z-10">
+              <p className="text-[#b3c2d4] text-sm md:text-lg font-normal text-center leading-relaxed z-10">
                 {growthSteps[index]?.description || 'Deep discovery, audit, effort vs reward opportunities'}
               </p>
             </div>
