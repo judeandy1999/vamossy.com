@@ -1,11 +1,21 @@
-let pdfjsLib;
+
+let pdfjsLibPromise;
 if (typeof window !== 'undefined') {
-  pdfjsLib = require('pdfjs-dist/build/pdf');
-  pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf-worker/pdf.worker.min.js';
+  // Dynamically import the ES module for pdfjs-dist v5+
+  pdfjsLibPromise = import('pdfjs-dist/build/pdf.mjs');
 }
+
 
 export async function extractPdfText(arrayBuffer) {
   try {
+    if (!pdfjsLibPromise) {
+      throw new Error('pdfjs-dist is only available in the browser environment.');
+    }
+    const pdfjsLib = await pdfjsLibPromise;
+    // Set workerSrc to local file for maximum reliability in production
+    if (pdfjsLib.GlobalWorkerOptions) {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf-worker/pdf.worker.min.js';
+    }
     const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
     let text = '';
     for (let i = 1; i <= pdf.numPages; i++) {
