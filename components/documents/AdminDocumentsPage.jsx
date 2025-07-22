@@ -1,41 +1,56 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
-import UserAssignDropdown from './UserAssignDropdown';
-import FileUploadArea from './FileUploadArea';
-import DocumentTable from './AdminDocumentsTable';
-import PreviewModal from './PreviewModal';
-import DownloadModal from './DownloadModal';
-import { supabase } from '../../utils/client';
-import { useToast } from '../../contexts/toast-context';
-import CustomModal from '../ui/CustomModal';
-
-async function fetchUsers() {
-  const { data, error } = await supabase.from('users').select('id, email, name');
-  if (error) throw error;
-  return data;
-}
-
-async function fetchDocuments(filters = {}) {
-  const params = new URLSearchParams(filters).toString();
-  const session = await supabase.auth.getSession();
-  const token = session.data.session?.access_token;
-
-  const res = await fetch(`/api/documents?${params}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return res.json();
-}
+import React, { useState, useRef } from 'react';
+import UserAssignDropdown from '@/components/documents/UserAssignDropdown';
+import FileUploadArea from '@/components/documents/FileUploadArea';
+import DocumentTable from '@/components/documents/AdminDocumentsTable';
+import PreviewModal from '@/components/documents/PreviewModal';
+import DownloadModal from '@/components/documents/DownloadModal';
+import CustomModal from '@/components/ui/CustomModal';
+import { useAdminDocuments } from '@/hooks/useAdminDocuments';
+import { useAuthWithRedirect } from '@/hooks/useAuthWithRedirect';
 
 export default function AdminDocumentsPage() {
+  const { session, role: authRole, status } = useAuthWithRedirect();
   const ACCEPTED_TYPES = [
     'text/plain', 'text/markdown', 'application/pdf',
     'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
   ];
   const ACCEPTED_EXTENSIONS = ['.txt', '.md', '.pdf', '.doc', '.docx'];
   const MAX_SIZE = 10 * 1024 * 1024;
+
+  const [selectedUsers, setSelectedUsers] = useState([]);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const [userSearch, setUserSearch] = useState('');
+  const userDropdownRef = useRef(null);
+  const [search, setSearch] = useState('');
+  const [selectedDocs, setSelectedDocs] = useState([]);
+  const [uploading, setUploading] = useState(false);
+  const [files, setFiles] = useState([]);
+  const [previewFile, setPreviewFile] = useState(null);
+  const [previewText, setPreviewText] = useState(null);
+  const [userFilter, setUserFilter] = useState('');
+  const [downloadDoc, setDownloadDoc] = useState(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [userFilterDropdownOpen, setUserFilterDropdownOpen] = useState(false);
+  const [userFilterSearch, setUserFilterSearch] = useState('');
+  const userFilterDropdownRef = useRef(null);
+
+  // Add sortOrder state
+  const [sortOrder, setSortOrder] = useState('desc'); // default to 'desc', change as needed
+
+  const {
+    users,
+    documents,
+    loading,
+    fetchDocuments,
+    uploadDocument,
+    deleteDocuments,
+    downloadDocument,
+    role,
+    showToast,
+  } = useAdminDocuments({ session, role: authRole, status });
 
   function isAcceptedFile(file) {
     if (ACCEPTED_TYPES.includes(file.type)) return true;
@@ -62,7 +77,7 @@ export default function AdminDocumentsPage() {
       const filtered = accepted.filter(f => !existing.includes(f.name + '_' + f.size));
       return [...prevFiles, ...filtered];
     });
-    if (rejected.length) {
+    if (rejected.length && typeof showToast === 'function') {
       showToast('Some files were not added: ' + rejected.join(', '), 'error');
     }
   }
@@ -79,50 +94,6 @@ export default function AdminDocumentsPage() {
     e.preventDefault();
     e.stopPropagation();
   }
-  const { showToast } = useToast();
-  const [users, setUsers] = useState([]);
-  const [selectedUsers, setSelectedUsers] = useState([]);
-  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
-  const [userSearch, setUserSearch] = useState('');
-  const userDropdownRef = useRef(null);
-  const [documents, setDocuments] = useState([]);
-  const [search, setSearch] = useState('');
-  const [selectedDocs, setSelectedDocs] = useState([]);
-  const [uploading, setUploading] = useState(false);
-  const [files, setFiles] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [previewFile, setPreviewFile] = useState(null); 
-  const [previewText, setPreviewText] = useState(null);
-  const [userFilter, setUserFilter] = useState('');
-  const [downloadDoc, setDownloadDoc] = useState(null); 
-
-  useEffect(() => {
-    fetchUsers().then(setUsers).catch(() => showToast('Failed to load users', 'error'));
-    loadDocuments();
-  }, []);
-
-  async function loadDocuments(filters = {}) {
-    setLoading(true);
-    const mergedFilters = { ...filters };
-    if (userFilter) mergedFilters.userId = userFilter;
-    const { documents } = await fetchDocuments(mergedFilters);
-    setDocuments(documents || []);
-    setLoading(false);
-  }
-
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (userDropdownRef.current && !userDropdownRef.current.contains(event.target)) {
-        setUserDropdownOpen(false);
-      }
-    }
-    if (userDropdownOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    } else {
-      document.removeEventListener('mousedown', handleClickOutside);
-    }
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [userDropdownOpen]);
 
   function handleFileChange(e) {
     const newFiles = Array.from(e.target.files);
@@ -132,175 +103,94 @@ export default function AdminDocumentsPage() {
   async function handleUpload(e) {
     e.preventDefault();
     if (!files.length || !selectedUsers.length) {
-      showToast('Select files and users', 'warning');
+      if (typeof showToast === 'function') showToast('Select files and users', 'warning');
       return;
     }
     setUploading(true);
     let anyError = false;
     for (const file of files) {
-      
       if (!file || !file.name || file.size === 0) {
-        showToast(`Invalid file: ${file?.name || 'unknown'}`, 'error');
+        if (typeof showToast === 'function') showToast(`Invalid file: ${file?.name || 'unknown'}`, 'error');
         anyError = true;
         continue;
       }
-      
       for (const userId of selectedUsers) {
-        
-        const user = users.find(u => u.id === userId);
-        const userEmail = user ? user.email : userId;
-        const fileName = `${Date.now()}_${file.name}`;
-        const filePath = `${userEmail}/${fileName}`;
-        const { data: storageData, error: storageError } = await supabase.storage
-          .from('documents')
-          .upload(filePath, file, {
-            contentType: file.type,
-            upsert: false,
-          });
-        if (storageError) {
-          console.error('Supabase Storage upload error:', storageError, file);
-          showToast(`Upload error: ${storageError.message}`, 'error');
-          anyError = true;
-          continue;
-        }
-        const { data: publicUrlData } = supabase.storage.from('documents').getPublicUrl(filePath);
-
-        const { data: existing, error: checkError } = await supabase
-          .from('documents')
-          .select('id')
-          .eq('name', file.name)
-          .contains('assigned_users', [userId])
-          .maybeSingle();
-
-        if (existing) {
-          continue;
-        }
-
-        const { error: docError } = await supabase
-          .from('documents')
-          .insert([
-            {
-              name: file.name,
-              url: publicUrlData.publicUrl,
-              size: file.size,
-              type: file.type,
-              assigned_users: [userId],
-              created_at: new Date().toISOString(),
-            },
-          ]);
-        if (docError) {
-          anyError = true;
-          console.error('Supabase documents insert error:', docError);
-          showToast(`Insert error: ${docError.message}`, 'error');
-        }
+        const success = await uploadDocument({ file, userId });
+        if (!success) anyError = true;
       }
     }
     setUploading(false);
-    if (anyError) {
-      showToast('Some files failed to upload', 'error');
-    } else {
-      showToast('Files uploaded!', 'success');
+    if (typeof showToast === 'function') {
+      if (anyError) {
+        showToast('Some files failed to upload', 'error');
+      } else {
+        showToast('Files uploaded!', 'success');
+      }
     }
     setFiles([]);
     setSelectedUsers([]);
-   
     const fileInput = document.getElementById('fileInput');
     if (fileInput) fileInput.value = '';
-    loadDocuments();
+    fetchDocuments();
   }
-
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [deleting, setDeleting] = useState(false);
 
   async function handleDeleteConfirmed() {
     if (!selectedDocs.length) return;
     setDeleting(true);
-    try {
-      const session = await supabase.auth.getSession();
-      const token = session.data.session?.access_token;
-      const res = await fetch('/api/documents?delete=1', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ ids: selectedDocs }),
-        credentials: 'include',
-      });
-      if (res.ok) {
-        showToast('Deleted selected documents', 'success');
-        setSelectedDocs([]);
-        loadDocuments();
-      } else {
-        showToast('Delete failed', 'error');
-      }
-      setShowDeleteConfirm(false);
-    } finally {
-      setDeleting(false);
+    const filters = { search, userId: userFilter, sort: sortOrder };
+    const success = await deleteDocuments(selectedDocs, filters);
+    if (success) {
+      setSelectedDocs([]);
     }
+    setShowDeleteConfirm(false);
+    setDeleting(false);
   }
 
   function handleSearch(e) {
-    setSearch(e.target.value);
-    loadDocuments({ search: e.target.value });
+    const value = e.target.value;
+    setSearch(value);
+    fetchDocuments({ search: value, userId: userFilter, sort: sortOrder });
   }
 
-  useEffect(() => {
-    loadDocuments({ search });
+  React.useEffect(() => {
+    (async () => {
+      await fetchDocuments({ search, userId: userFilter, sort: sortOrder });
+    })();
   }, [userFilter]);
+
+  const filteredDocuments = React.useMemo(() => {
+    if (!userFilter) return documents;
+    return documents.filter(doc =>
+      Array.isArray(doc.assigned_users) &&
+      doc.assigned_users.length === 1 &&
+      doc.assigned_users[0] === userFilter
+    );
+  }, [documents, userFilter]);
 
   function handleSelectDoc(id) {
     setSelectedDocs(docs => docs.includes(id) ? docs.filter(d => d !== id) : [...docs, id]);
   }
 
-  const [userFilterDropdownOpen, setUserFilterDropdownOpen] = useState(false);
-  const [userFilterSearch, setUserFilterSearch] = useState('');
-  const userFilterDropdownRef = useRef(null);
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (userFilterDropdownRef.current && !userFilterDropdownRef.current.contains(event.target)) {
-        setUserFilterDropdownOpen(false);
-      }
-    }
-    if (userFilterDropdownOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
-    }
-  }, [userFilterDropdownOpen]);
 
   function handleDownload(doc) {
     setDownloadDoc({ path: doc.url, name: doc.name });
   }
 
-  async function downloadFile(fileUrl, fileName) {
-    try {
-      let path = fileUrl;
-      
-      const match = fileUrl.match(/\/object\/public\/(documents\/[^?]+)/);
-      if (match && match[1]) {
-        path = match[1];
+  React.useEffect(() => {
+    function handleClickOutside(event) {
+      if (userDropdownRef.current && !userDropdownRef.current.contains(event.target)) {
+        setUserDropdownOpen(false);
       }
-      if (!path.startsWith('documents/')) {
-        path = 'documents/' + path;
+      if (userFilterDropdownRef.current && !userFilterDropdownRef.current.contains(event.target)) {
+        setUserFilterDropdownOpen(false);
       }
-      const response = await fetch(`/api/documents/download-documents?path=${encodeURIComponent(path)}`);
-      if (!response.ok) throw new Error('Download failed');
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = fileName || 'downloaded-file';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      alert('Failed to download file: ' + error.message);
     }
-  }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6">
+    <div className="w-full py-6 px-2 sm:px-4">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
           Document Management
@@ -329,40 +219,43 @@ export default function AdminDocumentsPage() {
               handleDragOver={handleDragOver}
             />
           </div>
-          <button
-            type="submit"
-            onClick={handleUpload}
-            className={`mt-6 md:mt-0 admin-doc-btn admin-doc-btn--yellow${uploading ? ' admin-doc-btn--loading' : ''}`}
-            disabled={uploading}
-          >
-            {uploading ? 'Uploading...' : 'Upload'}
-          </button>
+          <div className="flex flex-col gap-2 md:ml-4">
+            <button
+              type="submit"
+              onClick={handleUpload}
+              className={`admin-doc-btn admin-doc-btn--yellow${uploading ? ' admin-doc-btn--loading' : ''}`}
+              disabled={uploading}
+            >
+              {uploading ? 'Uploading...' : 'Upload'}
+            </button>
+          </div>
         </div>
       </div>
 
       <div className="bg-white rounded-lg shadow mb-8">
-        <DocumentTable
-          documents={documents}
-          users={users}
-          loading={loading}
-          selectedDocs={selectedDocs}
-          setSelectedDocs={setSelectedDocs}
-          handleSelectDoc={handleSelectDoc}
-          setPreviewFile={setPreviewFile}
-          setPreviewText={setPreviewText}
-          handleDownload={handleDownload}
-          search={search}
-          handleSearch={handleSearch}
-          userFilter={userFilter}
-          setUserFilter={setUserFilter}
-          userFilterDropdownOpen={userFilterDropdownOpen}
-          setUserFilterDropdownOpen={setUserFilterDropdownOpen}
-          userFilterSearch={userFilterSearch}
-          setUserFilterSearch={setUserFilterSearch}
-          deleting={deleting}
-          setShowDeleteConfirm={setShowDeleteConfirm}
-        />
-        {/* Delete confirmation modal remains as CustomModal for now */}
+      <DocumentTable
+        documents={filteredDocuments}
+        users={users}
+        loading={loading}
+        selectedDocs={selectedDocs}
+        setSelectedDocs={setSelectedDocs}
+        handleSelectDoc={handleSelectDoc}
+        setPreviewFile={setPreviewFile}
+        setPreviewText={setPreviewText}
+        handleDownload={handleDownload}
+        search={search}
+        handleSearch={handleSearch}
+        userFilter={userFilter}
+        setUserFilter={setUserFilter}
+        userFilterDropdownOpen={userFilterDropdownOpen}
+        setUserFilterDropdownOpen={setUserFilterDropdownOpen}
+        userFilterSearch={userFilterSearch}
+        setUserFilterSearch={setUserFilterSearch}
+        deleting={deleting}
+        setShowDeleteConfirm={setShowDeleteConfirm}
+        sortOrder={sortOrder}
+        setSortOrder={setSortOrder}
+      />
         <CustomModal
           isOpen={showDeleteConfirm}
           onClose={() => deleting ? null : setShowDeleteConfirm(false)}
@@ -377,10 +270,9 @@ export default function AdminDocumentsPage() {
           <span>Are you sure you want to delete <span className="font-medium text-gray-900">{selectedDocs.length}</span> document{selectedDocs.length !== 1 ? 's' : ''}? This action cannot be undone.</span>
         </CustomModal>
       </div>
-    
-    {/* Tailwind classes now handle all button styling; removed <style jsx> block. */}
-    <PreviewModal previewFile={previewFile} previewText={previewText} setPreviewFile={setPreviewFile} />
-    <DownloadModal downloadDoc={downloadDoc} setDownloadDoc={setDownloadDoc} downloadFile={downloadFile} />
-  </div>
+
+      <PreviewModal previewFile={previewFile} previewText={previewText} setPreviewFile={setPreviewFile} />
+      <DownloadModal downloadDoc={downloadDoc} setDownloadDoc={setDownloadDoc} downloadFile={downloadDocument} />
+    </div>
   );
 }

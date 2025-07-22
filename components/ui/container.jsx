@@ -21,6 +21,8 @@ export default function Container({
         return 'bg-gray-900';
       case 'gray-card':
         return 'mt-5 md:mt-16 md:px-10 rounded-xl border border-yellow-400 bg-gradient-to-br from-[#262626] to-gray-900';
+      case 'black':
+        return 'bg-[#101010]';
       default:
         return `bg-transparent`;
     }

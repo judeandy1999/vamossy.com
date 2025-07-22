@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Hero from "@/components/homepage/hero";
 import Footer from "@/components/shared/footer";
 import WhoWeHelp from "@/components/homepage/who-we-help";
+import GrowWithConfidence from "@/components/homepage/grow-with-confidence";
 import ContactUs from "@/components/homepage/contact-us";
 import UniqueSolutions from "@/components/homepage/unique-solutions";
 import TieredServices from "@/components/homepage/tiered-services";
@@ -12,6 +13,8 @@ import LiveCaseStudies from "@/components/homepage/article-section";
 import Carousel from "@/components/homepage/carousel";
 import GoogleCalendarModal from "@/components/ui/google-calendar";
 import HowWeDrive from '@/components/homepage/how-we-drive';
+import WhyClients from '@/components/homepage/why-clients';
+import FrameworkSection from '@/components/homepage/our-framework';
 
 export default function Home() {
     const [showCalendar, setShowCalendar] = useState(false);
@@ -44,11 +47,12 @@ export default function Home() {
           {/* <Hero /> */}
           <WhoWeHelp />
           <HowWeDrive />
-          <UniqueSolutions />
+          <FrameworkSection />
+          {/* <UniqueSolutions /> */}
           <TieredServices />
           <ProofThroughPerspective />
+          <WhyClients />
           <LiveCaseStudies />
-          <ContactUs/>
           <Footer />
         </div>
 

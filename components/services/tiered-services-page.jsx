@@ -67,14 +67,12 @@ export default function TieredServices() {
 
   return (
     
-    <Container variant="gray-gradient" isTable={true}>
-      {/* Title */}
+    <Container variant="black" isTable={true}>
       <Title title={tieredServicesPage.title} variant="h2" />
       {tieredServicesPage.subtitle && (
         <Title title={tieredServicesPage.subtitle} variant="h2" />
       )}
 
-      {/* Mobile Scroll Hint */}
       <div className="block lg:hidden mb-4">
         <div className="flex items-center justify-center space-x-2 text-yellow-500">
           <ChevronLeft size={20} />
@@ -129,20 +127,18 @@ export default function TieredServices() {
           >
             <div className="min-w-3xl">
               {/* Header Row */}
-              <div className="grid grid-cols-4 bg-yellow-500 h-50 items-stretch rounded-t-3xl shadow-xl overflow-hidden">
-                <div className="flex items-center justify-left p-8 border-r border-gray-600 rounded-tl-3xl">
-                  <h4 className="text-gray-900 text-2xl md:text-4xl font-black tracking-tight">
+              <div className="grid grid-cols-4 bg-gradient-to-r from-gray-900 via-slate-800 to-blue-800 h-50 items-stretch rounded-t-3xl shadow-2xl overflow-hidden border-b-4 border-blue-500/70">
+                <div className="flex items-center justify-left p-8 border-r border-blue-700/60 rounded-tl-3xl bg-gradient-to-br from-slate-900 via-slate-800 to-blue-900/80 backdrop-blur-md">
+                  <h4 className="text-cyan-300 text-2xl md:text-4xl font-black tracking-tight drop-shadow-lg">
                     Service Name
                   </h4>
                 </div>
                 {tieredServicesPage.tiers.map((tier, idx) => (
                   <div
                     key={tier.id}
-                    className={`flex items-center justify-center p-8 border-r border-gray-600 last:border-r-0 h-full
-                      ${idx === tieredServicesPage.tiers.length - 1 ? 'rounded-tr-3xl' : ''}
-                    `}
+                    className={`flex items-center justify-center p-8 border-r border-blue-700/60 last:border-r-0 h-full bg-gradient-to-br from-slate-900 via-slate-800 to-blue-900/80 backdrop-blur-md ${idx === tieredServicesPage.tiers.length - 1 ? 'rounded-tr-3xl' : ''}`}
                   >
-                    <h5 className="text-2xl md:text-4xl font-black text-gray-900 w-full tracking-tight">
+                    <h5 className="text-2xl md:text-4xl font-black text-cyan-200 w-full tracking-tight drop-shadow-lg">
                       {tier.name}
                     </h5>
                   </div>
@@ -151,37 +147,29 @@ export default function TieredServices() {
 
               {/* Table Rows */}
               {[
-                { label: "Ideal For", key: "idealFor" },
-                { label: "Partnership Type", key: "partnershipType" },
-                { label: "Core Offer", key: "coreOffer" },
-                { label: "Investment", key: "investment" },
-                { label: "Duration", key: "duration" },
-                { label: "Type of Collaboration", key: "typeOfCollaboration" },
-                { label: "AI Advantages", key: "aiAdvantages" },
-                { label: "Consultations", key: "consultations" },
-                { label: "Deliverables", key: "deliverables" },
+                { label: "Custom / Standard Consultation", key: "customStandardConsultation" },
+                { label: "Market & Competitor Audit", key: "marketCompetitorAudit" },
+                { label: "Quick Wins Audit, and Implementation specification", key: "quickWinsAudit" },
+                { label: "360°Growth Consulting", key: "growthConsulting" },
+                { label: "360°Growth Execution", key: "growthExecution" },
               ].map((row, idx) => (
                 <motion.div
                   key={row.key}
-                  className={`grid min-h-[150px] md:min-h-[250px] grid-cols-4 border-b border-gray-700 items-stretch text-sm md:text-base lg:text-lg ${
-                    idx % 2 === 1 ? 'bg-yellow-500/10' : 'bg-gray-800/80'
+                  className={`grid min-h-[150px] md:min-h-[250px] grid-cols-4 border-b border-blue-700/40 items-stretch text-sm md:text-base lg:text-lg ${
+                    idx % 2 === 1 ? 'bg-gradient-to-r from-slate-800/80 via-blue-900/60 to-gray-900/80' : 'bg-gradient-to-r from-gray-900/80 via-slate-900/60 to-blue-900/80'
                   }`}
                   variants={rowVariants}
                 >
-                  <div className={`p-4 md:p-8 border-r border-gray-700 flex items-center font-semibold h-full justify-start ${
-                    idx % 2 === 1 ? 'text-gray-300' : 'text-gray-300'
-                  }`}>
-                    <h6 className="text-lg md:text-2xl text-left">{row.label}</h6>
+                  <div className={`p-4 md:p-8 border-r border-blue-700/40 flex items-center font-semibold h-full justify-start text-cyan-200`}>
+                    <h6 className="text-lg md:text-2xl text-left drop-shadow-lg">{row.label}</h6>
                   </div>
                   {tieredServicesPage.tiers.map((tier) => (
                     <div
                       key={tier.id}
-                      className={`items-center p-2 md:p-6 border-r border-gray-700 last:border-r-0 flex h-full ${
-                        idx % 2 === 1 ? 'text-gray-300' : 'text-gray-200'
-                      }`}
+                      className={`items-center p-2 md:p-6 border-r border-blue-700/40 last:border-r-0 flex h-full text-white bg-slate-900/70 backdrop-blur-sm`}
                     >
                       <div className="w-full">
-                        <p className="text-md md:text-lg lg:text-xl font-light w-full">
+                        <p className="text-md md:text-lg lg:text-xl font-medium w-full">
                           {tier[row.key]}
                         </p>
                       </div>
