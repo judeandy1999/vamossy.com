@@ -265,6 +265,32 @@ async function handleDelete(req, res, user, userRole, id) {
     if (userRole !== 'admin') {
       return res.status(403).json({ error: 'Only admins can delete tasks' });
     }
+        
+    const { error: evaluationsError } = await supabase
+      .from('evaluations')
+      .delete()
+      .eq('task_id', id);
+
+    if (evaluationsError) {
+      console.error('Failed to delete evaluations:', evaluationsError);
+      return res.status(500).json({ 
+        error: 'Failed to delete evaluations', 
+        details: evaluationsError.message 
+      });
+    }
+
+    const { error: logsError } = await supabase
+      .from('task_logs')
+      .delete()
+      .eq('task_id', id);
+
+    if (logsError) {
+      console.error('Failed to delete task logs:', logsError);
+      return res.status(500).json({ 
+        error: 'Failed to delete task logs', 
+        details: logsError.message 
+      });
+    }
 
     const { error: assignmentError } = await supabase
       .from('task_assignments')
@@ -272,7 +298,11 @@ async function handleDelete(req, res, user, userRole, id) {
       .eq('task_id', id);
 
     if (assignmentError) {
-      return res.status(500).json({ error: 'Failed to delete task assignments' });
+      console.error('Failed to delete task assignments:', assignmentError);
+      return res.status(500).json({ 
+        error: 'Failed to delete task assignments', 
+        details: assignmentError.message 
+      });
     }
 
     const { error: taskError } = await supabase
@@ -281,11 +311,19 @@ async function handleDelete(req, res, user, userRole, id) {
       .eq('id', id);
 
     if (taskError) {
-      return res.status(500).json({ error: 'Failed to delete task' });
+      console.error('Failed to delete task:', taskError);
+      return res.status(500).json({ 
+        error: 'Failed to delete task', 
+        details: taskError.message 
+      });
     }
 
     return res.status(200).json({ success: true });
   } catch (error) {
-    return res.status(500).json({ error: 'Failed to delete task', details: error.message });
+    console.error('Error in handleDelete:', error);
+    return res.status(500).json({ 
+      error: 'Failed to delete task', 
+      details: error.message 
+    });
   }
 }
