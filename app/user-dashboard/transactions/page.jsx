@@ -8,7 +8,7 @@ import InvoiceGenerator from '@/components/payment/invoice-generator';
 import { useAuthWithRedirect } from '@/hooks/useAuthWithRedirect';
 
 export default function TransactionsPage() {
-  const { session } = useAuthWithRedirect();
+  const { session, status } = useAuthWithRedirect();
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -21,15 +21,20 @@ export default function TransactionsPage() {
   const [sortBy, setSortBy] = useState('created_at');
 
   useEffect(() => {
-    fetchUserAndPayments();
+    if (status === 'authenticated' && session) {
+      fetchUserAndPayments();
+    }
+  }, [session, status]);
+
+  useEffect(() => {
+    if (status === 'authenticated' && session) {
+      fetchUserAndPayments();
+    }
   }, [filter, sortBy]);
 
   const fetchUserAndPayments = async () => {
     try {
       setLoading(true);
-      
-      // Get current user
-      if (sessionError) throw sessionError;
       
       if (!session?.user) {
         setError('Please log in to view transactions');
