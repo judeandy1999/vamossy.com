@@ -1,7 +1,6 @@
 
 let pdfjsLibPromise;
 if (typeof window !== 'undefined') {
-  // Dynamically import the ES module for pdfjs-dist v5+
   pdfjsLibPromise = import('pdfjs-dist/build/pdf.mjs');
 }
 
@@ -12,7 +11,6 @@ export async function extractPdfText(arrayBuffer) {
       throw new Error('pdfjs-dist is only available in the browser environment.');
     }
     const pdfjsLib = await pdfjsLibPromise;
-    // Set workerSrc to local file for maximum reliability in production
     if (pdfjsLib.GlobalWorkerOptions) {
       pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf-worker/pdf.worker.min.js';
     }
