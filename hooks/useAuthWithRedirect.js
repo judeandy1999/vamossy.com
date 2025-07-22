@@ -9,58 +9,72 @@ export function useAuthWithRedirect() {
   const [role, setRole] = useState(null);
 
   useEffect(() => {
-    const checkSession = async () => {
+    let isMounted = true;
+
+    const getInitialSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-
-      if (session) {
-        setSession(session);
-        setStatus('authenticated');
-
-        // Fetch role from your users table
-        const { data: userData } = await supabase
-          .from('users')
-          .select('role')
-          .eq('id', session.user.id)
-          .single();
-
-        setRole(userData ? userData.role : null);
-
-      } else {
-        setSession(null);
-        setRole(null);
-        setStatus('unauthenticated');
-      }
-    };
-
-    checkSession();
-
-    // Fix: wrap await logic in async IIFE
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      (async () => {
+      
+      if (isMounted) {
         if (session) {
           setSession(session);
           setStatus('authenticated');
-
-          const { data: userData } = await supabase
-            .from('users')
-            .select('role')
-            .eq('id', session.user.id)
-            .single();
-
-          setRole(userData ? userData.role : null);
-
+          
+          // Fetch role separately
+          try {
+            const { data: userData } = await supabase
+              .from('users')
+              .select('role')
+              .eq('id', session.user.id)
+              .single();
+            
+            setRole(userData?.role || null);
+          } catch (error) {
+            console.error('Error fetching user role:', error);
+            setRole(null);
+          }
         } else {
           setSession(null);
           setRole(null);
           setStatus('unauthenticated');
         }
-      })();
-    });
+      }
+    };
+
+    getInitialSession();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (isMounted) {
+          if (session) {
+            setSession(session);
+            setStatus('authenticated');
+            
+            try {
+              const { data: userData } = await supabase
+                .from('users')
+                .select('role')
+                .eq('id', session.user.id)
+                .single();
+              
+              setRole(userData?.role || null);
+            } catch (error) {
+              console.error('Error fetching user role:', error);
+              setRole(null);
+            }
+          } else {
+            setSession(null);
+            setRole(null);
+            setStatus('unauthenticated');
+          }
+        }
+      }
+    );
 
     return () => {
-      listener?.subscription?.unsubscribe();
+      isMounted = false;
+      subscription?.unsubscribe();
     };
-  }, [router]);
+  }, []);
 
   return { status, session, role };
 }
