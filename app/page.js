@@ -41,7 +41,7 @@ export default function Home() {
 
         <div className="relative">
           {/* Add Carousel Section */}
-          <section className="relative h-[65vh] mt-[8vh] z-10">
+          <section className="relative h-[70vh] mt-[10vh] z-10">
             <Carousel onBookNowClick={handleBookNowClick} />
           </section>
           {/* <Hero /> */}
