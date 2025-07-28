@@ -65,12 +65,12 @@ export default function TieredServices() {
   };
 
   const rowHeights = [
-    200, // Core Offer
-    180,  // Duration
-    100, // Type of Collaboration
-    160, // AI Advantages
-    220,  // Consultations
-    140, // Deliverables
+    200,
+    180,
+    100,
+    160,
+    220,
+    140,
   ];
 
   return (
@@ -142,7 +142,7 @@ export default function TieredServices() {
               <div className="grid grid-cols-4 bg-yellow-500 h-50 items-stretch rounded-t-3xl shadow-xl overflow-hidden">
                 <div className="flex items-center justify-center p-8 border-r border-gray-600 rounded-tl-3xl">
                   <h4 className="text-gray-900 text-2xl md:text-4xl font-black tracking-tight">
-                    Our Solutions
+                    Service Name
                   </h4>
                 </div>
                 {tieredServices.tiers.map((tier, idx) => (
@@ -161,12 +161,11 @@ export default function TieredServices() {
 
               {/* Table Rows */}
               {[
-                { label: "Core Offer", key: "coreOffer" },
-                { label: "Duration", key: "duration" },
-                { label: "Type of Collaboration", key: "typeOfCollaboration" },
-                { label: "AI Advantages", key: "aiAdvantages" },
-                { label: "Consultations", key: "consultations" },
-                { label: "Deliverables", key: "deliverables" },
+                { label: "Custom / Standard Consultation", key: "customStandardConsultation" },
+                { label: "Market & Competitor Audit", key: "marketCompetitorAudit" },
+                { label: "Quick Wins Audit, and Implementation specification", key: "quickWinsAudit" },
+                { label: "360°Growth Consulting", key: "growthConsulting" },
+                { label: "360°Growth Execution", key: "growthExecution" },
               ].map((row, idx) => (
                 <motion.div
                   key={row.key}

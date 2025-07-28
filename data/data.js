@@ -273,39 +273,46 @@ export const painPoints = {
   ]
 };
 
+export const whyClients = [
+  "We solve the right problems, not just visible symptoms",
+  "We integrate AI technology, human creativity, and strategic intelligence",
+  "We produce tools, workflows, and frameworks clients reuse for years",
+  "We create change that compounds",
+];
+
 export const liveCaseStudies = {
-  title: "Join Our Live Case Studies!",
-  subtitle: "We do our best for all of our clients, and are proud to show it! Let us make a case study with you - live, on the job! No foul play, no bought or incentivized reviews - Just honest, real feedback -before - during - and after our service!",
+  title: "Our Thoughts and Vision",
+  subtitle: "This section explains how and why AI-driven, or AI-enhanced approaches don't just lead to competitive advantages, but will be an absolute necessity over time. The faster you adjust, the bigger your advantage will be! Make AI your friend, and reap the rewards!",
   caseStudies: [
     {
       id: 1,
-      title: "Case study",
-      description: "Sample text. Click to select the text box. Click again or double click to start editing the text."
+      title: "The future of workspace and AI",
+      description: "The 9 to 5 office is already obsolete and AI didn't just help, it rewrote the rulebook."
     },
     {
       id: 2,
-      title: "Case study",
-      description: "Sample text. Click to select the text box. Click again or double click to start editing the text."
+      title: "How to motivate AI-enablement",
+      description: "AI isn't just a tool, it's a culture change. Here's how to get your people excited about it."
     },
     {
       id: 3,
-      title: "Case study",
-      description: "Sample text. Click to select the text box. Click again or double click to start editing the text."
+      title: "Business Process Optimisation with AI",
+      description: "Every process in your org is either a bottleneck—or a leverage. AI knows which is which."
     },
     {
       id: 4,
-      title: "Case study",
-      description: "Sample text. Click to select the text box. Click again or double click to start editing the text."
+      title: "AI in the competitive landscape",
+      description: "AI could double your ROI or quietly make you irrelevant. Which side are you on?"
     },
     {
       id: 5,
-      title: "Case study",
-      description: "Sample text. Click to select the text box. Click again or double click to start editing the text."
+      title: "How to adjust to AI-based systems",
+      description: "Going AI isn't about replacing people—it's about empowering them. Here's how to start."
     },
     {
       id: 6,
-      title: "Case study",
-      description: "Sample text. Click to select the text box. Click again or double click to start editing the text."
+      title: "How work conditions will change by AI",
+      description: "Work isn't dying—it's evolving. Here's what AI-augmented roles really look like on the ground."
     }
   ]
 };
@@ -365,8 +372,8 @@ export const ourValues = {
 // New data for Who We Help section
 export const clientTypes = [
   {
-    title: "7-8 Figure Brands",
-    description: "Seeking systems, not headcount",
+    title: "Growing Ecommerce Brands",
+    description: "Seeking know-how and competitive advancement",
   },
   {
     title: "Scaling Founders",
@@ -374,36 +381,59 @@ export const clientTypes = [
   },
   {
     title: "CMOs & Operators",
-    description: "Need leverage, not just content",
+    description: "Let’s make transparent, scalable improvements",
   },
   {
-    title: "Retention-Challenged Brands",
-    description: "Winback, subscription, loyalty fixes",
-  },
-  {
-    title: "High-LTV Product Teams",
-    description: "Want compounding automation logic",
+    title: "Ecommerce Marketers",
+    description: "We have the best solutions at hand, and will help you reap the rewards.",
   },
 ];
 
 export const growthSteps = [
   {
     number: "1",
-    title: "Audit & Map",
+    title: "Diagnostics",
     description:
-      "We deploy GPT-powered diagnostics to pinpoint friction, decay, and inefficiency in your funnel, content, and lifecycle.",
+      "Deep discovery, audit, effort vs reward opportunities",
   },
   {
     number: "2",
-    title: "Systemize & Automate",
+    title: "AI-optimized Project Design",
     description:
-      "Our PromptOps framework builds full-stack GPT assets: emails, hooks, audits, campaigns — all mapped to growth levers.",
+      "Design for AI, exclude failure, enforce success",
   },
   {
     number: "3",
-    title: "Built Self-Improvement",
+    title: "Execution Support",
     description:
-      "We embed feedback loops that suggest improvement ideas, and help maintain unique competitive advantage.",
+      "Monitoring progress, ensuring secure delivery",
+  },
+];
+
+export const FrameworkData = [
+  {
+    icon: FaChartBar,
+    title: 'We Are Fully Transparent',
+    description: 'Download any of our materials, and see our approach.',
+    deliverables: [
+      'Business Intelligence, Audit',
+      'Brand & Positioning',
+      'Lifecycle Marketing, Customer Success',
+      'Search Engine Optimisation',
+      'Organizational AI Enablement',
+    ],
+  },
+  {
+    icon: FaRocket,
+    title: 'Our Goal',
+    description: 'Maximizing your acquisition, conversion and retention results.',
+    deliverables: [
+      'Funnel, Segmentation, microintents',
+      'Conversion Optimisation',
+      'Traffic Channels',
+      'Paid Traffic',
+      'AI Role Automation',
+    ],
   },
 ];
 
@@ -593,64 +623,44 @@ Deliverables:
 
 
 export const tieredServices = {
-  title: "AI GROWTH ENGINE",
-  subtitle: "TIERED SERVICES",
+  title: "Our Services",
   tiers: [
     {
       id: 1,
-      name: "Growth Map",
-      icon: "/homepage/tier1.webp",
-      idealFor: "$0–$50k/mo brands",
-      partnershipType: "We provide all the help we can to inform you about all your opportunities, and make sure you gain a 360 degree understanding of your market.",
-      coreOffer: "Gain comprehensive competitive knowledge, with all of your growth opportunities. (Check deliverables below)",
-      investment: "$3k–$5k",
-      duration: "1 week sprint",
-      typeOfCollaboration: "Acquire extensive competitive information, and Consult with us up to 4 times about your opportunities.",
-      aiAdvantages: "100+ Pages of Top Quality Competitive Information, unmatched 360 Degree Insight.",
-      consultations: "Up to 4 times over a week",
-      deliverables: "Funnel Audit (GPT-Powered), Full KPI + Marketing Activity Audit, Lifecycle Growth Playbooks. (PDF Download)",
+      name: "About",
+      customStandardConsultation: "Choose any of our 10 topic categories, or have your own requests",
+      marketCompetitorAudit: "A detailed Audit, Competitor, and Market Research -finding performance gaps",
+      quickWinsAudit: "Documentation about all of the Low-hanging fruits of your business and their implementations",
+      growthConsulting: "Includes a thorough, all-inclusive opportunity audit, and implementation of all effort x reward opportunity matrix",
+      growthExecution: "Starts out with the 360°Growth Consulting, and consecutive consultations are added over the execution of the implementations",
     },
 
     {
       id: 2,
-      name: "Growth Collaboration",
-      icon: "/homepage/tier2.webp",
-      idealFor: "$50k–$250k/mo brands",
-      partnershipType: "After providing the Growth Map service, we will be fully committed to help you gain as much competitive advantage as you possibly can in the specified timeframe.",
-      coreOffer: "Taking advantage of your growth opportunities, executing  projects with our support, with extraordinary ROI (Check deliverables below)",
-      investment: "$8k–$15k (sprint)",
-      duration: "3-6 months",
-      typeOfCollaboration: "After evaluating and prioritizing your growth projects, we will make sure that they are properly and effectively executed in a 3-6 month sprint, with. weekly consultations.",
-      aiAdvantages: "AI is the assurance that the highest ROI projects will be prioritized, specified, and executed, taking maximum advantage of the 3-6 month sprint.",
-      consultations: "Starts with the 4-times Growth Map, then weekly, for 3-6 months.",
-      deliverables: "All included from the Growth Map, alongside your growth execution plan, specifications, Project management prompts, or any custom need. In addition we provide Prompt Packages. (PDF Download)",
+      name: "Benefits",
+      customStandardConsultation: "Business performance advancement in the selected areas.",
+      marketCompetitorAudit: "Insight into quick wins, learn about competitors, your business and your market.",
+      quickWinsAudit: "High ROI opportunities, even a few implementations can have major profit contributions.",
+      growthConsulting: "You get a comprehensive picture on all of your growth opportunities, and how to implement them.",
+      growthExecution: "We make sure that your growth projects yield results, and are as effective as they could be. I help from creating specifications to monitoring execution.",
     },
 
     {
       id: 3,
-      name: "Leadership Engineering",
-      icon: "/homepage/tier3.webp",
-      idealFor: "250k$+/mo brands, including enterprises",
-      partnershipType: "We are 100% committed to your business success, and treat your business as we would treat our own. We consider ourselves the extension of your company, and provide all the value we possibly can.",
-      coreOffer: "We will engineer an automated powerhouse,  with self-growing competitive advantage at its core. (Check deliverables below)",
-      investment: "$20k–$50k initial investment / $7k+/mo retainer",
-      duration: "Mid to long term",
-      typeOfCollaboration: "We will completely re-engineer your organization, using uniquely improved best practices, maximal automation, and embedded self-improvement, alongside full role enablement.",
-      aiAdvantages: "We rethink and redesign your entire organization from AI Atoms. Your KPIs, SOPs, projects, tasks, know-how are all AI Agents now, each with the goal to help you gain advantage, alongside custom built AI tools, tailored for your needs. +Full role enablement, extraordinary motivational system, and automated, peak-performance management.",
-      consultations: "Initially as many times as necessary to implement transformations, then weekly, with project leadership included.",
-      deliverables: "All included from the previous 2 services, + a Full All-Inclusive Company Wiki filled with cutting-edge content, maximal automation, growth oriented, self-enhancing agent prompts for literally all elements of your business. (PDF Download)",
+      name: "Investment",
+      customStandardConsultation: "200$ Per Consultation (2 points)",
+      marketCompetitorAudit: "200$ (2 points) - Deliverables only",
+      quickWinsAudit: "500$ (5 points) - Includes a consultation",
+      growthConsulting: "1000$ (10 points) - Includes maximum 3 consultations",
+      growthExecution: "2500$ (10 points) - Includes weekly consultations for 12 weeks",
     }
   ],
   featureRows: [
-    "Ideal For",
-    "Partnership Type",
-    "Core Offer", 
-    "Investment",
-    "Duration",
-    "Type of Collaboration",
-    "AI Advantages",
-    "Consultations",
-    "Deliverables",
+    "Custom / Standard Consultation",
+    "Market & Competitor Audit",
+    "Quick Wins Audit, and Implementation specification", 
+    "360°Growth Consulting",
+    "360°Growth Execution",
   ]
 };
 
@@ -730,59 +740,40 @@ export const tieredServicesPage = {
   tiers: [
     {
       id: 1,
-      name: "Growth Map",
-      icon: "/homepage/tier1.webp",
-      idealFor: "$0–$50k/mo brands",
-      partnershipType: "We provide all the help we can to inform you about all your opportunities, and make sure you gain a 360 degree understanding of your market.",
-      coreOffer: "Gain comprehensive competitive knowledge, with all of your growth opportunities. (Check deliverables below)",
-      investment: "$3k–$5k",
-      duration: "1 week sprint",
-      typeOfCollaboration: "Acquire extensive competitive information, and Consult with us up to 4 times about your opportunities.",
-      aiAdvantages: "100+ Pages of Top Quality Competitive Information, unmatched 360 Degree Insight.",
-      consultations: "Up to 4 times over a week",
-      deliverables: "Funnel Audit (GPT-Powered), Full KPI + Marketing Activity Audit, Lifecycle Growth Playbooks. (PDF Download)",
+      name: "About",
+      customStandardConsultation: "Choose any of our 10 topic categories, or have your own requests",
+      marketCompetitorAudit: "A detailed Audit, Competitor, and Market Research -finding performance gaps",
+      quickWinsAudit: "Documentation about all of the Low-hanging fruits of your business and their implementations",
+      growthConsulting: "Includes a thorough, all-inclusive opportunity audit, and implementation of all effort x reward opportunity matrix",
+      growthExecution: "Starts out with the 360°Growth Consulting, and consecutive consultations are added over the execution of the implementations",
     },
 
     {
       id: 2,
-      name: "Growth Collaboration",
-      icon: "/homepage/tier2.webp",
-      idealFor: "$50k–$250k/mo brands",
-      partnershipType: "After providing the Growth Map service, we will be fully committed to help you gain as much competitive advantage as you possibly can in the specified timeframe.",
-      coreOffer: "Taking advantage of your growth opportunities, executing  projects with our support, with extraordinary ROI (Check deliverables below)",
-      investment: "$8k–$15k (sprint)",
-      duration: "3-6 months",
-      typeOfCollaboration: "After evaluating and prioritizing your growth projects, we will make sure that they are properly and effectively executed in a 3-6 month sprint, with. weekly consultations.",
-      aiAdvantages: "AI is the assurance that the highest ROI projects will be prioritized, specified, and executed, taking maximum advantage of the 3-6 month sprint.",
-      consultations: "Starts with the 4-times Growth Map, then weekly, for 3-6 months.",
-      deliverables: "All included from the Growth Map, alongside your growth execution plan, specifications, Project management prompts, or any custom need. In addition we provide Prompt Packages. (PDF Download)",
+      name: "Benefits",
+      customStandardConsultation: "Business performance advancement in the selected areas.",
+      marketCompetitorAudit: "Insight into quick wins, learn about competitors, your business and your market.",
+      quickWinsAudit: "High ROI opportunities, even a few implementations can have major profit contributions.",
+      growthConsulting: "You get a comprehensive picture on all of your growth opportunities, and how to implement them.",
+      growthExecution: "We make sure that your growth projects yield results, and are as effective as they could be. I help from creating specifications to monitoring execution.",
     },
 
     {
       id: 3,
-      name: "Leadership Engineering",
-      icon: "/homepage/tier3.webp",
-      idealFor: "250k$+/mo brands, including enterprises",
-      partnershipType: "We are 100% committed to your business success, and treat your business as we would treat our own. We consider ourselves the extension of your company, and provide all the value we possibly can.",
-      coreOffer: "We will engineer an automated powerhouse,  with self-growing competitive advantage at its core. (Check deliverables below)",
-      investment: "$20k–$50k initial investment / $7k+/mo retainer",
-      duration: "Mid to long term",
-      typeOfCollaboration: "We will completely re-engineer your organization, using uniquely improved best practices, maximal automation, and embedded self-improvement, alongside full role enablement.",
-      aiAdvantages: "We rethink and redesign your entire organization from AI Atoms. Your KPIs, SOPs, projects, tasks, know-how are all AI Agents now, each with the goal to help you gain advantage, alongside custom built AI tools, tailored for your needs. +Full role enablement, extraordinary motivational system, and automated, peak-performance management.",
-      consultations: "Initially as many times as necessary to implement transformations, then weekly, with project leadership included.",
-      deliverables: "All included from the previous 2 services, + a Full All-Inclusive Company Wiki filled with cutting-edge content, maximal automation, growth oriented, self-enhancing agent prompts for literally all elements of your business. (PDF Download)",
+      name: "Investment",
+      customStandardConsultation: "200$ Per Consultation (2 points)",
+      marketCompetitorAudit: "200$ (2 points) - Deliverables only",
+      quickWinsAudit: "500$ (5 points) - Includes a consultation",
+      growthConsulting: "1000$ (10 points) - Includes maximum 3 consultations",
+      growthExecution: "2500$ (10 points) - Includes weekly consultations for 12 weeks",
     }
   ],
   featureRows: [
-    "Ideal For",
-    "Partnership Type",
-    "Core Offer", 
-    "Investment",
-    "Duration",
-    "Type of Collaboration",
-    "AI Advantages",
-    "Consultations",
-    "Deliverables",
+    "Custom / Standard Consultation",
+    "Market & Competitor Audit",
+    "Quick Wins Audit, and Implementation specification", 
+    "360°Growth Consulting",
+    "360°Growth Execution",
   ]
 };
 

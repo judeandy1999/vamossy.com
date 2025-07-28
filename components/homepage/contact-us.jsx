@@ -11,7 +11,7 @@ export default function ContactUs({ variant, size = 'lg', cardVariant }) {
     email: '',
     message: ''
   });
-  const [localError, setLocalError] = useState(""); // Add this line
+  const [localError, setLocalError] = useState("");
 
   const { submitContactForm, loading, error, success, resetForm } = useContactForm();
 

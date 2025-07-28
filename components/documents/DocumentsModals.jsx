@@ -1,5 +1,5 @@
 import React from 'react';
-import CustomModal from '../ui/CustomModal';
+import CustomModal from '@/components/ui/CustomModal';
 
 export function PreviewModal({ previewDoc, closePreview }) {
   return (

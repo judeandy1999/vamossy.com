@@ -1,4 +1,3 @@
-// Helper to read raw body as string (for bodyParser: false)
 async function readBody(req) {
   return new Promise((resolve, reject) => {
     let data = '';
@@ -13,12 +12,12 @@ async function readBody(req) {
     });
   });
 }
-import { getSession } from '../../../lib/authMiddleware';
-import { supabaseAdmin } from '../../../utils/storageClient';
+import { getSession } from '@/lib/authMiddleware';
+import { supabaseAdmin } from '@/utils/storageClient';
 
 export const config = {
   api: {
-    bodyParser: false, // Required for formidable
+    bodyParser: false, 
   },
 };
 
@@ -31,12 +30,11 @@ async function handler(req, res) {
 
 
   if (req.method === 'GET') {
-    // List documents (admin: all, user: own)
-    // Filters: userId, search, dateFrom, dateTo, minSize, maxSize
+
     const { userId, search, dateFrom, dateTo, minSize, maxSize } = req.query;
     let query = supabaseAdmin.from('documents').select('*');
     if (session.user.role !== 'admin') {
-      // Users can only see their own documents
+
       query = query.contains('assigned_users', [session.user.id]);
     } else if (userId) {
       query = query.contains('assigned_users', [userId]);
@@ -56,14 +54,13 @@ async function handler(req, res) {
     if (maxSize) {
       query = query.lte('size', Number(maxSize));
     }
-    const { data, error } = await query.order('created_at', { ascending: false });
+    const { data, error } = await query;
     if (error) {
       return res.status(500).json({ error: error.message });
     }
     return res.status(200).json({ documents: data });
   }
 
-  // Bulk delete via POST with ?delete=1 for reliability
   if (req.method === 'POST' && req.query.delete === '1') {
     if (session.user.role !== 'admin') {
       return res.status(403).json({ error: 'Forbidden' });
@@ -84,32 +81,31 @@ async function handler(req, res) {
     if (!ids.length) {
       return res.status(400).json({ error: 'No document IDs provided' });
     }
-    // Get docs to delete
     const { data: docs, error: fetchError } = await supabaseAdmin.from('documents').select('*').in('id', ids);
     if (fetchError) {
       return res.status(500).json({ error: fetchError.message });
     }
-    // Delete from storage
+    const filePathsToDelete = [];
     for (const doc of docs) {
-      // Extract the full path after the bucket name in the public URL
-      // Example: https://<project>.supabase.co/storage/v1/object/public/documents/user@email.com/filename.pdf
-      let filePath = null;
       try {
         const url = doc.url;
-        // Try to extract after '/documents/'
-        const match = url.match(/\/documents\/(.+)$/);
+        let match = url.match(/\/documents\/(.+)$/);
         if (match && match[1]) {
-          filePath = decodeURIComponent(match[1]);
+          const filePath = decodeURIComponent(match[1]);
+          if (!filePathsToDelete.includes(filePath)) {
+            filePathsToDelete.push(filePath);
+          }
         } else {
-          // fallback: try to use the original fileName (may fail)
-          filePath = decodeURIComponent(url.split('/').pop());
         }
-        await supabaseAdmin.storage.from('documents').remove([filePath]);
       } catch (err) {
-        // ignore
       }
     }
-    // Delete from DB
+    if (filePathsToDelete.length) {
+      const { error: removeError } = await supabaseAdmin.storage.from('documents').remove(filePathsToDelete);
+      if (removeError) {
+      } else {
+      }
+    }
     const { error: delError } = await supabaseAdmin.from('documents').delete().in('id', ids);
     if (delError) {
       return res.status(500).json({ error: delError.message });

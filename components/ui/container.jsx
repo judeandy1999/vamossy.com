@@ -16,11 +16,13 @@ export default function Container({
       case 'gray':
         return 'py-0 px-0 bg-[#262626]';
       case 'transparent-gradient':
-        return 'bg-gradient-to-br from-gray-900/30 to-blue-900/30';
+        return 'bg-gradient-to-br from-gray-900/10 to-blue-900/10';
       case 'gray-gradient':
         return 'bg-gray-900';
       case 'gray-card':
         return 'mt-5 md:mt-16 md:px-10 rounded-xl border border-yellow-400 bg-gradient-to-br from-[#262626] to-gray-900';
+      case 'black':
+        return 'bg-[#101010]';
       default:
         return `bg-transparent`;
     }

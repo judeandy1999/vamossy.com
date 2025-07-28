@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import { extractPdfText } from '@/utils/extractPdfText';
+import { extractDocxText } from '@/utils/extractDocxText';
 import { useToast } from '@/contexts/toast-context';
 import { Upload, FileText, Send } from 'lucide-react';
 
@@ -46,24 +48,34 @@ export default function LogUpload({ tasks, uploadLog }) {
     return null;
   };
 
-  const readFileContent = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      
-      reader.onload = (event) => {
-        resolve(event.target.result);
-      };
-      
-      reader.onerror = (error) => {
-        reject(error);
-      };
-
-      if (file.type === 'application/pdf') {
-        reader.readAsArrayBuffer(file);
-      } else {
-        reader.readAsText(file);
+  const readFileContent = async (file) => {
+    if (file.type === 'application/pdf') {
+      const arrayBuffer = await file.arrayBuffer();
+      try {
+        const text = await extractPdfText(arrayBuffer);
+        if (!text || text.trim().length === 0) throw new Error('No text extracted');
+        return text;
+      } catch (err) {
+        throw new Error('Failed to extract text from PDF. Please select a valid PDF file.');
       }
-    });
+    } else if (
+      file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    ) {
+      const arrayBuffer = await file.arrayBuffer();
+      try {
+        const text = await extractDocxText(arrayBuffer);
+        if (!text || text.trim().length === 0) throw new Error('No text extracted');
+        return text;
+      } catch (err) {
+        throw new Error('Failed to extract text from DOCX. Please select a valid DOCX file.');
+      }
+    } else if (file.type === 'application/msword') {
+      throw new Error('DOC files are not supported for text extraction. Please use DOCX.');
+    } else {
+      const text = await file.text();
+      if (!text || text.trim().length === 0) throw new Error('No text extracted');
+      return text;
+    }
   };
 
   const handleFileChange = async (event) => {
@@ -76,13 +88,15 @@ export default function LogUpload({ tasks, uploadLog }) {
         return;
       }
       setFileError('');
-      setSelectedFile(file);
-      
       try {
         const content = await readFileContent(file);
+        setSelectedFile(file);
         setFileContent(content);
       } catch (error) {
-        showToast('Error reading file content', 'error');
+        setFileError(error.message || 'Failed to extract file content');
+        showToast(error.message || 'Failed to extract file content', 'error');
+        setSelectedFile(null);
+        setFileContent('');
       }
     }
   };
