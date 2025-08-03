@@ -9,7 +9,7 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { FaFacebookF, FaLinkedinIn } from 'react-icons/fa';
-import ScrollProgressBar from '@/components/shared/scroll-progress-bar'; // <-- Add this import
+import ScrollProgressBar from '@/components/shared/scroll-progress-bar';
 
 export default function Header() {
   const { session } = useAuthWithRedirect();
