@@ -68,13 +68,18 @@ export default function Page() {
 
     for (const [tabId, tabContent] of Object.entries(tabs)) {
       if (tabContent && tabContent.trim()) {
-        const contentSize = new Blob([tabContent]).size;
-        if (contentSize > maxSize) {
-          oversizedTabs.push({
-            tabId,
-            size: contentSize,
-            sizeInKB: (contentSize / 1024).toFixed(1)
-          });
+        try {
+          const contentSize = new Blob([tabContent]).size;
+          if (contentSize > maxSize) {
+            oversizedTabs.push({
+              tabId,
+              size: contentSize,
+              sizeInKB: (contentSize / 1024).toFixed(1)
+            });
+          }
+        } catch (error) {
+          console.error(`Error calculating size for tab ${tabId}:`, error);
+          // If we can't calculate size, assume it's fine to avoid blocking saves
         }
       }
     }
@@ -83,11 +88,28 @@ export default function Page() {
   };
 
   const saveArticle = async () => {
-    if (!title.trim() || (!content.trim() && !hasTabs)) {
-      showToast('Title and content cannot be empty!', 'error');
+    // Validation checks
+    if (!title.trim()) {
+      showToast('Title cannot be empty!', 'error');
       return;
     }
 
+    if (wikiCategory === 0) {
+      showToast('Please select a wiki category!', 'error');
+      return;
+    }
+
+    if (!hasTabs && !content.trim()) {
+      showToast('Content cannot be empty!', 'error');
+      return;
+    }
+
+    if (hasTabs && Object.keys(tabContents).length === 0) {
+      showToast('Please add content to at least one tab!', 'error');
+      return;
+    }
+
+    // Size validation
     if (hasTabs && Object.keys(tabContents).length > 0) {
       const oversizedTabs = validateTabSizes(tabContents);
       if (oversizedTabs.length > 0) {
@@ -158,6 +180,7 @@ export default function Page() {
           user_email: session.user.email,
         });
 
+        // Wait for article creation before saving tabs
         if (hasTabs && Object.keys(tabContents).length > 0) {
           showToast('Saving tabs...', 'info');
           await saveTabsIndividually(newArticle.id, tabContents);
@@ -175,53 +198,28 @@ export default function Page() {
       refreshContent();
       setContentChanged(!contentChanged);
     } catch (error) {
-      console.error('Error saving article:', error.message);
-      showToast(error.message || 'Failed to save article!', 'error');
+      console.error('Error saving article:', error);
+      const errorMessage = error.message || 'Failed to save article!';
+      showToast(errorMessage, 'error');
     } finally {
       setIsSaving(false);
     }
   };
 
-  const updateTabsIndividually = async (articleId, tabs) => {
-    const accessToken = session?.access_token;
-
-    await fetch(`/api/tab-articles/${articleId}/delete-all`, {
-      method: 'DELETE',
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
-      },
-    });
-
-    for (const [tabId, tabContent] of Object.entries(tabs)) {
-      if (tabContent && tabContent.trim()) {
-        const res = await fetch('/api/tab-articles/create-tab', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`,
-            'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
-          },
-          body: JSON.stringify({
-            article_id: articleId,
-            tab_id: Number(tabId),
-            content: tabContent
-          })
-        });
-        
-        if (!res.ok) {
-          const errorText = await res.text();
-          throw new Error(`Failed to update tab ${tabId}: ${errorText}`);
-        }
-      }
-    }
-  };
-
   const saveTabsIndividually = async (articleId, tabs) => {
-    const accessToken = session?.access_token;
+    if (!session?.access_token) {
+      throw new Error('No authentication token available');
+    }
 
-    for (const [tabId, tabContent] of Object.entries(tabs)) {
-      if (tabContent && tabContent.trim()) {
+    const accessToken = session.access_token;
+    const tabEntries = Object.entries(tabs).filter(([, content]) => content && content.trim());
+
+    if (tabEntries.length === 0) {
+      return; // No tabs to save
+    }
+
+    for (const [tabId, tabContent] of tabEntries) {
+      try {
         const res = await fetch('/api/tab-articles/create-tab', {
           method: 'POST',
           headers: {
@@ -240,7 +238,39 @@ export default function Page() {
           const errorText = await res.text();
           throw new Error(`Failed to save tab ${tabId}: ${errorText}`);
         }
+      } catch (error) {
+        console.error(`Error saving tab ${tabId}:`, error);
+        throw error; // Re-throw to be caught by main try-catch
       }
+    }
+  };
+
+  const updateTabsIndividually = async (articleId, tabs) => {
+    if (!session?.access_token) {
+      throw new Error('No authentication token available');
+    }
+
+    const accessToken = session.access_token;
+
+    try {
+      // Delete all existing tabs first
+      const deleteRes = await fetch(`/api/tab-articles/${articleId}/delete-all`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
+        },
+      });
+
+      if (!deleteRes.ok) {
+        throw new Error('Failed to delete existing tabs');
+      }
+
+      // Then save new tabs
+      await saveTabsIndividually(articleId, tabs);
+    } catch (error) {
+      console.error('Error updating tabs:', error);
+      throw error;
     }
   };
 
@@ -278,16 +308,90 @@ export default function Page() {
       [tabId]: newContent,
     }));
 
-    const contentSize = new Blob([newContent]).size;
-    const maxSize = 900 * 1024;
-    
-    if (contentSize > maxSize) {
-      const sizeInKB = (contentSize / 1024).toFixed(1);
-      const tabName = tabOptionsMap[wikiCategory]?.[tabId] || `Tab ${tabId}`;
-      showToast(
-        `Warning: ${tabName} content is ${sizeInKB}KB (exceeds 900KB limit). Article cannot be saved until this is reduced.`,
-        'warning'
-      );
+    // Debounced size validation to avoid too many warnings
+    if (newContent && newContent.trim()) {
+      try {
+        const contentSize = new Blob([newContent]).size;
+        const maxSize = 900 * 1024;
+        
+        if (contentSize > maxSize) {
+          const sizeInKB = (contentSize / 1024).toFixed(1);
+          const tabName = tabOptionsMap[wikiCategory]?.[tabId] || `Tab ${tabId}`;
+          
+          // Only show warning if content is significantly over limit
+          if (contentSize > maxSize * 1.1) { // 10% buffer
+            showToast(
+              `Warning: ${tabName} content is ${sizeInKB}KB (exceeds 900KB limit). Article cannot be saved until this is reduced.`,
+              'warning'
+            );
+          }
+        }
+      } catch (error) {
+        console.error('Error calculating content size:', error);
+      }
+    }
+  };
+
+  // Improved useArticleTabs.js
+  const fetchTabContents = async () => {
+    if (!articleId) {
+      setTabContents({});
+      setInitialTabContents({});
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Always get fresh session
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError || !session?.access_token) {
+        throw new Error('Authentication required');
+      }
+
+      const response = await fetch(`/api/tab-articles?id=${articleId}`, {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+          'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
+        },
+      });
+
+      if (response.status === 401) {
+        // Token expired, try to refresh session
+        const { data: { session: refreshedSession } } = await supabase.auth.refreshSession();
+        if (refreshedSession?.access_token) {
+          // Retry with new token
+          const retryResponse = await fetch(`/api/tab-articles?id=${articleId}`, {
+            headers: {
+              Authorization: `Bearer ${refreshedSession.access_token}`,
+              'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
+            },
+          });
+          if (!retryResponse.ok) {
+            throw new Error(`HTTP ${retryResponse.status}: ${retryResponse.statusText}`);
+          }
+          const tabs = await retryResponse.json();
+          setTabContents(tabs);
+          setInitialTabContents(tabs);
+          return;
+        }
+        throw new Error('Session expired. Please log in again.');
+      }
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const tabs = await response.json();
+      setTabContents(tabs);
+      setInitialTabContents(tabs);
+    } catch (error) {
+      console.error('Error fetching tab contents:', error.message);
+      setError(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
