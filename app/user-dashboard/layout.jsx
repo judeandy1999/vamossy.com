@@ -1,7 +1,8 @@
 'use client';
 
 import { useAuthWithRedirect } from '@/hooks/useAuthWithRedirect';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import Sidebar from '@/components/dashboard/sidebar';
 import Topbar from '@/components/dashboard/topbar';
 import Spinner from '@/components/ui/spinner';
@@ -9,14 +10,31 @@ import { ToastProvider } from '@/contexts/toast-context';
 import Toast from '@/components/shared/toast';
 
 export default function UserDashboardLayout({ children }) {
-  const { status, session } = useAuthWithRedirect();
+  const { status, session, isInitialized } = useAuthWithRedirect();
+  const router = useRouter();
+  const [hasRedirected, setHasRedirected] = useState(false);
 
-  if (status === 'loading') {
+  useEffect(() => {
+    // Only redirect if we're fully initialized and not authenticated
+    if (isInitialized && status === 'unauthenticated' && !hasRedirected) {
+      setHasRedirected(true);
+      router.replace('/login');
+    }
+  }, [status, isInitialized, hasRedirected, router]);
+
+  // Show loading while checking authentication
+  if (!isInitialized || status === 'loading') {
     return <Spinner />;
   }
 
-  if (!session) {
-    redirect('/login');
+  // Show loading while redirecting unauthenticated users
+  if (status === 'unauthenticated') {
+    return <Spinner />;
+  }
+
+  // Only render dashboard if authenticated
+  if (status !== 'authenticated' || !session) {
+    return <Spinner />;
   }
 
   return (

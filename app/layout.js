@@ -6,6 +6,7 @@ import { CookieConsentProvider } from "@/contexts/cookie-consent-context";
 import CookieConsentBanner from "@/components/ui/cookie-consent-banner";
 import Script from 'next/script';
 import Navbar from "@/components/shared/navbar";
+import ErrorBoundary from "@/components/error-boundary";
 
 export const metadata = {
   title: "Vamossy",
@@ -43,7 +44,7 @@ const proximaNova = localFont({
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={proximaNova.className}>
-      <body className={`${proximaNova.className}`}>
+      <body className={`${proximaNova.className}`} suppressHydrationWarning={true}>
         {/* Google Analytics 4 - Consent Mode */}
         <Script
           id="ga-consent-mode"
@@ -79,15 +80,16 @@ export default function RootLayout({ children }) {
           }}
         />
         
-        <CookieConsentProvider>
-          <Navbar />
-          {/* <Header /> */}
-          <div className="height-[100vh] z-4">
-            {children}
-            <SpeedInsights />
-          </div>
-          <CookieConsentBanner />
-        </CookieConsentProvider>
+        <ErrorBoundary>
+          <CookieConsentProvider>
+            <Navbar />
+            <div className="height-[100vh] z-4">
+              {children}
+              <SpeedInsights />
+            </div>
+            <CookieConsentBanner />
+          </CookieConsentProvider>
+        </ErrorBoundary>
       </body>
     </html>
   );
