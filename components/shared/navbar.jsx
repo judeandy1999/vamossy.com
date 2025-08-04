@@ -1,16 +1,34 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import { useAuthWithRedirect } from '@/hooks/useAuthWithRedirect';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const { session } = useAuthWithRedirect();
+  const [isScrolled, setIsScrolled] = useState(false);
+  const pathname = usePathname();
+  
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  if (pathname === '/user-dashboard' || pathname.startsWith('/user-dashboard/')) {
+    return null;
+  }
 
   const navigation = [
     { name: 'Home', href: '#home' },
     { name: 'Services', href: '#services' },
     { name: 'About', href: '#about' },
     { name: 'Contact', href: '#contact' },
+    { name: 'Articles', href: '/articles' },
   ];
 
   return (
@@ -26,7 +44,7 @@ export default function Navbar() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-4">
+            <div className="ml-10 flex items-baseline space-x-0">
               {navigation.map((item) => (
                 <Link
                   key={item.name}
@@ -46,6 +64,16 @@ export default function Navbar() {
               className="bg-[#85bd41] text-white px-8 py-3 rounded-lg font-semibold text-xl hover:bg-blue-700 transition-all duration-300"
             >
               Request a Proposal
+            </Link>
+
+            <Link
+              key="login"
+              href='/login'
+              className={`px-3 py-2 rounded-md text-2xl font-normal transition-colors duration-200 ${
+                pathname === 'user-dashboard' ? 'text-[#85bd41]' : 'text-gray-600 hover:text-[#85bd41]'
+              }`}
+            >
+              Login
             </Link>
           </div>
 
@@ -74,13 +102,25 @@ export default function Navbar() {
                   {item.name}
                 </Link>
               ))}
-              <Link
-                href="#contact"
-                className="bg-[#85bd41] text-white block px-3 py-2 rounded-lg font-semibold text-center mt-4"
-                onClick={() => setIsOpen(false)}
-              >
-                Free Consultation
-              </Link>
+              {session ? (
+                <Link
+                  key="dashboard"
+                  href='/user-dashboard'
+                  className={`transition-colors duration-300 ${
+                    pathname === 'user-dashboard' ? 'text-yellow-400' : 'text-gray-200 hover:text-yellow-400'
+                  }`}
+                >
+                  Go to Dashboard
+                </Link>
+              ): (
+                <Link
+                  href="#contact"
+                  className="bg-[#85bd41] text-white block px-3 py-2 rounded-lg font-semibold text-center mt-4"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Free Consultation
+                </Link>
+              )}
             </div>
           </div>
         )}
