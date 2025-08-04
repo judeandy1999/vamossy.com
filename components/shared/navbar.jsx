@@ -28,6 +28,7 @@ export default function Navbar() {
     { name: 'Services', href: '#services' },
     { name: 'About', href: '#about' },
     { name: 'Contact', href: '#contact' },
+    { name: 'Articles', href: '/articles' },
   ];
 
   return (
@@ -43,7 +44,7 @@ export default function Navbar() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-4">
+            <div className="ml-10 flex items-baseline space-x-0">
               {navigation.map((item) => (
                 <Link
                   key={item.name}
@@ -63,6 +64,16 @@ export default function Navbar() {
               className="bg-[#85bd41] text-white px-8 py-3 rounded-lg font-semibold text-xl hover:bg-blue-700 transition-all duration-300"
             >
               Request a Proposal
+            </Link>
+
+            <Link
+              key="login"
+              href='/login'
+              className={`px-3 py-2 rounded-md text-2xl font-normal transition-colors duration-200 ${
+                pathname === 'user-dashboard' ? 'text-[#85bd41]' : 'text-gray-600 hover:text-[#85bd41]'
+              }`}
+            >
+              Login
             </Link>
           </div>
 
