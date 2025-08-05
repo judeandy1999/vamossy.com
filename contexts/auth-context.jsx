@@ -105,11 +105,8 @@ export function AuthProvider({ children }) {
 
         console.log('[AuthContext] Fetching initial session...');
         
-        // Add timeout to getSession call
-        const { data: { session }, error } = await Promise.race([
-          supabase.auth.getSession(),
-          new Promise((_, reject) => setTimeout(() => reject(new Error('Session timeout')), 4000))
-        ]);
+        // Remove the timeout race condition - let Supabase handle it
+        const { data: { session }, error } = await supabase.auth.getSession();
         
         console.log('[AuthContext] getSession result:', {
           hasSession: !!session,
@@ -120,7 +117,7 @@ export function AuthProvider({ children }) {
         
         if (error) {
           console.error('[AuthContext] Session error:', error);
-          if (retryCount < maxRetries && !error.message.includes('timeout')) {
+          if (retryCount < maxRetries) {
             retryCount++;
             console.log(`[AuthContext] Retrying session fetch (${retryCount}/${maxRetries}) in ${2000 * retryCount}ms`);
             setTimeout(getInitialSession, 2000 * retryCount);
@@ -129,10 +126,11 @@ export function AuthProvider({ children }) {
           throw error;
         }
 
-        if (!session) {
-          console.warn('[AuthContext] No session found, clearing any broken session...');
-          await supabase.auth.signOut(); // clear broken session
-        }
+        // Remove this unnecessary signOut call
+        // if (!session) {
+        //   console.warn('[AuthContext] No session found, clearing any broken session...');
+        //   await supabase.auth.signOut();
+        // }
         
         await updateAuthState(session, 'initial-fetch');
         
