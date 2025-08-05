@@ -9,12 +9,12 @@ import AdminTaskManagement from '@/components/gpt-center/admin-task-management';
 import LogUpload from '@/components/gpt-center/log-upload';
 import EvaluationTable from '@/components/gpt-center/evaluation-table';
 import Spinner from '@/components/ui/spinner';
-import { useSendToKlaviyo } from '@/hooks/useSendToKlaviyo';
+// import { useSendToKlaviyo } from '@/hooks/useSendToKlaviyo';
 import { getUser } from '@/utils/authService';
 
 export default function Dashboard() {
   const { session, status, role } = useAuthWithRedirect();
-  const { sendToKlaviyo, loading: klaviyoLoading, error: klaviyoError } = useSendToKlaviyo();
+  // const { sendToKlaviyo, loading: klaviyoLoading, error: klaviyoError } = useSendToKlaviyo();
   const { 
     tasks,
     allTasks,
@@ -34,15 +34,15 @@ export default function Dashboard() {
   } = useGPTCenter(session);
   const [activeTab, setActiveTab] = useState('tasks');
 
-  useEffect(() => {
-    const fetchAndSend = async () => {
-      const { user } = await getUser();
-      if (user) {
-        await sendToKlaviyo(user);
-      }
-    };
-    fetchAndSend();
-  }, []);
+  // useEffect(() => {
+  //   const fetchAndSend = async () => {
+  //     const { user } = await getUser();
+  //     if (user) {
+  //       await sendToKlaviyo(user);
+  //     }
+  //   };
+  //   fetchAndSend();
+  // }, []);
 
   if (status === 'loading' || loading || !role) {
     return <Spinner />;

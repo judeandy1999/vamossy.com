@@ -7,13 +7,13 @@ import Spinner from '@/components/ui/spinner';
 import Link from 'next/link';
 import { signInWithGoogle, signInWithEmail } from '@/utils/authService';
 import { useAuth } from '@/contexts/auth-context';
-import { useSendToKlaviyo } from '@/hooks/useSendToKlaviyo';
+// import { useSendToKlaviyo } from '@/hooks/useSendToKlaviyo';
 import Image from 'next/image';
 
 export default function LoginPage() {
   const router = useRouter();
   const { status, session, isInitialized } = useAuth();
-  const { sendToKlaviyo, loading: klaviyoLoading, error: klaviyoError } = useSendToKlaviyo();
+  // const { sendToKlaviyo, loading: klaviyoLoading, error: klaviyoError } = useSendToKlaviyo();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -45,13 +45,13 @@ export default function LoginPage() {
         return;
       }
 
-      if (data?.user) {
-        try {
-          await sendToKlaviyo(data.user);
-        } catch (klaviyoErr) {
-          console.warn('[LoginPage] Klaviyo error:', klaviyoErr);
-        }
-      }
+      // if (data?.user) {
+      //   try {
+      //     await sendToKlaviyo(data.user);
+      //   } catch (klaviyoErr) {
+      //     console.warn('[LoginPage] Klaviyo error:', klaviyoErr);
+      //   }
+      // }
       
     } catch (err) {
       console.error('[LoginPage] Login error:', err);
