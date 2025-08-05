@@ -127,7 +127,7 @@ export default function LoginPage() {
   }
 
   // Only show login form if definitely unauthenticated
-  if status !== 'unauthenticated') {
+  if (status !== 'unauthenticated') {
     console.log('[LoginPage] Showing spinner - status is not unauthenticated:', status);
     return <Spinner />;
   }
