@@ -3,6 +3,7 @@ import localFont from 'next/font/local';
 // import Header from "@/components/shared/header";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { CookieConsentProvider } from "@/contexts/cookie-consent-context";
+import ClientAuthProvider from "@/components/providers/client-auth-provider";
 import CookieConsentBanner from "@/components/ui/cookie-consent-banner";
 import Script from 'next/script';
 import Navbar from "@/components/shared/navbar";
@@ -81,14 +82,16 @@ export default function RootLayout({ children }) {
         />
         
         <ErrorBoundary>
-          <CookieConsentProvider>
-            <Navbar />
-            <div className="height-[100vh] z-4">
-              {children}
-              <SpeedInsights />
-            </div>
-            <CookieConsentBanner />
-          </CookieConsentProvider>
+          <ClientAuthProvider>
+            <CookieConsentProvider>
+              <Navbar />
+              <div className="height-[100vh] z-4">
+                {children}
+                <SpeedInsights />
+              </div>
+              <CookieConsentBanner />
+            </CookieConsentProvider>
+          </ClientAuthProvider>
         </ErrorBoundary>
       </body>
     </html>
