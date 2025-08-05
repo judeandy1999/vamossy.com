@@ -103,7 +103,7 @@ export default function LoginPage() {
         {/* Google Sign-in */}
         <button
           onClick={handleGoogleLogin}
-          disabled={loading || klaviyoLoading}
+          disabled={loading}
           className="flex items-center justify-center gap-2 bg-white border border-gray-300 rounded-full py-2 px-4 shadow-sm hover:shadow transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <FcGoogle size={20} />
@@ -144,10 +144,10 @@ export default function LoginPage() {
 
           <button
             type="submit"
-            disabled={loading || klaviyoLoading || !email || !password}
+            disabled={loading || !email || !password}
             className="bg-[#f4c30f] hover:bg-yellow-500 text-gray-900 rounded-full py-2 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading || klaviyoLoading ? 'Signing in...' : 'Sign in'}
+            {loading ? 'Signing in...' : 'Sign in'}
           </button>
         </form>
 
