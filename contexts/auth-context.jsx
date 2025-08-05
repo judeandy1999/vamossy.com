@@ -25,6 +25,26 @@ export function AuthProvider({ children }) {
           nodeEnv: process.env.NODE_ENV
         });
 
+        // Add simple Supabase health check
+        console.log('[AuthContext] Testing basic Supabase connection...');
+        try {
+          const testStart = Date.now();
+          const testResponse = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/`, {
+            headers: {
+              'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+              'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`
+            }
+          });
+          const testEnd = Date.now();
+          console.log('[AuthContext] Supabase health check:', {
+            status: testResponse.status,
+            ok: testResponse.ok,
+            responseTime: `${testEnd - testStart}ms`
+          });
+        } catch (healthError) {
+          console.error('[AuthContext] Supabase health check FAILED:', healthError.message);
+        }
+
         // Add timeout to prevent hanging on realtime connection
         const sessionPromise = supabase.auth.getSession();
         const timeoutPromise = new Promise((_, reject) => 
