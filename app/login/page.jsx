@@ -21,10 +21,28 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [hasRedirected, setHasRedirected] = useState(false);
 
+  // Add logging for auth state changes
+  useEffect(() => {
+    console.log('[LoginPage] Auth state changed:', {
+      status,
+      hasSession: !!session,
+      isInitialized,
+      hasRedirected,
+      pathname: window.location.pathname
+    });
+  }, [status, session, isInitialized, hasRedirected]);
+
   useEffect(() => {
     // Only redirect if we're fully initialized and authenticated
     if (isInitialized && status === 'authenticated' && session && !hasRedirected) {
+      console.log('[LoginPage] Conditions met for redirect:', {
+        isInitialized,
+        status,
+        hasSession: !!session,
+        hasRedirected
+      });
       setHasRedirected(true);
+      console.log('[LoginPage] Redirecting to /user-dashboard');
       router.replace('/user-dashboard');
     }
   }, [status, session, isInitialized, hasRedirected, router]);
@@ -33,9 +51,16 @@ export default function LoginPage() {
     e.preventDefault();
     setError('');
     setLoading(true);
+    
+    console.log('[LoginPage] Starting email login for:', email);
 
     try {
       const { error: signInError } = await signInWithEmail(email, password);
+      
+      console.log('[LoginPage] Email login result:', {
+        hasError: !!signInError,
+        errorMessage: signInError?.message
+      });
 
       if (signInError) {
         setError(signInError.message);
@@ -43,13 +68,20 @@ export default function LoginPage() {
       }
 
       const { user, error: userError } = await getUser();
+      console.log('[LoginPage] getUser result:', {
+        hasUser: !!user,
+        userError: userError?.message
+      });
+      
       if (user && !userError) {
+        console.log('[LoginPage] Sending user to Klaviyo');
         await sendToKlaviyo(user);
         // Don't manually redirect here, let the useEffect handle it
       } else if (userError) {
         setError(userError.message);
       }
     } catch (err) {
+      console.error('[LoginPage] Login error:', err);
       setError(err.message || 'Login failed');
     } finally {
       setLoading(false);
@@ -59,14 +91,22 @@ export default function LoginPage() {
   const handleGoogleLogin = async () => {
     setError('');
     setLoading(true);
+    
+    console.log('[LoginPage] Starting Google login');
 
     try {
       const { error } = await signInWithGoogle();
+      console.log('[LoginPage] Google login result:', {
+        hasError: !!error,
+        errorMessage: error?.message
+      });
+      
       if (error) {
         setError(error.message);
       }
       // Don't manually redirect here, let the useEffect handle it
     } catch (err) {
+      console.error('[LoginPage] Google login error:', err);
       setError(err.message || 'Google login failed');
     } finally {
       setLoading(false);
@@ -74,14 +114,25 @@ export default function LoginPage() {
   };
 
   // Show loading while checking authentication status
+  console.log('[LoginPage] Render decision:', {
+    isInitialized,
+    status,
+    hasRedirected,
+    shouldShowSpinner: !isInitialized || (status === 'authenticated' && !hasRedirected) || status !== 'unauthenticated'
+  });
+
   if (!isInitialized || (status === 'authenticated' && !hasRedirected)) {
+    console.log('[LoginPage] Showing spinner - not initialized or authenticated without redirect');
     return <Spinner />;
   }
 
   // Only show login form if definitely unauthenticated
-  if (status !== 'unauthenticated') {
+  if status !== 'unauthenticated') {
+    console.log('[LoginPage] Showing spinner - status is not unauthenticated:', status);
     return <Spinner />;
   }
+
+  console.log('[LoginPage] Rendering login form');
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 font-sans p-4">
