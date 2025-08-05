@@ -15,6 +15,62 @@ export function AuthProvider({ children }) {
     let isMounted = true;
     let retryCount = 0;
     const maxRetries = 3;
+    let authStateSubscription = null;
+
+    const fetchUserRole = async (userId) => {
+      try {
+        console.log('[AuthContext] Fetching user role for:', userId);
+        const { data: userData, error: userError } = await supabase
+          .from('users')
+          .select('role')
+          .eq('id', userId)
+          .single();
+        
+        console.log('[AuthContext] Role fetch result:', {
+          userData,
+          userError: userError?.message,
+          role: userData?.role
+        });
+        
+        if (userError) {
+          console.error('[AuthContext] Error fetching user role:', userError);
+          return 'user'; // Default role
+        }
+        
+        return userData?.role || 'user';
+      } catch (roleError) {
+        console.error('[AuthContext] Role fetch error:', roleError);
+        return 'user'; // Default role
+      }
+    };
+
+    const updateAuthState = async (session, source = 'unknown') => {
+      if (!isMounted) {
+        console.log('[AuthContext] Component unmounted, skipping auth state update');
+        return;
+      }
+
+      console.log(`[AuthContext] Updating auth state from ${source}:`, {
+        hasSession: !!session,
+        hasUser: !!session?.user,
+        userId: session?.user?.id?.substring(0, 8) + '...'
+      });
+
+      if (session?.user) {
+        setSession(session);
+        setStatus('authenticated');
+        
+        const userRole = await fetchUserRole(session.user.id);
+        if (isMounted) {
+          setRole(userRole);
+        }
+      } else {
+        console.log('[AuthContext] No session, setting unauthenticated state');
+        setSession(null);
+        setRole(null);
+        setStatus('unauthenticated');
+      }
+    };
 
     const getInitialSession = async () => {
       try {
@@ -25,36 +81,32 @@ export function AuthProvider({ children }) {
           nodeEnv: process.env.NODE_ENV
         });
 
-        // Add simple Supabase health check
-        console.log('[AuthContext] Testing basic Supabase connection...');
-        try {
-          const testStart = Date.now();
-          const testResponse = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/`, {
-            headers: {
-              'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-              'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`
-            }
-          });
-          const testEnd = Date.now();
-          console.log('[AuthContext] Supabase health check:', {
-            status: testResponse.status,
-            ok: testResponse.ok,
-            responseTime: `${testEnd - testStart}ms`
-          });
-        } catch (healthError) {
-          console.error('[AuthContext] Supabase health check FAILED:', healthError.message);
+        // Only do health check in development
+        if (process.env.NODE_ENV === 'development') {
+          console.log('[AuthContext] Testing basic Supabase connection...');
+          try {
+            const testStart = Date.now();
+            const testResponse = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/`, {
+              headers: {
+                'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+                'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`
+              }
+            });
+            const testEnd = Date.now();
+            console.log('[AuthContext] Supabase health check:', {
+              status: testResponse.status,
+              ok: testResponse.ok,
+              responseTime: `${testEnd - testStart}ms`
+            });
+          } catch (healthError) {
+            console.error('[AuthContext] Supabase health check FAILED:', healthError.message);
+          }
         }
 
-        // Add timeout to prevent hanging on realtime connection
-        const sessionPromise = supabase.auth.getSession();
-        const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Session fetch timeout - realtime connection may be slow')), 8000)
-        );
-
-        const { data: { session }, error } = await Promise.race([
-          sessionPromise,
-          timeoutPromise
-        ]);
+        // Remove the aggressive timeout and let the session fetch complete naturally
+        console.log('[AuthContext] Fetching initial session...');
+        
+        const { data: { session }, error } = await supabase.auth.getSession();
         
         console.log('[AuthContext] getSession result:', {
           hasSession: !!session,
@@ -67,54 +119,15 @@ export function AuthProvider({ children }) {
           console.error('[AuthContext] Session error:', error);
           if (retryCount < maxRetries) {
             retryCount++;
-            console.log(`[AuthContext] Retrying session fetch (${retryCount}/${maxRetries}) in ${1000 * retryCount}ms`);
-            setTimeout(getInitialSession, 1000 * retryCount);
+            console.log(`[AuthContext] Retrying session fetch (${retryCount}/${maxRetries}) in ${2000 * retryCount}ms`);
+            setTimeout(getInitialSession, 2000 * retryCount);
             return;
           }
           throw error;
         }
         
-        if (!isMounted) {
-          console.log('[AuthContext] Component unmounted, skipping session update');
-          return;
-        }
-
-        if (session?.user) {
-          console.log('[AuthContext] User found, setting authenticated state');
-          setSession(session);
-          setStatus('authenticated');
-          
-          // Fetch role with retry logic
-          try {
-            console.log('[AuthContext] Fetching user role for:', session.user.id);
-            const { data: userData, error: userError } = await supabase
-              .from('users')
-              .select('role')
-              .eq('id', session.user.id)
-              .single();
-            
-            console.log('[AuthContext] Role fetch result:', {
-              userData,
-              userError: userError?.message,
-              role: userData?.role
-            });
-            
-            if (userError) {
-              console.error('[AuthContext] Error fetching user role:', userError);
-              setRole('user'); // Default role
-            } else {
-              setRole(userData?.role || 'user');
-            }
-          } catch (roleError) {
-            console.error('[AuthContext] Role fetch error:', roleError);
-            setRole('user'); // Default role
-          }
-        } else {
-          console.log('[AuthContext] No user found, setting unauthenticated state');
-          setSession(null);
-          setRole(null);
-          setStatus('unauthenticated');
-        }
+        await updateAuthState(session, 'initial-fetch');
+        
       } catch (error) {
         console.error('[AuthContext] Auth initialization error:', error);
         if (isMounted) {
@@ -130,7 +143,7 @@ export function AuthProvider({ children }) {
       }
     };
 
-    // Set up auth state change listener
+    // Set up auth state change listener FIRST
     console.log('[AuthContext] Setting up auth state listener...');
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
@@ -146,48 +159,29 @@ export function AuthProvider({ children }) {
           userId: session?.user?.id?.substring(0, 8) + '...'
         });
         
-        if (session?.user) {
-          setSession(session);
-          setStatus('authenticated');
-          
-          try {
-            console.log('[AuthContext] Fetching role for auth state change');
-            const { data: userData, error: roleError } = await supabase
-              .from('users')
-              .select('role')
-              .eq('id', session.user.id)
-              .single();
-            
-            console.log('[AuthContext] Role fetch in state change:', {
-              userData,
-              roleError: roleError?.message
-            });
-            
-            if (roleError) {
-              console.error('[AuthContext] Error fetching user role in state change:', roleError);
-            }
-            
-            setRole(userData?.role || 'user');
-          } catch (error) {
-            console.error('[AuthContext] Error fetching user role in state change:', error);
-            setRole('user');
-          }
-        } else {
-          console.log('[AuthContext] No session in state change, setting unauthenticated');
-          setSession(null);
-          setRole(null);
-          setStatus('unauthenticated');
+        // Handle OAuth redirect completion
+        if (event === 'SIGNED_IN' && session) {
+          console.log('[AuthContext] OAuth sign-in detected, updating state');
+          await updateAuthState(session, 'oauth-signin');
+        } else if (event === 'SIGNED_OUT') {
+          console.log('[AuthContext] Sign-out detected');
+          await updateAuthState(null, 'signout');
+        } else if (event === 'TOKEN_REFRESHED' && session) {
+          console.log('[AuthContext] Token refreshed');
+          await updateAuthState(session, 'token-refresh');
         }
       }
     );
 
-    // Get initial session after setting up listener
-    getInitialSession();
+    authStateSubscription = subscription;
+
+    // Small delay to allow auth state listener to be ready
+    setTimeout(getInitialSession, 100);
 
     return () => {
       console.log('[AuthContext] Cleaning up auth context');
       isMounted = false;
-      subscription?.unsubscribe();
+      authStateSubscription?.unsubscribe();
     };
   }, []); // Empty dependency array - only run once
 
