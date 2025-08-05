@@ -316,7 +316,7 @@ export default function Page() {
         
         if (contentSize > maxSize) {
           const sizeInKB = (contentSize / 1024).toFixed(1);
-          const tabName = tabOptionsMap[wikiCategory]?.[tabId] || `Tab ${tabId}`;
+          const tabName = tabOptionsMap[wikiCategory]?.[tabId]?.name || `Tab ${tabId}`;
           
           // Only show warning if content is significantly over limit
           if (contentSize > maxSize * 1.1) { // 10% buffer
@@ -457,8 +457,8 @@ export default function Page() {
             onChange={(e) => setWikiCategory(Number(e.target.value))}
           >
             <option value={0}>Select a wiki category</option>
-            {Object.entries(wikiOptions).map(([key, label]) => (
-              <option key={key} value={key}>{label}</option>
+            {Object.entries(wikiOptions).map(([key, wikiData]) => (
+              <option key={key} value={key}>{wikiData.name}</option>
             ))}
           </select>
 

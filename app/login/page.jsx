@@ -5,81 +5,54 @@ import { useRouter } from 'next/navigation';
 import { FcGoogle } from 'react-icons/fc';
 import Spinner from '@/components/ui/spinner';
 import Link from 'next/link';
-import { signInWithGoogle, signInWithEmail, getUser } from '@/utils/authService';
-import { useAuthWithRedirect } from '@/hooks/useAuthWithRedirect';
+import { signInWithGoogle, signInWithEmail } from '@/utils/authService';
+import { useAuth } from '@/contexts/auth-context';
 import { useSendToKlaviyo } from '@/hooks/useSendToKlaviyo';
 import Image from 'next/image';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { status, session, isInitialized } = useAuthWithRedirect();
+  const { status, session, isInitialized } = useAuth();
   const { sendToKlaviyo, loading: klaviyoLoading, error: klaviyoError } = useSendToKlaviyo();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [hasRedirected, setHasRedirected] = useState(false);
-
-  // Add logging for auth state changes
-  useEffect(() => {
-    console.log('[LoginPage] Auth state changed:', {
-      status,
-      hasSession: !!session,
-      isInitialized,
-      hasRedirected,
-      pathname: window.location.pathname
-    });
-  }, [status, session, isInitialized, hasRedirected]);
 
   useEffect(() => {
-    // Only redirect if we're fully initialized and authenticated
-    if (isInitialized && status === 'authenticated' && session && !hasRedirected) {
-      console.log('[LoginPage] Conditions met for redirect:', {
-        isInitialized,
-        status,
-        hasSession: !!session,
-        hasRedirected
-      });
-      setHasRedirected(true);
-      console.log('[LoginPage] Redirecting to /user-dashboard');
+    if (isInitialized && status === 'authenticated' && session) {
       router.replace('/user-dashboard');
     }
-  }, [status, session, isInitialized, hasRedirected, router]);
+  }, [status, session, isInitialized, router]);
 
   const handleEmailLogin = async (e) => {
     e.preventDefault();
+    
+    if (!email || !password) {
+      setError('Please fill in all fields');
+      return;
+    }
+
     setError('');
     setLoading(true);
     
-    console.log('[LoginPage] Starting email login for:', email);
-
     try {
-      const { error: signInError } = await signInWithEmail(email, password);
-      
-      console.log('[LoginPage] Email login result:', {
-        hasError: !!signInError,
-        errorMessage: signInError?.message
-      });
+      const { data, error: signInError } = await signInWithEmail(email, password);
 
       if (signInError) {
         setError(signInError.message);
         return;
       }
 
-      const { user, error: userError } = await getUser();
-      console.log('[LoginPage] getUser result:', {
-        hasUser: !!user,
-        userError: userError?.message
-      });
-      
-      if (user && !userError) {
-        console.log('[LoginPage] Sending user to Klaviyo');
-        await sendToKlaviyo(user);
-        // Don't manually redirect here, let the useEffect handle it
-      } else if (userError) {
-        setError(userError.message);
+      if (data?.user) {
+        try {
+          await sendToKlaviyo(data.user);
+        } catch (klaviyoErr) {
+          console.warn('[LoginPage] Klaviyo error:', klaviyoErr);
+        }
       }
+      
     } catch (err) {
       console.error('[LoginPage] Login error:', err);
       setError(err.message || 'Login failed');
@@ -91,48 +64,31 @@ export default function LoginPage() {
   const handleGoogleLogin = async () => {
     setError('');
     setLoading(true);
-    
-    console.log('[LoginPage] Starting Google login');
 
     try {
       const { error } = await signInWithGoogle();
-      console.log('[LoginPage] Google login result:', {
-        hasError: !!error,
-        errorMessage: error?.message
-      });
       
       if (error) {
         setError(error.message);
+        setLoading(false);
       }
-      // Don't manually redirect here, let the useEffect handle it
     } catch (err) {
-      console.error('[LoginPage] Google login error:', err);
       setError(err.message || 'Google login failed');
-    } finally {
       setLoading(false);
     }
   };
 
-  // Show loading while checking authentication status
-  console.log('[LoginPage] Render decision:', {
-    isInitialized,
-    status,
-    hasRedirected,
-    shouldShowSpinner: !isInitialized || (status === 'authenticated' && !hasRedirected) || status !== 'unauthenticated'
-  });
-
-  if (!isInitialized || (status === 'authenticated' && !hasRedirected)) {
-    console.log('[LoginPage] Showing spinner - not initialized or authenticated without redirect');
-    return <Spinner />;
+  if (!isInitialized || status === 'loading' || status === 'authenticated') {
+    return (
+      <Spinner />
+    );
   }
 
-  // Only show login form if definitely unauthenticated
   if (status !== 'unauthenticated') {
-    console.log('[LoginPage] Showing spinner - status is not unauthenticated:', status);
-    return <Spinner />;
+    return (
+      <Spinner />
+    );
   }
-
-  console.log('[LoginPage] Rendering login form');
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 font-sans p-4">
@@ -148,10 +104,12 @@ export default function LoginPage() {
         <button
           onClick={handleGoogleLogin}
           disabled={loading || klaviyoLoading}
-          className="flex items-center justify-center gap-2 bg-white border border-gray-300 rounded-full py-2 px-4 shadow-sm hover:shadow transition transform hover:scale-105 disabled:opacity-50"
+          className="flex items-center justify-center gap-2 bg-white border border-gray-300 rounded-full py-2 px-4 shadow-sm hover:shadow transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <FcGoogle size={20} />
-          <span className="text-sm font-medium text-gray-700">Sign in with Google</span>
+          <span className="text-sm font-medium text-gray-700">
+            {loading ? 'Signing in...' : 'Sign in with Google'}
+          </span>
         </button>
 
         {/* Divider */}
@@ -167,7 +125,8 @@ export default function LoginPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="text-white px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-sm"
+            disabled={loading}
+            className="text-white px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
           />
           <input
             type="password"
@@ -175,19 +134,20 @@ export default function LoginPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="text-white px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-sm"
+            disabled={loading}
+            className="text-white px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
           />
 
           {(error || klaviyoError) && (
-            <p className="text-xs text-red-500">{error || klaviyoError}</p>
+            <p className="text-xs text-red-500 text-center">{error || klaviyoError}</p>
           )}
 
           <button
             type="submit"
-            disabled={loading || klaviyoLoading}
-            className="bg-[#f4c30f] hover:bg-yellow-500 text-gray-100 rounded-full py-2 font-medium transition-colors disabled:opacity-50"
+            disabled={loading || klaviyoLoading || !email || !password}
+            className="bg-[#f4c30f] hover:bg-yellow-500 text-gray-900 rounded-full py-2 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading || klaviyoLoading ? 'Logging in...' : 'Sign in'}
+            {loading || klaviyoLoading ? 'Signing in...' : 'Sign in'}
           </button>
         </form>
 

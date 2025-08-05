@@ -5,7 +5,7 @@ import { verifySupabaseAuth } from '@/utils/verifySupabaseAuth';
 export default async function handler(req, res) {
   if (!authenticate(req, res)) return;
   if (req.method !== 'GET') {
-    const { user, error } = await verifySupabaseAuth(req);
+    const { error } = await verifySupabaseAuth(req);
 
     if (error) {
       return res.status(401).json({ error });

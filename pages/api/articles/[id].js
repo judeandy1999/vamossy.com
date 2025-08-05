@@ -8,7 +8,7 @@ export default async function handler(req, res) {
   const { id } = req.query;
 
   if (req.method !== 'GET') {
-    const { user, error } = await verifySupabaseAuth(req);
+    const { error } = await verifySupabaseAuth(req);
     if (error) {
       return res.status(401).json({ error });
     }

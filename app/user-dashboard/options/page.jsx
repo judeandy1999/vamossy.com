@@ -5,11 +5,8 @@ import { useOptions } from '@/hooks/useOptions';
 import { Plus, Trash } from 'lucide-react';
 import Spinner from '@/components/ui/spinner';
 import Modal from '@/components/ui/modal';
-import { useAuthWithRedirect } from '@/hooks/useAuthWithRedirect';
 
 export default function Page() {
-  const { status, session, role } = useAuthWithRedirect();
-
   const {
     wikiOptions,
     tabOptionsMap,
@@ -82,7 +79,7 @@ export default function Page() {
     }
   };
 
-  if (status === 'loading' || loading) {
+  if (loading) {
     return <Spinner />;
   }
 
@@ -108,7 +105,7 @@ export default function Page() {
         <h1 className="text-3xl font-bold mb-8 text-center">Wiki & Tab Management</h1>
 
         {/* Two-column layout */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
           {/* Wikis List */}
           <section className="bg-white shadow rounded p-4 max-h-[70vh] overflow-y-auto">
             <h2 className="text-xl font-semibold mb-4">Wikis</h2>
@@ -121,7 +118,7 @@ export default function Page() {
                 </tr>
               </thead>
               <tbody>
-                {Object.entries(wikiOptions).map(([id, name]) => (
+                {Object.entries(wikiOptions).map(([id, wiki]) => (
                   <tr
                     key={id}
                     className={`transition cursor-pointer ${
@@ -129,9 +126,9 @@ export default function Page() {
                     }`}
                     onClick={() => setSelectedWiki((prev) => (prev === Number(id) ? null : Number(id)))}
                   >
-                    <td className="p-3 font-medium">{name}</td>
+                    <td className="p-3 font-medium">{wiki.name}</td>
                     <td className="p-3 text-gray-500">
-                      {wikiOptions.descriptions?.[id] || 'No description'}
+                      {wiki.description || 'No description'}
                     </td>
                     <td className="p-3 flex justify-end items-center gap-2">
                       <button
@@ -139,7 +136,7 @@ export default function Page() {
                           e.stopPropagation();
                           handleDeleteWiki(Number(id));
                         }}
-                        className="text-red-500 hover:text-red-600 transition"
+                        className="cursor-pointer text-red-500 hover:text-red-600 transition"
                       >
                         <Trash size={16} />
                       </button>
@@ -167,7 +164,7 @@ export default function Page() {
               />
               <button
                 onClick={handleAddWiki}
-                className="flex items-center gap-1 bg-slate-500 text-gray-300 px-4 py-2 rounded hover:bg-slate-700 transition"
+                className="cursor-pointer flex items-center gap-1 bg-slate-500 text-white px-4 py-2 rounded hover:bg-slate-700 transition"
               >
                 <Plus size={16} /> Add Wiki
               </button>
@@ -195,11 +192,11 @@ export default function Page() {
                     {(tabOptionsMap[selectedWiki]
                       ? Object.entries(tabOptionsMap[selectedWiki])
                       : []
-                    ).map(([key, name]) => (
+                    ).map(([key, tab]) => (
                       <tr key={key} className="hover:bg-slate-100 transition">
-                        <td className="p-3 font-medium">{name}</td>
+                        <td className="p-3 font-medium">{tab.name}</td>
                         <td className="p-3 text-gray-500">
-                          {tabOptionsMap.descriptions?.[key] || 'No description'}
+                          {tab.description || 'No description'}
                         </td>
                         <td className="p-3 flex justify-end items-center">
                           <button
@@ -207,7 +204,7 @@ export default function Page() {
                               e.stopPropagation();
                               handleDeleteTab(Number(key));
                             }}
-                            className="text-red-500 hover:text-red-600 transition"
+                            className="cursor-pointer text-red-500 hover:text-red-600 transition"
                           >
                             <Trash size={16} />
                           </button>
@@ -235,7 +232,7 @@ export default function Page() {
                   />
                   <button
                     onClick={handleAddTab}
-                    className="flex items-center gap-1 bg-slate-500 text-gray-300 px-4 py-2 rounded hover:bg-slate-700 transition"
+                    className="cursor-pointer flex items-center gap-1 bg-slate-500 text-white px-4 py-2 rounded hover:bg-slate-700 transition"
                   >
                     <Plus size={16} /> Add Tab
                   </button>

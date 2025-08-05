@@ -104,10 +104,6 @@ export const signInAndUpdatePassword = async (currentPassword, newPassword) => {
   }
 };
 
-export const getSession = async () => {
-  return supabase.auth.getSession();
-};
-
 export const signOut = async () => {
   return supabase.auth.signOut();
 };

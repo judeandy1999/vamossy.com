@@ -1,7 +1,5 @@
 import GoogleAnalyticsService from '@/lib/googleAnalytics';
-import { verifySupabaseAuth } from '@/utils/verifySupabaseAuth';
 
-// Simple in-memory cache for API responses
 const cache = new Map();
 const CACHE_DURATION = 45 * 1000; // 45 seconds for ultra-fast response
 const MAX_CACHE_SIZE = 50; // Prevent memory leaks
@@ -45,16 +43,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Verify authentication
-    const authResult = await verifySupabaseAuth(req);
-    if (authResult.error) {
-      return res.status(401).json({ error: authResult.error });
-    }
-
-    // Get date range from query params (default to 7 days)
     const { dateRange = '7daysAgo' } = req.query;
-
-    // Check cache first
     const cachedResult = getCachedData(dateRange);
     if (cachedResult) {
       return res.status(200).json({

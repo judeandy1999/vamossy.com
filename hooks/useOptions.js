@@ -41,16 +41,20 @@ export const useOptions = () => {
         if (!tabResponse.ok) throw new Error(tabJson.error || 'Failed to fetch tab options');
         const tabData = tabJson.data || [];
 
-        // Format wiki options
         const formattedWikiOptions = wikiData.reduce((acc, wiki) => {
-          acc[wiki.id] = wiki.name;
+          acc[wiki.id] = {
+            name: wiki.name,
+            description: wiki.description || ''
+          };
           return acc;
         }, {});
 
-        // Format tab options
         const formattedTabOptionsMap = tabData.reduce((acc, tab) => {
           if (!acc[tab.wiki_id]) acc[tab.wiki_id] = {};
-          acc[tab.wiki_id][tab.id] = tab.name;
+          acc[tab.wiki_id][tab.id] = {
+            name: tab.name,
+            description: tab.description || ''
+          };
           return acc;
         }, {});
 
@@ -83,7 +87,13 @@ export const useOptions = () => {
       if (!response.ok) throw new Error('Failed to add wiki');
 
       const addedWiki = await response.json();
-      setWikiOptions((prev) => ({ ...prev, [addedWiki[0].id]: addedWiki[0].name }));
+      setWikiOptions((prev) => ({ 
+        ...prev, 
+        [addedWiki[0].id]: {
+          name: addedWiki[0].name,
+          description: addedWiki[0].description || ''
+        }
+      }));
     } catch (err) {
       setError(err.message);
     }
@@ -111,7 +121,10 @@ export const useOptions = () => {
         ...prev,
         [newTab.wiki_id]: {
           ...prev[newTab.wiki_id],
-          [addedTab[0].id]: addedTab[0].name,
+          [addedTab[0].id]: {
+            name: addedTab[0].name,
+            description: addedTab[0].description || ''
+          }
         },
       }));
     } catch (err) {

@@ -26,7 +26,7 @@ export default function CollapsibleTabs({
 
   return (
     <div className="space-y-4">
-      {Object.entries(currentTabOptions).map(([key, label]) => (
+      {Object.entries(currentTabOptions).map(([key, tabData]) => (
         <div key={key} className="rounded shadow bg-white">
           {/* Tab Header */}
           <div
@@ -35,7 +35,7 @@ export default function CollapsibleTabs({
             } hover:bg-slate-200 transition rounded-t`}
             onClick={() => toggleTab(key)}
           >
-            <h3 className="text-sm font-semibold text-slate-800">{label}</h3>
+            <h3 className="text-sm font-semibold text-slate-800">{tabData.name}</h3>
             <span className="text-slate-600">
               {expandedTabs[key] ? (
                 <Minus size={18} />
