@@ -19,20 +19,6 @@ export function AuthProvider({ children }) {
     const getInitialSession = async () => {
       try {
         console.log('[AuthContext] Initializing auth session...');
-        
-        // Clear any potentially stale session FIRST
-        console.log('[AuthContext] Clearing any stale session data...');
-        try {
-          await supabase.auth.signOut({ scope: 'local' });
-          // Clear localStorage
-          Object.keys(localStorage)
-            .filter(key => key.startsWith('sb-'))
-            .forEach(key => localStorage.removeItem(key));
-          console.log('[AuthContext] Stale session cleared');
-        } catch (clearError) {
-          console.warn('[AuthContext] Error clearing stale session:', clearError);
-        }
-        
         console.log('[AuthContext] Environment:', {
           supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL ? 'Present' : 'Missing',
           supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'Present' : 'Missing',
@@ -59,7 +45,7 @@ export function AuthProvider({ children }) {
           console.error('[AuthContext] Supabase health check FAILED:', healthError.message);
         }
 
-        // Fixed timeout promise (no signOut here)
+        // Add timeout to prevent hanging on realtime connection
         const sessionPromise = supabase.auth.getSession();
         const timeoutPromise = new Promise((_, reject) => 
           setTimeout(() => reject(new Error('Session fetch timeout - realtime connection may be slow')), 8000)
@@ -205,7 +191,6 @@ export function AuthProvider({ children }) {
     };
   }, []); // Empty dependency array - only run once
 
-  // Add this to your context value
   const value = {
     status: isInitialized ? status : 'loading',
     session,
