@@ -103,10 +103,13 @@ export function AuthProvider({ children }) {
           }
         }
 
-        // Remove the aggressive timeout and let the session fetch complete naturally
         console.log('[AuthContext] Fetching initial session...');
         
-        const { data: { session }, error } = await supabase.auth.getSession();
+        // Add timeout to getSession call
+        const { data: { session }, error } = await Promise.race([
+          supabase.auth.getSession(),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('Session timeout')), 4000))
+        ]);
         
         console.log('[AuthContext] getSession result:', {
           hasSession: !!session,
@@ -117,7 +120,7 @@ export function AuthProvider({ children }) {
         
         if (error) {
           console.error('[AuthContext] Session error:', error);
-          if (retryCount < maxRetries) {
+          if (retryCount < maxRetries && !error.message.includes('timeout')) {
             retryCount++;
             console.log(`[AuthContext] Retrying session fetch (${retryCount}/${maxRetries}) in ${2000 * retryCount}ms`);
             setTimeout(getInitialSession, 2000 * retryCount);
@@ -125,11 +128,27 @@ export function AuthProvider({ children }) {
           }
           throw error;
         }
+
+        if (!session) {
+          console.warn('[AuthContext] No session found, clearing any broken session...');
+          await supabase.auth.signOut(); // clear broken session
+        }
         
         await updateAuthState(session, 'initial-fetch');
         
       } catch (error) {
         console.error('[AuthContext] Auth initialization error:', error);
+        
+        // If it's a timeout error, try to clear broken session
+        if (error.message === 'Session timeout') {
+          console.warn('[AuthContext] Session timeout, clearing broken session...');
+          try {
+            await supabase.auth.signOut();
+          } catch (signOutError) {
+            console.error('[AuthContext] Error clearing broken session:', signOutError);
+          }
+        }
+        
         if (isMounted) {
           setSession(null);
           setRole(null);
@@ -183,7 +202,7 @@ export function AuthProvider({ children }) {
       isMounted = false;
       authStateSubscription?.unsubscribe();
     };
-  }, []); // Empty dependency array - only run once
+  }, []);
 
   const value = {
     status: isInitialized ? status : 'loading',
