@@ -25,7 +25,16 @@ export function AuthProvider({ children }) {
           nodeEnv: process.env.NODE_ENV
         });
 
-        const { data: { session }, error } = await supabase.auth.getSession();
+        // Add timeout to prevent hanging on realtime connection
+        const sessionPromise = supabase.auth.getSession();
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Session fetch timeout - realtime connection may be slow')), 8000)
+        );
+
+        const { data: { session }, error } = await Promise.race([
+          sessionPromise,
+          timeoutPromise
+        ]);
         
         console.log('[AuthContext] getSession result:', {
           hasSession: !!session,
