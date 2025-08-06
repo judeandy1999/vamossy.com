@@ -14,25 +14,36 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     let isMounted = true;
     let subscription = null;
+    let initTimeout = null;
+    let roleTimeout = null;
 
     const fetchUserRole = async (userId) => {
       if (!userId || !isMounted) return 'user';
       
-      try {
-        const { data: userData, error } = await supabase
+      return new Promise((resolve) => {
+        // Set timeout to prevent hanging
+        roleTimeout = setTimeout(() => {
+          resolve('user');
+        }, 10000); // 10 seconds max
+
+        supabase
           .from('users')
           .select('role')
           .eq('id', userId)
-          .single();
-        
-        if (error) {
-          return 'user';
-        }
-        
-        return userData?.role || 'user';
-      } catch (error) {
-        return 'user';
-      }
+          .single()
+          .then(({ data: userData, error }) => {
+            clearTimeout(roleTimeout);
+            if (error || !userData) {
+              resolve('user');
+            } else {
+              resolve(userData.role || 'user');
+            }
+          })
+          .catch(() => {
+            clearTimeout(roleTimeout);
+            resolve('user');
+          });
+      });
     };
 
     const updateAuthState = async (session, event = 'session_change') => {
@@ -56,28 +67,53 @@ export function AuthProvider({ children }) {
     };
 
     const initializeAuth = async () => {
-      try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        if (error) {
-          throw error;
-        }
-        await updateAuthState(session, 'initialization');
-      } catch (error) {
-        if (isMounted) {
-          setSession(null);
-          setRole(null);
-          setStatus('unauthenticated');
-        }
-      } finally {
-        if (isMounted) {
-          setIsInitialized(true);
-        }
-      }
+      return new Promise((resolve) => {
+        // Set timeout to prevent hanging on initialization
+        initTimeout = setTimeout(() => {
+          if (isMounted) {
+            setSession(null);
+            setRole(null);
+            setStatus('unauthenticated');
+            setIsInitialized(true);
+          }
+          resolve();
+        }, 12000); // 12 seconds max for initialization
+
+        supabase.auth.getSession()
+          .then(async ({ data: { session }, error }) => {
+            clearTimeout(initTimeout);
+            
+            if (!error && session) {
+              await updateAuthState(session, 'initialization');
+            } else {
+              if (isMounted) {
+                setSession(null);
+                setRole(null);
+                setStatus('unauthenticated');
+              }
+            }
+          })
+          .catch(() => {
+            clearTimeout(initTimeout);
+            if (isMounted) {
+              setSession(null);
+              setRole(null);
+              setStatus('unauthenticated');
+            }
+          })
+          .finally(() => {
+            if (isMounted) {
+              setIsInitialized(true);
+            }
+            resolve();
+          });
+      });
     };
 
     const { data: { subscription: authSubscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        if (!isMounted) return;        
+        if (!isMounted) return;
+        
         switch (event) {
           case 'SIGNED_IN':
           case 'TOKEN_REFRESHED':
@@ -99,6 +135,8 @@ export function AuthProvider({ children }) {
     return () => {
       isMounted = false;
       subscription?.unsubscribe();
+      if (initTimeout) clearTimeout(initTimeout);
+      if (roleTimeout) clearTimeout(roleTimeout);
     };
   }, []);
 
