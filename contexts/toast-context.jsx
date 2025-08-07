@@ -7,7 +7,7 @@ export const ToastProvider = ({ children }) => {
   const [toast, setToast] = useState({ message: '', type: '', visible: false });
   const timeoutRef = useRef(null);
 
-  const showToast = (message, type = 'info') => {
+  const showToast = (message, type = 'info', persist = false) => {
     // Clear existing timeout
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
@@ -15,11 +15,13 @@ export const ToastProvider = ({ children }) => {
 
     setToast({ message, type, visible: true });
     
-    // Set new timeout
-    timeoutRef.current = setTimeout(() => {
-      setToast(prev => ({ ...prev, visible: false }));
-      timeoutRef.current = null;
-    }, 4000); // Increased to 4 seconds for better UX
+    // Only set timeout if not persistent
+    if (!persist) {
+      timeoutRef.current = setTimeout(() => {
+        setToast(prev => ({ ...prev, visible: false }));
+        timeoutRef.current = null;
+      }, 4000);
+    }
   };
 
   const hideToast = () => {

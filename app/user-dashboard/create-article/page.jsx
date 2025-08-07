@@ -147,7 +147,7 @@ export default function Page() {
       const sanitizedContent = DOMPurify.sanitize(content);
 
       if (isEditing) {
-        showToast('Updating article...', 'info');
+        showToast('Updating article...', 'info', true);
         
         const updatedArticle = await updateArticle({
           id: selectedArticle.id,
@@ -159,7 +159,7 @@ export default function Page() {
         });
 
         if (hasTabs && Object.keys(tabContents).length > 0) {
-          showToast('Updating tabs...', 'info');
+          showToast('Updating tabs...', 'info', true);
           await updateTabsIndividually(selectedArticle.id, tabContents);
         }
 
@@ -170,7 +170,7 @@ export default function Page() {
         });
         setSelectedArticle(null);
       } else {
-        showToast('Creating article...', 'info');
+        showToast('Creating article...', 'info', true);
         
         const newArticle = await createArticle({
           title,
@@ -182,7 +182,7 @@ export default function Page() {
 
         // Wait for article creation before saving tabs
         if (hasTabs && Object.keys(tabContents).length > 0) {
-          showToast('Saving tabs...', 'info');
+          showToast('Saving tabs...', 'info', true);
           await saveTabsIndividually(newArticle.id, tabContents);
         }
         
