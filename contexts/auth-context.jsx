@@ -74,7 +74,6 @@ export function AuthProvider({ children }) {
 
     const initializeAuth = async () => {
       return new Promise((resolve) => {
-        // Set timeout to prevent hanging on initialization
         initTimeout = setTimeout(() => {
           if (isMounted) {
             setSession(null);
