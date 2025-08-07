@@ -52,9 +52,8 @@ export function AuthProvider({ children }) {
       if (session?.user) {
         let userRole = role;
         
-        if (event === 'TOKEN_REFRESHED' && role) {
-          userRole = role;
-        } else {
+        // Only fetch role if we don't have one or if user changed
+        if (!role || session.user.id !== session?.user?.id) {
           userRole = await fetchUserRole(session.user.id);
         }
         
