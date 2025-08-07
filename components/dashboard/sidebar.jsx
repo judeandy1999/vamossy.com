@@ -49,6 +49,11 @@ export default function Sidebar() {
     setIsCollapsed(!isCollapsed)
   }
 
+  const handleNavClick = (href) => {
+    // Force reload when navigating
+    window.location.href = href
+  }
+
   const filteredNavItems = role ? navItems.filter(item => item.roles.includes(role)) : []
 
   return (
@@ -94,10 +99,10 @@ export default function Sidebar() {
           </div>
         ) : (
           filteredNavItems.map(({ label, href, icon: Icon }) => (
-            <Link
+            <button
               key={href}
-              href={href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors group relative cursor-pointer ${
+              onClick={() => handleNavClick(href)}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors group relative cursor-pointer ${
                 pathname === href
                   ? 'bg-yellow-500 text-white font-medium shadow-sm'
                   : 'text-slate-600 hover:bg-gray-50 hover:text-slate-800'
@@ -111,7 +116,7 @@ export default function Sidebar() {
                 }`} 
               />
               {!isCollapsed && (
-                <span className="truncate">{label}</span>
+                <span className="truncate text-left">{label}</span>
               )}
               
               {/* Tooltip for collapsed state */}
@@ -121,7 +126,7 @@ export default function Sidebar() {
                   <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-2 h-2 bg-gray-900 rotate-45"></div>
                 </div>
               )}
-            </Link>
+            </button>
           ))
         )}
       </nav>
