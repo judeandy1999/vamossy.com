@@ -26,7 +26,6 @@ export function AuthProvider({ children }) {
         roleTimeout = setTimeout(() => {
           if (!hasResolved) {
             hasResolved = true;
-            resolve('user');
           }
         }, 2000);
 
