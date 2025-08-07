@@ -21,10 +21,14 @@ export function AuthProvider({ children }) {
       if (!userId || !isMounted) return 'user';
       
       return new Promise((resolve) => {
-        // Set timeout to prevent hanging
+        let hasResolved = false;
+        
         roleTimeout = setTimeout(() => {
-          resolve('user');
-        }, 10000); // 10 seconds max
+          if (!hasResolved) {
+            hasResolved = true;
+            resolve('user');
+          }
+        }, 2000);
 
         supabase
           .from('users')
@@ -33,15 +37,27 @@ export function AuthProvider({ children }) {
           .single()
           .then(({ data: userData, error }) => {
             clearTimeout(roleTimeout);
-            if (error || !userData) {
-              resolve('user');
+            
+            if (!hasResolved) {
+              hasResolved = true;
+              if (error || !userData) {
+                resolve('user');
+              } else {
+                const fetchedRole = userData.role || 'user';
+                resolve(fetchedRole);
+              }
             } else {
-              resolve(userData.role || 'user');
+              if (userData && userData.role && userData.role !== 'user' && isMounted) {
+                setRole(userData.role);
+              }
             }
           })
           .catch(() => {
             clearTimeout(roleTimeout);
-            resolve('user');
+            if (!hasResolved) {
+              hasResolved = true;
+              resolve('user');
+            }
           });
       });
     };
@@ -50,12 +66,7 @@ export function AuthProvider({ children }) {
       if (!isMounted) return;
 
       if (session?.user) {
-        let userRole = role;
-        
-        // Only fetch role if we don't have one or if user changed
-        if (!role || session.user.id !== session?.user?.id) {
-          userRole = await fetchUserRole(session.user.id);
-        }
+        const userRole = await fetchUserRole(session.user.id);
         
         if (isMounted) {
           setSession(session);
@@ -81,7 +92,7 @@ export function AuthProvider({ children }) {
             setIsInitialized(true);
           }
           resolve();
-        }, 12000); // 12 seconds max for initialization
+        }, 12000);
 
         supabase.auth.getSession()
           .then(async ({ data: { session }, error }) => {
