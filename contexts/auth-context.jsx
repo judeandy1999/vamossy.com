@@ -23,41 +23,52 @@ export function AuthProvider({ children }) {
       return new Promise((resolve) => {
         let hasResolved = false;
         
-        roleTimeout = setTimeout(() => {
-          if (!hasResolved) {
-            hasResolved = true;
-          }
-        }, 2000);
-
-        supabase
-          .from('users')
-          .select('role')
-          .eq('id', userId)
-          .single()
-          .then(({ data: userData, error }) => {
-            clearTimeout(roleTimeout);
-            
-            if (!hasResolved) {
-              hasResolved = true;
-              if (error || !userData) {
-                resolve('user');
-              } else {
-                const fetchedRole = userData.role || 'user';
-                resolve(fetchedRole);
-              }
-            } else {
-              if (userData && userData.role && userData.role !== 'user' && isMounted) {
-                setRole(userData.role);
-              }
-            }
-          })
-          .catch(() => {
-            clearTimeout(roleTimeout);
+        // Critical timing fix: Add small delay before role fetch
+        const startRoleFetch = () => {
+          roleTimeout = setTimeout(() => {
             if (!hasResolved) {
               hasResolved = true;
               resolve('user');
             }
-          });
+          }, 2000);
+
+          supabase
+            .from('users')
+            .select('role')
+            .eq('id', userId)
+            .single()
+            .then(({ data: userData, error }) => {
+              clearTimeout(roleTimeout);
+              
+              if (!hasResolved) {
+                hasResolved = true;
+                if (error || !userData) {
+                  resolve('user');
+                } else {
+                  const fetchedRole = userData.role || 'user';
+                  resolve(fetchedRole);
+                }
+              } else {
+                // Late update handling
+                if (userData && userData.role && userData.role !== 'user' && isMounted) {
+                  // Small delay to ensure React has processed previous state updates
+                  setTimeout(() => {
+                    if (isMounted) setRole(userData.role);
+                  }, 0);
+                }
+              }
+            })
+            .catch(() => {
+              clearTimeout(roleTimeout);
+              if (!hasResolved) {
+                hasResolved = true;
+                resolve('user');
+              }
+            });
+        };
+
+        // Add micro-delay to prevent race conditions (this was the key fix!)
+        setTimeout(startRoleFetch, 10);
       });
     };
 
@@ -68,15 +79,25 @@ export function AuthProvider({ children }) {
         const userRole = await fetchUserRole(session.user.id);
         
         if (isMounted) {
-          setSession(session);
-          setRole(userRole);
-          setStatus('authenticated');
+          // Batch state updates to prevent race conditions
+          const updateStates = () => {
+            setSession(session);
+            setRole(userRole);
+            setStatus('authenticated');
+          };
+
+          // Use setTimeout to ensure proper state batching
+          setTimeout(updateStates, 0);
         }
       } else {
         if (isMounted) {
-          setSession(null);
-          setRole(null);
-          setStatus('unauthenticated');
+          const updateStates = () => {
+            setSession(null);
+            setRole(null);
+            setStatus('unauthenticated');
+          };
+          
+          setTimeout(updateStates, 0);
         }
       }
     };
@@ -93,34 +114,37 @@ export function AuthProvider({ children }) {
           resolve();
         }, 12000);
 
-        supabase.auth.getSession()
-          .then(async ({ data: { session }, error }) => {
-            clearTimeout(initTimeout);
-            
-            if (!error && session) {
-              await updateAuthState(session, 'initialization');
-            } else {
+        // Add small delay before getting session (critical timing fix)
+        setTimeout(() => {
+          supabase.auth.getSession()
+            .then(async ({ data: { session }, error }) => {
+              clearTimeout(initTimeout);
+              
+              if (!error && session) {
+                await updateAuthState(session, 'initialization');
+              } else {
+                if (isMounted) {
+                  setSession(null);
+                  setRole(null);
+                  setStatus('unauthenticated');
+                }
+              }
+            })
+            .catch(() => {
+              clearTimeout(initTimeout);
               if (isMounted) {
                 setSession(null);
                 setRole(null);
                 setStatus('unauthenticated');
               }
-            }
-          })
-          .catch(() => {
-            clearTimeout(initTimeout);
-            if (isMounted) {
-              setSession(null);
-              setRole(null);
-              setStatus('unauthenticated');
-            }
-          })
-          .finally(() => {
-            if (isMounted) {
-              setIsInitialized(true);
-            }
-            resolve();
-          });
+            })
+            .finally(() => {
+              if (isMounted) {
+                setIsInitialized(true);
+              }
+              resolve();
+            });
+        }, 50); // Critical delay
       });
     };
 
