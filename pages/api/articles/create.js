@@ -1,16 +1,6 @@
 import { supabase } from '@/utils/client';
-import { authenticate } from '@/lib/authMiddleware';
-import { verifySupabaseAuth } from '@/utils/verifySupabaseAuth';
 
 export default async function handler(req, res) {
-  if (!authenticate(req, res)) return;
-  if (req.method !== 'GET') {
-    const { error } = await verifySupabaseAuth(req);
-
-    if (error) {
-      return res.status(401).json({ error });
-    }
-  }
 
   if (req.method === 'POST') {
     const { title, content, wiki_id, has_tabs, user_email } = req.body;

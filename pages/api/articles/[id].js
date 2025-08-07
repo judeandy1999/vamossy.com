@@ -3,17 +3,7 @@ import { authenticate } from '@/lib/authMiddleware';
 import { verifySupabaseAuth } from '@/utils/verifySupabaseAuth';
 
 export default async function handler(req, res) {
-  if (!authenticate(req, res)) return;
-
   const { id } = req.query;
-
-  if (req.method !== 'GET') {
-    const { error } = await verifySupabaseAuth(req);
-    if (error) {
-      return res.status(401).json({ error });
-    }
-  }
-
   const full = req.query.full === 'true';
 
   if (req.method === 'GET') {
