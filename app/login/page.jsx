@@ -7,21 +7,21 @@ import Spinner from '@/components/ui/spinner';
 import Link from 'next/link';
 import { signInWithGoogle, signInWithEmail } from '@/utils/authService';
 import { useAuth } from '@/contexts/auth-context';
-// import { useSendToKlaviyo } from '@/hooks/useSendToKlaviyo';
 import Image from 'next/image';
 
 export default function LoginPage() {
   const router = useRouter();
   const { status, session, isInitialized } = useAuth();
-  // const { sendToKlaviyo, loading: klaviyoLoading, error: klaviyoError } = useSendToKlaviyo();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [redirecting, setRedirecting] = useState(false);
 
   useEffect(() => {
     if (isInitialized && status === 'authenticated' && session) {
+      setRedirecting(true);
       router.replace('/user-dashboard');
     }
   }, [status, session, isInitialized, router]);
@@ -45,13 +45,10 @@ export default function LoginPage() {
         return;
       }
 
-      // if (data?.user) {
-      //   try {
-      //     await sendToKlaviyo(data.user);
-      //   } catch (klaviyoErr) {
-      //     console.warn('[LoginPage] Klaviyo error:', klaviyoErr);
-      //   }
-      // }
+      if (data?.user) {
+        console.log('Email login successful:', data.user.email);
+        // The useAuth hook will handle the redirect
+      }
       
     } catch (err) {
       console.error('[LoginPage] Login error:', err);
@@ -66,11 +63,15 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const { error } = await signInWithGoogle();
+      const { data, error } = await signInWithGoogle();
       
       if (error) {
         setError(error.message);
         setLoading(false);
+      } else {
+        // For OAuth, the redirect happens automatically
+        // Don't set loading to false here as we're redirecting
+        console.log('Google login initiated');
       }
     } catch (err) {
       setError(err.message || 'Google login failed');
@@ -78,16 +79,16 @@ export default function LoginPage() {
     }
   };
 
-  if (!isInitialized || status === 'loading' || status === 'authenticated') {
-    return (
-      <Spinner />
-    );
+  if (!isInitialized || redirecting) {
+    return <Spinner />;
   }
 
-  if (status !== 'unauthenticated') {
-    return (
-      <Spinner />
-    );
+  if (status === 'loading') {
+    return <Spinner />;
+  }
+
+  if (status === 'authenticated') {
+    return <Spinner />;
   }
 
   return (
@@ -138,7 +139,7 @@ export default function LoginPage() {
             className="text-white px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
           />
 
-          {(error) && (
+          {error && (
             <p className="text-xs text-red-500 text-center">{error}</p>
           )}
 

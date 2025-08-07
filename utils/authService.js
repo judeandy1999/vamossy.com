@@ -1,30 +1,44 @@
 import { supabase } from '@/utils/client';
 
 export const signInWithGoogle = async () => {
-  const { error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: { redirectTo: `${window.location.origin}/user-dashboard` },
-  });
-
-  if (error) {
-    return { error };
-  }
-
-  return new Promise((resolve) => {
-    supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_IN' && session) {
-        const { user } = session;
-        resolve({ user });
-      }
+  try {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { 
+        redirectTo: `${window.location.origin}/user-dashboard`,
+        skipBrowserRedirect: false
+      },
     });
-  });
+
+    if (error) {
+      console.error('Google sign-in error:', error);
+      return { error };
+    }
+
+    return { data };
+  } catch (err) {
+    console.error('Google sign-in exception:', err);
+    return { error: { message: err.message || 'Google sign-in failed' } };
+  }
 };
 
 export const signInWithEmail = async (email, password) => {
-  return supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      console.error('Email sign-in error:', error);
+      return { data: null, error };
+    }
+
+    return { data, error: null };
+  } catch (err) {
+    console.error('Email sign-in exception:', err);
+    return { data: null, error: { message: err.message || 'Sign-in failed' } };
+  }
 };
 
 export const resetPassword = async (email) => {
@@ -39,7 +53,7 @@ export const resetPassword = async (email) => {
   }
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${window.location.origin}/login`,
+    redirectTo: `${window.location.origin}/reset-password`,
   });
 
   return { error };
