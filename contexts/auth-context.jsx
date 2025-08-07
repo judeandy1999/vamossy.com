@@ -50,7 +50,13 @@ export function AuthProvider({ children }) {
       if (!isMounted) return;
 
       if (session?.user) {
-        const userRole = await fetchUserRole(session.user.id);
+        let userRole = role;
+        
+        if (event === 'TOKEN_REFRESHED' && role) {
+          userRole = role;
+        } else {
+          userRole = await fetchUserRole(session.user.id);
+        }
         
         if (isMounted) {
           setSession(session);
