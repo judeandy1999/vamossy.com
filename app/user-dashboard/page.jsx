@@ -10,7 +10,6 @@ import LogUpload from '@/components/gpt-center/log-upload';
 import EvaluationTable from '@/components/gpt-center/evaluation-table';
 import Spinner from '@/components/ui/spinner';
 // import { useSendToKlaviyo } from '@/hooks/useSendToKlaviyo';
-import { getUser } from '@/utils/authService';
 
 export default function Dashboard() {
   const { session, status, role } = useAuthWithRedirect();

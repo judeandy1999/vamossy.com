@@ -2,7 +2,8 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
-import { signOut, getUser } from '@/utils/authService'
+import { signOut } from '@/utils/authService'
+import { useAuth } from '@/contexts/auth-context'
 import { User } from 'lucide-react'
 import Image from 'next/image'
 
@@ -22,18 +23,13 @@ const getPageTitle = (pathname) => {
 
 export default function Topbar() {
   const [showDropdown, setShowDropdown] = useState(false)
-  const [currentUser, setCurrentUser] = useState(null)
+  const [isSigningOut, setIsSigningOut] = useState(false)
   const dropdownRef = useRef(null)
   const pathname = usePathname()
   const router = useRouter()
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const { user } = await getUser()
-      setCurrentUser(user)
-    }
-    fetchUser()
-  }, [])
+  
+  const { session, status } = useAuth()
+  const currentUser = session?.user || null
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -48,16 +44,53 @@ export default function Topbar() {
     }
   }, [])
 
-  const handleSignOut = async () => {
+  useEffect(() => {
+    const shouldSignOut = sessionStorage.getItem('pendingSignOut')
+    if (shouldSignOut === 'true') {
+      console.log('[TOPBAR] Detected pending sign out after reload')
+      sessionStorage.removeItem('pendingSignOut')
+      performSignOut()
+    }
+  }, [])
+
+  const performSignOut = async () => {
+    console.log('[TOPBAR] Performing sign out after reload')
+    setIsSigningOut(true)
+    
     try {
       const { error } = await signOut()
+      console.log('[TOPBAR] Sign out result:', { success: !error, error: error?.message })
+      
       if (!error) {
-        setShowDropdown(false)
+        console.log('[TOPBAR] Sign out successful, redirecting to login')
+        window.location.href = '/login'
+      } else {
+        console.error('[TOPBAR] Sign out failed:', error)
+        // Even if signOut fails, redirect anyway
         window.location.href = '/login'
       }
     } catch (err) {
-      console.error('Sign out error:', err)
+      console.error('[TOPBAR] Sign out exception:', err)
+      // Force redirect even on exception
+      window.location.href = '/login'
+    } finally {
+      setIsSigningOut(false)
     }
+  }
+
+  const handleSignOut = async () => {
+    if (isSigningOut) return
+
+    console.log('[TOPBAR] Sign out clicked - setting up reload and sign out')
+    setIsSigningOut(true)
+    setShowDropdown(false)
+    
+    // Set flag in sessionStorage to indicate we want to sign out after reload
+    sessionStorage.setItem('pendingSignOut', 'true')
+    
+    // Reload the page to refresh Supabase connection
+    console.log('[TOPBAR] Reloading page to refresh connection...')
+    window.location.reload()
   }
 
   const handleAccountSettings = () => {
@@ -107,6 +140,18 @@ export default function Topbar() {
   }
 
   const avatarUrl = getAvatarUrl()
+
+  // Show loading state only during initial auth load or when signing out
+  if (status === 'loading' || isSigningOut) {
+    return (
+      <header className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-white">
+        <div className="text-xl font-semibold text-slate-800">{getPageTitle(pathname)}</div>
+        <div className="flex items-center gap-4">
+          <div className="w-8 h-8 rounded-full bg-gray-200 animate-pulse"></div>
+        </div>
+      </header>
+    )
+  }
 
   return (
     <header className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-white">
@@ -185,10 +230,11 @@ export default function Topbar() {
                 <hr className="my-1 border-gray-200" />
                 <button
                   onClick={handleSignOut}
-                  className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors block"
+                  disabled={isSigningOut}
+                  className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors block disabled:opacity-50 disabled:cursor-not-allowed"
                   type="button"
                 >
-                  Log out
+                  {isSigningOut ? 'Signing out...' : 'Log out'}
                 </button>
               </div>
             </div>
