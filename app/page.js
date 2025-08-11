@@ -1,6 +1,6 @@
 'use client';
 
-import HomePage from '@/components/homepage/homepage-new';
+import HomePage from '@/components/homepage-v2/homepage-new';
 // import { useState } from 'react';
 // import Hero from "@/components/homepage/hero";
 // import Footer from "@/components/shared/footer";

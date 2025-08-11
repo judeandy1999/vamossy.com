@@ -24,57 +24,58 @@ export default function Navbar() {
   }
 
   const navigation = [
-    { name: 'Home', href: '#home' },
-    { name: 'Services', href: '#services' },
-    { name: 'About', href: '#about' },
-    { name: 'Contact', href: '#contact' },
+    { name: 'Home', href: '/' },
+    { name: 'Solutions', href: '/solutions' },
+    { name: 'About', href: '/about' },
+    { name: 'Contact', href: '/contact' },
     { name: 'Articles', href: '/articles' },
   ];
 
   return (
     <nav className="fixed top-0 w-full bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-xs z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="py-13 flex justify-between items-center h-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
+        <div className="py-2 flex justify-between items-center h-20">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <Link href="/" className="text-5xl font-bold text-gray-900">
-              SEO<span className="text-[#85bd41]">Vamossy</span>
+            <Link href="/" className="block">
+              <div className="text-5xl font-bold text-[#85bd41]">
+                Vamossy
+              </div>
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-0">
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className="text-gray-600 hover:text-[#85bd41] px-3 py-2 rounded-md text-2xl font-normal transition-colors duration-200"
-                >
-                  {item.name}
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          {/* Contact Info & CTA */}
+          {/* CTA Button & Auth */}
           <div className="hidden md:flex items-center space-x-4">
+            {/* Desktop Navigation */}
+            <div className="hidden md:block mr-8">
+              <div className="flex items-center space-x-6">
+                {navigation.map((item) => (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className="text-[#3A3A3A] hover:text-[#85bd41] text-2xl font-medium transition-colors duration-200"
+                  >
+                    {item.name}
+                  </Link>
+                ))}
+              </div>
+            </div>
             <Link
               href="#contact"
-              className="bg-[#85bd41] text-white px-8 py-3 rounded-lg font-semibold text-xl hover:bg-blue-700 transition-all duration-300"
+              className="bg-[#85bd41] text-white px-6 py-2 rounded-lg font-medium text-xl hover:bg-[#548816] transition-all duration-100"
             >
-              Request a Proposal
+              Get Free Preview
             </Link>
 
-            <Link
+            {/* <Link
               key="login"
               href='/login'
-              className={`px-3 py-2 rounded-md text-2xl font-normal transition-colors duration-200 ${
-                pathname === 'user-dashboard' ? 'text-[#85bd41]' : 'text-gray-600 hover:text-[#85bd41]'
+              className={`px-3 py-2 rounded-md text-2xl font-medium transition-colors duration-200 ${
+                pathname === 'user-dashboard' ? 'text-[#85bd41]' : 'text-[#3A3A3A] hover:text-[#85bd41]'
               }`}
             >
               Login
-            </Link>
+            </Link> */}
           </div>
 
           {/* Mobile menu button */}
@@ -113,13 +114,22 @@ export default function Navbar() {
                   Go to Dashboard
                 </Link>
               ): (
-                <Link
-                  href="#contact"
-                  className="bg-[#85bd41] text-white block px-3 py-2 rounded-lg font-semibold text-center mt-4"
-                  onClick={() => setIsOpen(false)}
-                >
-                  Free Consultation
-                </Link>
+                <>
+                  <Link
+                    href="#contact"
+                    className="bg-[#B8860B] text-white block px-3 py-2 rounded-lg font-medium text-center mt-4"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Get Free Preview
+                  </Link>
+                  <Link
+                    href="/login"
+                    className="text-gray-600 hover:text-[#85bd41] block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Login
+                  </Link>
+                </>
               )}
             </div>
           </div>

@@ -8,6 +8,7 @@ import CookieConsentBanner from "@/components/ui/cookie-consent-banner";
 import Script from 'next/script';
 import Navbar from "@/components/shared/navbar";
 import ErrorBoundary from "@/components/error-boundary";
+import FooterV2 from "@/components/shared/footer-v2";
 
 export const metadata = {
   title: "Vamossy",
@@ -89,6 +90,7 @@ export default function RootLayout({ children }) {
                 {children}
                 <SpeedInsights />
               </div>
+              <FooterV2 />
               <CookieConsentBanner />
             </CookieConsentProvider>
           </ClientAuthProvider>
