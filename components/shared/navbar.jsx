@@ -64,7 +64,7 @@ export default function Navbar() {
               href="#contact"
               className="bg-[#85bd41] text-white px-6 py-2 rounded-lg font-medium text-xl hover:bg-[#548816] transition-all duration-100"
             >
-              Get Free Preview
+              Get Free Consultation
             </Link>
 
             {/* <Link
