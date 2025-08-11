@@ -89,7 +89,7 @@ export default function FooterV2() {
                     <Link
                       href={link.href}
                       className="text-gray-400 hover:text-white transition-colors duration-200 text-sm"
-                    >
+                    > 
                       {link.name}
                     </Link>
                   </li>
