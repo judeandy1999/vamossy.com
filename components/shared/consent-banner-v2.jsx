@@ -81,19 +81,12 @@ export default function CookieConsentBanner() {
               >
                 Terms of Service
               </Link>
-              {', '}
+              {', and '}
               <Link 
                 href="/privacy-policy" 
                 className="text-[#85bd41] hover:text-[#548816] underline transition-colors"
               >
                 Privacy Policy
-              </Link>
-              {', and '}
-              <Link 
-                href="/company-privacy-policy" 
-                className="text-[#85bd41] hover:text-[#548816] underline transition-colors"
-              >
-                Company Privacy Policy
               </Link>
               .
             </p>
