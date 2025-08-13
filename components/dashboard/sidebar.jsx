@@ -32,7 +32,7 @@ const navItems = [
   { label: 'Create Article', href: '/user-dashboard/create-article', icon: PenTool, roles: ['admin'] },
   { label: 'Role Management', href: '/user-dashboard/user-management', icon: UserCheck, roles: ['admin'] },
   { label: 'Cards Management', href: '/user-dashboard/card-management', icon: Layers, roles: ['admin', 'user'] },
-  { label: 'Analytics', href: '/user-dashboard/analytics', icon: TrendingUp, roles: ['admin'] },
+  // { label: 'Analytics', href: '/user-dashboard/analytics', icon: TrendingUp, roles: ['admin'] },
   { label: 'Options', href: '/user-dashboard/options', icon: Cog, roles: ['admin'] },
   { label: 'Booking & Payments', href: '/user-dashboard/booking', icon: Calendar, roles: ['admin', 'worker', 'user'] },
   { label: 'Transactions', href: '/user-dashboard/transactions', icon: Receipt, roles: ['admin', 'user', 'worker'] },
