@@ -1,7 +1,6 @@
 import "./globals.css";
 import localFont from 'next/font/local';
 // import Header from "@/components/shared/header";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import { CookieConsentProvider } from "@/contexts/cookie-consent-context";
 import ClientAuthProvider from "@/components/providers/client-auth-provider";
 import CookieConsentBanner from "@/components/ui/cookie-consent-banner";
@@ -49,50 +48,25 @@ export default function RootLayout({ children }) {
       <body className={`${proximaNova.className}`} suppressHydrationWarning={true}>
         {/* Google Analytics 4 - Consent Mode */}
         <Script
-          id="ga-consent-mode"
-          strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('consent', 'default', {
-                'analytics_storage': 'denied',
-                'ad_storage': 'denied'
-              });
-              gtag('js', new Date());
-            `,
-          }}
-        />
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-0MPGTS19F3"
-          strategy="beforeInteractive"
-        />
-        <Script
-          id="ga-config"
+          src="https://www.googletagmanager.com/gtag/js?id=G-GCCXJQB3L7"
           strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('config', 'G-0MPGTS19F3', {
-                page_title: document.title,
-                page_location: window.location.href
-              });
-            `,
-          }}
         />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-GCCXJQB3L7');
+          `}
+        </Script>
         
         <ErrorBoundary>
           <ClientAuthProvider>
-            <CookieConsentProvider>
-              <Navbar />
-              <div className="height-[100vh] z-4">
-                {children}
-                <SpeedInsights />
-              </div>
-              <FooterV2 />
-              <CookieConsentBanner />
-            </CookieConsentProvider>
+            <Navbar />
+            <div className="height-[100vh] z-4">
+              {children}
+            </div>
+            <FooterV2 />
           </ClientAuthProvider>
         </ErrorBoundary>
       </body>
