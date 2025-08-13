@@ -5,25 +5,12 @@ import { Linkedin, Twitter, Youtube, Instagram, Facebook } from 'lucide-react';
 export default function FooterV2() {
   const footerSections = [
     {
-      title: "Why WebCraft Pro",
+      title: "Explore",
       links: [
-        { name: "Full Solution", href: "/services" },
-        { name: "Platform", href: "/about" },
-        { name: "Framework", href: "/services" },
-        { name: "Implementation", href: "/services" },
-        { name: "Integrations", href: "/services" }
-      ]
-    },
-    {
-      title: "Resources",
-      links: [
-        { name: "Pricing", href: "/pricing" },
-        { name: "Learning Center", href: "/articles" },
-        { name: "Webinars", href: "/articles" },
-        { name: "Book", href: "/articles" },
-        { name: "Substack", href: "#" },
-        { name: "Customer Stories", href: "/our-work" },
-        { name: "Partnership Program", href: "/contact" }
+        { name: "Solutions", href: "/solutions" },
+        { name: "Services", href: "/services" },
+        { name: "Resources", href: "/resources" },
+        { name: "contact us", href: "/contact-us" }
       ]
     },
     {
@@ -45,15 +32,16 @@ export default function FooterV2() {
   ];
 
   const legalLinks = [
-    { name: "Terms of Service", href: "/terms" },
-    { name: "Privacy Policy", href: "/privacy" },
+    { name: "Terms of Service", href: "/terms-of-service" },
+    { name: "Privacy Policy", href: "/privacy-policy" },
+    { name: "Company Privacy Policy", href: "/company-privacy-policy" },
   ];
 
   return (
     <footer className="bg-[#2a2a2a] text-gray-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Main Footer Content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
           {/* Logo and Social Links */}
           <div className="lg:col-span-2 space-y-6">
             {/* Logo */}
@@ -100,7 +88,7 @@ export default function FooterV2() {
         </div>
 
         {/* Bottom Section */}
-        <div className="mt-16 pt-8 border-t border-gray-700">
+        <div className="mt-8 pt-8 border-t border-gray-700">
           <div className="flex flex-col items-center space-y-6">
             {/* Legal Links */}
             <div className="flex flex-wrap justify-center items-center space-x-4 text-sm">

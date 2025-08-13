@@ -26,7 +26,7 @@ export default function Navbar() {
   const navigation = [
     { name: 'Home', href: '/' },
     { name: 'Solutions', href: '/solutions' },
-    { name: 'About', href: '/about' },
+    { name: 'Resources', href: '/resources' },
     { name: 'Contact', href: '/contact' },
     { name: 'Articles', href: '/articles' },
   ];
@@ -34,11 +34,11 @@ export default function Navbar() {
   return (
     <nav className="fixed top-0 w-full bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-xs z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
-        <div className="py-2 flex justify-between items-center h-20">
+        <div className="py-2 flex justify-between items-center h-15 lg:h-20">
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link href="/" className="block">
-              <div className="text-5xl font-bold text-[#85bd41]">
+              <div className="text-3xl md:text-5xl font-bold text-[#85bd41]">
                 Vamossy
               </div>
             </Link>

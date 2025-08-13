@@ -325,8 +325,15 @@ export default function HomePage() {
                 <motion.div
                   key={index}
                   variants={cardVariants}
-                  className="bg-white rounded-2xl p-8 shadow-xl hover:shadow-2xl group cursor-pointer"
+                  className="bg-white rounded-2xl p-8 shadow-xl hover:shadow-2xl group cursor-pointer relative overflow-hidden"
                 >
+                  {/* Price Badge */}
+                  <div className="absolute top-4 right-4">
+                    <div className="bg-[#85bd41] text-white px-3 py-1 rounded-full text-sm font-bold">
+                      FREE
+                    </div>
+                  </div>
+                  
                   {/* Icon */}
                   <div className="flex justify-center mb-6">
                     <div 
@@ -348,12 +355,21 @@ export default function HomePage() {
                     {resource.description}
                   </p>
                   
-                  {/* Download Button */}
-                  <button 
-                    className="cursor-pointer bg-[#85bd41] hover:bg-[#548816] inline-flex items-center gap-2 text-white px-6 py-3 rounded-lg font-semibold text-sm hover:shadow-lg group-hover:scale-105"
-                  >
-                    Explore Now
-                  </button>
+                  {/* Action Buttons */}
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <button 
+                      className="cursor-pointer bg-[#85bd41] hover:bg-[#548816] flex-1 inline-flex items-center justify-center gap-2 text-white px-4 py-3 rounded-lg font-semibold text-sm hover:shadow-lg transition-all duration-200"
+                    >
+                      <BookOpen size={16} />
+                      Explore Now
+                    </button>
+                    <button 
+                      className="cursor-pointer border-2 border-[#85bd41] text-[#85bd41] hover:bg-[#85bd41] hover:text-white flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-semibold text-sm transition-all duration-200"
+                    >
+                      <Download size={16} />
+                      Download
+                    </button>
+                  </div>
                 </motion.div>
               ))}
             </div>
@@ -363,10 +379,13 @@ export default function HomePage() {
               variants={itemVariants}
               className="pt-4"
             >
-              <button className="bg-[#85bd41] hover:bg-[#548816] inline-flex items-center gap-3 text-white px-8 py-4 rounded-xl font-bold text-lg cursor-pointer shadow-lg">
+              <a 
+                href="/resources"
+                className="bg-[#85bd41] hover:bg-[#548816] inline-flex items-center gap-3 text-white px-8 py-4 rounded-xl font-bold text-lg cursor-pointer shadow-lg transition-all duration-200"
+              >
                 {resourcesSection.ctaText}
                 <ArrowRight className="w-5 h-5" />
-              </button>
+              </a>
             </motion.div>
           </motion.div>
         </div>
