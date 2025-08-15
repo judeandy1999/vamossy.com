@@ -3,7 +3,7 @@ import { authenticate } from '@/lib/authMiddleware';
 import { verifySupabaseAuth } from '@/utils/verifySupabaseAuth';
 
 export default async function handler(req, res) {
-  
+
   const { id } = req.query;
 
   if (!id || isNaN(Number(id))) {
@@ -13,8 +13,42 @@ export default async function handler(req, res) {
     });
   }
 
-  if (req.method === 'DELETE') {
-    try {
+  try {
+    if (req.method === 'PUT') {
+      // Update tab
+      const { name, description } = req.body;
+      
+      if (!name || !name.trim()) {
+        return res.status(400).json({
+          success: false,
+          error: 'Name is required'
+        });
+      }
+      
+      const { data, error } = await supabase
+        .from('tab_options')
+        .update({ 
+          name: name.trim(), 
+          description: description?.trim() || null
+        })
+        .eq('id', id)
+        .select();
+      
+      if (error) throw error;
+      
+      if (data.length === 0) {
+        return res.status(404).json({
+          success: false,
+          error: 'Tab not found'
+        });
+      }
+      
+      return res.status(200).json({
+        success: true,
+        data: data[0]
+      });
+      
+    } else if (req.method === 'DELETE') {
       const { error: articleTabsError } = await supabase
         .from('article_tabs')
         .delete()
@@ -37,18 +71,19 @@ export default async function handler(req, res) {
         success: true,
         data: { message: `Tab ${id} and its associated articles deleted successfully.` },
       });
-    } catch (error) {
-      return res.status(500).json({
+    } else {
+      res.setHeader('Allow', ['PUT', 'DELETE']);
+      return res.status(405).json({
         success: false,
-        error: 'Internal Server Error',
-        details: error.message,
+        error: `Method ${req.method} not allowed`
       });
     }
-  } else {
-    res.setHeader('Allow', ['DELETE']);
-    return res.status(405).json({
+  } catch (error) {
+    console.error('Error in tab-options/[id] API:', error.message);
+    return res.status(500).json({
       success: false,
-      error: `Method ${req.method} not allowed`,
+      error: 'Internal Server Error',
+      details: error.message,
     });
   }
 }

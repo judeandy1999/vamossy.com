@@ -3,19 +3,40 @@ import { authenticate } from '@/lib/authMiddleware';
 import { verifySupabaseAuth } from '@/utils/verifySupabaseAuth';
 
 export default async function handler(req, res) {
-  if (!authenticate(req, res)) return;
-  if (req.method !== 'GET') {
-    const { user, error } = await verifySupabaseAuth(req);
-
-    if (error) {
-      return res.status(401).json({ error });
-    }
-  }
-  
   const { id } = req.query;
 
-  if (req.method === 'DELETE') {
-    try {
+  if (!id || isNaN(Number(id))) {
+    return res.status(400).json({ error: 'Valid ID is required' });
+  }
+
+  try {
+    if (req.method === 'PUT') {
+      // Update category
+      const { name, description, main_category_id } = req.body;
+      
+      if (!name || !name.trim()) {
+        return res.status(400).json({ error: 'Name is required' });
+      }
+      
+      const { data, error } = await supabase
+        .from('category_options')
+        .update({ 
+          name: name.trim(), 
+          description: description?.trim() || null,
+          main_category_id: main_category_id || null
+        })
+        .eq('id', id)
+        .select();
+      
+      if (error) throw error;
+      
+      if (data.length === 0) {
+        return res.status(404).json({ error: 'Category not found' });
+      }
+      
+      return res.status(200).json(data[0]);
+      
+    } else if (req.method === 'DELETE') {
       // Step 1: Delete all articles that directly reference this wiki (via wiki_id)
       const { error: directArticlesError } = await supabase
         .from('articles')
@@ -71,12 +92,12 @@ export default async function handler(req, res) {
       }
 
       return res.status(200).json({ message: `Wiki ${id}, its associated tabs, and articles were deleted successfully.` });
-    } catch (error) {
-      console.error(error.message);
-      return res.status(500).json({ error: error.message });
+    } else {
+      res.setHeader('Allow', ['PUT', 'DELETE']);
+      return res.status(405).json({ error: `Method ${req.method} not allowed` });
     }
-  } else {
-    res.setHeader('Allow', ['DELETE']);
-    return res.status(405).json({ error: `Method ${req.method} not allowed` });
+  } catch (error) {
+    console.error('Error in wiki-options/[id] API:', error.message);
+    return res.status(500).json({ error: error.message });
   }
 }

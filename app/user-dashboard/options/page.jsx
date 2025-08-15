@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useOptions } from '@/hooks/useOptions';
-import { Plus, Trash, ChevronDown } from 'lucide-react';
+import { Plus, Trash, ChevronDown, Edit2, Check, X } from 'lucide-react';
 import Spinner from '@/components/ui/spinner';
 import Modal from '@/components/ui/modal';
 
@@ -19,7 +19,10 @@ export default function Page() {
     deleteTab,
     addMainCategory,
     deleteMainCategory,
-    updateWikiMainCategory
+    updateWikiMainCategory,
+    updateMainCategory,
+    updateWiki,
+    updateTab
   } = useOptions();
 
   const [selectedWiki, setSelectedWiki] = useState(null);
@@ -33,6 +36,14 @@ export default function Page() {
   const [deleteTarget, setDeleteTarget] = useState({ type: '', id: null });
   const [deleting, setDeleting] = useState(false);
   const [showMainCategoryForm, setShowMainCategoryForm] = useState(false);
+  
+  // Edit states
+  const [editingMainCategory, setEditingMainCategory] = useState(null);
+  const [editingWiki, setEditingWiki] = useState(null);
+  const [editingTab, setEditingTab] = useState(null);
+  const [editMainCategoryData, setEditMainCategoryData] = useState({ name: '', description: '' });
+  const [editWikiData, setEditWikiData] = useState({ name: '', description: '', main_category_id: null });
+  const [editTabData, setEditTabData] = useState({ name: '', description: '' });
 
   const handleAddMainCategory = async () => {
     if (!newMainCategory.name.trim()) {
@@ -127,6 +138,89 @@ export default function Page() {
     }
   };
 
+  // Edit functions
+  const startEditMainCategory = (id, category) => {
+    setEditingMainCategory(id);
+    setEditMainCategoryData({ name: category.name, description: category.description || '' });
+  };
+
+  const saveMainCategory = async () => {
+    if (!editMainCategoryData.name.trim()) {
+      setMainCategoryError('Main category name cannot be empty.');
+      return;
+    }
+    
+    try {
+      await updateMainCategory(editingMainCategory, editMainCategoryData);
+      setEditingMainCategory(null);
+      setMainCategoryError('');
+    } catch (error) {
+      setMainCategoryError('Failed to update main category: ' + error.message);
+    }
+  };
+
+  const cancelEditMainCategory = () => {
+    setEditingMainCategory(null);
+    setEditMainCategoryData({ name: '', description: '' });
+    setMainCategoryError('');
+  };
+
+  const startEditWiki = (wikiId, wiki) => {
+    setEditingWiki(wikiId);
+    setEditWikiData({ 
+      name: wiki.name, 
+      description: wiki.description || '', 
+      main_category_id: wiki.main_category_id || null 
+    });
+  };
+
+  const saveWiki = async () => {
+    if (!editWikiData.name.trim()) {
+      setWikiError('Category name cannot be empty.');
+      return;
+    }
+    
+    try {
+      await updateWiki(editingWiki, editWikiData);
+      setEditingWiki(null);
+      setWikiError('');
+    } catch (error) {
+      setWikiError('Failed to update category: ' + error.message);
+    }
+  };
+
+  const cancelEditWiki = () => {
+    setEditingWiki(null);
+    setEditWikiData({ name: '', description: '', main_category_id: null });
+    setWikiError('');
+  };
+
+  const startEditTab = (tabId, tab) => {
+    setEditingTab(tabId);
+    setEditTabData({ name: tab.name, description: tab.description || '' });
+  };
+
+  const saveTab = async () => {
+    if (!editTabData.name.trim()) {
+      setTabError('Tab name cannot be empty.');
+      return;
+    }
+    
+    try {
+      await updateTab(editingTab, editTabData);
+      setEditingTab(null);
+      setTabError('');
+    } catch (error) {
+      setTabError('Failed to update tab: ' + error.message);
+    }
+  };
+
+  const cancelEditTab = () => {
+    setEditingTab(null);
+    setEditTabData({ name: '', description: '' });
+    setTabError('');
+  };
+
   // Group wikis by main category
   const groupedWikis = Object.entries(wikiOptions).reduce((acc, [wikiId, wiki]) => {
     const mainCategoryId = wiki.main_category_id || 'uncategorized';
@@ -175,21 +269,62 @@ export default function Page() {
           </div>
 
           {/* Main Categories List */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
             {Object.entries(mainCategories).map(([id, category]) => (
               <div key={id} className="border border-gray-200 rounded p-3 bg-gray-50">
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <h3 className="font-medium text-sm">{category.name}</h3>
-                    <p className="text-xs text-gray-500 mt-1">{category.description || 'No description'}</p>
+                {editingMainCategory === Number(id) ? (
+                  <div className="space-y-2">
+                    <input
+                      type="text"
+                      value={editMainCategoryData.name}
+                      onChange={(e) => setEditMainCategoryData({ ...editMainCategoryData, name: e.target.value })}
+                      className="w-full text-sm font-medium border border-gray-300 rounded px-2 py-1 focus:outline-none focus:border-blue-400"
+                      placeholder="Category name"
+                    />
+                    <input
+                      type="text"
+                      value={editMainCategoryData.description}
+                      onChange={(e) => setEditMainCategoryData({ ...editMainCategoryData, description: e.target.value })}
+                      className="w-full text-xs border border-gray-300 rounded px-2 py-1 focus:outline-none focus:border-blue-400"
+                      placeholder="Description"
+                    />
+                    <div className="flex justify-end gap-1">
+                      <button
+                        onClick={saveMainCategory}
+                        className="cursor-pointer text-green-600 hover:text-green-700 transition"
+                      >
+                        <Check size={14} />
+                      </button>
+                      <button
+                        onClick={cancelEditMainCategory}
+                        className="cursor-pointer text-gray-500 hover:text-gray-600 transition"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
                   </div>
-                  <button
-                    onClick={() => handleDeleteMainCategory(Number(id))}
-                    className="cursor-pointer text-red-500 hover:text-red-600 transition ml-2"
-                  >
-                    <Trash size={14} />
-                  </button>
-                </div>
+                ) : (
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <h3 className="font-medium text-sm">{category.name}</h3>
+                      <p className="text-xs text-gray-500 mt-1">{category.description || 'No description'}</p>
+                    </div>
+                    <div className="flex items-center gap-1 ml-2">
+                      <button
+                        onClick={() => startEditMainCategory(Number(id), category)}
+                        className="cursor-pointer text-blue-500 hover:text-blue-600 transition"
+                      >
+                        <Edit2 size={14} />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteMainCategory(Number(id))}
+                        className="cursor-pointer text-red-500 hover:text-red-600 transition"
+                      >
+                        <Trash size={14} />
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -200,9 +335,16 @@ export default function Page() {
               <div className="flex flex-col sm:flex-row gap-2">
                 <input
                   type="text"
-                  placeholder="Wiki Name"
+                  placeholder="Main Category Name"
                   value={newMainCategory.name}
                   onChange={(e) => setNewMainCategory({ ...newMainCategory, name: e.target.value })}
+                  className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:border-blue-400"
+                />
+                <input
+                  type="text"
+                  placeholder="Description"
+                  value={newMainCategory.description}
+                  onChange={(e) => setNewMainCategory({ ...newMainCategory, description: e.target.value })}
                   className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:border-blue-400"
                 />
                 <button
@@ -246,6 +388,12 @@ export default function Page() {
                         handleDeleteWiki={handleDeleteWiki}
                         mainCategories={mainCategories}
                         onMainCategoryChange={handleWikiMainCategoryChange}
+                        editingWiki={editingWiki}
+                        editWikiData={editWikiData}
+                        setEditWikiData={setEditWikiData}
+                        startEditWiki={startEditWiki}
+                        saveWiki={saveWiki}
+                        cancelEditWiki={cancelEditWiki}
                       />
                     ))}
                   </div>
@@ -269,6 +417,12 @@ export default function Page() {
                           handleDeleteWiki={handleDeleteWiki}
                           mainCategories={mainCategories}
                           onMainCategoryChange={handleWikiMainCategoryChange}
+                          editingWiki={editingWiki}
+                          editWikiData={editWikiData}
+                          setEditWikiData={setEditWikiData}
+                          startEditWiki={startEditWiki}
+                          saveWiki={saveWiki}
+                          cancelEditWiki={cancelEditWiki}
                         />
                       ))}
                     </div>
@@ -302,7 +456,7 @@ export default function Page() {
                     onChange={(e) => setNewWiki({ ...newWiki, main_category_id: e.target.value ? Number(e.target.value) : null })}
                     className="flex-1 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:border-slate-400"
                   >
-                    <option value="">Select Wiki (Optional)</option>
+                    <option value="">Select Main Category (Optional)</option>
                     {Object.entries(mainCategories).map(([id, category]) => (
                       <option key={id} value={id}>{category.name}</option>
                     ))}
@@ -327,42 +481,39 @@ export default function Page() {
               <p className="text-gray-500 text-sm">No Category is selected. Please select a Category to manage its tabs.</p>
             ) : (
               <>
-                <table className="min-w-full text-sm text-left">
-                  <thead>
-                    <tr className="border-b border-gray-200 text-slate-600">
-                      <th className="p-3">Tab Name</th>
-                      <th className="p-3">Description</th>
-                      <th className="p-3 text-right">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {(tabOptionsMap[selectedWiki]
-                      ? Object.entries(tabOptionsMap[selectedWiki])
-                      : []
-                    ).map(([key, tab]) => (
-                      <tr key={key} className="hover:bg-slate-100 transition">
-                        <td className="p-3 font-medium">{tab.name}</td>
-                        <td className="p-3 text-gray-500">
-                          {tab.description || 'No description'}
-                        </td>
-                        <td className="p-3 flex justify-end items-center">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDeleteTab(Number(key));
-                            }}
-                            className="cursor-pointer text-red-500 hover:text-red-600 transition"
-                          >
-                            <Trash size={16} />
-                          </button>
-                        </td>
+                <div className="max-h-96 overflow-y-auto">
+                  <table className="min-w-full text-sm text-left">
+                    <thead className="sticky top-0 bg-white">
+                      <tr className="border-b border-gray-200 text-slate-600">
+                        <th className="p-3">Tab Name</th>
+                        <th className="p-3">Description</th>
+                        <th className="p-3 text-right">Actions</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {(tabOptionsMap[selectedWiki]
+                        ? Object.entries(tabOptionsMap[selectedWiki])
+                        : []
+                      ).map(([key, tab]) => (
+                        <TabRow
+                          key={key}
+                          tabId={key}
+                          tab={tab}
+                          handleDeleteTab={handleDeleteTab}
+                          editingTab={editingTab}
+                          editTabData={editTabData}
+                          setEditTabData={setEditTabData}
+                          startEditTab={startEditTab}
+                          saveTab={saveTab}
+                          cancelEditTab={cancelEditTab}
+                        />
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
 
                 {/* Add Tab */}
-                <div className="flex flex-col sm:flex-row gap-2 mt-4">
+                <div className="flex flex-col sm:flex-row gap-2 mt-4 pt-4 border-t border-gray-200">
                   <input
                     type="text"
                     placeholder="Tab Name"
@@ -395,8 +546,69 @@ export default function Page() {
 }
 
 // WikiRow component for individual wiki items
-function WikiRow({ wikiId, wiki, selectedWiki, setSelectedWiki, handleDeleteWiki, mainCategories, onMainCategoryChange }) {
+function WikiRow({ 
+  wikiId, 
+  wiki, 
+  selectedWiki, 
+  setSelectedWiki, 
+  handleDeleteWiki, 
+  mainCategories, 
+  onMainCategoryChange,
+  editingWiki,
+  editWikiData,
+  setEditWikiData,
+  startEditWiki,
+  saveWiki,
+  cancelEditWiki
+}) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  if (editingWiki === Number(wikiId)) {
+    return (
+      <div className="border border-blue-300 rounded p-3 bg-blue-50">
+        <div className="space-y-2">
+          <input
+            type="text"
+            value={editWikiData.name}
+            onChange={(e) => setEditWikiData({ ...editWikiData, name: e.target.value })}
+            className="w-full text-sm font-medium border border-gray-300 rounded px-2 py-1 focus:outline-none focus:border-blue-400"
+            placeholder="Category name"
+          />
+          <input
+            type="text"
+            value={editWikiData.description}
+            onChange={(e) => setEditWikiData({ ...editWikiData, description: e.target.value })}
+            className="w-full text-xs border border-gray-300 rounded px-2 py-1 focus:outline-none focus:border-blue-400"
+            placeholder="Description"
+          />
+          <select
+            value={editWikiData.main_category_id || ''}
+            onChange={(e) => setEditWikiData({ ...editWikiData, main_category_id: e.target.value ? Number(e.target.value) : null })}
+            className="w-full text-xs border border-gray-300 rounded px-2 py-1 focus:outline-none focus:border-blue-400"
+          >
+            <option value="">Select Main Category (Optional)</option>
+            {Object.entries(mainCategories).map(([id, category]) => (
+              <option key={id} value={id}>{category.name}</option>
+            ))}
+          </select>
+          <div className="flex justify-end gap-1">
+            <button
+              onClick={saveWiki}
+              className="cursor-pointer text-green-600 hover:text-green-700 transition"
+            >
+              <Check size={14} />
+            </button>
+            <button
+              onClick={cancelEditWiki}
+              className="cursor-pointer text-gray-500 hover:text-gray-600 transition"
+            >
+              <X size={14} />
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -410,7 +622,7 @@ function WikiRow({ wikiId, wiki, selectedWiki, setSelectedWiki, handleDeleteWiki
           <h4 className="font-medium text-sm">{wiki.name}</h4>
           <p className="text-xs text-gray-500 mt-1">{wiki.description || 'No description'}</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           {/* Main Category Dropdown */}
           <div className="relative">
             <button
@@ -458,6 +670,16 @@ function WikiRow({ wikiId, wiki, selectedWiki, setSelectedWiki, handleDeleteWiki
           <button
             onClick={(e) => {
               e.stopPropagation();
+              startEditWiki(Number(wikiId), wiki);
+            }}
+            className="cursor-pointer text-blue-500 hover:text-blue-600 transition"
+          >
+            <Edit2 size={14} />
+          </button>
+          
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
               handleDeleteWiki(Number(wikiId));
             }}
             className="cursor-pointer text-red-500 hover:text-red-600 transition"
@@ -467,5 +689,88 @@ function WikiRow({ wikiId, wiki, selectedWiki, setSelectedWiki, handleDeleteWiki
         </div>
       </div>
     </div>
+  );
+}
+
+// TabRow component for individual tab items
+function TabRow({ 
+  tabId, 
+  tab, 
+  handleDeleteTab, 
+  editingTab, 
+  editTabData, 
+  setEditTabData, 
+  startEditTab, 
+  saveTab, 
+  cancelEditTab 
+}) {
+  if (editingTab === Number(tabId)) {
+    return (
+      <tr className="bg-blue-50">
+        <td className="p-3" colSpan="3">
+          <div className="space-y-2">
+            <input
+              type="text"
+              value={editTabData.name}
+              onChange={(e) => setEditTabData({ ...editTabData, name: e.target.value })}
+              className="w-full text-sm font-medium border border-gray-300 rounded px-2 py-1 focus:outline-none focus:border-blue-400"
+              placeholder="Tab name"
+            />
+            <input
+              type="text"
+              value={editTabData.description}
+              onChange={(e) => setEditTabData({ ...editTabData, description: e.target.value })}
+              className="w-full text-xs border border-gray-300 rounded px-2 py-1 focus:outline-none focus:border-blue-400"
+              placeholder="Description"
+            />
+            <div className="flex justify-end gap-1">
+              <button
+                onClick={saveTab}
+                className="cursor-pointer text-green-600 hover:text-green-700 transition"
+              >
+                <Check size={14} />
+              </button>
+              <button
+                onClick={cancelEditTab}
+                className="cursor-pointer text-gray-500 hover:text-gray-600 transition"
+              >
+                <X size={14} />
+              </button>
+            </div>
+          </div>
+        </td>
+      </tr>
+    );
+  }
+
+  return (
+    <tr className="hover:bg-slate-100 transition">
+      <td className="p-3 font-medium">{tab.name}</td>
+      <td className="p-3 text-gray-500">
+        {tab.description || 'No description'}
+      </td>
+      <td className="p-3">
+        <div className="flex justify-end items-center gap-1">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              startEditTab(Number(tabId), tab);
+            }}
+            className="cursor-pointer text-blue-500 hover:text-blue-600 transition"
+          >
+            <Edit2 size={14} />
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDeleteTab(Number(tabId));
+            }}
+            className="cursor-pointer text-red-500 hover:text-red-600 transition"
+          >
+            <Trash size={16} />
+          </button>
+        </div>
+      </td>
+    </tr>
   );
 }

@@ -8,11 +8,6 @@ export const useOptions = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const getAccessToken = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    return session?.access_token;
-  };
-
   useEffect(() => {
     const fetchOptions = async () => {
       try {
@@ -211,6 +206,37 @@ export const useOptions = () => {
     }
   };
 
+  const updateWiki = async (id, updatedWiki) => {
+    try {
+
+      const response = await fetch(`/api/wiki-options/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
+        },
+        body: JSON.stringify(updatedWiki),
+      });
+
+      if (!response.ok) throw new Error('Failed to update category');
+
+      const updated = await response.json();
+      setWikiOptions((prev) => ({
+        ...prev,
+        [id]: {
+          name: updated.name,
+          description: updated.description || '',
+          main_category_id: updated.main_category_id
+        }
+      }));
+      
+      return updated;
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    }
+  };
+
   const updateWikiMainCategory = async (wikiId, mainCategoryId) => {
     try {
 
@@ -267,6 +293,51 @@ export const useOptions = () => {
       }));
     } catch (err) {
       setError(err.message);
+    }
+  };
+
+  const updateTab = async (id, updatedTab) => {
+    try {
+
+      const response = await fetch(`/api/tab-options/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
+        },
+        body: JSON.stringify(updatedTab),
+      });
+
+      if (!response.ok) throw new Error('Failed to update tab');
+
+      const responseData = await response.json();
+      const updated = responseData.data || responseData;
+      
+      // Find which wiki this tab belongs to
+      let targetWikiId = null;
+      Object.entries(tabOptionsMap).forEach(([wikiId, tabs]) => {
+        if (tabs[id]) {
+          targetWikiId = wikiId;
+        }
+      });
+
+      if (targetWikiId) {
+        setTabOptionsMap((prev) => ({
+          ...prev,
+          [targetWikiId]: {
+            ...prev[targetWikiId],
+            [id]: {
+              name: updated.name,
+              description: updated.description || ''
+            }
+          }
+        }));
+      }
+      
+      return updated;
+    } catch (err) {
+      setError(err.message);
+      throw err;
     }
   };
 
@@ -336,6 +407,8 @@ export const useOptions = () => {
     addMainCategory,
     updateMainCategory,
     deleteMainCategory,
-    updateWikiMainCategory
+    updateWikiMainCategory,
+    updateWiki,
+    updateTab
   };
 };
