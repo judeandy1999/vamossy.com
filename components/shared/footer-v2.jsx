@@ -1,8 +1,16 @@
 'use client';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Linkedin, Twitter, Youtube, Instagram, Facebook } from 'lucide-react';
 
 export default function FooterV2() {
+  const pathname = usePathname();
+  
+  // Hide footer on user-dashboard pages
+  if (pathname?.startsWith('/user-dashboard')) {
+    return null;
+  }
+
   const footerSections = [
     {
       title: "Explore",
