@@ -3,14 +3,13 @@
 import { useState, useEffect } from 'react';
 import { useArticleMeta } from '@/hooks/useArticleMeta';
 import { useArticleContent } from '@/hooks/useArticleContent';
-import { Loader2 } from 'lucide-react';
 import Spinner from '@/components/ui/spinner';
 import { use } from 'react';
 
 export default function ArticlePage(props) {
   const params = use(props.params);
   const { data: meta, isLoading: loadingMeta, error: errorMeta } = useArticleMeta(params.id);
-  const { data: full, isLoading: loadingContent, error: errorContent } = useArticleContent(params.id);
+  const { data: full, isLoading: loadingContent } = useArticleContent(params.id);
 
   const [activeTab, setActiveTab] = useState(null);
 
@@ -73,77 +72,14 @@ export default function ArticlePage(props) {
     }
   }, [loadingContent, full, activeTab]);
 
-  // Show loading spinner while meta or content is loading
-  if (loadingMeta || loadingContent) {
-    return (
-      <div className="pt-12 bg-gray-50 min-h-screen flex flex-col items-center">
-        <div className="w-full max-w-4xl bg-white shadow rounded-lg py-8 px-12 mt-24 mb-12">
-          {loadingMeta ? (
-            // Loading meta data (title, date, etc.)
-            <div className="animate-pulse">
-              <div className="h-8 md:h-12 bg-gray-200 rounded mb-4"></div>
-              <div className="h-4 bg-gray-200 rounded w-48 mb-8"></div>
-            </div>
-          ) : (
-            // Meta loaded, show article header
-            <>
-              <h1 className="text-3xl md:text-5xl font-bold text-slate-800 mb-4">{meta.title}</h1>
-              <p className="text-sm text-gray-500 mb-8">
-                {new Date(meta.created_at).toLocaleString([], {
-                  dateStyle: 'medium',
-                  timeStyle: 'short',
-                  hour12: true
-                })}
-              </p>
-            </>
-          )}
-          
-          {/* Content loading indicator */}
-          {loadingContent && (
-            <div className="flex justify-center items-center py-20">
-              <div className="text-center">
-                <Loader2 size={40} className="animate-spin text-slate-600 mx-auto mb-4" />
-                <p className="text-gray-500">Loading article content...</p>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    );
+  if (loadingMeta) {
+    return <Spinner />
   }
 
   if (errorMeta) {
     return (
-      <div className="pt-12 bg-gray-50 min-h-screen flex flex-col items-center">
-        <div className="w-full max-w-4xl bg-white shadow rounded-lg py-8 px-12 mt-24 mb-12">
-          <div className="text-center text-red-500">
-            <h1 className="text-2xl font-bold mb-4">Article Not Found</h1>
-            <p className="text-lg mb-2">Failed to load article</p>
-            <p className="text-sm">Please try again or go back to articles.</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (errorContent) {
-    return (
-      <div className="pt-12 bg-gray-50 min-h-screen flex flex-col items-center">
-        <div className="w-full max-w-4xl bg-white shadow rounded-lg py-8 px-12 mt-24 mb-12">
-          <h1 className="text-3xl md:text-5xl font-bold text-slate-800 mb-4">{meta.title}</h1>
-          <p className="text-sm text-gray-500 mb-8">
-            {new Date(meta.created_at).toLocaleString([], {
-              dateStyle: 'medium',
-              timeStyle: 'short',
-              hour12: true
-            })}
-          </p>
-          
-          <div className="text-center text-red-500 py-12">
-            <p className="text-lg mb-2">Failed to load article content</p>
-            <p className="text-sm">Please try refreshing the page.</p>
-          </div>
-        </div>
+      <div className="flex justify-center items-center h-screen text-red-500">
+        Failed to load article. Please try again.
       </div>
     );
   }
@@ -162,7 +98,11 @@ export default function ArticlePage(props) {
           })}
         </p>
 
-        {hasTabs ? (
+        {loadingContent ? (
+          <div className="flex justify-center items-center my-12 text-teal-600">
+            <Spinner />
+          </div>
+        ) : hasTabs ? (
           <div>
             {/* Tabs Navigation */}
             <div className="flex gap-2 sm:gap-4 border-b border-gray-200 mb-6">

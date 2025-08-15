@@ -2,8 +2,9 @@
 
 import { useAllArticles } from '@/hooks/useAllArticles';
 import { useArticleContent } from '@/hooks/useArticleContent';
+import { useArticleMeta } from '@/hooks/useArticleMeta'; // Add this import
 import { useOptions } from '@/hooks/useOptions';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Loader2, ChevronDown, ChevronRight, ArrowLeft, Calendar, Tag } from 'lucide-react';
 import Spinner from '@/components/ui/spinner';
 
@@ -14,9 +15,21 @@ export default function BlogPage() {
   const [selectedWikiId, setSelectedWikiId] = useState(null);
   const [expandedMainCategories, setExpandedMainCategories] = useState(new Set());
   const [selectedArticleId, setSelectedArticleId] = useState(null);
+  const [activeTab, setActiveTab] = useState(null); // Add tab state
   
   // Fetch article content when an article is selected
   const { data: selectedArticle, loading: articleLoading, error: articleError } = useArticleContent(selectedArticleId);
+  const { data: selectedArticleMeta } = useArticleMeta(selectedArticleId); // Add meta fetch
+
+  // Add useEffect for tab management
+  useEffect(() => {
+    if (selectedArticleMeta?.has_tabs && selectedArticle?.tabs) {
+      const firstTabId = Object.keys(selectedArticle.tabs)[0];
+      setActiveTab(firstTabId);
+    } else {
+      setActiveTab(null);
+    }
+  }, [selectedArticleMeta?.has_tabs, selectedArticle?.tabs]);
 
   const toggleMainCategory = (mainCategoryId) => {
     const newExpanded = new Set(expandedMainCategories);
@@ -35,6 +48,7 @@ export default function BlogPage() {
 
   const handleArticleClick = (articleId) => {
     setSelectedArticleId(articleId);
+    setActiveTab(null); // Reset tab when selecting new article
   };
 
   const handleBackToArticles = () => {
@@ -409,10 +423,40 @@ export default function BlogPage() {
                     </div>
 
                     {/* Article Body */}
-                    <div 
-                      className="prose prose-slate max-w-none prose-headings:text-slate-800 prose-p:text-gray-700 prose-a:text-blue-600 prose-strong:text-slate-800"
-                      dangerouslySetInnerHTML={{ __html: selectedArticle.content }}
-                    />
+                    {selectedArticleMeta?.has_tabs && selectedArticle?.tabs ? (
+                      <div>
+                        {/* Tabs Navigation */}
+                        <div className="flex gap-2 sm:gap-4 border-b border-gray-200 mb-6">
+                          {Object.entries(selectedArticle.tabs).map(([tabId, tabContent]) => (
+                            <button
+                              key={tabId}
+                              onClick={() => setActiveTab(tabId)}
+                              className={`cursor-pointer px-4 py-2 text-sm font-medium rounded-t transition focus:outline-none ${
+                                activeTab === tabId
+                                  ? 'bg-slate-100 text-slate-700 border-b-2 border-slate-500'
+                                  : 'text-gray-500 hover:text-slate-600'
+                              }`}
+                            >
+                              {tabContent.name}
+                            </button>
+                          ))}
+                        </div>
+
+                        {/* Tab Content */}
+                        <div className="prose prose-slate max-w-none prose-headings:text-slate-800 prose-p:text-gray-700 prose-a:text-blue-600 prose-strong:text-slate-800">
+                          {activeTab ? (
+                            <div dangerouslySetInnerHTML={{ __html: selectedArticle.tabs[activeTab].content }} />
+                          ) : (
+                            <p className="text-gray-500">Select a tab to view its content.</p>
+                          )}
+                        </div>
+                      </div>
+                    ) : (
+                      <div 
+                        className="prose prose-slate max-w-none prose-headings:text-slate-800 prose-p:text-gray-700 prose-a:text-blue-600 prose-strong:text-slate-800"
+                        dangerouslySetInnerHTML={{ __html: selectedArticle?.content }}
+                      />
+                    )}
                   </div>
                 ) : null}
               </div>
