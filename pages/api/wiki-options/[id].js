@@ -62,7 +62,7 @@ export default async function handler(req, res) {
 
       // Step 5: Finally delete the wiki
       const { error: wikiError } = await supabase
-        .from('wiki_options')
+        .from('category_options')
         .delete()
         .eq('id', id);
 

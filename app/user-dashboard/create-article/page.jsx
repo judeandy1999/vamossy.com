@@ -95,7 +95,7 @@ export default function Page() {
     }
 
     if (wikiCategory === 0) {
-      showToast('Please select a wiki category!', 'error');
+      showToast('Please select a category!', 'error');
       return;
     }
 
@@ -449,14 +449,14 @@ export default function Page() {
             onChange={(e) => setTitle(e.target.value)}
           />
 
-          <label htmlFor="wiki" className="block mb-1 text-sm text-slate-600 font-medium">Wiki Category</label>
+          <label htmlFor="wiki" className="block mb-1 text-sm text-slate-600 font-medium">Category</label>
           <select
             id="wiki"
             className="w-full border border-gray-300 rounded px-3 py-2 mb-4 focus:outline-none focus:ring focus:border-slate-400"
             value={wikiCategory}
             onChange={(e) => setWikiCategory(Number(e.target.value))}
           >
-            <option value={0}>Select a wiki category</option>
+            <option value={0}>Select a category</option>
             {Object.entries(wikiOptions).map(([key, wikiData]) => (
               <option key={key} value={key}>{wikiData.name}</option>
             ))}

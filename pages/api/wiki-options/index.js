@@ -3,46 +3,68 @@ import { authenticate } from '@/lib/authMiddleware';
 import { verifySupabaseAuth } from '@/utils/verifySupabaseAuth';
 
 export default async function handler(req, res) {
-  if (!authenticate(req, res)) return;
-  if (req.method !== 'GET') {
-    const { user, error } = await verifySupabaseAuth(req);
-
-    if (error) {
-      return res.status(401).json({ error });
-    }
-  }
-
   try {
     if (req.method === 'GET') {
-
-      const { data, error } = await supabase.from('wiki_options').select('*');
+      // Get all categories with their main category info
+      const { data, error } = await supabase
+        .from('category_options')
+        .select(`
+          *,
+          main_categories (
+            id,
+            name,
+            description
+          )
+        `);
       if (error) throw error;
       return res.status(200).json(data);
+      
     } else if (req.method === 'POST') {
-
-      const { name, description } = req.body;
+      // Create new category
+      const { name, description, main_category_id } = req.body;
+      
+      if (!name || !name.trim()) {
+        return res.status(400).json({ error: 'Name is required' });
+      }
+      
       const { data, error } = await supabase
-        .from('wiki_options')
-        .insert([{ name, description }])
+        .from('category_options')
+        .insert([{ 
+          name: name.trim(), 
+          description: description?.trim() || null,
+          main_category_id: main_category_id || null
+        }])
         .select();
       if (error) throw error;
       return res.status(201).json(data);
+      
     } else if (req.method === 'PUT') {
-
-      const { id, name, description } = req.body;
+      // Update category
+      const { id, name, description, main_category_id } = req.body;
+      
+      if (!name || !name.trim()) {
+        return res.status(400).json({ error: 'Name is required' });
+      }
+      
       const { data, error } = await supabase
-        .from('wiki_options')
-        .update({ name, description })
+        .from('category_options')
+        .update({ 
+          name: name.trim(), 
+          description: description?.trim() || null,
+          main_category_id: main_category_id || null
+        })
         .eq('id', id)
         .select();
       if (error) throw error;
       return res.status(200).json(data);
+      
     } else if (req.method === 'DELETE') {
-
+      // Delete category
       const { id } = req.body;
-      const { error } = await supabase.from('wiki_options').delete().eq('id', id);
+      const { error } = await supabase.from('category_options').delete().eq('id', id);
       if (error) throw error;
       return res.status(204).end();
+      
     } else {
       return res.status(405).json({ error: 'Method Not Allowed' });
     }

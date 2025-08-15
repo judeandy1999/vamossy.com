@@ -4,6 +4,7 @@ import { supabase } from '@/utils/client';
 export const useOptions = () => {
   const [wikiOptions, setWikiOptions] = useState({});
   const [tabOptionsMap, setTabOptionsMap] = useState({});
+  const [mainCategories, setMainCategories] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -18,12 +19,18 @@ export const useOptions = () => {
         setLoading(true);
         setError(null);
 
-        const accessToken = await getAccessToken();
+        // Fetch main categories
+        const mainCategoriesResponse = await fetch('/api/main-categories', {
+          headers: {
+            'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
+          },
+        });
+        const mainCategoriesData = await mainCategoriesResponse.json();
+        if (!mainCategoriesResponse.ok) throw new Error(mainCategoriesData.error || 'Failed to fetch main categories');
 
         // Fetch wiki options
         const wikiResponse = await fetch('/api/wiki-options', {
           headers: {
-            Authorization: `Bearer ${accessToken}`,
             'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
           },
         });
@@ -33,7 +40,6 @@ export const useOptions = () => {
         // Fetch tab options
         const tabResponse = await fetch('/api/tab-options', {
           headers: {
-            Authorization: `Bearer ${accessToken}`,
             'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
           },
         });
@@ -41,14 +47,26 @@ export const useOptions = () => {
         if (!tabResponse.ok) throw new Error(tabJson.error || 'Failed to fetch tab options');
         const tabData = tabJson.data || [];
 
-        const formattedWikiOptions = wikiData.reduce((acc, wiki) => {
-          acc[wiki.id] = {
-            name: wiki.name,
-            description: wiki.description || ''
+        // Format main categories
+        const formattedMainCategories = mainCategoriesData.reduce((acc, category) => {
+          acc[category.id] = {
+            name: category.name,
+            description: category.description || ''
           };
           return acc;
         }, {});
 
+        // Format wiki options
+        const formattedWikiOptions = wikiData.reduce((acc, wiki) => {
+          acc[wiki.id] = {
+            name: wiki.name,
+            description: wiki.description || '',
+            main_category_id: wiki.main_category_id
+          };
+          return acc;
+        }, {});
+
+        // Format tab options
         const formattedTabOptionsMap = tabData.reduce((acc, tab) => {
           if (!acc[tab.wiki_id]) acc[tab.wiki_id] = {};
           acc[tab.wiki_id][tab.id] = {
@@ -58,6 +76,7 @@ export const useOptions = () => {
           return acc;
         }, {});
 
+        setMainCategories(formattedMainCategories);
         setWikiOptions(formattedWikiOptions);
         setTabOptionsMap(formattedTabOptionsMap);
       } catch (err) {
@@ -70,15 +89,107 @@ export const useOptions = () => {
     fetchOptions();
   }, []);
 
+  const addMainCategory = async (newMainCategory) => {
+    try {
+
+      const response = await fetch('/api/main-categories', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
+        },
+        body: JSON.stringify(newMainCategory),
+      });
+
+      if (!response.ok) throw new Error('Failed to add main category');
+
+      const addedMainCategory = await response.json();
+      setMainCategories((prev) => ({ 
+        ...prev, 
+        [addedMainCategory[0].id]: {
+          name: addedMainCategory[0].name,
+          description: addedMainCategory[0].description || ''
+        }
+      }));
+      
+      return addedMainCategory[0];
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    }
+  };
+
+  const updateMainCategory = async (id, updatedMainCategory) => {
+    try {
+
+      const response = await fetch(`/api/main-categories/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
+        },
+        body: JSON.stringify(updatedMainCategory),
+      });
+
+      if (!response.ok) throw new Error('Failed to update main category');
+
+      const updated = await response.json();
+      setMainCategories((prev) => ({
+        ...prev,
+        [id]: {
+          name: updated[0].name,
+          description: updated[0].description || ''
+        }
+      }));
+      
+      return updated[0];
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    }
+  };
+
+  const deleteMainCategory = async (id) => {
+    try {
+
+      const response = await fetch(`/api/main-categories/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
+        },
+      });
+
+      if (!response.ok) throw new Error('Failed to delete main category');
+
+      setMainCategories((prev) => {
+        const updated = { ...prev };
+        delete updated[id];
+        return updated;
+      });
+
+      // Update any wikis that were assigned to this main category
+      setWikiOptions((prev) => {
+        const updated = { ...prev };
+        Object.keys(updated).forEach(wikiId => {
+          if (updated[wikiId].main_category_id === id) {
+            updated[wikiId] = { ...updated[wikiId], main_category_id: null };
+          }
+        });
+        return updated;
+      });
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    }
+  };
+
   const addWiki = async (newWiki) => {
     try {
-      const accessToken = await getAccessToken();
 
       const response = await fetch('/api/wiki-options', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
           'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
         },
         body: JSON.stringify(newWiki),
@@ -91,7 +202,8 @@ export const useOptions = () => {
         ...prev, 
         [addedWiki[0].id]: {
           name: addedWiki[0].name,
-          description: addedWiki[0].description || ''
+          description: addedWiki[0].description || '',
+          main_category_id: addedWiki[0].main_category_id
         }
       }));
     } catch (err) {
@@ -99,15 +211,41 @@ export const useOptions = () => {
     }
   };
 
+  const updateWikiMainCategory = async (wikiId, mainCategoryId) => {
+    try {
+
+      const response = await fetch(`/api/wiki-options/${wikiId}/main-category`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
+        },
+        body: JSON.stringify({ main_category_id: mainCategoryId }),
+      });
+
+      if (!response.ok) throw new Error('Failed to update wiki main category');
+
+      const updatedWiki = await response.json();
+      setWikiOptions((prev) => ({
+        ...prev,
+        [wikiId]: {
+          ...prev[wikiId],
+          main_category_id: updatedWiki.main_category_id
+        }
+      }));
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    }
+  };
+
   const addTab = async (newTab) => {
     try {
-      const accessToken = await getAccessToken();
 
       const response = await fetch('/api/tab-options', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
           'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
         },
         body: JSON.stringify(newTab),
@@ -134,12 +272,10 @@ export const useOptions = () => {
 
   const deleteWiki = async (wikiId) => {
     try {
-      const accessToken = await getAccessToken();
 
       const response = await fetch(`/api/wiki-options/${wikiId}`, {
         method: 'DELETE',
         headers: {
-          Authorization: `Bearer ${accessToken}`,
           'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
         },
       });
@@ -166,12 +302,10 @@ export const useOptions = () => {
 
   const deleteTab = async (tabId, wikiId) => {
     try {
-      const accessToken = await getAccessToken();
 
       const response = await fetch(`/api/tab-options/${tabId}`, {
         method: 'DELETE',
         headers: {
-          Authorization: `Bearer ${accessToken}`,
           'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
         },
       });
@@ -189,5 +323,19 @@ export const useOptions = () => {
     }
   };
 
-  return { wikiOptions, tabOptionsMap, loading, error, addWiki, addTab, deleteWiki, deleteTab };
+  return { 
+    wikiOptions, 
+    tabOptionsMap, 
+    mainCategories,
+    loading, 
+    error, 
+    addWiki, 
+    addTab, 
+    deleteWiki, 
+    deleteTab,
+    addMainCategory,
+    updateMainCategory,
+    deleteMainCategory,
+    updateWikiMainCategory
+  };
 };
