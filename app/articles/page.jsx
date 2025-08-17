@@ -5,10 +5,14 @@ import { useArticleContent } from '@/hooks/useArticleContent';
 import { useArticleMeta } from '@/hooks/useArticleMeta'; // Add this import
 import { useOptions } from '@/hooks/useOptions';
 import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Loader2, ChevronDown, ChevronRight, ArrowLeft, Calendar, Tag } from 'lucide-react';
 import Spinner from '@/components/ui/spinner';
 
 export default function BlogPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  
   const { articles, loading, error, loadMore, isReachingEnd } = useAllArticles();
   const { wikiOptions, mainCategories, loading: optionsLoading } = useOptions();
   const [selectedMainCategoryId, setSelectedMainCategoryId] = useState(null);
@@ -16,6 +20,24 @@ export default function BlogPage() {
   const [expandedMainCategories, setExpandedMainCategories] = useState(new Set());
   const [selectedArticleId, setSelectedArticleId] = useState(null);
   const [activeTab, setActiveTab] = useState(null); // Add tab state
+  
+  // Helper function to create URL-friendly slug from article title
+  const createSlug = (title) => {
+    return title
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '') // Remove special characters
+      .replace(/\s+/g, '-') // Replace spaces with hyphens
+      .replace(/--+/g, '-') // Replace multiple hyphens with single hyphen
+      .trim(); // Remove leading/trailing whitespace
+  };
+  
+  // Initialize selectedArticleId from URL on component mount
+  useEffect(() => {
+    const articleId = searchParams.get('article');
+    if (articleId) {
+      setSelectedArticleId(parseInt(articleId));
+    }
+  }, [searchParams]);
   
   // Fetch article content when an article is selected
   const { data: selectedArticle, loading: articleLoading, error: articleError } = useArticleContent(selectedArticleId);
@@ -30,6 +52,71 @@ export default function BlogPage() {
       setActiveTab(null);
     }
   }, [selectedArticleMeta?.has_tabs, selectedArticle?.tabs]);
+
+  // Add this useEffect for collapsible tables
+  useEffect(() => {
+    const makeTablesCollapsible = () => {
+      const tables = document.querySelectorAll('.article-container table');
+      
+      tables.forEach(table => {
+        // Skip if already processed
+        if (table.closest('.table-wrapper')) return;
+        
+        const wrapper = document.createElement('div');
+        wrapper.className = 'table-wrapper';
+        
+        const toggle = document.createElement('div');
+        toggle.className = 'table-toggle';
+        toggle.innerHTML = `
+          <svg class="toggle-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m6 9 6 6 6-6"/>
+          </svg>
+          <span>Table</span>
+        `;
+        
+        const content = document.createElement('div');
+        content.className = 'table-content';
+        
+        table.parentNode.insertBefore(wrapper, table);
+        wrapper.appendChild(toggle);
+        wrapper.appendChild(content);
+        content.appendChild(table);
+        
+        toggle.addEventListener('click', () => {
+          const icon = toggle.querySelector('.toggle-icon');
+          const isCollapsed = content.classList.contains('collapsed');
+          
+          if (isCollapsed) {
+            content.classList.remove('collapsed');
+            // ChevronDown icon
+            icon.innerHTML = '<path d="m6 9 6 6 6-6"/>';
+          } else {
+            content.classList.add('collapsed');
+            // ChevronRight icon
+            icon.innerHTML = '<path d="m9 18 6-6-6-6"/>';
+          }
+        });
+      });
+    };
+
+    // Run after content is loaded
+    if (!articleLoading && (selectedArticle?.content || selectedArticle?.tabs)) {
+      setTimeout(makeTablesCollapsible, 100);
+    }
+  }, [articleLoading, selectedArticle, activeTab]);
+
+  // Early returns should come AFTER all hooks
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-screen text-red-500">
+        Failed to load articles. Please try again.
+      </div>
+    );
+  }
+
+  if (loading || optionsLoading) { 
+    return <Spinner />;
+  }
 
   const toggleMainCategory = (mainCategoryId) => {
     const newExpanded = new Set(expandedMainCategories);
@@ -49,10 +136,95 @@ export default function BlogPage() {
   const handleArticleClick = (articleId) => {
     setSelectedArticleId(articleId);
     setActiveTab(null); // Reset tab when selecting new article
+    
+    // Find the article to get its title
+    const article = articles.find(a => a.id === articleId);
+    if (article) {
+      // Update URL with article ID and name
+      const params = new URLSearchParams(searchParams);
+      params.set('article', articleId.toString());
+      params.set('name', createSlug(article.title));
+      router.push(`/articles?${params.toString()}`, { scroll: false });
+    }
   };
 
   const handleBackToArticles = () => {
     setSelectedArticleId(null);
+    
+    // Remove article ID and name from URL
+    const params = new URLSearchParams(searchParams);
+    params.delete('article');
+    params.delete('name');
+    const newUrl = params.toString() ? `/articles?${params.toString()}` : '/articles';
+    router.push(newUrl, { scroll: false });
+  };
+
+  const updateUrlWithoutArticle = () => {
+    // Helper function to update URL and remove article parameters
+    const params = new URLSearchParams(searchParams);
+    params.delete('article');
+    params.delete('name');
+    const newUrl = params.toString() ? `/articles?${params.toString()}` : '/articles';
+    router.push(newUrl, { scroll: false });
+  };
+
+  const getPageTitle = () => {
+    if (selectedArticleId && selectedArticle) {
+      return selectedArticle.title;
+    } else if (selectedWikiId) {
+      return `${wikiOptions[selectedWikiId]?.name} Articles`;
+    } else if (selectedMainCategoryId === 'uncategorized') {
+      return 'Uncategorized Articles';
+    } else if (selectedMainCategoryId) {
+      return `${mainCategories[selectedMainCategoryId]?.name} Articles`;
+    }
+    return 'All Articles';
+  };
+
+  const getBreadcrumbs = () => {
+    const breadcrumbs = [];
+    
+    breadcrumbs.push({
+      label: 'All Articles',
+      onClick: () => {
+        setSelectedMainCategoryId(null);
+        setSelectedWikiId(null);
+        setSelectedArticleId(null);
+        updateUrlWithoutArticle();
+      }
+    });
+
+    if (selectedMainCategoryId) {
+      breadcrumbs.push({
+        label: selectedMainCategoryId === 'uncategorized' 
+          ? 'Uncategorized' 
+          : mainCategories[selectedMainCategoryId]?.name,
+        onClick: () => {
+          setSelectedWikiId(null);
+          setSelectedArticleId(null);
+          updateUrlWithoutArticle();
+        }
+      });
+    }
+
+    if (selectedWikiId) {
+      breadcrumbs.push({
+        label: wikiOptions[selectedWikiId]?.name,
+        onClick: () => {
+          setSelectedArticleId(null);
+          updateUrlWithoutArticle();
+        }
+      });
+    }
+
+    if (selectedArticleId && selectedArticle) {
+      breadcrumbs.push({
+        label: `${selectedArticle.title} (#${selectedArticleId})`,
+        onClick: null // Current page, not clickable
+      });
+    }
+
+    return breadcrumbs;
   };
 
   // Group categories by main category
@@ -95,74 +267,6 @@ export default function BlogPage() {
     }
     const categoriesInMainCategory = groupedCategories[mainCategoryId] || [];
     return categoriesInMainCategory.reduce((count, cat) => count + getArticleCount(cat.id), 0);
-  };
-
-  if (error) {
-    return (
-      <div className="flex justify-center items-center h-screen text-red-500">
-        Failed to load articles. Please try again.
-      </div>
-    );
-  }
-
-  if (loading || optionsLoading) { 
-    return <Spinner />;
-  }
-
-  const getPageTitle = () => {
-    if (selectedArticleId && selectedArticle) {
-      return selectedArticle.title;
-    } else if (selectedWikiId) {
-      return `${wikiOptions[selectedWikiId]?.name} Articles`;
-    } else if (selectedMainCategoryId === 'uncategorized') {
-      return 'Uncategorized Articles';
-    } else if (selectedMainCategoryId) {
-      return `${mainCategories[selectedMainCategoryId]?.name} Articles`;
-    }
-    return 'All Articles';
-  };
-
-  const getBreadcrumbs = () => {
-    const breadcrumbs = [];
-    
-    breadcrumbs.push({
-      label: 'All Articles',
-      onClick: () => {
-        setSelectedMainCategoryId(null);
-        setSelectedWikiId(null);
-        setSelectedArticleId(null);
-      }
-    });
-
-    if (selectedMainCategoryId) {
-      breadcrumbs.push({
-        label: selectedMainCategoryId === 'uncategorized' 
-          ? 'Uncategorized' 
-          : mainCategories[selectedMainCategoryId]?.name,
-        onClick: () => {
-          setSelectedWikiId(null);
-          setSelectedArticleId(null);
-        }
-      });
-    }
-
-    if (selectedWikiId) {
-      breadcrumbs.push({
-        label: wikiOptions[selectedWikiId]?.name,
-        onClick: () => {
-          setSelectedArticleId(null);
-        }
-      });
-    }
-
-    if (selectedArticleId && selectedArticle) {
-      breadcrumbs.push({
-        label: selectedArticle.title,
-        onClick: null // Current page, not clickable
-      });
-    }
-
-    return breadcrumbs;
   };
 
   return (
@@ -387,7 +491,7 @@ export default function BlogPage() {
                     <p className="text-sm">Please try again or go back to articles.</p>
                   </div>
                 ) : selectedArticle ? (
-                  <div className="p-6">
+                  <div className="p-6 pl-13">
                     {/* Article Header */}
                     <div className="mb-6">
                       <h1 className="text-3xl font-bold text-slate-800 mb-4">
@@ -443,7 +547,7 @@ export default function BlogPage() {
                         </div>
 
                         {/* Tab Content */}
-                        <div className="prose prose-slate max-w-none prose-headings:text-slate-800 prose-p:text-gray-700 prose-a:text-blue-600 prose-strong:text-slate-800">
+                        <div className="article-container max-w-none text-gray-800 leading-relaxed">
                           {activeTab ? (
                             <div dangerouslySetInnerHTML={{ __html: selectedArticle.tabs[activeTab].content }} />
                           ) : (
@@ -453,7 +557,7 @@ export default function BlogPage() {
                       </div>
                     ) : (
                       <div 
-                        className="prose prose-slate max-w-none prose-headings:text-slate-800 prose-p:text-gray-700 prose-a:text-blue-600 prose-strong:text-slate-800"
+                        className="article-container max-w-none text-gray-800 leading-relaxed"
                         dangerouslySetInnerHTML={{ __html: selectedArticle?.content }}
                       />
                     )}
