@@ -19,9 +19,8 @@ export default function BlogPage() {
   const [selectedWikiId, setSelectedWikiId] = useState(null);
   const [expandedMainCategories, setExpandedMainCategories] = useState(new Set());
   const [selectedArticleId, setSelectedArticleId] = useState(null);
-  const [activeTab, setActiveTab] = useState(null); // Add tab state
-  
-  // Helper function to create URL-friendly slug from article title
+  const [activeTab, setActiveTab] = useState(null); 
+
   const createSlug = (title) => {
     return title
       .toLowerCase()
