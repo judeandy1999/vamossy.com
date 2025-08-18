@@ -4,9 +4,9 @@ import { useAllArticles } from '@/hooks/useAllArticles';
 import { useArticleContent } from '@/hooks/useArticleContent';
 import { useArticleMeta } from '@/hooks/useArticleMeta';
 import { useOptions } from '@/hooks/useOptions';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Loader2, ChevronDown, ChevronRight, ArrowLeft, Calendar, Tag } from 'lucide-react';
+import { Loader2, ChevronDown, ChevronRight, ArrowLeft, Calendar, Tag, ChevronLeft } from 'lucide-react';
 import Spinner from '@/components/ui/spinner';
 
 export default function ArticlesPageContent() {
@@ -19,7 +19,12 @@ export default function ArticlesPageContent() {
   const [selectedWikiId, setSelectedWikiId] = useState(null);
   const [expandedMainCategories, setExpandedMainCategories] = useState(new Set());
   const [selectedArticleId, setSelectedArticleId] = useState(null);
-  const [activeTab, setActiveTab] = useState(null); 
+  const [activeTab, setActiveTab] = useState(null);
+  
+  // Tab navigation states
+  const [currentTabPage, setCurrentTabPage] = useState(0);
+  const [tabsPerPage, setTabsPerPage] = useState(5);
+  const tabsContainerRef = useRef(null);
 
   const createSlug = (title) => {
     return title
@@ -42,15 +47,73 @@ export default function ArticlesPageContent() {
   const { data: selectedArticle, loading: articleLoading, error: articleError } = useArticleContent(selectedArticleId);
   const { data: selectedArticleMeta } = useArticleMeta(selectedArticleId);
 
+  // Helper function to get sorted tabs
+  const getSortedTabs = () => {
+    if (!selectedArticle?.tabs) return [];
+    
+    return Object.entries(selectedArticle.tabs).sort((a, b) => {
+      const nameA = a[1].name.toLowerCase();
+      const nameB = b[1].name.toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
+  };
+
   // Add useEffect for tab management
   useEffect(() => {
     if (selectedArticleMeta?.has_tabs && selectedArticle?.tabs) {
-      const firstTabId = Object.keys(selectedArticle.tabs)[0];
+      const sortedTabs = getSortedTabs();
+      const firstTabId = sortedTabs[0]?.[0]; // Get the first tab ID from sorted tabs
       setActiveTab(firstTabId);
+      setCurrentTabPage(0); // Reset to first page when new article loads
     } else {
       setActiveTab(null);
+      setCurrentTabPage(0);
     }
   }, [selectedArticleMeta?.has_tabs, selectedArticle?.tabs]);
+
+  // Calculate how many tabs can fit based on container width
+  useEffect(() => {
+    const calculateTabsPerPage = () => {
+      if (tabsContainerRef.current && selectedArticle?.tabs) {
+        const containerWidth = tabsContainerRef.current.offsetWidth;
+        const totalTabs = Object.keys(selectedArticle.tabs).length;
+        
+        // Create a temporary element to measure actual tab width
+        const tempTab = document.createElement('div');
+        tempTab.className = 'px-4 py-2 text-sm font-medium whitespace-nowrap flex-shrink-0';
+        tempTab.style.visibility = 'hidden';
+        tempTab.style.position = 'absolute';
+        tempTab.textContent = 'Sample Tab Name'; // Use average length
+        document.body.appendChild(tempTab);
+        
+        const measuredTabWidth = tempTab.offsetWidth + 16; // Add gap between tabs
+        document.body.removeChild(tempTab);
+        
+        // Reserve space for navigation buttons (40px each + margins)
+        const navButtonSpace = totalTabs > 1 ? 100 : 0; // Only reserve space if we have multiple tabs
+        const availableWidth = containerWidth - navButtonSpace;
+        
+        const calculatedTabsPerPage = Math.floor(availableWidth / measuredTabWidth);
+        
+        // If all tabs can fit, show them all
+        if (calculatedTabsPerPage >= totalTabs) {
+          setTabsPerPage(totalTabs);
+        } else {
+          // Otherwise, show as many as we can fit with a minimum of 2
+          setTabsPerPage(Math.max(2, calculatedTabsPerPage));
+        }
+      }
+    };
+
+    // Delay calculation to ensure DOM is rendered
+    const timeoutId = setTimeout(calculateTabsPerPage, 100);
+    
+    window.addEventListener('resize', calculateTabsPerPage);
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener('resize', calculateTabsPerPage);
+    };
+  }, [selectedArticle?.tabs]);
 
   // Add this useEffect for collapsible tables
   useEffect(() => {
@@ -267,6 +330,39 @@ export default function ArticlesPageContent() {
     const categoriesInMainCategory = groupedCategories[mainCategoryId] || [];
     return categoriesInMainCategory.reduce((count, cat) => count + getArticleCount(cat.id), 0);
   };
+
+  // Tab navigation functions
+  const getVisibleTabs = () => {
+    const sortedTabs = getSortedTabs();
+    
+    // If all tabs fit on one page, show them all
+    if (sortedTabs.length <= tabsPerPage) {
+      return sortedTabs;
+    }
+    
+    const startIndex = currentTabPage * tabsPerPage;
+    const endIndex = startIndex + tabsPerPage;
+    
+    return sortedTabs.slice(startIndex, endIndex);
+  };
+
+  const getTotalPages = () => {
+    if (!selectedArticle?.tabs) return 0;
+    const totalTabs = Object.keys(selectedArticle.tabs).length;
+    return Math.ceil(totalTabs / tabsPerPage);
+  };
+
+  const goToPreviousPage = () => {
+    setCurrentTabPage(prev => Math.max(0, prev - 1));
+  };
+
+  const goToNextPage = () => {
+    setCurrentTabPage(prev => Math.min(getTotalPages() - 1, prev + 1));
+  };
+
+  const canGoPrevious = currentTabPage > 0;
+  const canGoNext = currentTabPage < getTotalPages() - 1;
+  const needsPagination = selectedArticle?.tabs && Object.keys(selectedArticle.tabs).length > tabsPerPage;
 
   return (
     <div className="bg-gray-50 min-h-screen py-10">
@@ -528,21 +624,78 @@ export default function ArticlesPageContent() {
                     {/* Article Body */}
                     {selectedArticleMeta?.has_tabs && selectedArticle?.tabs ? (
                       <div>
-                        {/* Tabs Navigation */}
-                        <div className="flex gap-2 sm:gap-4 border-b border-gray-200 mb-6">
-                          {Object.entries(selectedArticle.tabs).map(([tabId, tabContent]) => (
-                            <button
-                              key={tabId}
-                              onClick={() => setActiveTab(tabId)}
-                              className={`cursor-pointer px-4 py-2 text-sm font-medium rounded-t transition focus:outline-none ${
-                                activeTab === tabId
-                                  ? 'bg-slate-100 text-slate-700 border-b-2 border-slate-500'
-                                  : 'text-gray-500 hover:text-slate-600'
-                              }`}
-                            >
-                              {tabContent.name}
-                            </button>
-                          ))}
+                        {/* Tabs Navigation with Pagination */}
+                        <div ref={tabsContainerRef} className="relative mb-6">
+                          <div className="flex items-center border-b border-gray-200">
+                            {/* Previous Button */}
+                            {needsPagination && (
+                              <button
+                                onClick={goToPreviousPage}
+                                disabled={!canGoPrevious}
+                                className={`cursor-pointer mr-2 p-2 rounded-lg transition-all ${
+                                  canGoPrevious
+                                    ? 'text-slate-600 hover:text-slate-800 hover:bg-gray-100'
+                                    : 'text-gray-300 !cursor-not-allowed'
+                                }`}
+                                title="Previous tabs"
+                              >
+                                <ChevronLeft size={20} />
+                              </button>
+                            )}
+
+                            {/* Tabs Container */}
+                            <div className="flex gap-2 sm:gap-4 flex-1 min-w-0 overflow-hidden">
+                              {getVisibleTabs().map(([tabId, tabContent]) => (
+                                <button
+                                  key={tabId}
+                                  onClick={() => setActiveTab(tabId)}
+                                  className={`cursor-pointer px-4 py-2 text-sm font-medium rounded-t transition focus:outline-none whitespace-nowrap flex-shrink-0 ${
+                                    activeTab === tabId
+                                      ? 'bg-slate-100 text-slate-700 border-b-2 border-slate-500'
+                                      : 'text-gray-500 hover:text-slate-600'
+                                  }`}
+                                >
+                                  {tabContent.name}
+                                </button>
+                              ))}
+                            </div>
+
+                            {/* Next Button */}
+                            {needsPagination && (
+                              <button
+                                onClick={goToNextPage}
+                                disabled={!canGoNext}
+                                className={`cursor-pointer ml-2 p-2 rounded-lg transition-all ${
+                                  canGoNext
+                                    ? 'text-slate-600 hover:text-slate-800 hover:bg-gray-100'
+                                    : 'text-gray-300 !cursor-not-allowed'
+                                }`}
+                                title="Next tabs"
+                              >
+                                <ChevronRight size={20} />
+                              </button>
+                            )}
+                          </div>
+
+                          {/* Page Indicator */}
+                          {needsPagination && getTotalPages() > 1 && (
+                            <div className="absolute right-0 top-full mt-2">
+                              <div className="flex gap-1">
+                                {Array.from({ length: getTotalPages() }, (_, index) => (
+                                  <button
+                                    key={index}
+                                    onClick={() => setCurrentTabPage(index)}
+                                    className={`w-2 h-2 rounded-full transition-all ${
+                                      index === currentTabPage
+                                        ? 'bg-slate-500'
+                                        : 'bg-gray-300 hover:bg-gray-400'
+                                    }`}
+                                    title={`Page ${index + 1}`}
+                                  />
+                                ))}
+                              </div>
+                            </div>
+                          )}
                         </div>
 
                         {/* Tab Content */}
