@@ -74,92 +74,123 @@ export default function ArticlesPageContent() {
   // Calculate how many tabs can fit based on container width
   useEffect(() => {
     const calculateTabsPerPage = () => {
-      if (tabsContainerRef.current && selectedArticle?.tabs) {
-        const containerWidth = tabsContainerRef.current.offsetWidth;
-        
-        // Return early if container width is 0 (not rendered yet)
-        if (containerWidth === 0) {
-          return;
-        }
-        
-        const totalTabs = Object.keys(selectedArticle.tabs).length;
-        const sortedTabs = getSortedTabs();
-        
-        // Calculate actual tab widths by measuring each tab name
-        const tempContainer = document.createElement('div');
-        tempContainer.style.visibility = 'hidden';
-        tempContainer.style.position = 'absolute';
-        tempContainer.style.whiteSpace = 'nowrap';
-        tempContainer.style.fontFamily = getComputedStyle(tabsContainerRef.current).fontFamily;
-        tempContainer.style.fontSize = getComputedStyle(tabsContainerRef.current).fontSize;
-        document.body.appendChild(tempContainer);
-        
-        const tabWidths = sortedTabs.map(([tabId, tabContent]) => {
-          const tempTab = document.createElement('span');
-          tempTab.className = 'px-4 py-2 text-sm font-medium border rounded-lg';
-          tempTab.textContent = tabContent.name;
-          tempContainer.appendChild(tempTab);
-          const width = tempTab.offsetWidth + 8; // Add margin/gap
-          tempContainer.removeChild(tempTab);
-          return width;
-        });
-        
-        document.body.removeChild(tempContainer);
-        
-        // Reserve space for navigation buttons
-        const navButtonSpace = 96; // Space for both nav buttons + margins
-        const availableWidth = containerWidth - navButtonSpace;
-        
-        // Calculate how many tabs can fit
-        let currentWidth = 0;
-        let tabsToShow = 0;
-        
-        for (const width of tabWidths) {
-          if (currentWidth + width <= availableWidth) {
-            currentWidth += width;
-            tabsToShow++;
-          } else {
-            break;
-          }
-        }
-        
-        // If all tabs can fit comfortably, use full container
-        const totalWidthNeeded = tabWidths.reduce((sum, width) => sum + width, 0);
-        if (totalWidthNeeded <= containerWidth - 16) {
-          setTabsPerPage(totalTabs);
+      if (!tabsContainerRef.current || !selectedArticle?.tabs) {
+        return;
+      }
+
+      const containerWidth = tabsContainerRef.current.offsetWidth;
+      
+      // Return early if container width is 0 (not rendered yet)
+      if (containerWidth === 0) {
+        return;
+      }
+      
+      const totalTabs = Object.keys(selectedArticle.tabs).length;
+      const sortedTabs = getSortedTabs();
+      
+      // Calculate actual tab widths by measuring each tab name
+      const tempContainer = document.createElement('div');
+      tempContainer.style.visibility = 'hidden';
+      tempContainer.style.position = 'absolute';
+      tempContainer.style.whiteSpace = 'nowrap';
+      tempContainer.style.fontFamily = getComputedStyle(tabsContainerRef.current).fontFamily;
+      tempContainer.style.fontSize = getComputedStyle(tabsContainerRef.current).fontSize;
+      document.body.appendChild(tempContainer);
+      
+      const tabWidths = sortedTabs.map(([tabId, tabContent]) => {
+        const tempTab = document.createElement('span');
+        tempTab.className = 'px-3 py-2 text-xs sm:text-sm font-medium rounded-t whitespace-nowrap';
+        tempTab.textContent = tabContent.name;
+        tempContainer.appendChild(tempTab);
+        const width = tempTab.offsetWidth + 8; // Add gap
+        tempContainer.removeChild(tempTab);
+        return width;
+      });
+      
+      document.body.removeChild(tempContainer);
+      
+      // Reserve space for navigation buttons
+      const navButtonSpace = 96; // Space for both nav buttons + margins
+      const availableWidth = containerWidth - navButtonSpace;
+      
+      // Calculate how many tabs can fit
+      let currentWidth = 0;
+      let tabsToShow = 0;
+      
+      for (const width of tabWidths) {
+        if (currentWidth + width <= availableWidth) {
+          currentWidth += width;
+          tabsToShow++;
         } else {
-          setTabsPerPage(Math.max(1, tabsToShow));
+          break;
         }
+      }
+      
+      // If all tabs can fit comfortably, use full container
+      const totalWidthNeeded = tabWidths.reduce((sum, width) => sum + width, 0);
+      if (totalWidthNeeded <= containerWidth - 16) {
+        setTabsPerPage(totalTabs);
+      } else {
+        setTabsPerPage(Math.max(1, tabsToShow));
       }
     };
 
-    if (!selectedArticle?.tabs) return;
-
-    // Use ResizeObserver for more accurate container size detection
-    const resizeObserver = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        if (entry.target === tabsContainerRef.current) {
-          calculateTabsPerPage();
-        }
-      }
-    });
-
-    if (tabsContainerRef.current) {
-      resizeObserver.observe(tabsContainerRef.current);
-      
-      // Initial calculation with multiple attempts
-      calculateTabsPerPage();
-      setTimeout(calculateTabsPerPage, 0);
-      setTimeout(calculateTabsPerPage, 100);
+    // Only run if we have tabs and the article view is active
+    if (!selectedArticle?.tabs || !selectedArticleId) {
+      return;
     }
+
+    let resizeObserver;
+    let timeoutIds = [];
+
+    const setupCalculation = () => {
+      // Clear any existing timeouts
+      timeoutIds.forEach(id => clearTimeout(id));
+      timeoutIds = [];
+
+      // Wait for the tab container to be rendered
+      const waitForContainer = () => {
+        if (tabsContainerRef.current && tabsContainerRef.current.offsetWidth > 0) {
+          // Container is ready, set up observer and calculate
+          resizeObserver = new ResizeObserver((entries) => {
+            for (const entry of entries) {
+              if (entry.target === tabsContainerRef.current) {
+                // Debounce the calculation
+                timeoutIds.forEach(id => clearTimeout(id));
+                const timeoutId = setTimeout(calculateTabsPerPage, 50);
+                timeoutIds = [timeoutId];
+              }
+            }
+          });
+
+          resizeObserver.observe(tabsContainerRef.current);
+          
+          // Initial calculation
+          calculateTabsPerPage();
+        } else {
+          // Container not ready, try again
+          const timeoutId = setTimeout(waitForContainer, 50);
+          timeoutIds.push(timeoutId);
+        }
+      };
+
+      waitForContainer();
+    };
+
+    // Delay setup to ensure DOM is ready
+    const initialTimeoutId = setTimeout(setupCalculation, 100);
+    timeoutIds.push(initialTimeoutId);
 
     window.addEventListener('resize', calculateTabsPerPage);
     
     return () => {
-      resizeObserver.disconnect();
+      timeoutIds.forEach(id => clearTimeout(id));
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
       window.removeEventListener('resize', calculateTabsPerPage);
     };
-  }, [selectedArticle?.tabs]);
+  }, [selectedArticle?.tabs, selectedArticleId]); // Add selectedArticleId as dependency
 
   // Add this useEffect for collapsible tables
   useEffect(() => {
