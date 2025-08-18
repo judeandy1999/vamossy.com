@@ -77,36 +77,58 @@ export default function ArticlesPageContent() {
       if (tabsContainerRef.current && selectedArticle?.tabs) {
         const containerWidth = tabsContainerRef.current.offsetWidth;
         const totalTabs = Object.keys(selectedArticle.tabs).length;
+        const sortedTabs = getSortedTabs();
         
-        // Create a temporary element to measure actual tab width
-        const tempTab = document.createElement('div');
-        tempTab.className = 'px-4 py-2 text-sm font-medium whitespace-nowrap flex-shrink-0';
-        tempTab.style.visibility = 'hidden';
-        tempTab.style.position = 'absolute';
-        tempTab.textContent = 'Sample Tab Name'; // Use average length
-        document.body.appendChild(tempTab);
+        // Calculate actual tab widths by measuring each tab name
+        let totalTabWidth = 0;
+        const tempContainer = document.createElement('div');
+        tempContainer.style.visibility = 'hidden';
+        tempContainer.style.position = 'absolute';
+        tempContainer.style.whiteSpace = 'nowrap';
+        document.body.appendChild(tempContainer);
         
-        const measuredTabWidth = tempTab.offsetWidth + 16; // Add gap between tabs
-        document.body.removeChild(tempTab);
+        const tabWidths = sortedTabs.map(([tabId, tabContent]) => {
+          const tempTab = document.createElement('span');
+          tempTab.className = 'px-4 py-2 text-sm font-medium';
+          tempTab.textContent = tabContent.name;
+          tempContainer.appendChild(tempTab);
+          const width = tempTab.offsetWidth + 16; // Add gap
+          tempContainer.removeChild(tempTab);
+          return width;
+        });
         
-        // Reserve space for navigation buttons (40px each + margins)
-        const navButtonSpace = totalTabs > 1 ? 100 : 0; // Only reserve space if we have multiple tabs
+        document.body.removeChild(tempContainer);
+        
+        // Reserve space for navigation buttons only if we need pagination
+        const navButtonSpace = 80; // Space for both nav buttons
         const availableWidth = containerWidth - navButtonSpace;
         
-        const calculatedTabsPerPage = Math.floor(availableWidth / measuredTabWidth);
+        // Calculate how many tabs can fit
+        let currentWidth = 0;
+        let tabsToShow = 0;
         
-        // If all tabs can fit, show them all
-        if (calculatedTabsPerPage >= totalTabs) {
+        for (const width of tabWidths) {
+          if (currentWidth + width <= availableWidth) {
+            currentWidth += width;
+            tabsToShow++;
+          } else {
+            break;
+          }
+        }
+        
+        // If all tabs can fit without navigation, use full width
+        const totalWidthNeeded = tabWidths.reduce((sum, width) => sum + width, 0);
+        if (totalWidthNeeded <= containerWidth) {
           setTabsPerPage(totalTabs);
         } else {
-          // Otherwise, show as many as we can fit with a minimum of 2
-          setTabsPerPage(Math.max(2, calculatedTabsPerPage));
+          // Ensure we show at least 2 tabs when pagination is needed
+          setTabsPerPage(Math.max(2, tabsToShow));
         }
       }
     };
 
     // Delay calculation to ensure DOM is rendered
-    const timeoutId = setTimeout(calculateTabsPerPage, 100);
+    const timeoutId = setTimeout(calculateTabsPerPage, 200);
     
     window.addEventListener('resize', calculateTabsPerPage);
     return () => {
@@ -626,13 +648,13 @@ export default function ArticlesPageContent() {
                       <div>
                         {/* Tabs Navigation with Pagination */}
                         <div ref={tabsContainerRef} className="relative mb-6">
-                          <div className="flex items-center border-b border-gray-200">
+                          <div className="flex items-center border-b border-gray-200 w-full">
                             {/* Previous Button */}
                             {needsPagination && (
                               <button
                                 onClick={goToPreviousPage}
                                 disabled={!canGoPrevious}
-                                className={`cursor-pointer mr-2 p-2 rounded-lg transition-all ${
+                                className={`cursor-pointer flex-shrink-0 mr-2 p-2 rounded-lg transition-all ${
                                   canGoPrevious
                                     ? 'text-slate-600 hover:text-slate-800 hover:bg-gray-100'
                                     : 'text-gray-300 !cursor-not-allowed'
@@ -644,16 +666,17 @@ export default function ArticlesPageContent() {
                             )}
 
                             {/* Tabs Container */}
-                            <div className="flex gap-2 sm:gap-4 flex-1 min-w-0 overflow-hidden">
+                            <div className="flex gap-1 sm:gap-2 flex-1 min-w-0 overflow-hidden">
                               {getVisibleTabs().map(([tabId, tabContent]) => (
                                 <button
                                   key={tabId}
                                   onClick={() => setActiveTab(tabId)}
-                                  className={`cursor-pointer px-4 py-2 text-sm font-medium rounded-t transition focus:outline-none whitespace-nowrap flex-shrink-0 ${
+                                  className={`cursor-pointer flex-shrink-0 px-3 py-2 text-xs sm:text-sm font-medium rounded-t transition focus:outline-none whitespace-nowrap max-w-[200px] truncate ${
                                     activeTab === tabId
                                       ? 'bg-slate-100 text-slate-700 border-b-2 border-slate-500'
                                       : 'text-gray-500 hover:text-slate-600'
                                   }`}
+                                  title={tabContent.name} // Show full name on hover
                                 >
                                   {tabContent.name}
                                 </button>
@@ -665,7 +688,7 @@ export default function ArticlesPageContent() {
                               <button
                                 onClick={goToNextPage}
                                 disabled={!canGoNext}
-                                className={`cursor-pointer ml-2 p-2 rounded-lg transition-all ${
+                                className={`cursor-pointer flex-shrink-0 ml-2 p-2 rounded-lg transition-all ${
                                   canGoNext
                                     ? 'text-slate-600 hover:text-slate-800 hover:bg-gray-100'
                                     : 'text-gray-300 !cursor-not-allowed'
