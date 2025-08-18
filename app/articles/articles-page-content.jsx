@@ -76,31 +76,38 @@ export default function ArticlesPageContent() {
     const calculateTabsPerPage = () => {
       if (tabsContainerRef.current && selectedArticle?.tabs) {
         const containerWidth = tabsContainerRef.current.offsetWidth;
+        
+        // Return early if container width is 0 (not rendered yet)
+        if (containerWidth === 0) {
+          return;
+        }
+        
         const totalTabs = Object.keys(selectedArticle.tabs).length;
         const sortedTabs = getSortedTabs();
         
         // Calculate actual tab widths by measuring each tab name
-        let totalTabWidth = 0;
         const tempContainer = document.createElement('div');
         tempContainer.style.visibility = 'hidden';
         tempContainer.style.position = 'absolute';
         tempContainer.style.whiteSpace = 'nowrap';
+        tempContainer.style.fontFamily = getComputedStyle(tabsContainerRef.current).fontFamily;
+        tempContainer.style.fontSize = getComputedStyle(tabsContainerRef.current).fontSize;
         document.body.appendChild(tempContainer);
         
         const tabWidths = sortedTabs.map(([tabId, tabContent]) => {
           const tempTab = document.createElement('span');
-          tempTab.className = 'px-4 py-2 text-sm font-medium';
+          tempTab.className = 'px-4 py-2 text-sm font-medium border rounded-lg';
           tempTab.textContent = tabContent.name;
           tempContainer.appendChild(tempTab);
-          const width = tempTab.offsetWidth + 16; // Add gap
+          const width = tempTab.offsetWidth + 8; // Add margin/gap
           tempContainer.removeChild(tempTab);
           return width;
         });
         
         document.body.removeChild(tempContainer);
         
-        // Reserve space for navigation buttons only if we need pagination
-        const navButtonSpace = 80; // Space for both nav buttons
+        // Reserve space for navigation buttons
+        const navButtonSpace = 96; // Space for both nav buttons + margins
         const availableWidth = containerWidth - navButtonSpace;
         
         // Calculate how many tabs can fit
@@ -116,23 +123,40 @@ export default function ArticlesPageContent() {
           }
         }
         
-        // If all tabs can fit without navigation, use full width
+        // If all tabs can fit comfortably, use full container
         const totalWidthNeeded = tabWidths.reduce((sum, width) => sum + width, 0);
-        if (totalWidthNeeded <= containerWidth) {
+        if (totalWidthNeeded <= containerWidth - 16) {
           setTabsPerPage(totalTabs);
         } else {
-          // Ensure we show at least 2 tabs when pagination is needed
-          setTabsPerPage(Math.max(2, tabsToShow));
+          setTabsPerPage(Math.max(1, tabsToShow));
         }
       }
     };
 
-    // Delay calculation to ensure DOM is rendered
-    const timeoutId = setTimeout(calculateTabsPerPage, 200);
-    
+    if (!selectedArticle?.tabs) return;
+
+    // Use ResizeObserver for more accurate container size detection
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.target === tabsContainerRef.current) {
+          calculateTabsPerPage();
+        }
+      }
+    });
+
+    if (tabsContainerRef.current) {
+      resizeObserver.observe(tabsContainerRef.current);
+      
+      // Initial calculation with multiple attempts
+      calculateTabsPerPage();
+      setTimeout(calculateTabsPerPage, 0);
+      setTimeout(calculateTabsPerPage, 100);
+    }
+
     window.addEventListener('resize', calculateTabsPerPage);
+    
     return () => {
-      clearTimeout(timeoutId);
+      resizeObserver.disconnect();
       window.removeEventListener('resize', calculateTabsPerPage);
     };
   }, [selectedArticle?.tabs]);
