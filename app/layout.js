@@ -83,6 +83,12 @@ export default function RootLayout({ children }) {
             });
           `}
         </Script>
+
+        {/* Tidio Chat */}
+        <Script
+          src="//code.tidio.co/m4uaqdxnzzjolkznzwwrqsy1otnfdyxo.js"
+          strategy="afterInteractive"
+        />
         
         <ErrorBoundary>
           <ClientAuthProvider>
