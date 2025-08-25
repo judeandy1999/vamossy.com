@@ -1,6 +1,4 @@
 import { supabase } from '@/utils/client';
-import { authenticate } from '@/lib/authMiddleware';
-import { verifySupabaseAuth } from '@/utils/verifySupabaseAuth';
 
 export default async function handler(req, res) {
   const { id } = req.query;

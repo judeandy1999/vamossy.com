@@ -531,7 +531,9 @@ export default function HomePage() {
               className="pt-8"
             >
               <button
-                onClick={handleBookNowClick}
+                data-cal-link="dev-vamossy/consultation"
+                data-cal-namespace="consultation"
+                data-cal-config='{"layout":"month_view"}'
                 className="inline-flex items-center gap-3 bg-[#85bd41] text-white px-8 py-4 rounded-lg font-semibold text-lg shadow-lg hover:bg-[#548816] cursor-pointer"
               >
                 <Check size={24} />

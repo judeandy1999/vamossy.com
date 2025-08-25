@@ -400,13 +400,15 @@ export default function ResourcesPage() {
             <motion.div
               variants={itemVariants}
             >
-              <a
-                href="/contact"
-                className="inline-flex items-center gap-3 bg-[#85bd41] text-white px-8 py-4 rounded-xl font-bold text-lg cursor-pointer shadow-lg hover:bg-[#548816] transition-all duration-200"
+              <button
+                data-cal-link="dev-vamossy/consultation"
+                data-cal-namespace="consultation"
+                data-cal-config='{"layout":"month_view"}'
+                className="cursor-pointer inline-flex items-center gap-3 bg-[#85bd41] text-white px-8 py-4 rounded-xl font-bold text-lg shadow-lg hover:bg-[#548816] transition-all duration-200"
               >
                 Schedule a Free Consultation
                 <ArrowRight className="w-5 h-5" />
-              </a>
+              </button>
             </motion.div>
           </motion.div>
         </div>
