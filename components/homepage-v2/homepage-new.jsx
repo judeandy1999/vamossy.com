@@ -158,13 +158,14 @@ export default function HomePage() {
             transition={{ duration: 0.6, delay: 1.4 }}
             className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12"
           >
-            <motion.button
+            <motion.a
+              href="/resources"
               whileTap={{ scale: 0.98 }}
               className="cursor-pointer group bg-[#85bd41] hover:bg-[#548816] text-white px-10 py-5 rounded-xl font-bold text-lg flex items-center gap-3 shadow-xl hover:shadow-2xl w-full sm:w-auto"
             >
               View Your Free DTC Growth Ebook
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1" />
-            </motion.button>
+            </motion.a>
             
             <motion.button
               whileTap={{ scale: 0.98 }}
