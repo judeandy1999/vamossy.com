@@ -8,8 +8,8 @@ import FooterV2 from "@/components/shared/footer-v2";
 import CookieConsentBanner from "@/components/shared/consent-banner-v2";
 
 export const metadata = {
-  title: "Vamossy",
-  description: "YOUR AI-POWERED ECOMMERCE GROWTH CONSULTING AGENCY",
+  title: "Vamossy Digital",
+  description: "Dominate the DTC Supplement Market. The Proven AI, SEO & Marketing Partner for Food & Vitamin Brands",
   verification: {
     google: "NlE98BHOIRMISy-mkyutFS59QmEzKPr-EKQBgd_NdOc",
   },
