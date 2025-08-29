@@ -38,7 +38,7 @@ export default function Navbar() {
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link href="/" className="block">
-              <div className="text-3xl md:text-5xl font-bold text-[#85bd41]">
+              <div className="text-3xl md:text-5xl font-bold text-[#195850]">
                 Vamossy
               </div>
             </Link>
@@ -61,7 +61,7 @@ export default function Navbar() {
               </div>
             </div>
             <button
-              className="bg-[#85bd41] text-white px-6 py-2 rounded-lg font-medium text-xl hover:bg-[#548816] transition-all duration-100"
+              className="bg-[#195850] cursor-pointer text-white px-6 py-2 rounded-lg font-medium text-xl hover:bg-[#548816] transition-all duration-100"
               data-cal-link="dev-vamossy/consultation"
               data-cal-namespace="consultation"
               data-cal-config='{"layout":"month_view"}'
