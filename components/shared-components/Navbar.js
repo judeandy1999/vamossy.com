@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { useState, useRef, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 
 const navLinks = [
   { name: 'How it Works', href: '/how-it-works' },
@@ -16,6 +17,7 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [aboutDropdownOpen, setAboutDropdownOpen] = useState(false);
   const [aboutMobileDropdownOpen, setAboutMobileDropdownOpen] = useState(false);
+  const pathname = usePathname();
   const aboutRef = useRef(null);
 
   // Close desktop dropdown on outside click
@@ -32,6 +34,10 @@ export default function Navbar() {
     }
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [aboutDropdownOpen]);
+
+  if (pathname === '/user-dashboard' || pathname.startsWith('/user-dashboard/')) {
+    return null;
+  }
 
   return (
     <nav className="w-full bg-white shadow-sm">

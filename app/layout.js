@@ -3,7 +3,9 @@ import "./globals.css";
 import Navbar from "@/components/shared-components/Navbar";
 import Footer from "@/components/shared-components/Footer";
 import CookieConsentBanner from "@/components/shared-components/CookieConsentBanner";
-import Script from "next/script";
+import ClientAuthProvider from "@/components/providers/client-auth-provider";
+import Script from 'next/script';
+import ErrorBoundary from "@/components/error-boundary";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -85,10 +87,16 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Navbar />
-        {children}
-        <Footer />
-        <CookieConsentBanner />
+        <ErrorBoundary>
+          <ClientAuthProvider>
+            <Navbar />
+            <div className="height-[100vh] z-4">
+              {children}
+            </div>
+            <Footer />
+            <CookieConsentBanner />
+          </ClientAuthProvider>
+        </ErrorBoundary>
       </body>
     </html>
   );

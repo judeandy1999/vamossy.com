@@ -1,4 +1,6 @@
+'use client';
 import React from "react";
+import { usePathname } from 'next/navigation';
 
 const footerLinks = [
   {
@@ -42,6 +44,13 @@ const footerLinks = [
 ];
 
 export default function Footer() {
+  const pathname = usePathname();
+    
+  // Hide footer on user-dashboard pages
+  if (pathname?.startsWith('/user-dashboard')) {
+    return null;
+  }
+
   return (
     <footer className="bg-[#0f1729] text-[#e5e7eb] pt-12 pb-4 px-4">
       <div className="max-w-7xl mx-auto">
