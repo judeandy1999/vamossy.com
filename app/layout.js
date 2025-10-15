@@ -1,96 +1,52 @@
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import localFont from 'next/font/local';
-import ClientAuthProvider from "@/components/providers/client-auth-provider";
-import Script from 'next/script';
-import Navbar from "@/components/shared/navbar";
-import ErrorBoundary from "@/components/error-boundary";
-import FooterV2 from "@/components/shared/footer-v2";
-import CookieConsentBanner from "@/components/shared/consent-banner-v2";
+import Navbar from "@/components/shared-components/Navbar";
+import Footer from "@/components/shared-components/Footer";
+import CookieConsentBanner from "@/components/shared-components/CookieConsentBanner";
+import Script from "next/script";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
 
 export const metadata = {
-  title: "Vamossy Digital",
-  description: "Dominate the DTC Supplement Market. The Proven AI, SEO & Marketing Partner for Food & Vitamin Brands",
-  verification: {
-    google: "NlE98BHOIRMISy-mkyutFS59QmEzKPr-EKQBgd_NdOc",
-  },
+  title: "Vamossy - Your Ecommerce Growth Partner",
+  description: "Vamossy is your dedicated partner in eCommerce growth, providing tailored solutions to elevate your online business.",
 };
-
-const proximaNova = localFont({
-  src: [
-    {
-      path: '../public/fonts/ProximaNovaRegular.woff2',
-      weight: '400',
-      style: 'normal',
-    },
-    {
-      path: '../public/fonts/ProximaNova-Light.woff2',
-      weight: '300',
-      style: 'normal',
-    },
-    {
-      path: '../public/fonts/ProximaNova-Bold.woff2',
-      weight: '700',
-      style: 'normal',
-    },
-    {
-      path: '../public/fonts/ProximaNova-Semibold.woff2',
-      weight: '600',
-      style: 'normal',
-    },
-  ],
-})
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={proximaNova.className}>
-      <body className={`${proximaNova.className}`} suppressHydrationWarning={true}>
-        {/* Consent Mode Default - Must be first */}
-        <Script id="consent-default" strategy="beforeInteractive">
+    <html lang="en">
+      <head>
+        {/* Google Analytics - Initialize with consent mode */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-8Y6KGXJE9K"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
-            window.gtag = gtag;
-            
-            var defaultConsent = 'denied';
-            try {
-              if (typeof window !== 'undefined') {
-                var saved = localStorage.getItem('cookie-consent:v1');
-                if (saved === 'accepted') {
-                  defaultConsent = 'granted';
-                }
-              }
-            } catch (e) {}
-            
-            gtag('consent', 'default', {
-              'analytics_storage': defaultConsent,
-              'ad_storage': defaultConsent,
-              'ad_user_data': defaultConsent,
-              'ad_personalization': defaultConsent
-            });
-          `}
-        </Script>
-
-        {/* Google Analytics 4 */}
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-GCCXJQB3L7"
-          strategy="afterInteractive"
-        />
-        <Script id="ga4-config" strategy="afterInteractive">
-          {`
             gtag('js', new Date());
-            gtag('config', 'G-GCCXJQB3L7', { 
-              anonymize_ip: true 
+            
+            // Initialize with denied consent by default
+            gtag('consent', 'default', {
+              ad_storage: 'denied',
+              analytics_storage: 'denied'
             });
+            
+            // Configure Google Analytics
+            gtag('config', 'G-8Y6KGXJE9K');
           `}
         </Script>
 
-        {/* Tidio Chat */}
-        <Script
-          src="//code.tidio.co/m4uaqdxnzzjolkznzwwrqsy1otnfdyxo.js"
-          strategy="afterInteractive"
-        />
-
-        {/* Cal.com Script */}
+        {/* Cal.com embed script */}
         <Script id="cal-embed" strategy="afterInteractive">
           {`
             (function (C, A, L) { 
@@ -120,21 +76,19 @@ export default function RootLayout({ children }) {
               }; 
             })(window, "https://app.cal.com/embed/embed.js", "init");
             
-            Cal("init", "consultation", {origin:"https://app.cal.com"});
-            Cal.ns.consultation("ui", {"hideEventTypeDetails":false,"layout":"month_view"});
+            Cal("init", "discovery-call", {origin:"https://app.cal.com"});
+            Cal.ns["discovery-call"]("ui", {"hideEventTypeDetails":false,"layout":"month_view"});
           `}
         </Script>
-        
-        <ErrorBoundary>
-          <ClientAuthProvider>
-            <Navbar />
-            <div className="height-[100vh] z-4">
-              {children}
-            </div>
-            <FooterV2 />
-            <CookieConsentBanner />
-          </ClientAuthProvider>
-        </ErrorBoundary>
+        <Script src="//code.tidio.co/watsvndw7fxjw3m5rfw96b7cwimfzwbm.js" async></Script>
+      </head>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        <Navbar />
+        {children}
+        <Footer />
+        <CookieConsentBanner />
       </body>
     </html>
   );
