@@ -1,67 +1,25 @@
-'use client';
-
-import HomePage from '@/components/homepage-v2/homepage-new';
-// import { useState } from 'react';
-// import Hero from "@/components/homepage/hero";
-// import Footer from "@/components/shared/footer";
-// import WhoWeHelp from "@/components/homepage/who-we-help";
-// import GrowWithConfidence from "@/components/homepage/grow-with-confidence";
-// import ContactUs from "@/components/homepage/contact-us";
-// import UniqueSolutions from "@/components/homepage/unique-solutions";
-// import TieredServices from "@/components/homepage/tiered-services";
-// import ProofThroughPerspective from "@/components/homepage/proof-through-perspective";
-// import LiveCaseStudies from "@/components/homepage/article-section";
-// import Carousel from "@/components/homepage/carousel";
-// import GoogleCalendarModal from "@/components/ui/google-calendar";
-// import HowWeDrive from '@/components/homepage/how-we-drive';
-// import WhyClients from '@/components/homepage/why-clients';
-// import FrameworkSection from '@/components/homepage/our-framework';
+import CaseStudies from "@/components/homepage-components/CaseStudies";
+import Hero from "@/components/homepage-components/Hero";
+import HowWeWork from "@/components/homepage-components/HowWeWork";
+import OurFramework from "@/components/homepage-components/OurFramework";
+import OurValue from "@/components/homepage-components/OurValues";
+import ServicesModels from "@/components/homepage-components/ServiceModels";
+import WhoWeHelp from "@/components/homepage-components/WhoWeHelp";
+import ProvenFramework from "@/components/homepage-components/ProvenFramework";
+import WhyClientsAppreciateUs from "@/components/homepage-components/WhyClientsAppreciateUs";
 
 export default function Home() {
-    // const [showCalendar, setShowCalendar] = useState(false);
-
-    // const handleBookNowClick = (e) => {
-    //     e.preventDefault();
-    //     setShowCalendar(true);
-    // };
-
-    // const handleCloseCalendar = () => {
-    //     setShowCalendar(false);
-    // };
-
-    return (
-      <HomePage />
-      // <div className="relative min-h-screen overflow-hidden">
-      //   <div className="fixed inset-0 z-0">
-      //     <img
-      //       src="/homepage/hero-bg.webp"
-      //       alt="Background"
-      //       className="w-full h-full object-cover"
-      //     />
-      //     <div className="absolute inset-0 bg-black/75 backdrop-blur-sm"></div>
-      //   </div>
-
-      //   <div className="relative">
-      //     {/* Add Carousel Section */}
-      //     <section className="relative h-[70vh] mt-[10vh] z-10">
-      //       <Carousel onBookNowClick={handleBookNowClick} />
-      //     </section>
-      //     {/* <Hero /> */}
-      //     <WhoWeHelp />
-      //     <HowWeDrive />
-      //     <FrameworkSection />
-      //     {/* <UniqueSolutions /> */}
-      //     <TieredServices />
-      //     <ProofThroughPerspective />
-      //     <WhyClients />
-      //     <LiveCaseStudies />
-      //     <Footer />
-      //   </div>
-
-      //   <GoogleCalendarModal
-      //     isOpen={showCalendar}
-      //     onClose={handleCloseCalendar}
-      //   />
-      // </div>
-    );
+  return (
+    <>
+      <Hero />
+      <HowWeWork />
+      <OurValue />
+      <WhoWeHelp />
+      <ProvenFramework />
+      <ServicesModels />
+      <OurFramework />
+      <WhyClientsAppreciateUs />
+      <CaseStudies />
+    </>
+  );
 }
