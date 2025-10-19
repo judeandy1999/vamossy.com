@@ -32,12 +32,12 @@ const navItems = [
   { label: 'Create Article', href: '/user-dashboard/create-article', icon: PenTool, roles: ['admin', 'worker'] },
   { label: 'Role Management', href: '/user-dashboard/user-management', icon: UserCheck, roles: ['admin'] },
   { label: 'Cards Management', href: '/user-dashboard/card-management', icon: Layers, roles: ['admin', 'worker', 'user'] },
-  // { label: 'Analytics', href: '/user-dashboard/analytics', icon: TrendingUp, roles: ['admin'] },
+  //{ label: 'Analytics', href: '/user-dashboard/analytics', icon: TrendingUp, roles: ['admin'] },
   { label: 'Options', href: '/user-dashboard/options', icon: Cog, roles: ['admin'] },
   { label: 'Booking & Payments', href: '/user-dashboard/booking', icon: Calendar, roles: [] },
   { label: 'Transactions', href: '/user-dashboard/transactions', icon: Receipt, roles: [] },
-  // { label: 'Asset Library', href: '/dashboard/assets', icon: FolderOpen, roles: ['admin', 'user'] },
-  // { label: 'FAQ', href: '/dashboard/faq', icon: HelpCircle, roles: ['admin', 'user', 'worker'] },
+  //{ label: 'Asset Library', href: '/dashboard/assets', icon: FolderOpen, roles: ['admin', 'user'] },
+  //{ label: 'FAQ', href: '/dashboard/faq', icon: HelpCircle, roles: ['admin', 'user', 'worker'] },
 ]
 
 export default function Sidebar() {
