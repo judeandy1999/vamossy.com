@@ -162,7 +162,7 @@ export default function Topbar() {
         <div className="relative" ref={dropdownRef}>
           <button 
             onClick={toggleDropdown}
-            className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-sm hover:bg-gray-400 transition-colors overflow-hidden border-2 border-gray-200 hover:border-gray-300"
+            className="cursor-pointer w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-sm hover:bg-gray-400 transition-colors overflow-hidden border-2 border-gray-200 hover:border-gray-300"
             type="button"
           >
             {avatarUrl ? (
@@ -221,7 +221,7 @@ export default function Topbar() {
 
                 <button
                   onClick={handleAccountSettings}
-                  className="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-gray-50 transition-colors flex items-center gap-2"
+                  className="cursor-pointer w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-gray-50 transition-colors flex items-center gap-2"
                   type="button"
                 >
                   <User size={16} />
@@ -231,7 +231,7 @@ export default function Topbar() {
                 <button
                   onClick={handleSignOut}
                   disabled={isSigningOut}
-                  className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors block disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="cursor-pointer w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors block disabled:opacity-50 disabled:cursor-not-allowed"
                   type="button"
                 >
                   {isSigningOut ? 'Signing out...' : 'Log out'}
