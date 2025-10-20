@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, useRef, useCallback } from 'react';
 import { supabase } from '@/utils/client';
 
 const AuthContext = createContext({});
@@ -9,15 +9,26 @@ export function AuthProvider({ children }) {
   const [status, setStatus] = useState('loading');
   const [session, setSession] = useState(null);
   const [role, setRole] = useState(null);
+  const currentUserIdRef = useRef(null);
+  const isInitializedRef = useRef(false);
 
-  // Add this to detect re-mounting
-  console.log('[AuthProvider] Component mounted/re-mounted');
+  // Enhanced debugging
+  console.log('[AuthProvider] Render at:', new Date().toISOString());
 
-  const fetchUserRole = async (userId) => {
+
+  // Add unmount detection
+  useEffect(() => {
+    console.log('[AuthProvider] Component mounted');
+
+    return () => {
+      console.log('[AuthProvider] Component UNMOUNTING');
+    };
+  }, []);
+
+  const fetchUserRole = useCallback(async (userId) => {
     if (!userId) return 'user';
     console.log('[AuthProvider] Fetching role for user ID:', userId);
     try {
-      // Add timeout to the request
       const timeoutPromise = new Promise((resolve) =>
         setTimeout(() => resolve({ data: { role: 'user' } }), 5000)
       );
@@ -39,18 +50,19 @@ export function AuthProvider({ children }) {
     } catch (error) {
       return 'user';
     }
-  };
+  }, []);
 
-  const updateAuthState = async (session, event) => {
+  const updateAuthState = useCallback(async (session, event) => {
     if (event === 'SIGNED_OUT') {
       setSession(null);
       setRole(null);
       setStatus('unauthenticated');
+      currentUserIdRef.current = null;
       return;
     }
 
     // Prevent redundant calls if session hasn't changed
-    if (session?.user?.id && role) {
+    if (session?.user?.id && session?.user?.id === currentUserIdRef.current) {
       console.log('[AuthProvider] Session unchanged, skipping role fetch');
       return;
     }
@@ -62,26 +74,32 @@ export function AuthProvider({ children }) {
       setSession(session);
       setRole(userRole);
       setStatus('authenticated');
+      currentUserIdRef.current = session.user.id;
     } else {
       setSession(null);
       setRole(null);
       setStatus('unauthenticated');
+      currentUserIdRef.current = null;
     }
-  };
+  }, [fetchUserRole]);
 
   useEffect(() => {
     let mounted = true;
 
     // Initialize auth state
     const initAuth = async () => {
+      if (isInitializedRef.current) return; // Prevent double initialization
+      
       try {
         const { data: { session } } = await supabase.auth.getSession();
         if (mounted) {
           await updateAuthState(session);
+          isInitializedRef.current = true;
         }
       } catch (error) {
         if (mounted) {
           setStatus('unauthenticated');
+          isInitializedRef.current = true;
         }
       }
     };
@@ -101,7 +119,7 @@ export function AuthProvider({ children }) {
       mounted = false;
       subscription.unsubscribe();
     };
-  }, []);
+  }, [updateAuthState]);
 
   const value = {
     status,
