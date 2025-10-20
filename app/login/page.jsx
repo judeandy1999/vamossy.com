@@ -92,76 +92,101 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 font-sans p-4">
-      <div className="bg-[#262626]/90 backdrop-blur-sm shadow-lg rounded-2xl p-8 max-w-md w-full flex flex-col gap-6">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2 flex items-center justify-center mb-4">
-            <Image src="/homepage/logo.png" alt="Logo" width={200} height={50} className="h-12 lg:h-14 w-auto" />
+    <div className="min-h-[90vh] bg-gradient-to-br from-[#f3f6f9] to-[#f1f6fe] flex items-center justify-center px-4 py-8">
+      <div className="bg-white shadow-xl rounded-2xl p-8 max-w-md w-full">
+        <div className="text-center mb-2">
+          <div className='flex flex-col items-center mb-4'>
+            <span className="p-1 font-semibold text-5xl bg-gradient-to-r from-[#032646] to-[#60a5fa] bg-clip-text text-transparent">
+              Vamossy
+            </span>
+            <span className="text-[#032646] text-lg font-medium -mt-4">
+              vamossy.com
+            </span>
+          </div>
+          <h1 className="mt-10 text-2xl font-bold text-[#1e283c]">
+            Welcome Back
           </h1>
-          <p className="text-gray-100 text-sm">Log in to continue</p>
+          <p className="text-[#505a66] text-sm">Sign in to your account to continue</p>
         </div>
 
         {/* Google Sign-in */}
         <button
           onClick={handleGoogleLogin}
           disabled={loading}
-          className="flex items-center justify-center gap-2 bg-white border border-gray-300 rounded-full py-2 px-4 shadow-sm hover:shadow transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="cursor-pointer w-full flex items-center justify-center gap-3 bg-white border-2 border-gray-200 rounded-lg py-3 px-4 text-[#1e283c] font-medium hover:border-gray-300 hover:shadow-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed mb-6"
         >
           <FcGoogle size={20} />
-          <span className="text-sm font-medium text-gray-700">
-            {loading ? 'Signing in...' : 'Sign in with Google'}
+          <span className="text-sm">
+            {loading ? 'Signing in...' : 'Continue with Google'}
           </span>
         </button>
 
         {/* Divider */}
-        <div className="flex items-center gap-2 text-gray-100 text-xs uppercase">
-          <span className="flex-1 border-t"></span> or <span className="flex-1 border-t"></span>
+        <div className="flex items-center gap-4 text-[#505a66] text-sm mb-6">
+          <div className="flex-1 border-t border-gray-200"></div>
+          <span>or</span>
+          <div className="flex-1 border-t border-gray-200"></div>
         </div>
 
-        {/* Manual Login */}
-        <form onSubmit={handleEmailLogin} className="flex flex-col gap-4">
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            disabled={loading}
-            className="text-white px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            disabled={loading}
-            className="text-white px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-          />
+        {/* Email Login Form */}
+        <form onSubmit={handleEmailLogin} className="space-y-4">
+          <div>
+            <input
+              type="email"
+              placeholder="Email address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              disabled={loading}
+              className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1f40af] focus:border-transparent bg-gray-50 text-[#1e283c] placeholder-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
+            />
+          </div>
+          
+          <div>
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              disabled={loading}
+              className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1f40af] focus:border-transparent bg-gray-50 text-[#1e283c] placeholder-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
+            />
+          </div>
 
           {error && (
-            <p className="text-xs text-red-500 text-center">{error}</p>
+            <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+              <p className="text-sm text-red-600 text-center">{error}</p>
+            </div>
           )}
 
           <button
             type="submit"
             disabled={loading || !email || !password}
-            className="bg-[#f4c30f] hover:bg-yellow-500 text-gray-900 rounded-full py-2 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="cursor-pointer w-full bg-[#1f40af] hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Signing in...' : 'Sign in'}
           </button>
         </form>
 
-        <div className="flex justify-between text-xs text-gray-100">
-          <Link href="/forgot-password" className="hover:underline">
-            Forgot password?
-          </Link>
-          <span>
-            Don&apos;t have an account?{' '}
-            <Link href="/signup" className="text-[#f4c30f] hover:underline">
-              Sign up
+        <div className="mt-6 pt-6 border-t border-gray-200">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm">
+            <Link 
+              href="/forgot-password" 
+              className="text-[#1f40af] hover:text-blue-800 hover:underline transition-colors"
+            >
+              Forgot password?
             </Link>
-          </span>
+            <div className="text-[#505a66]">
+              Don&apos;t have an account?{' '}
+              <Link 
+                href="/signup" 
+                className="text-[#1f40af] hover:text-blue-800 hover:underline transition-colors font-medium"
+              >
+                Sign up
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </div>

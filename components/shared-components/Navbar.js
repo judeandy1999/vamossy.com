@@ -9,31 +9,36 @@ import { usePathname } from 'next/navigation';
 const navLinks = [
   { name: 'How it Works', href: '/how-it-works' },
   { name: 'Services', href: '/services' },
-  { name: 'Case Studies', href: '/case-studies' },
   { name: 'Contact Us', href: '/contact' },
 ];
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [aboutDropdownOpen, setAboutDropdownOpen] = useState(false);
+  const [resourcesDropdownOpen, setResourcesDropdownOpen] = useState(false);
   const [aboutMobileDropdownOpen, setAboutMobileDropdownOpen] = useState(false);
+  const [resourcesMobileDropdownOpen, setResourcesMobileDropdownOpen] = useState(false);
   const pathname = usePathname();
   const aboutRef = useRef(null);
+  const resourcesRef = useRef(null);
 
-  // Close desktop dropdown on outside click
+  // Close desktop dropdowns on outside click
   useEffect(() => {
     function handleClickOutside(event) {
       if (aboutRef.current && !aboutRef.current.contains(event.target)) {
         setAboutDropdownOpen(false);
       }
+      if (resourcesRef.current && !resourcesRef.current.contains(event.target)) {
+        setResourcesDropdownOpen(false);
+      }
     }
-    if (aboutDropdownOpen) {
+    if (aboutDropdownOpen || resourcesDropdownOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     } else {
       document.removeEventListener("mousedown", handleClickOutside);
     }
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [aboutDropdownOpen]);
+  }, [aboutDropdownOpen, resourcesDropdownOpen]);
 
   if (pathname === '/user-dashboard' || pathname.startsWith('/user-dashboard/')) {
     return null;
@@ -58,10 +63,53 @@ export default function Navbar() {
               {link.name}
             </Link>
           ))}
+          {/* Resources Dropdown */}
+          <div className="relative" ref={resourcesRef}>
+            <button
+              className={`text-[#4b5562] cursor-pointer text-xl hover:text-blue-600 transition-colors flex items-center py-2 rounded-lg ${resourcesDropdownOpen ? "text-blue-600" : ""}`}
+              aria-haspopup="true"
+              aria-expanded={resourcesDropdownOpen}
+              onClick={() => setResourcesDropdownOpen((open) => !open)}
+            >
+              Resources
+              {/* Simple chevron-down icon (Heroicons style) */}
+              <svg className={`w-5 h-5 ml-1 transition-transform ${resourcesDropdownOpen ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 20 20">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 8l4 4 4-4" />
+              </svg>
+            </button>
+            <AnimatePresence>
+              {resourcesDropdownOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -10, scale: 0.98 }}
+                  transition={{ duration: 0.18 }}
+                  className="absolute left-0 mt-3 w-44 bg-white rounded-xl shadow-lg z-30 border border-blue-100 overflow-hidden"
+                >
+                  <div className="flex flex-col">
+                    <Link
+                      href="/articles"
+                      className="px-5 py-3 text-[#1e283c] hover:bg-blue-50 transition-colors"
+                      onClick={() => setResourcesDropdownOpen(false)}
+                    >
+                      Articles
+                    </Link>
+                    <Link
+                      href="/case-studies"
+                      className="px-5 py-3 text-[#1e283c] hover:bg-blue-50 transition-colors"
+                      onClick={() => setResourcesDropdownOpen(false)}
+                    >
+                      Case Studies
+                    </Link>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
           {/* About Dropdown */}
           <div className="relative" ref={aboutRef}>
             <button
-              className={`text-[#4b5562] cursor-pointer text-xl hover:text-blue-600 transition-colors flex items-center gap-1 px-3 py-2 rounded-lg ${aboutDropdownOpen ? "bg-blue-50" : ""}`}
+              className={`text-[#4b5562] cursor-pointer text-xl hover:text-blue-600 transition-colors flex items-center py-2 rounded-lg ${aboutDropdownOpen ? "text-blue-600" : ""}`}
               aria-haspopup="true"
               aria-expanded={aboutDropdownOpen}
               onClick={() => setAboutDropdownOpen((open) => !open)}
@@ -131,6 +179,52 @@ export default function Navbar() {
                 {link.name}
               </Link>
             ))}
+            {/* Resources Dropdown for mobile */}
+            <div className="flex flex-col">
+              <button
+                className="flex items-center justify-between text-[#4b5562] text-lg px-4 py-2 rounded hover:bg-blue-50 transition-colors w-full"
+                onClick={() => setResourcesMobileDropdownOpen(open => !open)}
+                aria-haspopup="true"
+                aria-expanded={resourcesMobileDropdownOpen}
+              >
+                <span>Resources</span>
+                <svg className={`w-5 h-5 ml-2 transition-transform ${resourcesMobileDropdownOpen ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 20 20">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 8l4 4 4-4" />
+                </svg>
+              </button>
+              <AnimatePresence>
+                {resourcesMobileDropdownOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.18 }}
+                    className="flex flex-col"
+                  >
+                    <Link
+                      href="/articles"
+                      className="pl-8 pr-4 py-2 text-[#1e283c] hover:bg-blue-100 rounded transition-colors w-full"
+                      onClick={() => {
+                        setResourcesMobileDropdownOpen(false);
+                        setMobileMenuOpen(false);
+                      }}
+                    >
+                      Articles
+                    </Link>
+                    <Link
+                      href="/case-studies"
+                      className="pl-8 pr-4 py-2 text-[#1e283c] hover:bg-blue-100 rounded transition-colors w-full"
+                      onClick={() => {
+                        setResourcesMobileDropdownOpen(false);
+                        setMobileMenuOpen(false);
+                      }}
+                    >
+                      Case Studies
+                    </Link>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
             {/* About Dropdown for mobile */}
             <div className="flex flex-col">
               <button

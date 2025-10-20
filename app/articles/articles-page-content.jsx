@@ -151,7 +151,7 @@ export default function ArticlesPageContent() {
   // Early returns should come AFTER all hooks
   if (error) {
     return (
-      <div className="bg-[#F5F5F5] min-h-screen py-10">
+      <div className="bg-white min-h-screen py-10">
         <div className="max-w-6xl mx-auto px-4 pt-24">
           <div className="text-center text-red-500">
             <p className="text-lg mb-2">Failed to load articles</p>
@@ -164,12 +164,12 @@ export default function ArticlesPageContent() {
 
   if (loading || optionsLoading) {
     return (
-      <div className="bg-[#F5F5F5] min-h-screen py-10">
+      <div className="bg-white min-h-screen py-10">
         <div className="max-w-6xl mx-auto px-4 pt-24">
           <div className="flex justify-center items-center py-20">
             <div className="text-center">
-              <Loader2 size={40} className="animate-spin text-[#025965] mx-auto mb-4" />
-              <p className="text-[#3A3A3A]">Loading articles...</p>
+              <Loader2 size={40} className="animate-spin text-[#1f40af] mx-auto mb-4" />
+              <p className="text-[#4b5562]">Loading articles...</p>
             </div>
           </div>
         </div>
@@ -359,9 +359,9 @@ export default function ArticlesPageContent() {
   const needsPagination = selectedArticle?.tabs && Object.keys(selectedArticle.tabs).length > tabsPerPage;
 
   return (
-    <div className="bg-[#F5F5F5] min-h-screen py-10">
-      <div className="max-w-6xl mx-auto px-4 pt-24">
-        <h1 className="text-3xl md:text-4xl font-bold text-[#222222] mb-8">
+    <div className="bg-white min-h-screen mb-8">
+      <div className="max-w-7xl mx-auto px-4 pt-8">
+        <h1 className="text-4xl md:text-5xl font-bold text-[#032646] mb-8">
           {getPageTitle()}
         </h1>
 
@@ -369,7 +369,7 @@ export default function ArticlesPageContent() {
           {/* Sidebar */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 sticky top-24">
-              <h2 className="text-lg font-semibold text-[#222222] mb-4">Browse Categories</h2>
+              <h2 className="text-xl font-semibold text-[#032646] mb-6">Browse Categories</h2>
               
               {/* All Articles Button */}
               <button
@@ -380,15 +380,19 @@ export default function ArticlesPageContent() {
                   setActiveTab(null);
                   updateUrlWithoutArticle();
                 }}
-                className={`cursor-pointer w-full text-left px-3 py-2 rounded-lg mb-3 transition ${
+                className={`cursor-pointer w-full text-left px-4 py-3 rounded-lg mb-3 transition font-medium ${
                   !selectedMainCategoryId && !selectedWikiId && !selectedArticleId
-                    ? 'bg-[#025965] text-white'
-                    : 'hover:bg-gray-50 text-[#3A3A3A]'
+                    ? 'bg-[#1f40af] text-white'
+                    : 'hover:bg-blue-50 text-[#4b5562] hover:text-blue-600'
                 }`}
               >
                 <div className="flex justify-between items-center">
-                  <span className="font-medium">All Articles</span>
-                  <span className="text-xs bg-gray-100 text-[#3A3A3A] px-2 py-1 rounded">
+                  <span>All Articles</span>
+                  <span className={`text-xs px-2 py-1 rounded ${
+                    !selectedMainCategoryId && !selectedWikiId && !selectedArticleId
+                      ? 'bg-blue-100 text-[#1f40af]'
+                      : 'bg-gray-100 text-[#4b5562]'
+                  }`}>
                     {articles.length}
                   </span>
                 </div>
@@ -400,17 +404,17 @@ export default function ArticlesPageContent() {
                   <div className="mb-2">
                     <button
                       onClick={() => toggleMainCategory('uncategorized')}
-                      className="cursor-pointer w-full flex items-center justify-between px-3 py-2 text-left hover:bg-gray-50 rounded-lg transition"
+                      className="cursor-pointer w-full flex items-center justify-between px-4 py-3 text-left hover:bg-blue-50 rounded-lg transition"
                     >
                       <div className="flex items-center gap-2">
                         {expandedMainCategories.has('uncategorized') ? (
-                          <ChevronDown size={16} className="text-gray-400" />
+                          <ChevronDown size={16} className="text-[#4b5562]" />
                         ) : (
-                          <ChevronRight size={16} className="text-gray-400" />
+                          <ChevronRight size={16} className="text-[#4b5562]" />
                         )}
-                        <span className="font-medium text-[#3A3A3A]">Uncategorized</span>
+                        <span className="font-medium text-[#4b5562]">Uncategorized</span>
                       </div>
-                      <span className="text-xs bg-gray-100 text-[#3A3A3A] px-2 py-1 rounded">
+                      <span className="text-xs bg-gray-100 text-[#4b5562] px-2 py-1 rounded">
                         {getMainCategoryArticleCount('uncategorized')}
                       </span>
                     </button>
@@ -425,10 +429,10 @@ export default function ArticlesPageContent() {
                             setActiveTab(null);
                             updateUrlWithoutArticle();
                           }}
-                          className={`cursor-pointer w-full text-left px-3 py-2 rounded text-sm transition ${
+                          className={`cursor-pointer w-full text-left px-4 py-2 rounded text-sm transition ${
                             selectedMainCategoryId === 'uncategorized' && !selectedWikiId && !selectedArticleId
-                              ? 'bg-gray-100 text-[#025965] font-medium'
-                              : 'hover:bg-gray-50 text-[#3A3A3A]'
+                              ? 'bg-blue-50 text-blue-600 font-medium'
+                              : 'hover:bg-blue-50 text-[#4b5562] hover:text-blue-600'
                           }`}
                         >
                           All Uncategorized ({getMainCategoryArticleCount('uncategorized')})
@@ -443,10 +447,10 @@ export default function ArticlesPageContent() {
                               setActiveTab(null);
                               updateUrlWithoutArticle();
                             }}
-                            className={`cursor-pointer w-full text-left px-3 py-2 rounded text-sm transition ${
+                            className={`cursor-pointer w-full text-left px-4 py-2 rounded text-sm transition ${
                               selectedWikiId === parseInt(category.id) && !selectedArticleId
-                                ? 'bg-gray-100 text-[#025965] font-medium'
-                                : 'hover:bg-gray-50 text-[#3A3A3A]'
+                                ? 'bg-blue-50 text-blue-600 font-medium'
+                                : 'hover:bg-blue-50 text-[#4b5562] hover:text-blue-600'
                             }`}
                           >
                             <div className="flex justify-between items-center">
@@ -467,17 +471,17 @@ export default function ArticlesPageContent() {
                   <div key={mainCategoryId} className="mb-2">
                     <button
                       onClick={() => toggleMainCategory(mainCategoryId)}
-                      className="cursor-pointer w-full flex items-center justify-between px-3 py-2 text-left hover:bg-gray-50 rounded-lg transition"
+                      className="cursor-pointer w-full flex items-center justify-between px-4 py-3 text-left hover:bg-blue-50 rounded-lg transition"
                     >
                       <div className="flex items-center gap-2">
                         {expandedMainCategories.has(mainCategoryId) ? (
-                          <ChevronDown size={16} className="text-gray-400" />
+                          <ChevronDown size={16} className="text-[#4b5562]" />
                         ) : (
-                          <ChevronRight size={16} className="text-gray-400" />
+                          <ChevronRight size={16} className="text-[#4b5562]" />
                         )}
-                        <span className="font-medium text-[#3A3A3A]">{mainCategory.name}</span>
+                        <span className="font-medium text-[#4b5562]">{mainCategory.name}</span>
                       </div>
-                      <span className="text-xs bg-gray-100 text-[#3A3A3A] px-2 py-1 rounded">
+                      <span className="text-xs bg-gray-100 text-[#4b5562] px-2 py-1 rounded">
                         {getMainCategoryArticleCount(mainCategoryId)}
                       </span>
                     </button>
@@ -492,10 +496,10 @@ export default function ArticlesPageContent() {
                             setActiveTab(null);
                             updateUrlWithoutArticle();
                           }}
-                          className={`cursor-pointer w-full text-left px-3 py-2 rounded text-sm transition ${
+                          className={`cursor-pointer w-full text-left px-4 py-2 rounded text-sm transition ${
                             selectedMainCategoryId === mainCategoryId && !selectedWikiId && !selectedArticleId
-                              ? 'bg-gray-100 text-[#025965] font-medium'
-                              : 'hover:bg-gray-50 text-[#3A3A3A]'
+                              ? 'bg-blue-50 text-blue-600 font-medium'
+                              : 'hover:bg-blue-50 text-[#4b5562] hover:text-blue-600'
                           }`}
                         >
                           All {mainCategory.name} ({getMainCategoryArticleCount(mainCategoryId)})
@@ -510,10 +514,10 @@ export default function ArticlesPageContent() {
                               setActiveTab(null);
                               updateUrlWithoutArticle();
                             }}
-                            className={`cursor-pointer w-full text-left px-3 py-2 rounded text-sm transition ${
+                            className={`cursor-pointer w-full text-left px-4 py-2 rounded text-sm transition ${
                               selectedWikiId === parseInt(category.id) && !selectedArticleId
-                                ? 'bg-gray-100 text-[#025965] font-medium'
-                                : 'hover:bg-gray-50 text-[#3A3A3A]'
+                                ? 'bg-blue-50 text-blue-600 font-medium'
+                                : 'hover:bg-blue-50 text-[#4b5562] hover:text-blue-600'
                             }`}
                           >
                             <div className="flex justify-between items-center">
@@ -536,19 +540,19 @@ export default function ArticlesPageContent() {
           <div className="lg:col-span-3">
             {/* Breadcrumbs */}
             <div className="mb-6">
-              <nav className="flex items-center text-sm text-[#3A3A3A]">
+              <nav className="flex items-center text-sm text-[#4b5562]">
                 {getBreadcrumbs().map((breadcrumb, index) => (
                   <div key={index} className="flex items-center">
-                    {index > 0 && <span className="mx-2">/</span>}
+                    {index > 0 && <span className="mx-2 text-gray-400">/</span>}
                     {breadcrumb.onClick ? (
                       <button
                         onClick={breadcrumb.onClick}
-                        className="cursor-pointer hover:text-[#025965] transition truncate max-w-[200px]"
+                        className="cursor-pointer hover:text-blue-600 transition truncate max-w-[200px]"
                       >
                         {breadcrumb.label}
                       </button>
                     ) : (
-                      <span className="text-[#222222] font-medium truncate max-w-[200px]">
+                      <span className="text-[#032646] font-medium truncate max-w-[200px]">
                         {breadcrumb.label}
                       </span>
                     )}
@@ -564,7 +568,7 @@ export default function ArticlesPageContent() {
                 <div className="border-b border-gray-200 p-6 pb-4">
                   <button
                     onClick={handleBackToArticles}
-                    className="cursor-pointer flex items-center gap-2 text-[#3A3A3A] hover:text-[#025965] transition mb-4"
+                    className="cursor-pointer flex items-center gap-2 text-[#4b5562] hover:text-blue-600 transition mb-4 font-medium"
                   >
                     <ArrowLeft size={16} />
                     Back to Articles
@@ -575,8 +579,8 @@ export default function ArticlesPageContent() {
                 {articleLoading ? (
                   <div className="flex justify-center items-center py-20">
                     <div className="text-center">
-                      <Loader2 size={40} className="animate-spin text-[#025965] mx-auto mb-4" />
-                      <p className="text-[#3A3A3A]">Loading article...</p>
+                      <Loader2 size={40} className="animate-spin text-[#1f40af] mx-auto mb-4" />
+                      <p className="text-[#4b5562]">Loading article...</p>
                     </div>
                   </div>
                 ) : articleError ? (
@@ -588,11 +592,11 @@ export default function ArticlesPageContent() {
                   <div className="p-6 pl-13">
                     {/* Article Header */}
                     <div className="mb-6">
-                      <h1 className="text-3xl font-bold text-[#222222] mb-4">
+                      <h1 className="text-3xl font-bold text-[#032646] mb-4">
                         {selectedArticle.title}
                       </h1>
                       
-                      <div className="flex items-center gap-4 text-sm text-[#3A3A3A]">
+                      <div className="flex items-center gap-4 text-sm text-[#4b5562]">
                         <div className="flex items-center gap-1">
                           <Calendar size={16} />
                           <span>
@@ -608,11 +612,11 @@ export default function ArticlesPageContent() {
                           <Tag size={16} />
                           <div className="flex gap-2">
                             {wikiOptions[selectedArticle.wiki_id]?.main_category_id && (
-                              <span className="bg-[#B5C9B8] text-[#025965] px-2 py-1 rounded text-xs">
+                              <span className="bg-blue-100 text-blue-600 px-2 py-1 rounded text-xs font-medium">
                                 {mainCategories[wikiOptions[selectedArticle.wiki_id].main_category_id]?.name}
                               </span>
                             )}
-                            <span className="bg-gray-100 text-[#3A3A3A] px-2 py-1 rounded text-xs">
+                            <span className="bg-gray-100 text-[#4b5562] px-2 py-1 rounded text-xs">
                               {wikiOptions[selectedArticle.wiki_id]?.name || 'Unknown Category'}
                             </span>
                           </div>
@@ -633,7 +637,7 @@ export default function ArticlesPageContent() {
                                 disabled={!canGoPrevious}
                                 className={`cursor-pointer flex-shrink-0 mr-2 p-2 rounded-lg transition-all ${
                                   canGoPrevious
-                                    ? 'text-[#025965] hover:text-[#548816] hover:bg-gray-100'
+                                    ? 'text-blue-600 hover:text-[#1f40af] hover:bg-blue-50'
                                     : 'text-gray-300 !cursor-not-allowed'
                                 }`}
                                 title="Previous tabs"
@@ -648,10 +652,10 @@ export default function ArticlesPageContent() {
                                 <button
                                   key={tabId}
                                   onClick={() => setActiveTab(tabId)}
-                                  className={`cursor-pointer flex-shrink-0 px-3 py-2 text-xs sm:text-sm font-medium rounded-t transition focus:outline-none whitespace-nowrap max-w-[200px] truncate ${
+                                  className={`cursor-pointer flex-shrink-0 px-4 py-3 text-sm font-medium rounded-t transition focus:outline-none whitespace-nowrap max-w-[200px] truncate ${
                                     activeTab === tabId
-                                      ? 'bg-gray-100 text-[#025965] border-b-2 border-[#025965]'
-                                      : 'text-[#3A3A3A] hover:text-[#025965]'
+                                      ? 'bg-blue-50 text-blue-600 border-b-2 border-blue-600'
+                                      : 'text-[#4b5562] hover:text-blue-600'
                                   }`}
                                   title={tabContent.name}
                                 >
@@ -667,7 +671,7 @@ export default function ArticlesPageContent() {
                                 disabled={!canGoNext}
                                 className={`cursor-pointer flex-shrink-0 ml-2 p-2 rounded-lg transition-all ${
                                   canGoNext
-                                    ? 'text-[#025965] hover:text-[#548816] hover:bg-gray-100'
+                                    ? 'text-blue-600 hover:text-[#1f40af] hover:bg-blue-50'
                                     : 'text-gray-300 !cursor-not-allowed'
                                 }`}
                                 title="Next tabs"
@@ -687,7 +691,7 @@ export default function ArticlesPageContent() {
                                     onClick={() => setCurrentTabPage(index)}
                                     className={`w-2 h-2 rounded-full transition-all ${
                                       index === currentTabPage
-                                        ? 'bg-[#025965]'
+                                        ? 'bg-blue-600'
                                         : 'bg-gray-300 hover:bg-gray-400'
                                     }`}
                                     title={`Page ${index + 1}`}
@@ -699,7 +703,7 @@ export default function ArticlesPageContent() {
                         </div>
 
                         {/* Tab Content */}
-                        <div className="article-container max-w-none text-[#3A3A3A] leading-relaxed">
+                        <div className="article-container max-w-none text-[#4b5562] leading-relaxed">
                           {activeTab ? (
                             <div dangerouslySetInnerHTML={{ __html: selectedArticle.tabs[activeTab].content }} />
                           ) : (
@@ -709,7 +713,7 @@ export default function ArticlesPageContent() {
                       </div>
                     ) : (
                       <div 
-                        className="article-container max-w-none text-[#3A3A3A] leading-relaxed"
+                        className="article-container max-w-none text-[#4b5562] leading-relaxed"
                         dangerouslySetInnerHTML={{ __html: selectedArticle?.content }}
                       />
                     )}
@@ -720,7 +724,7 @@ export default function ArticlesPageContent() {
               <>
                 {filteredArticles.length === 0 ? (
                   <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
-                    <p className="text-[#3A3A3A] text-lg">
+                    <p className="text-[#4b5562] text-lg">
                       {selectedWikiId 
                         ? `No articles found in ${wikiOptions[selectedWikiId]?.name}`
                         : selectedMainCategoryId === 'uncategorized'
@@ -736,16 +740,16 @@ export default function ArticlesPageContent() {
                     {filteredArticles.map((article) => (
                       <div
                         key={article.id}
-                        className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition cursor-pointer"
+                        className="group bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition cursor-pointer hover:border-blue-200"
                         onClick={() => handleArticleClick(article.id)}
                       >
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
-                            <h3 className="text-xl font-semibold text-[#222222] hover:text-[#025965] transition mb-2">
+                            <h3 className="text-xl font-semibold text-[#032646] group-hover:text-blue-600 transition mb-2">
                               {article.title}
                             </h3>
                             <div className="flex items-center gap-4 mb-3">
-                              <p className="text-sm text-[#3A3A3A]">
+                              <p className="text-sm text-[#4b5562]">
                                 {new Date(article.created_at).toLocaleString([], {
                                   dateStyle: 'medium',
                                   timeStyle: 'short',
@@ -754,16 +758,16 @@ export default function ArticlesPageContent() {
                               </p>
                               <div className="flex items-center gap-2">
                                 {wikiOptions[article.wiki_id]?.main_category_id && (
-                                  <span className="text-xs bg-[#B5C9B8] text-[#025965] px-2 py-1 rounded">
+                                  <span className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded font-medium">
                                     {mainCategories[wikiOptions[article.wiki_id].main_category_id]?.name}
                                   </span>
                                 )}
-                                <span className="text-xs bg-gray-100 text-[#3A3A3A] px-2 py-1 rounded">
+                                <span className="text-xs bg-gray-100 text-[#4b5562] px-2 py-1 rounded">
                                   {wikiOptions[article.wiki_id]?.name || 'Unknown Category'}
                                 </span>
                               </div>
                             </div>
-                            <p className="text-[#3A3A3A] line-clamp-3">{article.preview}</p>
+                            <p className="text-[#4b5562] line-clamp-3">{article.preview}</p>
                           </div>
                         </div>
                       </div>
@@ -776,7 +780,7 @@ export default function ArticlesPageContent() {
                   <div className="flex justify-center mt-10">
                     <button
                       onClick={loadMore}
-                      className="cursor-pointer px-6 py-3 bg-[#025965] text-white rounded-lg hover:bg-[#548816] transition flex items-center gap-2"
+                      className="cursor-pointer px-6 py-3 bg-[#1f40af] text-white rounded-lg hover:bg-blue-800 transition flex items-center gap-2 font-medium"
                     >
                       {loading && <Loader2 size={16} className="animate-spin" />}
                       Load More Articles

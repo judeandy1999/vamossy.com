@@ -47,7 +47,7 @@ export default function Footer() {
   const pathname = usePathname();
     
   // Hide footer on user-dashboard pages
-  if (pathname?.startsWith('/user-dashboard')) {
+  if (pathname?.startsWith('/user-dashboard') || pathname?.startsWith('/login')) {
     return null;
   }
 
