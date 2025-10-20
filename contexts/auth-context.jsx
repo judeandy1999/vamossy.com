@@ -12,25 +12,11 @@ export function AuthProvider({ children }) {
   const currentUserIdRef = useRef(null);
   const isInitializedRef = useRef(false);
 
-  // Enhanced debugging
-  console.log('[AuthProvider] Render at:', new Date().toISOString());
-
-
-  // Add unmount detection
-  useEffect(() => {
-    console.log('[AuthProvider] Component mounted');
-
-    return () => {
-      console.log('[AuthProvider] Component UNMOUNTING');
-    };
-  }, []);
-
   const fetchUserRole = useCallback(async (userId) => {
     if (!userId) return 'user';
-    console.log('[AuthProvider] Fetching role for user ID:', userId);
     try {
       const timeoutPromise = new Promise((resolve) =>
-        setTimeout(() => resolve({ data: { role: 'user' } }), 5000)
+        setTimeout(() => resolve({ data: { role: null } }), 50000)
       );
 
       const queryPromise = supabase
@@ -44,7 +30,7 @@ export function AuthProvider({ children }) {
         return 'user';
       }
 
-      const userRole = data.role || 'user';
+      const userRole = data.role;
       return userRole;
       
     } catch (error) {
@@ -63,14 +49,11 @@ export function AuthProvider({ children }) {
 
     // Prevent redundant calls if session hasn't changed
     if (session?.user?.id && session?.user?.id === currentUserIdRef.current) {
-      console.log('[AuthProvider] Session unchanged, skipping role fetch');
       return;
     }
     
     if (session?.user) {
-      console.log('[AuthProvider] User session detected:', session.user);
       const userRole = await fetchUserRole(session.user.id);
-      console.log('[AuthProvider] User role fetched:', userRole);
       setSession(session);
       setRole(userRole);
       setStatus('authenticated');
@@ -106,9 +89,9 @@ export function AuthProvider({ children }) {
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         if (mounted && ['SIGNED_IN', 'SIGNED_OUT', 'TOKEN_REFRESHED'].includes(event)) {
-          await updateAuthState(session, event);
+          updateAuthState(session, event);
         }
       }
     );
