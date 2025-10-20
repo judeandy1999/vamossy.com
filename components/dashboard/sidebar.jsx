@@ -61,7 +61,7 @@ export default function Sidebar() {
       {/* Header with logo and toggle */}
       <div className="p-2 border-b border-gray-200 flex items-center justify-between">
         {!isCollapsed && (
-          <Link href="/" className="flex items-center">
+          // <Link href="/" className="flex items-center">
             <div className='flex flex-col items-center'>
               <span className="p-1 font-semibold text-3xl bg-gradient-to-r from-[#032646] to-[#60a5fa] bg-clip-text text-transparent">
                 Vamossy
@@ -70,7 +70,7 @@ export default function Sidebar() {
                 vamossy.com
               </span>
             </div>
-          </Link>
+          // </Link>
         )}
         <button
           onClick={toggleSidebar}
