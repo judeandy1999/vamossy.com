@@ -9,180 +9,76 @@ export function AuthProvider({ children }) {
   const [status, setStatus] = useState('loading');
   const [session, setSession] = useState(null);
   const [role, setRole] = useState(null);
-  const [isInitialized, setIsInitialized] = useState(false);
+
+  const fetchUserRole = async (userId) => {
+    if (!userId) return 'user';
+    
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', userId)
+        .single();
+      
+      return error || !data ? 'user' : (data.role || 'user');
+    } catch {
+      return 'user';
+    }
+  };
+
+  const updateAuthState = async (session) => {
+    if (session?.user) {
+      const userRole = await fetchUserRole(session.user.id);
+      setSession(session);
+      setRole(userRole);
+      setStatus('authenticated');
+    } else {
+      setSession(null);
+      setRole(null);
+      setStatus('unauthenticated');
+    }
+  };
 
   useEffect(() => {
-    let isMounted = true;
-    let subscription = null;
-    let initTimeout = null;
-    let roleTimeout = null;
+    let mounted = true;
 
-    const fetchUserRole = async (userId) => {
-      if (!userId || !isMounted) return 'user';
-      
-      return new Promise((resolve) => {
-        let hasResolved = false;
-        
-        // Critical timing fix: Add small delay before role fetch
-        const startRoleFetch = () => {
-          roleTimeout = setTimeout(() => {
-            if (!hasResolved) {
-              hasResolved = true;
-              resolve('user');
-            }
-          }, 2000);
-
-          supabase
-            .from('users')
-            .select('role')
-            .eq('id', userId)
-            .single()
-            .then(({ data: userData, error }) => {
-              clearTimeout(roleTimeout);
-              
-              if (!hasResolved) {
-                hasResolved = true;
-                if (error || !userData) {
-                  resolve('user');
-                } else {
-                  const fetchedRole = userData.role || 'user';
-                  resolve(fetchedRole);
-                }
-              } else {
-                // Late update handling
-                if (userData && userData.role && userData.role !== 'user' && isMounted) {
-                  // Small delay to ensure React has processed previous state updates
-                  setTimeout(() => {
-                    if (isMounted) setRole(userData.role);
-                  }, 0);
-                }
-              }
-            })
-            .catch(() => {
-              clearTimeout(roleTimeout);
-              if (!hasResolved) {
-                hasResolved = true;
-                resolve('user');
-              }
-            });
-        };
-
-        // Add micro-delay to prevent race conditions (this was the key fix!)
-        setTimeout(startRoleFetch, 10);
-      });
-    };
-
-    const updateAuthState = async (session, event = 'session_change') => {
-      if (!isMounted) return;
-
-      if (session?.user) {
-        const userRole = await fetchUserRole(session.user.id);
-        
-        if (isMounted) {
-          // Batch state updates to prevent race conditions
-          const updateStates = () => {
-            setSession(session);
-            setRole(userRole);
-            setStatus('authenticated');
-          };
-
-          // Use setTimeout to ensure proper state batching
-          setTimeout(updateStates, 0);
+    // Initialize auth state
+    const initAuth = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (mounted) {
+          await updateAuthState(session);
         }
-      } else {
-        if (isMounted) {
-          const updateStates = () => {
-            setSession(null);
-            setRole(null);
-            setStatus('unauthenticated');
-          };
-          
-          setTimeout(updateStates, 0);
+      } catch (error) {
+        console.error('Auth initialization error:', error);
+        if (mounted) {
+          setStatus('unauthenticated');
         }
       }
     };
 
-    const initializeAuth = async () => {
-      return new Promise((resolve) => {
-        initTimeout = setTimeout(() => {
-          if (isMounted) {
-            setSession(null);
-            setRole(null);
-            setStatus('unauthenticated');
-            setIsInitialized(true);
-          }
-          resolve();
-        }, 12000);
-
-        // Add small delay before getting session (critical timing fix)
-        setTimeout(() => {
-          supabase.auth.getSession()
-            .then(async ({ data: { session }, error }) => {
-              clearTimeout(initTimeout);
-              
-              if (!error && session) {
-                await updateAuthState(session, 'initialization');
-              } else {
-                if (isMounted) {
-                  setSession(null);
-                  setRole(null);
-                  setStatus('unauthenticated');
-                }
-              }
-            })
-            .catch(() => {
-              clearTimeout(initTimeout);
-              if (isMounted) {
-                setSession(null);
-                setRole(null);
-                setStatus('unauthenticated');
-              }
-            })
-            .finally(() => {
-              if (isMounted) {
-                setIsInitialized(true);
-              }
-              resolve();
-            });
-        }, 50); // Critical delay
-      });
-    };
-
-    const { data: { subscription: authSubscription } } = supabase.auth.onAuthStateChange(
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        if (!isMounted) return;
-        
-        switch (event) {
-          case 'SIGNED_IN':
-          case 'TOKEN_REFRESHED':
-            await updateAuthState(session, event);
-            break;
-          case 'SIGNED_OUT':
-            await updateAuthState(null, event);
-            break;
-          default:
-            break;
+        if (mounted && ['SIGNED_IN', 'SIGNED_OUT', 'TOKEN_REFRESHED'].includes(event)) {
+          await updateAuthState(session);
         }
       }
     );
 
-    subscription = authSubscription;
-    
-    initializeAuth();
+    initAuth();
 
     return () => {
-      isMounted = false;
-      subscription?.unsubscribe();
-      if (initTimeout) clearTimeout(initTimeout);
-      if (roleTimeout) clearTimeout(roleTimeout);
+      mounted = false;
+      subscription.unsubscribe();
     };
   }, []);
 
   const value = {
-    status: isInitialized ? status : 'loading',
+    status,
     session,
     role,
-    isInitialized
+    isInitialized: status !== 'loading'
   };
 
   return (
