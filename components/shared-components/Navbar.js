@@ -171,7 +171,7 @@ export default function Navbar() {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
-          className="md:hidden bg-white shadow-lg px-4 py-6 absolute top-20 left-0 w-full z-50"
+          className="md:hidden bg-white shadow-lg px-4 py-6 absolute top-24 left-0 w-full z-50"
         >
           <div className="flex flex-col gap-2">
             {navLinks.map(link => (
