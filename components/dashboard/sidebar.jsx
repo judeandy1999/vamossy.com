@@ -59,16 +59,17 @@ export default function Sidebar() {
   return (
     <aside className={`${isCollapsed ? 'w-16' : 'w-64'} bg-white border-r border-gray-200 hidden md:flex flex-col shadow-sm transition-all duration-300 ease-in-out`}>
       {/* Header with logo and toggle */}
-      <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+      <div className="p-2 border-b border-gray-200 flex items-center justify-between">
         {!isCollapsed && (
           <Link href="/" className="flex items-center">
-            <Image 
-              src="/homepage/logo.png" 
-              alt="Logo" 
-              width={120} 
-              height={30} 
-              className="h-8 w-auto" 
-            />
+            <div className='flex flex-col items-center'>
+              <span className="p-1 font-semibold text-3xl bg-gradient-to-r from-[#032646] to-[#60a5fa] bg-clip-text text-transparent">
+                Vamossy
+              </span>
+              <span className="text-[#032646] text-sm font-medium -mt-4">
+                vamossy.com
+              </span>
+            </div>
           </Link>
         )}
         <button
