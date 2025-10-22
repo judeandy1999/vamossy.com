@@ -608,92 +608,97 @@ export default function ArticlesPageContent() {
                   ))}
                 </div>
                 <div>
-                  {/* Pagination */}
-                  {totalPages > 1 && (
-                    <div className="flex justify-end items-center mb-2 space-x-1">
-                      {/* First page button - only show if not near the beginning */}
-                      {currentPage > 3 && (
-                        <>
-                          <button 
-                            onClick={() => goToPage(1)} 
-                            className="cursor-pointer px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-900 transition-colors duration-200"
-                          >
-                            1
-                          </button>
-                          {currentPage > 4 && (
-                            <span className="px-2 py-2 text-gray-500">
-                              <MoreHorizontal size={16} />
-                            </span>
+                  {!selectedArticleId && (
+                    <>
+                      {/* Pagination */}
+                      {totalPages > 1 && (
+                        <div className="flex justify-end items-center mb-2 space-x-1">
+                          {/* First page button - only show if not near the beginning */}
+                          {currentPage > 3 && (
+                            <>
+                              <button 
+                                onClick={() => goToPage(1)} 
+                                className="cursor-pointer px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-900 transition-colors duration-200"
+                              >
+                                1
+                              </button>
+                              {currentPage > 4 && (
+                                <span className="px-2 py-2 text-gray-500">
+                                  <MoreHorizontal size={16} />
+                                </span>
+                              )}
+                            </>
                           )}
-                        </>
+                          
+                          {/* Previous button */}
+                          <button 
+                            onClick={goToPrevPage}
+                            disabled={!hasPrevPage}
+                            className={`cursor-pointer flex items-center px-3 py-2 text-sm font-medium border rounded-md transition-colors duration-200 ${
+                              hasPrevPage
+                                ? 'text-gray-700 bg-white border-gray-300 hover:bg-gray-50 hover:text-gray-900'
+                                : 'text-gray-400 bg-gray-50 border-gray-200 cursor-not-allowed'
+                            }`}
+                          >
+                            <ChevronLeft size={16} className="mr-1" />
+                            Previous
+                          </button>
+                          
+                          {/* Page numbers */}
+                          {getPageNumbers().map(pageNum => (
+                            <button
+                              key={pageNum}
+                              onClick={() => goToPage(pageNum)}
+                              className={`cursor-pointer px-3 py-2 text-sm font-medium border rounded-md transition-colors duration-200 ${
+                                currentPage === pageNum 
+                                  ? 'bg-blue-600 text-white border-blue-600 hover:bg-blue-700' 
+                                  : 'text-gray-700 bg-white border-gray-300 hover:bg-gray-50 hover:text-gray-900'
+                              }`}
+                            >
+                              {pageNum}
+                            </button>
+                          ))}
+                          
+                          {/* Next button */}
+                          <button 
+                            onClick={goToNextPage}
+                            disabled={!hasNextPage}
+                            className={`cursor-pointer flex items-center px-3 py-2 text-sm font-medium border rounded-md transition-colors duration-200 ${
+                              hasNextPage
+                                ? 'text-gray-700 bg-white border-gray-300 hover:bg-gray-50 hover:text-gray-900'
+                                : 'text-gray-400 bg-gray-50 border-gray-200 cursor-not-allowed'
+                            }`}
+                          >
+                            Next
+                            <ChevronRight size={16} className="ml-1" />
+                          </button>
+                          
+                          {/* Last page button - only show if not near the end */}
+                          {currentPage < totalPages - 2 && (
+                            <>
+                              {currentPage < totalPages - 3 && (
+                                <span className="px-2 py-2 text-gray-500">
+                                  <MoreHorizontal size={16} />
+                                </span>
+                              )}
+                              <button 
+                                onClick={() => goToPage(totalPages)} 
+                                className="cursor-pointer px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-900 transition-colors duration-200"
+                              >
+                                {totalPages}
+                              </button>
+                            </>
+                          )}
+                        </div>
                       )}
                       
-                      {/* Previous button */}
-                      <button 
-                        onClick={goToPrevPage}
-                        disabled={!hasPrevPage}
-                        className={`cursor-pointer flex items-center px-3 py-2 text-sm font-medium border rounded-md transition-colors duration-200 ${
-                          hasPrevPage
-                            ? 'text-gray-700 bg-white border-gray-300 hover:bg-gray-50 hover:text-gray-900'
-                            : 'text-gray-400 bg-gray-50 border-gray-200 cursor-not-allowed'
-                        }`}
-                      >
-                        <ChevronLeft size={16} className="mr-1" />
-                        Previous
-                      </button>
-                      
-                      {/* Page numbers */}
-                      {getPageNumbers().map(pageNum => (
-                        <button
-                          key={pageNum}
-                          onClick={() => goToPage(pageNum)}
-                          className={`cursor-pointer px-3 py-2 text-sm font-medium border rounded-md transition-colors duration-200 ${
-                            currentPage === pageNum 
-                              ? 'bg-blue-600 text-white border-blue-600 hover:bg-blue-700' 
-                              : 'text-gray-700 bg-white border-gray-300 hover:bg-gray-50 hover:text-gray-900'
-                          }`}
-                        >
-                          {pageNum}
-                        </button>
-                      ))}
-                      
-                      {/* Next button */}
-                      <button 
-                        onClick={goToNextPage}
-                        disabled={!hasNextPage}
-                        className={`cursor-pointer flex items-center px-3 py-2 text-sm font-medium border rounded-md transition-colors duration-200 ${
-                          hasNextPage
-                            ? 'text-gray-700 bg-white border-gray-300 hover:bg-gray-50 hover:text-gray-900'
-                            : 'text-gray-400 bg-gray-50 border-gray-200 cursor-not-allowed'
-                        }`}
-                      >
-                        Next
-                        <ChevronRight size={16} className="ml-1" />
-                      </button>
-                      
-                      {/* Last page button - only show if not near the end */}
-                      {currentPage < totalPages - 2 && (
-                        <>
-                          {currentPage < totalPages - 3 && (
-                            <span className="px-2 py-2 text-gray-500">
-                              <MoreHorizontal size={16} />
-                            </span>
-                          )}
-                          <button 
-                            onClick={() => goToPage(totalPages)} 
-                            className="cursor-pointer px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-900 transition-colors duration-200"
-                          >
-                            {totalPages}
-                          </button>
-                        </>
-                      )}
-                    </div>
+                      {/* Show items count */}
+                      <div className="text-end text-sm text-gray-600">
+                        {getPaginationText()}
+                      </div>
+                    </>
                   )}
                   
-                  {/* Show items count */}
-                  <div className="text-end mt-2 text-sm text-gray-600">
-                    {getPaginationText()}
-                  </div>
                 </div>
               </nav>
             </div>
