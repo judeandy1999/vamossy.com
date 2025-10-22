@@ -17,7 +17,7 @@ export default function DocumentsPage() {
   if (role === 'admin') {
     return <AdminDocumentsPage />;
   }
-  if (role === 'user') {
+  if (role === 'user' || role === 'worker') {
     return <UserDocumentsPage />;
   }
   
