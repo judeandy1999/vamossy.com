@@ -16,7 +16,8 @@ import { useToast } from '@/contexts/toast-context';
 
 export default function Page() {
   const { status, session } = useAuthWithRedirect();
-  const { articles, loading, error, loadMore, isReachingEnd, addNewArticle, updateArticleInSidebar, deleteArticleFromSidebar } = useAllArticles();
+  const [currentPage, setCurrentPage] = useState(1);
+  const { articles, loading, error, totalPages, totalCount, hasNextPage, hasPrevPage, addNewArticle, updateArticleInSidebar, deleteArticleFromSidebar } = useAllArticles(currentPage);
   const { wikiOptions, tabOptionsMap, loading: optionsLoading, error: optionsError } = useOptions();
   const { showToast } = useToast();
   const [selectedArticle, setSelectedArticle] = useState(null);
@@ -395,6 +396,30 @@ export default function Page() {
     }
   };
 
+  // Pagination functions for sidebar
+  const goToPage = (page) => {
+    setCurrentPage(page);
+  };
+
+  const goToNextPage = () => {
+    if (hasNextPage) {
+      setCurrentPage(prev => prev + 1);
+    }
+  };
+
+  const goToPrevPage = () => {
+    if (hasPrevPage) {
+      setCurrentPage(prev => prev - 1);
+    }
+  };
+
+  useEffect(() => {
+    // Reset to first page when starting a new article
+    if (!selectedArticle) {
+      setCurrentPage(1);
+    }
+  }, [selectedArticle]);
+
   if (status === 'loading' || optionsLoading) {
     return <Spinner />;
   }
@@ -413,8 +438,13 @@ export default function Page() {
       <EditorSidebar
         articles={articles}
         loading={loading}
-        isReachingEnd={isReachingEnd}
-        loadMore={loadMore}
+        totalPages={totalPages}
+        currentPage={currentPage}
+        hasNextPage={hasNextPage}
+        hasPrevPage={hasPrevPage}
+        goToPage={goToPage}
+        goToNextPage={goToNextPage}
+        goToPrevPage={goToPrevPage}
         startNewArticle={startNewArticle}
         setSelectedArticle={setSelectedArticle}
         selectedArticleId={selectedArticle?.id}
