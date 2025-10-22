@@ -1,61 +1,49 @@
 'use client';
+
 import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { ChevronDown, ChevronRight, ArrowLeft, Calendar, Tag, Loader2, ChevronLeft } from 'lucide-react';
+import { ChevronDown, ChevronRight, ArrowLeft, Calendar, Tag, Loader2, ChevronLeft, MoreHorizontal } from 'lucide-react';
 import { useAllArticles } from '@/hooks/useAllArticles';
 import { useOptions } from '@/hooks/useOptions';
 import { useArticleContent } from '@/hooks/useArticleContent';
 import { useArticleMeta } from '@/hooks/useArticleMeta';
+import { useArticleCounts } from '@/hooks/useArticleCounts';
 
 export default function ArticlesPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   
-  const { articles, loading, error, loadMore, isReachingEnd } = useAllArticles();
-  const { wikiOptions, mainCategories, loading: optionsLoading } = useOptions();
+  // ALL STATE HOOKS FIRST
+  const [currentPage, setCurrentPage] = useState(1);
   const [selectedMainCategoryId, setSelectedMainCategoryId] = useState(null);
   const [selectedWikiId, setSelectedWikiId] = useState(null);
   const [expandedMainCategories, setExpandedMainCategories] = useState(new Set());
   const [selectedArticleId, setSelectedArticleId] = useState(null);
   const [activeTab, setActiveTab] = useState(null);
-  
-  // Tab navigation states
   const [currentTabPage, setCurrentTabPage] = useState(0);
   const [tabsPerPage, setTabsPerPage] = useState(5);
-  const tabsContainerRef = useRef(null);
-
-  const createSlug = (title) => {
-    return title
-      .toLowerCase()
-      .replace(/[^\w\s-]/g, '')
-      .replace(/\s+/g, '-')
-      .replace(/--+/g, '-')
-      .trim();
-  };
   
-  // Initialize selectedArticleId from URL on component mount
+  // ALL REF HOOKS
+  const tabsContainerRef = useRef(null);
+  
+  // ALL CUSTOM HOOKS
+  const { articles, loading, error, totalPages, totalCount, hasNextPage, hasPrevPage } = useAllArticles(
+    currentPage, 
+    { selectedWikiId, selectedMainCategoryId }
+  );
+  const { counts, loading: countsLoading } = useArticleCounts();
+  const { wikiOptions, mainCategories, loading: optionsLoading } = useOptions();
+  const { data: selectedArticle, loading: articleLoading, error: articleError } = useArticleContent(selectedArticleId);
+  const { data: selectedArticleMeta } = useArticleMeta(selectedArticleId);
+
+  // ALL USEEFFECTS
   useEffect(() => {
     const id = searchParams.get('id');
     if (id) {
       setSelectedArticleId(parseInt(id));
     }
   }, [searchParams]);
-  
-  // Fetch article content when an article is selected
-  const { data: selectedArticle, loading: articleLoading, error: articleError } = useArticleContent(selectedArticleId);
-  const { data: selectedArticleMeta } = useArticleMeta(selectedArticleId);
 
-  // Helper function to get sorted tabs
-  const getSortedTabs = () => {
-    if (!selectedArticle?.tabs) return [];
-    return Object.entries(selectedArticle.tabs).sort((a, b) => {
-      const orderA = a[1].order || 999;
-      const orderB = b[1].order || 999;
-      return orderA - orderB;
-    });
-  };
-
-  // Add useEffect for tab management
   useEffect(() => {
     if (selectedArticleMeta?.has_tabs && selectedArticle?.tabs) {
       const sortedTabs = getSortedTabs();
@@ -67,7 +55,6 @@ export default function ArticlesPageContent() {
     }
   }, [selectedArticleMeta?.has_tabs, selectedArticle?.tabs]);
 
-  // Calculate how many tabs can fit based on container width
   useEffect(() => {
     const calculateTabsPerPage = () => {
       if (tabsContainerRef.current && selectedArticle?.tabs) {
@@ -84,7 +71,6 @@ export default function ArticlesPageContent() {
     return () => window.removeEventListener('resize', calculateTabsPerPage);
   }, [selectedArticle?.tabs, selectedArticleId]);
 
-  // Add this useEffect for collapsible tables
   useEffect(() => {
     if (!articleLoading && selectedArticle) {
       const timer = setTimeout(() => {
@@ -148,7 +134,61 @@ export default function ArticlesPageContent() {
     }
   }, [articleLoading, selectedArticle, activeTab]);
 
-  // Early returns should come AFTER all hooks
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedMainCategoryId, selectedWikiId]);
+
+  // ALL FUNCTIONS (these can be defined after hooks)
+  const createSlug = (title) => {
+    return title
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/--+/g, '-')
+      .trim();
+  };
+
+  const getSortedTabs = () => {
+    if (!selectedArticle?.tabs) return [];
+    return Object.entries(selectedArticle.tabs).sort((a, b) => {
+      const orderA = a[1].order || 999;
+      const orderB = b[1].order || 999;
+      return orderA - orderB;
+    });
+  };
+
+  // Tab navigation functions for article tabs (not main pagination)
+  const getVisibleTabs = () => {
+    if (!selectedArticle?.tabs) return [];
+    const sortedTabs = getSortedTabs();
+    const startIndex = currentTabPage * tabsPerPage;
+    const endIndex = startIndex + tabsPerPage;
+    return sortedTabs.slice(startIndex, endIndex);
+  };
+
+  const getTotalTabPages = () => {
+    if (!selectedArticle?.tabs) return 0;
+    return Math.ceil(Object.keys(selectedArticle.tabs).length / tabsPerPage);
+  };
+
+  const goToPreviousTabPage = () => {
+    if (currentTabPage > 0) {
+      setCurrentTabPage(prev => prev - 1);
+    }
+  };
+
+  const goToNextTabPage = () => {
+    if (currentTabPage < getTotalTabPages() - 1) {
+      setCurrentTabPage(prev => prev + 1);
+    }
+  };
+
+  const canGoPrevious = currentTabPage > 0;
+  const canGoNext = currentTabPage < getTotalTabPages() - 1;
+  const needsPagination = selectedArticle?.tabs && Object.keys(selectedArticle.tabs).length > tabsPerPage;
+
+  // NOW EARLY RETURNS CAN HAPPEN AFTER ALL HOOKS
   if (error) {
     return (
       <div className="bg-white min-h-screen py-10">
@@ -298,66 +338,73 @@ export default function ArticlesPageContent() {
     return acc;
   }, {});
 
-  // Filter articles based on selections
-  const getFilteredArticles = () => {
-    if (selectedWikiId) {
-      return articles.filter(article => article.wiki_id === selectedWikiId);
-    }
-    if (selectedMainCategoryId === 'uncategorized') {
-      const uncategorizedWikiIds = groupedCategories['uncategorized']?.map(cat => parseInt(cat.id)) || [];
-      return articles.filter(article => uncategorizedWikiIds.includes(article.wiki_id));
-    }
-    if (selectedMainCategoryId) {
-      const categoryWikiIds = groupedCategories[selectedMainCategoryId]?.map(cat => parseInt(cat.id)) || [];
-      return articles.filter(article => categoryWikiIds.includes(article.wiki_id));
-    }
-    return articles;
-  };
-
-  const filteredArticles = getFilteredArticles();
+  const filteredArticles = articles; // No client-side filtering needed anymore
 
   // Get article counts for display
   const getArticleCount = (categoryId) => {
-    return articles.filter(article => article.wiki_id === parseInt(categoryId)).length;
+    return counts?.byWikiId?.[parseInt(categoryId)] || 0;
   };
 
   const getMainCategoryArticleCount = (mainCategoryId) => {
     if (mainCategoryId === 'uncategorized') {
-      const uncategorizedWikiIds = groupedCategories['uncategorized']?.map(cat => parseInt(cat.id)) || [];
-      return articles.filter(article => uncategorizedWikiIds.includes(article.wiki_id)).length;
+      return counts?.uncategorized || 0;
     }
-    const categoryWikiIds = groupedCategories[mainCategoryId]?.map(cat => parseInt(cat.id)) || [];
-    return articles.filter(article => categoryWikiIds.includes(article.wiki_id)).length;
+    return counts?.byMainCategoryId?.[mainCategoryId] || 0;
   };
 
-  // Tab navigation functions
-  const getVisibleTabs = () => {
-    const sortedTabs = getSortedTabs();
-    const startIndex = currentTabPage * tabsPerPage;
-    return sortedTabs.slice(startIndex, startIndex + tabsPerPage);
+  const getTotalArticleCount = () => {
+    return counts?.total || 0;
   };
 
-  const getTotalPages = () => {
-    const sortedTabs = getSortedTabs();
-    return Math.ceil(sortedTabs.length / tabsPerPage);
-  };
-
-  const goToPreviousPage = () => {
-    if (currentTabPage > 0) {
-      setCurrentTabPage(currentTabPage - 1);
-    }
+  // Pagination functions
+  const goToPage = (page) => {
+    setCurrentPage(page);
   };
 
   const goToNextPage = () => {
-    if (currentTabPage < getTotalPages() - 1) {
-      setCurrentTabPage(currentTabPage + 1);
+    if (hasNextPage) {
+      setCurrentPage(prev => prev + 1);
     }
   };
 
-  const canGoPrevious = currentTabPage > 0;
-  const canGoNext = currentTabPage < getTotalPages() - 1;
-  const needsPagination = selectedArticle?.tabs && Object.keys(selectedArticle.tabs).length > tabsPerPage;
+  const goToPrevPage = () => {
+    if (hasPrevPage) {
+      setCurrentPage(prev => prev - 1);
+    }
+  };
 
+  // Generate page numbers for pagination UI
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxVisible = 5; // Show 5 page numbers at most
+    
+    let start = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+    let end = Math.min(totalPages, start + maxVisible - 1);
+    
+    if (end - start + 1 < maxVisible) {
+      start = Math.max(1, end - maxVisible + 1);
+    }
+    
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+    
+    return pages;
+  };
+
+  const getPaginationText = () => {
+    if (totalCount === 0) {
+      return "No articles found";
+    }
+    
+    const pageSize = 10;
+    const start = ((currentPage - 1) * pageSize) + 1;
+    const end = Math.min(currentPage * pageSize, totalCount);
+    
+    return `Showing ${start}-${end} of ${totalCount} articles`;
+  };
+
+  // Return your JSX here
   return (
     <div className="bg-white min-h-screen mb-8">
       <div className="max-w-7xl mx-auto px-4 pt-8">
@@ -393,7 +440,7 @@ export default function ArticlesPageContent() {
                       ? 'bg-blue-100 text-[#1f40af]'
                       : 'bg-gray-100 text-[#4b5562]'
                   }`}>
-                    {articles.length}
+                    {getTotalArticleCount()}
                   </span>
                 </div>
               </button>
@@ -540,24 +587,114 @@ export default function ArticlesPageContent() {
           <div className="lg:col-span-3">
             {/* Breadcrumbs */}
             <div className="mb-6">
-              <nav className="flex items-center text-sm text-[#4b5562]">
-                {getBreadcrumbs().map((breadcrumb, index) => (
-                  <div key={index} className="flex items-center">
-                    {index > 0 && <span className="mx-2 text-gray-400">/</span>}
-                    {breadcrumb.onClick ? (
-                      <button
-                        onClick={breadcrumb.onClick}
-                        className="cursor-pointer hover:text-blue-600 transition truncate max-w-[200px]"
+              <nav className="flex justify-between items-end text-md text-[#4b5562]">
+                <div className="flex items-center">
+                  {getBreadcrumbs().map((breadcrumb, index) => (
+                    <div key={index} className="flex items-center">
+                      {index > 0 && <span className="mx-2 text-gray-400">/</span>}
+                      {breadcrumb.onClick ? (
+                        <button
+                          onClick={breadcrumb.onClick}
+                          className="cursor-pointer hover:text-blue-600 transition truncate max-w-[200px]"
+                        >
+                          {breadcrumb.label}
+                        </button>
+                      ) : (
+                        <span className="text-[#032646] text-md font-medium truncate max-w-[200px]">
+                          {breadcrumb.label}
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <div>
+                  {/* Pagination */}
+                  {totalPages > 1 && (
+                    <div className="flex justify-end items-center mb-2 space-x-1">
+                      {/* First page button - only show if not near the beginning */}
+                      {currentPage > 3 && (
+                        <>
+                          <button 
+                            onClick={() => goToPage(1)} 
+                            className="cursor-pointer px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-900 transition-colors duration-200"
+                          >
+                            1
+                          </button>
+                          {currentPage > 4 && (
+                            <span className="px-2 py-2 text-gray-500">
+                              <MoreHorizontal size={16} />
+                            </span>
+                          )}
+                        </>
+                      )}
+                      
+                      {/* Previous button */}
+                      <button 
+                        onClick={goToPrevPage}
+                        disabled={!hasPrevPage}
+                        className={`cursor-pointer flex items-center px-3 py-2 text-sm font-medium border rounded-md transition-colors duration-200 ${
+                          hasPrevPage
+                            ? 'text-gray-700 bg-white border-gray-300 hover:bg-gray-50 hover:text-gray-900'
+                            : 'text-gray-400 bg-gray-50 border-gray-200 cursor-not-allowed'
+                        }`}
                       >
-                        {breadcrumb.label}
+                        <ChevronLeft size={16} className="mr-1" />
+                        Previous
                       </button>
-                    ) : (
-                      <span className="text-[#032646] font-medium truncate max-w-[200px]">
-                        {breadcrumb.label}
-                      </span>
-                    )}
+                      
+                      {/* Page numbers */}
+                      {getPageNumbers().map(pageNum => (
+                        <button
+                          key={pageNum}
+                          onClick={() => goToPage(pageNum)}
+                          className={`cursor-pointer px-3 py-2 text-sm font-medium border rounded-md transition-colors duration-200 ${
+                            currentPage === pageNum 
+                              ? 'bg-blue-600 text-white border-blue-600 hover:bg-blue-700' 
+                              : 'text-gray-700 bg-white border-gray-300 hover:bg-gray-50 hover:text-gray-900'
+                          }`}
+                        >
+                          {pageNum}
+                        </button>
+                      ))}
+                      
+                      {/* Next button */}
+                      <button 
+                        onClick={goToNextPage}
+                        disabled={!hasNextPage}
+                        className={`cursor-pointer flex items-center px-3 py-2 text-sm font-medium border rounded-md transition-colors duration-200 ${
+                          hasNextPage
+                            ? 'text-gray-700 bg-white border-gray-300 hover:bg-gray-50 hover:text-gray-900'
+                            : 'text-gray-400 bg-gray-50 border-gray-200 cursor-not-allowed'
+                        }`}
+                      >
+                        Next
+                        <ChevronRight size={16} className="ml-1" />
+                      </button>
+                      
+                      {/* Last page button - only show if not near the end */}
+                      {currentPage < totalPages - 2 && (
+                        <>
+                          {currentPage < totalPages - 3 && (
+                            <span className="px-2 py-2 text-gray-500">
+                              <MoreHorizontal size={16} />
+                            </span>
+                          )}
+                          <button 
+                            onClick={() => goToPage(totalPages)} 
+                            className="cursor-pointer px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-900 transition-colors duration-200"
+                          >
+                            {totalPages}
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  )}
+                  
+                  {/* Show items count */}
+                  <div className="text-end mt-2 text-sm text-gray-600">
+                    {getPaginationText()}
                   </div>
-                ))}
+                </div>
               </nav>
             </div>
 
@@ -633,7 +770,7 @@ export default function ArticlesPageContent() {
                             {/* Previous Button */}
                             {needsPagination && (
                               <button
-                                onClick={goToPreviousPage}
+                                onClick={goToPreviousTabPage}
                                 disabled={!canGoPrevious}
                                 className={`cursor-pointer flex-shrink-0 mr-2 p-2 rounded-lg transition-all ${
                                   canGoPrevious
@@ -667,7 +804,7 @@ export default function ArticlesPageContent() {
                             {/* Next Button */}
                             {needsPagination && (
                               <button
-                                onClick={goToNextPage}
+                                onClick={goToNextTabPage}
                                 disabled={!canGoNext}
                                 className={`cursor-pointer flex-shrink-0 ml-2 p-2 rounded-lg transition-all ${
                                   canGoNext
@@ -682,10 +819,10 @@ export default function ArticlesPageContent() {
                           </div>
 
                           {/* Pagination Dots */}
-                          {needsPagination && getTotalPages() > 1 && (
+                          {needsPagination && getTotalTabPages() > 1 && (
                             <div className="absolute right-0 top-full mt-2">
                               <div className="flex gap-1">
-                                {Array.from({ length: getTotalPages() }, (_, index) => (
+                                {Array.from({ length: getTotalTabPages() }, (_, index) => (
                                   <button
                                     key={index}
                                     onClick={() => setCurrentTabPage(index)}
@@ -736,7 +873,7 @@ export default function ArticlesPageContent() {
                     </p>
                   </div>
                 ) : (
-                  <div className="space-y-6">
+                  <div className="space-y-6 mb-4">
                     {filteredArticles.map((article) => (
                       <div
                         key={article.id}
@@ -774,19 +911,94 @@ export default function ArticlesPageContent() {
                     ))}
                   </div>
                 )}
-
-                {/* Load More Button */}
-                {!isReachingEnd && !loading && !selectedWikiId && !selectedMainCategoryId && (
-                  <div className="flex justify-center mt-10">
-                    <button
-                      onClick={loadMore}
-                      className="cursor-pointer px-6 py-3 bg-[#1f40af] text-white rounded-lg hover:bg-blue-800 transition flex items-center gap-2 font-medium"
-                    >
-                      {loading && <Loader2 size={16} className="animate-spin" />}
-                      Load More Articles
-                    </button>
+                <div>
+                  {/* Pagination */}
+                  {totalPages > 1 && (
+                    <div className="flex justify-end items-center mt-4 mb-2 space-x-1">
+                      {/* First page button - only show if not near the beginning */}
+                      {currentPage > 3 && (
+                        <>
+                          <button 
+                            onClick={() => goToPage(1)} 
+                            className="cursor-pointer px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-900 transition-colors duration-200"
+                          >
+                            1
+                          </button>
+                          {currentPage > 4 && (
+                            <span className="px-2 py-2 text-gray-500">
+                              <MoreHorizontal size={16} />
+                            </span>
+                          )}
+                        </>
+                      )}
+                      
+                      {/* Previous button */}
+                      <button 
+                        onClick={goToPrevPage}
+                        disabled={!hasPrevPage}
+                        className={`cursor-pointer flex items-center px-3 py-2 text-sm font-medium border rounded-md transition-colors duration-200 ${
+                          hasPrevPage
+                            ? 'text-gray-700 bg-white border-gray-300 hover:bg-gray-50 hover:text-gray-900'
+                            : 'text-gray-400 bg-gray-50 border-gray-200 cursor-not-allowed'
+                        }`}
+                      >
+                        <ChevronLeft size={16} className="mr-1" />
+                        Previous
+                      </button>
+                      
+                      {/* Page numbers */}
+                      {getPageNumbers().map(pageNum => (
+                        <button
+                          key={pageNum}
+                          onClick={() => goToPage(pageNum)}
+                          className={`cursor-pointer px-3 py-2 text-sm font-medium border rounded-md transition-colors duration-200 ${
+                            currentPage === pageNum 
+                              ? 'bg-blue-600 text-white border-blue-600 hover:bg-blue-700' 
+                              : 'text-gray-700 bg-white border-gray-300 hover:bg-gray-50 hover:text-gray-900'
+                          }`}
+                        >
+                          {pageNum}
+                        </button>
+                      ))}
+                      
+                      {/* Next button */}
+                      <button 
+                        onClick={goToNextPage}
+                        disabled={!hasNextPage}
+                        className={`cursor-pointer flex items-center px-3 py-2 text-sm font-medium border rounded-md transition-colors duration-200 ${
+                          hasNextPage
+                            ? 'text-gray-700 bg-white border-gray-300 hover:bg-gray-50 hover:text-gray-900'
+                            : 'text-gray-400 bg-gray-50 border-gray-200 cursor-not-allowed'
+                        }`}
+                      >
+                        Next
+                        <ChevronRight size={16} className="ml-1" />
+                      </button>
+                      
+                      {/* Last page button - only show if not near the end */}
+                      {currentPage < totalPages - 2 && (
+                        <>
+                          {currentPage < totalPages - 3 && (
+                            <span className="px-2 py-2 text-gray-500">
+                              <MoreHorizontal size={16} />
+                            </span>
+                          )}
+                          <button 
+                            onClick={() => goToPage(totalPages)} 
+                            className="cursor-pointer px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-900 transition-colors duration-200"
+                          >
+                            {totalPages}
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  )}
+                  
+                  {/* Show items count */}
+                  <div className="text-end text-sm text-gray-600">
+                    {getPaginationText()}
                   </div>
-                )}
+                </div>
               </>
             )}
           </div>

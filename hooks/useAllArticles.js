@@ -1,6 +1,6 @@
 'use client';
 
-import useSWRInfinite from 'swr/infinite';
+import useSWR from 'swr';
 
 const fetcher = (url) =>
   fetch(url, {
@@ -16,47 +16,77 @@ const fetcher = (url) =>
 
 const PAGE_SIZE = 10;
 
-export const getAllArticlesKey = (pageIndex, previousPageData) => {
-  if (previousPageData && !previousPageData.length) return null;
-  return `/api/articles?page=${pageIndex + 1}&limit=${PAGE_SIZE}`;
-};
+export function useAllArticles(currentPage = 1, filters = {}) {
+  const { selectedWikiId, selectedMainCategoryId } = filters;
+  
+  const queryParams = {
+    page: currentPage,
+    limit: PAGE_SIZE,
+  };
+  
+  if (selectedWikiId) {
+    queryParams.wiki_id = selectedWikiId;
+  }
+  
+  if (selectedMainCategoryId) {
+    queryParams.main_category_id = selectedMainCategoryId;
+  }
+  
+  const queryString = new URLSearchParams(queryParams).toString();
 
-export function useAllArticles() {
-  const { data, error, isLoading, size, setSize, mutate } = useSWRInfinite(
-    getAllArticlesKey,
+  const { data, error, isLoading, mutate } = useSWR(
+    `/api/articles?${queryString}`,
     fetcher,
-    { revalidateFirstPage: false }
+    { revalidateOnFocus: false }
   );
 
-  const articles = data ? [].concat(...data) : [];
-  const isReachingEnd = data && data[data.length - 1]?.length < PAGE_SIZE;
+  // For pagination, we need total count from the API
+  const articles = data?.articles || [];
+  const totalCount = data?.totalCount || 0;
+  const totalPages = Math.ceil(totalCount / PAGE_SIZE);
+  const hasNextPage = currentPage < totalPages;
+  const hasPrevPage = currentPage > 1;
 
   const addNewArticle = (newArticle) => {
-    mutate((pages) => {
-      if (!pages) return [];
-      const updatedFirstPage = [newArticle, ...pages[0]].slice(0, PAGE_SIZE);
-      return [updatedFirstPage, ...pages.slice(1)];
-    }, false);
+    // Only update if we're on the first page and no filters are applied
+    if (currentPage === 1 && !selectedWikiId && !selectedMainCategoryId) {
+      mutate(
+        (current) => ({
+          ...current,
+          articles: [newArticle, ...(current?.articles || [])],
+          totalCount: (current?.totalCount || 0) + 1
+        }),
+        false
+      );
+    }
   };
 
   const updateArticleInSidebar = (updatedArticle) => {
-    mutate((pages) => {
-      if (!pages) return [];
-      const updatedFirstPage = pages[0].map((article) =>
-        article.id === updatedArticle.id ? { ...article, ...updatedArticle } : article
-      );
-      return [updatedFirstPage, ...pages.slice(1)];
-    }, false);
+    mutate(
+      (current) => {
+        if (!current) return current;
+        const updatedArticles = current.articles.map((article) =>
+          article.id === updatedArticle.id ? { ...article, ...updatedArticle } : article
+        );
+        return { ...current, articles: updatedArticles };
+      },
+      false
+    );
   };
 
   const deleteArticleFromSidebar = async (id) => {
-    mutate((pages) => {
-      if (!pages) return [];
-      const updatedPages = pages.map((page) =>
-        page.filter((article) => article.id !== id)
-      );
-      return updatedPages;
-    }, false);
+    mutate(
+      (current) => {
+        if (!current) return current;
+        const filteredArticles = current.articles.filter((article) => article.id !== id);
+        return {
+          ...current,
+          articles: filteredArticles,
+          totalCount: Math.max(0, (current.totalCount || 0) - 1)
+        };
+      },
+      false
+    );
 
     await mutate();
   };
@@ -65,8 +95,11 @@ export function useAllArticles() {
     articles,
     loading: isLoading,
     error,
-    loadMore: () => setSize(size + 1),
-    isReachingEnd,
+    totalPages,
+    totalCount,
+    currentPage,
+    hasNextPage,
+    hasPrevPage,
     addNewArticle,
     updateArticleInSidebar,
     deleteArticleFromSidebar,
