@@ -5,30 +5,30 @@ import Link from 'next/link';
 const features = [
 	{
 		icon: <Target className="w-7 h-7" />,
-		title: 'Step 1 – Understand Your Goals',
+		title: 'Step 1 – Align Goals',
 		description:
-			'We start by learning what growth means for you—whether it&apos;s scaling revenue, improving retention, or launching into new markets.',
+			'We start by learning about your goals, and understanding the nuances of your ecommerce business. Whether it is scaling revenue, improving retention, launching into new markets, or other development projects, we are here to help you.',
 		bg: 'bg-[#1f40af]',
 	},
 	{
 		icon: <Users className="w-7 h-7" />,
 		title: 'Step 2 – Match You With the Right Partner',
 		description:
-			'No endless pitches. No bias. Just data-driven matching with agencies and AI tools proven to deliver in your specific category.',
+			'No endless pitches. No bias. Just data-driven and human reviewed matching with pre-vetted competent agencies, proven to deliver high quality work similar to your project.',
 		bg: 'bg-[#3c82f6]',
 	},
 	{
 		icon: <Rocket className="w-7 h-7" />,
 		title: 'Step 3 – Launch Fast, See Results',
 		description:
-			'Your growth sprint begins within days, not months. We structure engagements so you can measure ROI in the first 30 days.',
+			'Your growth sprint begins within days, not months. We structure engagements frequently, so you can measure the project’s delivery by a wide variety of unbiased assessments.',
 		bg: 'bg-[#1f40af]',
 	},
 	{
 		icon: <HeartHandshake className="w-7 h-7" />,
 		title: 'Step 4 – Stay Supported',
 		description:
-			'Unlike other matchmakers, we don&apos;t disappear after the intro. Vamossy stays by your side to ensure the partnership keeps delivering.',
+			'Unlike other matchmakers, we don’t disappear after the intro. Vamossy stays by your side to ensure the partnership keeps delivering.',
 		bg: 'bg-[#3c82f6]',
 	},
 ];
@@ -56,7 +56,7 @@ const HowWeWork = () => (
 						>
 							{feature.icon}
 						</span>
-						<h3 className="font-medium text-sm text-[#1e283c] mb-2">
+						<h3 className="font-medium text-left text-sm text-[#1e283c] mb-2">
 							{feature.title}
 						</h3>
 						<p className="text-sm text-[#505a66] text-start">
