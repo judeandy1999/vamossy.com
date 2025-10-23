@@ -1,41 +1,46 @@
 import { useState } from 'react';
 
-export function useContactForm() {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(false);
+export const useContactForm = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState(null);
 
-  const resetForm = () => {
-    setError(null);
-    setSuccess(false);
-  };
+  const submitContactForm = async (formData) => {
+    setIsSubmitting(true);
+    setSubmitStatus(null);
 
-  const submitContactForm = async ({ name, email, message }) => {
-    setLoading(true);
-    setError(null);
-    setSuccess(false);
     try {
-      const res = await fetch('/api/contact/contact-klaviyo', {
+      
+      const response = await fetch('/api/contact/contact-form', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, message }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
       });
-      const data = await res.json();
-      if (!res.ok || !data.success) {
-        setError(data.error || 'Failed to submit form');
-        setSuccess(false);
-        return { success: false, error: data.error || 'Failed to submit form' };
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        setSubmitStatus('error');
+        return { success: false, error: data };
       }
-      setSuccess(true);
-      return { success: true };
-    } catch (err) {
-      setError(err.message || 'Network error');
-      setSuccess(false);
-      return { success: false, error: err.message || 'Network error' };
+
+      setSubmitStatus('success');
+      return { success: true, data };
+
+    } catch (error) {
+      console.error('Form submission error:', error);
+      setSubmitStatus('error');
+      return { success: false, error };
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
-  return { submitContactForm, loading, error, success, resetForm };
-}
+  return {
+    isSubmitting,
+    submitStatus,
+    submitContactForm,
+    setSubmitStatus
+  };
+};

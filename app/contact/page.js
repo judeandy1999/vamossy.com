@@ -1,9 +1,11 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Send, CheckCircle, Clock, ShieldCheck, LineChart, Handshake, Calendar } from 'lucide-react';
+import { useContactForm } from '../../hooks/useContactForm';
 
 export default function ContactPage() {
+  const [isClient, setIsClient] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -12,8 +14,12 @@ export default function ContactPage() {
     message: ''
   });
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const { isSubmitting, submitStatus, submitContactForm, setSubmitStatus } = useContactForm();
+
+  // Ensure this only runs on client side
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const serviceTypes = [
     'Agency Matchmaking',
@@ -33,17 +39,44 @@ export default function ContactPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    console.log('Form submitted:', formData);
-    setIsSubmitted(true);
-    setIsSubmitting(false);
+    const result = await submitContactForm(formData);
   };
 
-  if (isSubmitted) {
+  if (!isClient) {
+    return (
+      <div className="min-h-[90dvh] bg-gradient-to-br from-[#f3f6f9] to-[#f1f6fe] flex items-center justify-center px-4 py-8">
+        <div className="max-w-6xl w-full grid lg:grid-cols-2 gap-12 items-center">
+          <div className="bg-white rounded-2xl p-8 shadow-xl">
+            <div className="animate-pulse space-y-4">
+              <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+              <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+              <div className="space-y-3">
+                <div className="h-10 bg-gray-200 rounded"></div>
+                <div className="h-10 bg-gray-200 rounded"></div>
+                <div className="h-10 bg-gray-200 rounded"></div>
+                <div className="h-10 bg-gray-200 rounded"></div>
+                <div className="h-20 bg-gray-200 rounded"></div>
+                <div className="h-10 bg-gray-200 rounded"></div>
+              </div>
+            </div>
+          </div>
+          <div className="text-[#1e283c]">
+            <div className="animate-pulse space-y-4">
+              <div className="h-8 bg-gray-200 rounded w-1/2"></div>
+              <div className="space-y-2">
+                <div className="h-4 bg-gray-200 rounded"></div>
+                <div className="h-4 bg-gray-200 rounded"></div>
+                <div className="h-4 bg-gray-200 rounded"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (submitStatus === 'success') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#f3f6f9] to-[#f1f6fe] flex items-center justify-center px-4">
         <div className="bg-white rounded-2xl p-8 max-w-md w-full text-center shadow-lg">
@@ -52,7 +85,7 @@ export default function ContactPage() {
           <p className="text-[#505a66] mb-6">We&apos;ll get back to you within 24 hours with actionable insights.</p>
           <button
             onClick={() => {
-              setIsSubmitted(false);
+              setSubmitStatus(null);
               setFormData({ name: '', email: '', company: '', serviceType: '', message: '' });
             }}
             className="text-[#1f40af] hover:text-[#1e377a] font-medium"
@@ -71,6 +104,14 @@ export default function ContactPage() {
         <div className="bg-white rounded-2xl p-8 shadow-xl">
           <h1 className="text-2xl font-bold text-[#1e283c] mb-2">Get Started Today</h1>
           <p className="text-[#505a66] mb-6">Tell us about your ecommerce growth goals and challenges.</p>
+          
+          {submitStatus === 'error' && (
+            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-red-700 text-sm">
+                There was an error submitting your message. Please try again.
+              </p>
+            </div>
+          )}
           
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
