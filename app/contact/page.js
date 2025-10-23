@@ -178,7 +178,7 @@ export default function ContactPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-[#1f2937] text-white font-semibold py-3 px-6 rounded-lg hover:bg-gray-900 transition-colors duration-200 flex items-center justify-center gap-2 disabled:opacity-50"
+              className="cursor-pointer w-full bg-[#1f2937] text-white font-semibold py-3 px-6 rounded-lg hover:bg-gray-900 transition-colors duration-200 flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {isSubmitting ? (
                 <>

@@ -6,6 +6,7 @@ import CookieConsentBanner from "@/components/shared-components/CookieConsentBan
 import ClientAuthProvider from "@/components/providers/client-auth-provider";
 import Script from 'next/script';
 import ErrorBoundary from "@/components/error-boundary";
+import FloatingCTA from '@/components/shared-components/FloatingCTA';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -92,6 +93,7 @@ export default function RootLayout({ children }) {
             <Navbar />
             <div className="height-[100vh] z-4">
               {children}
+              <FloatingCTA />
             </div>
             <Footer />
             <CookieConsentBanner />
