@@ -9,7 +9,6 @@ import { usePathname } from 'next/navigation';
 const navLinks = [
   { name: 'How it Works', href: '/how-it-works' },
   { name: 'Services', href: '/services' },
-  { name: 'Contact Us', href: '/contact' },
 ];
 
 export default function Navbar() {
@@ -149,6 +148,10 @@ export default function Navbar() {
               )}
             </AnimatePresence>
           </div>
+          {/* Contact Us */}
+          <Link href="/contact" className="text-[#4b5562] text-xl hover:text-blue-600 transition-colors">
+            Contact Us
+          </Link>
         </div>
         <div className="flex items-center gap-4">
           <Link href="#" 
@@ -271,6 +274,12 @@ export default function Navbar() {
                 )}
               </AnimatePresence>
             </div>
+            {/* Contact Us for mobile */}
+            <Link href="/contact" className="text-[#4b5562] text-lg hover:text-blue-600 transition-colors px-4 py-2 rounded"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Contact Us
+            </Link>
             <Link href="#" 
               className="bg-[#1f40af] text-white text-lg font-bold px-4 py-2 rounded-md font-medium hover:bg-blue-800 transition-colors mt-2"
               data-cal-link="dev-vamossy/discovery-call"
