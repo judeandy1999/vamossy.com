@@ -77,18 +77,18 @@ const OurValue = () => (
               key={idx}
               className="bg-white/10 rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
             >
-              <div className="text-center mb-6">
+              <div className="text-center mb-8">
                 <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center">
                   <IconComponent className="w-40 h-40 text-white" />
                 </div>
-                <h3 className="font-semibold text-xl text-white mb-2">{benefit.title}</h3>
-                <p className="text-white text-sm leading-relaxed">{benefit.description}</p>
+                <h3 className="font-semibold text-xl text-white">{benefit.title}</h3>
+                <p className="text-white text-xs leading-relaxed">{benefit.description}</p>
               </div>
               
-              <ul className="space-y-2">
+              <ul className="space-y-2 flex items-center flex-col">
                 {benefit.features.map((feature, featureIdx) => (
-                  <li key={featureIdx} className="flex items-start text-sm">
-                    <span className="inline-block w-1.5 h-1.5 bg-white rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                  <li key={featureIdx} className="flex items-center text-sm">
+                    {/* <span className="inline-block w-1.5 h-1.5 bg-white rounded-full mt-2 mr-3 flex-shrink-0"></span> */}
                     <span className="text-white">{feature}</span>
                   </li>
                 ))}
