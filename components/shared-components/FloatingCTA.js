@@ -6,12 +6,6 @@ import { usePathname } from 'next/navigation';
 
 export default function FloatingCTA() {
   const pathname = usePathname();
-      
-  // Hide footer on user-dashboard pages
-  if (pathname?.startsWith('/user-dashboard')) {
-    return null;
-  }
-
   const [isVisible, setIsVisible] = useState(true);
 
   // Hide CTA when user scrolls to footer or contact sections
@@ -30,6 +24,11 @@ export default function FloatingCTA() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+      
+  // Hide footer on user-dashboard pages
+  if (pathname?.startsWith('/user-dashboard')) {
+    return null;
+  }
 
   return (
     <AnimatePresence>
