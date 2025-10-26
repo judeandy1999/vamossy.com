@@ -17,12 +17,7 @@ export default function CaseStudiesPage() {
 
   // Ensure consistent filtering logic
   const filteredCaseStudies = useMemo(() => {
-    if (typeof window === 'undefined') {
-      // Server-side: return all case studies
-      return caseStudies;
-    }
-    
-    // Client-side: apply filters
+    // Apply filters consistently on both server and client
     let filtered = searchCaseStudies(searchQuery);
     
     if (selectedCategory) {

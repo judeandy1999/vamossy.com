@@ -7,6 +7,7 @@ import ClientAuthProvider from "@/components/providers/client-auth-provider";
 import Script from 'next/script';
 import ErrorBoundary from "@/components/error-boundary";
 import FloatingCTA from '@/components/shared-components/FloatingCTA';
+import { generateSiteMetadata, generateOrganizationSchema, generateWebsiteSchema } from "@/utils/seo";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,15 +19,28 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata = {
-  title: "Vamossy - Your Ecommerce Growth Partner",
-  description: "Vamossy is your dedicated partner in eCommerce growth, providing tailored solutions to elevate your online business.",
-};
+export const metadata = generateSiteMetadata();
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
+        {/* Structured Data */}
+        <Script
+          id="organization-schema"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(generateOrganizationSchema()),
+          }}
+        />
+        <Script
+          id="website-schema"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(generateWebsiteSchema()),
+          }}
+        />
+        
         {/* Google Analytics - Initialize with consent mode */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-8Y6KGXJE9K"

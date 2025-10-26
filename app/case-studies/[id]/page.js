@@ -1,8 +1,24 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Clock, Star, TrendingUp, CheckCircle, Quote, Calendar, Tag } from 'lucide-react';
+import Script from 'next/script';
+import { ArrowLeft, Clock, Star, TrendingUp, CheckCircle, Quote, Calendar, Tag, Users, Target } from 'lucide-react';
 import { getCaseStudyById } from '@/data/caseStudies';
+import { generateCaseStudyMetadata, generateArticleSchema, generateBreadcrumbSchema } from '@/utils/seo';
+
+// Generate metadata for the page
+export async function generateMetadata({ params }) {
+  const caseStudy = getCaseStudyById(params.id);
+  
+  if (!caseStudy) {
+    return {
+      title: 'Case Study Not Found',
+      description: 'The requested case study could not be found.',
+    };
+  }
+  
+  return generateCaseStudyMetadata(caseStudy);
+}
 
 export default function CaseStudyDetailPage({ params }) {
   const caseStudy = getCaseStudyById(params.id);
@@ -11,7 +27,59 @@ export default function CaseStudyDetailPage({ params }) {
     notFound();
   }
 
+  // Generate structured data
+  const caseStudySchema = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": caseStudy.title,
+    "description": caseStudy.summary,
+    "author": {
+      "@type": "Organization",
+      "name": "Vamossy Digital"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Vamossy Digital",
+      "logo": {
+        "@type": "ImageObject",
+        "url": `${process.env.NEXT_PUBLIC_SITE_URL || 'https://vamossy.com'}/logo.png`
+      }
+    },
+    "datePublished": caseStudy.publishedDate,
+    "dateModified": caseStudy.publishedDate,
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": `${process.env.NEXT_PUBLIC_SITE_URL || 'https://vamossy.com'}${caseStudy.seo.url}`
+    },
+    "keywords": caseStudy.tags.join(', '),
+    "articleSection": "Case Studies",
+    "wordCount": caseStudy.readTime
+  };
+
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: "Home", url: "/" },
+    { name: "Case Studies", url: "/case-studies" },
+    { name: caseStudy.title, url: caseStudy.seo.url }
+  ]);
+
   return (
+    <>
+      {/* Structured Data */}
+      <Script
+        id="case-study-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(caseStudySchema),
+        }}
+      />
+      <Script
+        id="breadcrumb-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbSchema),
+        }}
+      />
+      
     <div className="bg-[#f1f5fb] min-h-screen font-sans">
       {/* Header */}
       <section className="py-8 px-4 bg-white shadow-sm">
@@ -75,12 +143,12 @@ export default function CaseStudyDetailPage({ params }) {
           <h2 className="text-2xl md:text-3xl font-bold text-[#1e283c] mb-8 text-center font-sans">
             Key Results
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {Object.entries(caseStudy.metrics).map(([key, value]) => (
-              <div key={key} className="bg-white rounded-xl p-6 text-center shadow-lg">
-                <div className="text-3xl font-bold text-[#1f40af] mb-2 font-sans">{value}</div>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
+            {caseStudy.keyResults.map((result, index) => (
+              <div key={index} className="bg-white rounded-xl p-6 text-center shadow-lg">
+                <div className="text-3xl font-bold text-[#1f40af] mb-2 font-sans">{result.value}</div>
                 <div className="text-sm text-[#505a66] capitalize font-medium">
-                  {key.replace(/([A-Z])/g, ' $1').trim()}
+                  {result.metric}
                 </div>
               </div>
             ))}
@@ -178,20 +246,17 @@ export default function CaseStudyDetailPage({ params }) {
       <section className="py-12 px-4">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-bold text-[#1e283c] mb-8 font-sans">
-            Implementation Process
+            Approach
           </h2>
           <div className="space-y-6">
             {caseStudy.implementation.phases.map((phase, index) => (
               <div key={index} className="bg-white rounded-xl p-6 shadow-lg">
                 <div className="flex items-start gap-4">
                   <span className="w-10 h-10 rounded-full bg-[#1f40af] text-white font-bold flex items-center justify-center flex-shrink-0 font-sans">
-                    {index + 1}
+                    {phase.step}
                   </span>
                   <div className="flex-1">
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-3">
-                      <h3 className="font-bold text-[#1e283c] text-lg font-sans">{phase.title}</h3>
-                      <span className="text-[#1f40af] font-semibold text-sm font-sans">{phase.duration}</span>
-                    </div>
+                    <h3 className="font-bold text-[#1e283c] text-lg mb-3 font-sans">{phase.title}</h3>
                     <ul className="space-y-2">
                       {phase.outcomes.map((outcome, outcomeIndex) => (
                         <li key={outcomeIndex} className="flex items-start gap-2">
@@ -208,46 +273,129 @@ export default function CaseStudyDetailPage({ params }) {
         </div>
       </section>
 
-      {/* Results */}
+      {/* Implementation Highlights */}
       <section className="py-12 px-4 bg-white">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-bold text-[#1e283c] mb-8 font-sans">
-            Results & Outcomes
+            Implementation Highlights
           </h2>
-          <div className="space-y-6">
-            {caseStudy.results.primaryOutcomes.map((outcome, index) => (
-              <div key={index} className="bg-[#f6f8fc] rounded-xl p-6">
-                <div className="flex items-start gap-4">
-                  <TrendingUp className="w-8 h-8 text-[#2fc55f] flex-shrink-0" />
-                  <div>
-                    <h3 className="font-bold text-[#1e283c] text-lg mb-2 font-sans">{outcome.metric}</h3>
-                    <p className="text-[#1f40af] font-semibold mb-2 font-sans">{outcome.result}</p>
-                    <p className="text-[#505a66] font-normal">{outcome.impact}</p>
-                  </div>
-                </div>
+          <div className="space-y-8">
+            {Object.entries(caseStudy.implementationHighlights).map(([key, section]) => (
+              <div key={key} className="bg-[#f6f8fc] rounded-xl p-8">
+                <h3 className="font-bold text-[#1e283c] text-xl mb-4 font-sans">{section.title}</h3>
+                <ul className="space-y-3">
+                  {section.achievements.map((achievement, index) => (
+                    <li key={index} className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-[#2fc55f] flex-shrink-0 mt-0.5" />
+                      <span className="text-[#505a66] font-normal">{achievement}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Testimonial */}
+      {/* Results */}
       <section className="py-12 px-4">
         <div className="max-w-5xl mx-auto">
-          <div className="bg-[#1f2937] rounded-2xl p-8 md:p-12 text-white text-center">
-            <Quote className="w-12 h-12 mx-auto mb-6 opacity-50" />
-            <blockquote className="text-lg md:text-xl leading-relaxed mb-6 italic font-normal">
-              &ldquo;{caseStudy.testimonial.quote}&rdquo;
-            </blockquote>
-            <cite className="font-semibold font-sans">
-              — {caseStudy.testimonial.author}, {caseStudy.testimonial.company}
-            </cite>
+          <h2 className="text-2xl md:text-3xl font-bold text-[#1e283c] mb-8 font-sans">
+            Results
+          </h2>
+          
+          {/* Performance Gains */}
+          <div className="mb-8">
+            <h3 className="text-xl font-bold text-[#1e283c] mb-6 font-sans">
+              {caseStudy.results.performanceGains.title}
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {caseStudy.results.performanceGains.metrics.map((metric, index) => (
+                <div key={index} className="bg-white rounded-xl p-6 shadow-lg">
+                  <div className="flex items-center gap-4">
+                    <TrendingUp className="w-8 h-8 text-[#2fc55f] flex-shrink-0" />
+                    <div>
+                      <h4 className="font-semibold text-[#1e283c] font-sans">{metric.metric}</h4>
+                      <p className="text-[#1f40af] font-bold text-lg font-sans">{metric.value}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Operational Impact */}
+          <div>
+            <h3 className="text-xl font-bold text-[#1e283c] mb-6 font-sans">
+              {caseStudy.results.operationalImpact.title}
+            </h3>
+            <div className="bg-white rounded-xl p-6 shadow-lg">
+              <ul className="space-y-3">
+                {caseStudy.results.operationalImpact.metrics.map((metric, index) => (
+                  <li key={index} className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 text-[#2fc55f] flex-shrink-0 mt-0.5" />
+                    <span className="text-[#505a66] font-normal">{metric}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Team & Collaboration */}
+      <section className="py-12 px-4 bg-white">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-[#1e283c] mb-8 font-sans">
+            Team & Collaboration
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <div className="bg-[#f6f8fc] rounded-xl p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <Users className="w-6 h-6 text-[#1f40af]" />
+                <h3 className="font-bold text-[#1e283c] font-sans">Client Team</h3>
+              </div>
+              <ul className="space-y-2">
+                {caseStudy.teamCollaboration.client.map((member, index) => (
+                  <li key={index} className="text-[#505a66] font-normal">{member}</li>
+                ))}
+              </ul>
+            </div>
+            
+            <div className="bg-[#f6f8fc] rounded-xl p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <Target className="w-6 h-6 text-[#2fc55f]" />
+                <h3 className="font-bold text-[#1e283c] font-sans">Vamossy Digital</h3>
+              </div>
+              <ul className="space-y-2">
+                {caseStudy.teamCollaboration.vamossyDigital.map((member, index) => (
+                  <li key={index} className="text-[#505a66] font-normal">{member}</li>
+                ))}
+              </ul>
+            </div>
+            
+            <div className="bg-[#f6f8fc] rounded-xl p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <Users className="w-6 h-6 text-[#1f40af]" />
+                <h3 className="font-bold text-[#1e283c] font-sans">Partners</h3>
+              </div>
+              <ul className="space-y-2">
+                {caseStudy.teamCollaboration.partners.map((partner, index) => (
+                  <li key={index} className="text-[#505a66] font-normal">{partner}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          
+          <div className="bg-[#f6f8fc] rounded-xl p-6">
+            <h3 className="font-bold text-[#1e283c] mb-2 font-sans">Collaboration Cadence</h3>
+            <p className="text-[#505a66] font-normal">{caseStudy.teamCollaboration.cadence}</p>
           </div>
         </div>
       </section>
 
       {/* Key Takeaways */}
-      <section className="py-12 px-4 bg-white">
+      <section className="py-12 px-4">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-bold text-[#1e283c] mb-8 font-sans">
             Key Takeaways
@@ -275,7 +423,6 @@ export default function CaseStudyDetailPage({ params }) {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
               className="cursor-pointer bg-[#1f40af] text-white font-semibold py-3 px-6 rounded-lg shadow hover:bg-blue-800 transition font-sans"
-              data-cal-link="dev-vamossy/discovery-call"
               data-cal-namespace="discovery-call"
               data-cal-config='{"layout":"month_view"}'
             >
@@ -291,5 +438,6 @@ export default function CaseStudyDetailPage({ params }) {
         </div>
       </section>
     </div>
+    </>
   );
 }

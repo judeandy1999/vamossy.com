@@ -4,7 +4,9 @@ import { useState, useEffect } from 'react';
 import { useArticleMeta } from '@/hooks/useArticleMeta';
 import { useArticleContent } from '@/hooks/useArticleContent';
 import Spinner from '@/components/ui/spinner';
+import Script from 'next/script';
 import { use } from 'react';
+import { generateArticleSchema, generateBreadcrumbSchema } from '@/utils/seo';
 
 export default function ArticlePage(props) {
   const params = use(props.params);
@@ -86,7 +88,44 @@ export default function ArticlePage(props) {
 
   const hasTabs = meta?.has_tabs && full?.tabs;
 
+  // Generate structured data when meta is available
+  const articleSchema = meta ? generateArticleSchema({
+    id: params.id,
+    title: meta.title,
+    created_at: meta.created_at,
+    updated_at: meta.updated_at,
+    excerpt: full?.excerpt || meta.excerpt,
+    summary: full?.summary || meta.summary
+  }) : null;
+
+  const breadcrumbSchema = meta ? generateBreadcrumbSchema([
+    { name: "Home", url: "/" },
+    { name: "Articles", url: "/articles" },
+    { name: meta.title, url: `/articles/${params.id}` }
+  ]) : null;
+
   return (
+    <>
+      {/* Structured Data */}
+      {articleSchema && (
+        <Script
+          id="article-schema"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(articleSchema),
+          }}
+        />
+      )}
+      {breadcrumbSchema && (
+        <Script
+          id="breadcrumb-schema"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(breadcrumbSchema),
+          }}
+        />
+      )}
+      
     <div className="pt-12 bg-gray-50 min-h-screen flex flex-col items-center">
       <article className="w-full max-w-4xl bg-white shadow rounded-lg py-8 px-12 mt-24 mb-12">
         <h1 className="text-3xl md:text-5xl font-bold text-slate-800 mb-4">{meta.title}</h1>
@@ -138,5 +177,6 @@ export default function ArticlePage(props) {
         )}
       </article>
     </div>
+    </>
   );
 }
