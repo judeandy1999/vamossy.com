@@ -37,7 +37,7 @@ export function generateSiteMetadata() {
       siteName: 'Vamossy Digital',
       images: [
         {
-          url: '/og-image.jpg',
+          url: '/og-image.png',
           width: 1200,
           height: 630,
           alt: 'Vamossy Digital - eCommerce Growth Solutions',
@@ -48,7 +48,7 @@ export function generateSiteMetadata() {
       card: 'summary_large_image',
       title: 'Vamossy Digital - AI-Powered eCommerce Growth Solutions',
       description: 'Transform your eCommerce business with AI-powered growth systems.',
-      images: ['/og-image.jpg'],
+      images: ['/og-image.png'],
       creator: '@vamossydigital',
     },
     robots: {
@@ -69,7 +69,7 @@ export function generatePageMetadata({
   title,
   description,
   keywords = [],
-  image = '/og-image.jpg',
+  image = '/og-image.png',
   url = '/',
   type = 'website',
   publishedTime,
@@ -199,7 +199,7 @@ export function generateArticleSchema(article) {
     "@type": "Article",
     "headline": article.title,
     "description": article.excerpt || article.summary,
-    "image": article.image || '/og-image.jpg',
+    "image": article.image || '/og-image.png',
     "author": {
       "@type": "Organization",
       "name": "Vamossy Digital"
