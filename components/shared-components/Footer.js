@@ -89,7 +89,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="flex flex-col md:flex-row md:justify-between items-center mt-8 text-xs text-[#a3a7b7] gap-2">
-          <div>© 2024 Vamossy Digital Ltd. All rights reserved.</div>
+          <div>© 2025 Vamossy Digital Ltd. All rights reserved.</div>
           <div className="flex items-center gap-3">
             {/* <a href="#" aria-label="LinkedIn" className="hover:text-white">
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
