@@ -52,6 +52,16 @@ export default function AdminDocumentsPage() {
     showToast,
   } = useAdminDocuments({ session, role: authRole, status });
 
+  // Add function to sanitize file names
+  function sanitizeFileName(fileName) {
+    // Remove or replace invalid characters for storage keys
+    return fileName
+      .replace(/[^a-zA-Z0-9._-]/g, '_') // Replace invalid chars with underscore
+      .replace(/_{2,}/g, '_') // Replace multiple underscores with single
+      .replace(/^_+|_+$/g, '') // Remove leading/trailing underscores
+      .substring(0, 200); // Limit length
+  }
+
   function isAcceptedFile(file) {
     if (ACCEPTED_TYPES.includes(file.type)) return true;
     const ext = file.name ? file.name.toLowerCase().slice(file.name.lastIndexOf('.')) : '';
@@ -70,7 +80,14 @@ export default function AdminDocumentsPage() {
         rejected.push(file.name + ' (too large)');
         continue;
       }
-      accepted.push(file);
+      
+      // Sanitize the file name before adding
+      const sanitizedFile = new File([file], sanitizeFileName(file.name), {
+        type: file.type,
+        lastModified: file.lastModified,
+      });
+      
+      accepted.push(sanitizedFile);
     }
     setFiles(prevFiles => {
       const existing = prevFiles.map(f => f.name + '_' + f.size);
@@ -114,6 +131,13 @@ export default function AdminDocumentsPage() {
         anyError = true;
         continue;
       }
+      
+      // Additional validation for file name
+      const sanitizedName = sanitizeFileName(file.name);
+      if (sanitizedName !== file.name) {
+        console.log(`File name sanitized: ${file.name} -> ${sanitizedName}`);
+      }
+      
       for (const userId of selectedUsers) {
         const success = await uploadDocument({ file, userId });
         if (!success) anyError = true;
