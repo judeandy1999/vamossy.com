@@ -6,6 +6,8 @@ export default function robots() {
       userAgent: '*',
       allow: '/',
       disallow: [
+        '/case-studies/',  // Prevent indexing of all case studies
+        '/articles/',
         '/user-dashboard/',
         '/api/',
         '/admin/',

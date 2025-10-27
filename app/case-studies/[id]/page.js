@@ -14,10 +14,22 @@ export async function generateMetadata({ params }) {
     return {
       title: 'Case Study Not Found',
       description: 'The requested case study could not be found.',
+      robots: {
+        index: false,
+        follow: false,
+      },
     };
   }
   
-  return generateCaseStudyMetadata(caseStudy);
+  // Generate metadata with noindex
+  const metadata = generateCaseStudyMetadata(caseStudy);
+  return {
+    ...metadata,
+    robots: {
+      index: false,
+      follow: false,
+    },
+  };
 }
 
 export default function CaseStudyDetailPage({ params }) {

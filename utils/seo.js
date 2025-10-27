@@ -113,6 +113,13 @@ export function generatePageMetadata({
     robots: {
       index: !noIndex,
       follow: !noIndex,
+      googleBot: {
+        index: !noIndex,
+        follow: !noIndex,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
     },
   };
 }
@@ -126,6 +133,7 @@ export function generateCaseStudyMetadata(caseStudy) {
     type: 'article',
     publishedTime: caseStudy.publishedDate,
     modifiedTime: caseStudy.publishedDate,
+    noIndex: true // Prevent all case studies from being indexed
   });
 }
 
