@@ -404,7 +404,6 @@ export default function ArticlesPageContent() {
     return `Showing ${start}-${end} of ${totalCount} articles`;
   };
 
-  // Return your JSX here
   return (
     <div className="bg-white min-h-screen mb-8">
       <div className="max-w-7xl mx-auto px-4 pt-8">
@@ -737,8 +736,8 @@ export default function ArticlesPageContent() {
                       <h1 className="text-3xl font-bold text-[#032646] mb-4">
                         {selectedArticle.title}
                       </h1>
-                      
-                      <div className="flex items-center gap-4 text-sm text-[#4b5562]">
+
+                      <div className="flex flex-col items-start gap-4 text-sm text-[#4b5562]">
                         <div className="flex items-center gap-1">
                           <Calendar size={16} />
                           <span>
@@ -752,15 +751,26 @@ export default function ArticlesPageContent() {
                         
                         <div className="flex items-center gap-2">
                           <Tag size={16} />
-                          <div className="flex gap-2">
-                            {wikiOptions[selectedArticle.wiki_id]?.main_category_id && (
-                              <span className="bg-blue-100 text-blue-600 px-2 py-1 rounded text-xs font-medium">
-                                {mainCategories[wikiOptions[selectedArticle.wiki_id].main_category_id]?.name}
+                          <div className="flex gap-2 flex-wrap">
+                            {/* Display all categories for this article */}
+                            {selectedArticle.category_details?.map((category, index) => (
+                              <div key={category.id} className="flex items-center gap-1">
+                                {category.main_category_id && mainCategories[category.main_category_id] && (
+                                  <span className="bg-blue-100 text-blue-600 px-2 py-1 rounded text-xs font-medium">
+                                    {mainCategories[category.main_category_id].name}
+                                  </span>
+                                )}
+                                <span className="bg-gray-100 text-[#4b5562] px-2 py-1 rounded text-xs">
+                                  {category.name}
+                                </span>
+                              </div>
+                            ))}
+                            {/* Fallback for articles without category details */}
+                            {(!selectedArticle.category_details || selectedArticle.category_details.length === 0) && (
+                              <span className="bg-gray-100 text-[#4b5562] px-2 py-1 rounded text-xs">
+                                Uncategorized
                               </span>
                             )}
-                            <span className="bg-gray-100 text-[#4b5562] px-2 py-1 rounded text-xs">
-                              {wikiOptions[selectedArticle.wiki_id]?.name || 'Unknown Category'}
-                            </span>
                           </div>
                         </div>
                       </div>
@@ -898,15 +908,29 @@ export default function ArticlesPageContent() {
                                   hour12: true
                                 })}
                               </p>
-                              <div className="flex items-center gap-2">
-                                {wikiOptions[article.wiki_id]?.main_category_id && (
-                                  <span className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded font-medium">
-                                    {mainCategories[wikiOptions[article.wiki_id].main_category_id]?.name}
+                              <div className="flex items-center gap-2 flex-wrap">
+                                {/* Display all categories for this article */}
+                                {article.category_details?.map((category, index) => (
+                                  <div key={category.id} className="flex items-center gap-1">
+                                    {category.main_category_id && mainCategories[category.main_category_id] && (
+                                      <span className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded font-medium">
+                                        {mainCategories[category.main_category_id].name}
+                                      </span>
+                                    )}
+                                    <span className="text-xs bg-gray-100 text-[#4b5562] px-2 py-1 rounded">
+                                      {category.name}
+                                    </span>
+                                    {index < article.category_details.length - 1 && (
+                                      <span className="text-xs text-gray-400">•</span>
+                                    )}
+                                  </div>
+                                ))}
+                                {/* Fallback for articles without category details */}
+                                {(!article.category_details || article.category_details.length === 0) && (
+                                  <span className="text-xs bg-gray-100 text-[#4b5562] px-2 py-1 rounded">
+                                    Uncategorized
                                   </span>
                                 )}
-                                <span className="text-xs bg-gray-100 text-[#4b5562] px-2 py-1 rounded">
-                                  {wikiOptions[article.wiki_id]?.name || 'Unknown Category'}
-                                </span>
                               </div>
                             </div>
                             <p className="text-[#4b5562] line-clamp-3">{article.preview}</p>
