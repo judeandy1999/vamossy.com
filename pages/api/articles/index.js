@@ -5,14 +5,14 @@ import { authenticate } from '@/lib/authMiddleware';
 async function getWikiIdsByMainCategory(mainCategoryId) {
   if (mainCategoryId === 'uncategorized') {
     const { data } = await supabase
-      .from('category_options')  // Changed from 'wiki_options'
+      .from('category_options')
       .select('id')
       .is('main_category_id', null);
     return data?.map(category => category.id) || [];
   }
   
   const { data } = await supabase
-    .from('category_options')  // Changed from 'wiki_options'
+    .from('category_options')
     .select('id')
     .eq('main_category_id', parseInt(mainCategoryId));
   return data?.map(category => category.id) || [];
@@ -33,16 +33,36 @@ export default async function handler(req, res) {
   const to = from + limitNumber - 1;
 
   try {
-    // Build query with filters
-    let query = supabase.from('articles').select('*', { count: 'exact' });
+    // Build query with junction table joins
+    let query = supabase
+      .from('articles')
+      .select(`
+        *,
+        article_wiki!left(
+          wiki_id,
+          category_options(id, name, main_category_id)
+        )
+      `, { count: 'exact' });
     
+    // Filter by specific wiki_id through junction table
     if (wiki_id) {
-      query = query.eq('wiki_id', parseInt(wiki_id));
+      query = query.eq('article_wiki.wiki_id', parseInt(wiki_id));
     }
     
+    // Filter by main category through junction table
     if (main_category_id) {
       const wikiIds = await getWikiIdsByMainCategory(main_category_id);
-      query = query.in('wiki_id', wikiIds);
+      if (wikiIds.length > 0) {
+        query = query.in('article_wiki.wiki_id', wikiIds);
+      } else {
+        // No articles match this main category
+        return res.status(200).json({
+          articles: [],
+          totalCount: 0,
+          currentPage: pageNumber,
+          totalPages: 0
+        });
+      }
     }
 
     const { data, error, count } = await query
@@ -53,8 +73,15 @@ export default async function handler(req, res) {
       throw error;
     }
 
+    // Transform the data to include categories array
+    const transformedArticles = data?.map(article => ({
+      ...article,
+      categories: article.article_wiki?.map(aw => aw.wiki_id) || [],
+      category_details: article.article_wiki?.map(aw => aw.category_options) || []
+    })) || [];
+
     return res.status(200).json({
-      articles: data,
+      articles: transformedArticles,
       totalCount: count,
       currentPage: pageNumber,
       totalPages: Math.ceil(count / limitNumber)
