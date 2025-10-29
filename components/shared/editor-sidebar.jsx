@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FilePlus, Trash, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { FilePlus, Trash, Loader2, ChevronLeft, ChevronRight, Search, X } from 'lucide-react';
 import Spinner from '@/components/ui/spinner';
 import Modal from '@/components/ui/modal';
 
@@ -19,6 +19,9 @@ export default function EditorSidebar({
   handleDelete,
   error,
   newlyCreatedId,
+  searchQuery,        // Add search props
+  onSearchChange,     // Add search props
+  totalCount,         // Add total count for search results
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [targetArticle, setTargetArticle] = useState(null);
@@ -70,7 +73,7 @@ export default function EditorSidebar({
   return (
     <div className="w-64 bg-gray-50 border-r border-gray-200 flex flex-col p-4 overflow-y-auto">
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold text-slate-800">Articles</h2>
         <button
           onClick={startNewArticle}
@@ -78,6 +81,48 @@ export default function EditorSidebar({
         >
           <FilePlus size={16} /> New
         </button>
+      </div>
+
+      {/* Search Bar */}
+      <div className="mb-4">
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
+            <Search className="h-4 w-4 text-gray-400" />
+          </div>
+          <input
+            type="text"
+            placeholder="Search articles..."
+            value={searchQuery || ''}
+            onChange={(e) => onSearchChange?.(e.target.value)}
+            className="block w-full pl-8 pr-8 py-1.5 text-sm border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-slate-500 focus:border-slate-500"
+          />
+          {searchQuery && (
+            <div className="absolute inset-y-0 right-0 pr-2 flex items-center">
+              <button
+                onClick={() => onSearchChange?.('')}
+                className="cursor-pointer text-gray-400 hover:text-gray-600"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          )}
+        </div>
+        
+        {/* Search Results Info */}
+        {searchQuery && (
+          <div className="mt-1 text-xs text-gray-500">
+            {loading ? (
+              <span>Searching...</span>
+            ) : (
+              <span>
+                {totalCount > 0 
+                  ? `${totalCount} result${totalCount === 1 ? '' : 's'}`
+                  : 'No results'
+                }
+              </span>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Loading & Error */}
@@ -92,31 +137,37 @@ export default function EditorSidebar({
         <div className="flex-1 flex flex-col overflow-y-auto max-h-[80vh]">
           {/* Articles List */}
           <ul className="flex-1 space-y-2 mb-4">
-            {articles.map((article, index) => (
-              <li
-                key={`${article?.id}-${index}`}
-                className={`flex justify-between items-start cursor-pointer p-2 rounded hover:bg-slate-200 transition ${
-                  selectedArticleId === article?.id ? 'bg-slate-200' : ''
-                } ${String(article?.id) === String(newlyCreatedId) ? 'animate-popIn' : ''}`}
-                onClick={() => setSelectedArticle(article)}
-              >
-                <div className="flex-1 overflow-auto">
-                  <h3 className="whitespace-normal text-sm font-medium text-slate-800 truncate">{article?.title}</h3>
-                  <p className="text-xs text-gray-500 mt-0.5">
-                    {new Date(article?.created_at).toLocaleString([], { dateStyle: 'short', timeStyle: 'short', hour12: true })}
-                  </p>
-                </div>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    openModal(article);
-                  }}
-                  className="text-red-500 hover:text-red-600 transition"
-                >
-                  <Trash size={16} />
-                </button>
+            {articles.length === 0 ? (
+              <li className="text-center text-gray-500 text-sm py-4">
+                {searchQuery ? 'No articles found' : 'No articles yet'}
               </li>
-            ))}
+            ) : (
+              articles.map((article, index) => (
+                <li
+                  key={`${article?.id}-${index}`}
+                  className={`flex justify-between items-start cursor-pointer p-2 rounded hover:bg-slate-200 transition ${
+                    selectedArticleId === article?.id ? 'bg-slate-200' : ''
+                  } ${String(article?.id) === String(newlyCreatedId) ? 'animate-popIn' : ''}`}
+                  onClick={() => setSelectedArticle(article)}
+                >
+                  <div className="flex-1 overflow-auto">
+                    <h3 className="whitespace-normal text-sm font-medium text-slate-800 truncate">{article?.title}</h3>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      {new Date(article?.created_at).toLocaleString([], { dateStyle: 'short', timeStyle: 'short', hour12: true })}
+                    </p>
+                  </div>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openModal(article);
+                    }}
+                    className="text-red-500 hover:text-red-600 transition"
+                  >
+                    <Trash size={16} />
+                  </button>
+                </li>
+              ))
+            )}
           </ul>
         </div>
 
