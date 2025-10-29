@@ -9,22 +9,6 @@ import { useArticleContent } from '@/hooks/useArticleContent';
 import { useArticleMeta } from '@/hooks/useArticleMeta';
 import { useArticleCounts } from '@/hooks/useArticleCounts';
 
-function useDebounce(value, delay) {
-  const [debouncedValue, setDebouncedValue] = useState(value);
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [value, delay]);
-
-  return debouncedValue;
-}
-
 export default function ArticlesPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -38,9 +22,7 @@ export default function ArticlesPageContent() {
   const [activeTab, setActiveTab] = useState(null);
   const [currentTabPage, setCurrentTabPage] = useState(0);
   const [tabsPerPage, setTabsPerPage] = useState(5);
-  const [searchInput, setSearchInput] = useState('');
   const [searchQuery, setSearchQuery] = useState(''); // New search query state
-  const debouncedSearchQuery = useDebounce(searchQuery, 300); // Debounced search query
   const searchResultsContainerRef = useRef(null);
   
   // ALL REF HOOKS
@@ -49,7 +31,7 @@ export default function ArticlesPageContent() {
   // ALL CUSTOM HOOKS
   const { articles, loading, error, totalPages, totalCount, hasNextPage, hasPrevPage } = useAllArticles(
     currentPage, 
-    { selectedWikiId, selectedMainCategoryId, searchQuery: debouncedSearchQuery } // Use debounced search query
+    { selectedWikiId, selectedMainCategoryId, searchQuery } // Use searchQuery directly
   );
   const { counts, loading: countsLoading } = useArticleCounts();
   const { wikiOptions, mainCategories, loading: optionsLoading } = useOptions();
@@ -221,21 +203,6 @@ export default function ArticlesPageContent() {
           <div className="text-center text-red-500">
             <p className="text-lg mb-2">Failed to load articles</p>
             <p className="text-sm">Please try refreshing the page.</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (loading || optionsLoading) {
-    return (
-      <div className="bg-white min-h-screen py-10">
-        <div className="max-w-6xl mx-auto px-4 pt-24">
-          <div className="flex justify-center items-center py-20">
-            <div className="text-center">
-              <Loader2 size={40} className="animate-spin text-[#1f40af] mx-auto mb-4" />
-              <p className="text-[#4b5562]">Loading articles...</p>
-            </div>
           </div>
         </div>
       </div>
@@ -429,6 +396,37 @@ export default function ArticlesPageContent() {
     return `Showing ${start}-${end} of ${totalCount} articles`;
   };
 
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    // Show a minimal placeholder during hydration
+    return (
+      <div className="bg-white min-h-screen">
+        <div className="max-w-7xl mx-auto px-4 pt-8">
+          <div className="animate-pulse">
+            <div className="h-12 bg-gray-200 rounded mb-6 w-1/3"></div>
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+              <div className="lg:col-span-1">
+                <div className="bg-gray-200 rounded-lg h-96"></div>
+              </div>
+              <div className="lg:col-span-3">
+                <div className="space-y-4">
+                  <div className="h-6 bg-gray-200 rounded w-1/4"></div>
+                  <div className="h-32 bg-gray-200 rounded"></div>
+                  <div className="h-32 bg-gray-200 rounded"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white min-h-screen mb-8">
       <div className="max-w-7xl mx-auto px-4 pt-8">
@@ -436,44 +434,49 @@ export default function ArticlesPageContent() {
           <h1 className="text-4xl md:text-5xl font-bold text-[#032646]">
             {getPageTitle()}
           </h1>
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-5 w-5 text-gray-400" />
-            </div>
-            <input
-              type="text"
-              placeholder="Search articles..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-            />
-            {searchQuery && (
-              <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                <button
-                  onClick={() => setSearchQuery('')}
-                  className="cursor-pointer text-gray-400 hover:text-gray-600"
-                >
-                  <X className="h-5 w-5" />
-                </button>
+          {!selectedArticleId && (
+            <div className="relative">
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Search className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Search articles..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                />
+                {searchQuery && (
+                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                    <button
+                      onClick={() => setSearchQuery('')}
+                      className="cursor-pointer text-gray-400 hover:text-gray-600"
+                    >
+                      <X className="h-5 w-5" />
+                    </button>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-          
-          {/* Search Results Info */}
-          {searchQuery && (
-            <div className="mt-2 text-sm text-gray-600">
-              {loading ? (
-                <span>Searching...</span>
-              ) : (
-                <span>
-                  {totalCount > 0 
-                    ? `Found ${totalCount} article${totalCount === 1 ? '' : 's'} for "${searchQuery}"`
-                    : `No articles found for "${searchQuery}"`
-                  }
-                </span>
+
+              {/* Search Results Info */}
+              {searchQuery && (
+                <div className="mt-2 text-sm text-gray-600">
+                  {loading ? (
+                    <span>Searching...</span>
+                  ) : (
+                    <span>
+                      {totalCount > 0 
+                        ? `Found ${totalCount} article${totalCount === 1 ? '' : 's'} for "${searchQuery}"`
+                        : `No articles found for "${searchQuery}"`
+                      }
+                    </span>
+                  )}
+                </div>
               )}
             </div>
           )}
+          
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -482,168 +485,176 @@ export default function ArticlesPageContent() {
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 sticky top-24">
               <h2 className="text-xl font-semibold text-[#032646] mb-6">Browse Categories</h2>
               
-              {/* All Articles Button */}
-              <button
-                onClick={() => {
-                  setSelectedMainCategoryId(null);
-                  setSelectedWikiId(null);
-                  setSelectedArticleId(null);
-                  setActiveTab(null);
-                  updateUrlWithoutArticle();
-                }}
-                className={`cursor-pointer w-full text-left px-4 py-3 rounded-lg mb-3 transition font-medium ${
-                  !selectedMainCategoryId && !selectedWikiId && !selectedArticleId
-                    ? 'bg-[#1f40af] text-white'
-                    : 'hover:bg-blue-50 text-[#4b5562] hover:text-blue-600'
-                }`}
-              >
-                <div className="flex justify-between items-center">
-                  <span>All Articles</span>
-                  <span className={`text-xs px-2 py-1 rounded ${
-                    !selectedMainCategoryId && !selectedWikiId && !selectedArticleId
-                      ? 'bg-blue-100 text-[#1f40af]'
-                      : 'bg-gray-100 text-[#4b5562]'
-                  }`}>
-                    {getTotalArticleCount()}
-                  </span>
+              {optionsLoading ? (
+                <div className="flex justify-center py-8">
+                  <Loader2 size={24} className="animate-spin text-gray-400" />
                 </div>
-              </button>
-
-              <div className="space-y-1">
-                {/* Uncategorized Section */}
-                {groupedCategories['uncategorized'] && groupedCategories['uncategorized'].length > 0 && (
-                  <div className="mb-2">
-                    <button
-                      onClick={() => toggleMainCategory('uncategorized')}
-                      className="cursor-pointer w-full flex items-center justify-between px-4 py-3 text-left hover:bg-blue-50 rounded-lg transition"
-                    >
-                      <div className="flex items-center gap-2">
-                        {expandedMainCategories.has('uncategorized') ? (
-                          <ChevronDown size={16} className="text-[#4b5562]" />
-                        ) : (
-                          <ChevronRight size={16} className="text-[#4b5562]" />
-                        )}
-                        <span className="font-medium text-[#4b5562]">Uncategorized</span>
-                      </div>
-                      <span className="text-xs bg-gray-100 text-[#4b5562] px-2 py-1 rounded">
-                        {getMainCategoryArticleCount('uncategorized')}
+              ) : (
+                <>
+                  {/* All Articles Button */}
+                  <button
+                    onClick={() => {
+                      setSelectedMainCategoryId(null);
+                      setSelectedWikiId(null);
+                      setSelectedArticleId(null);
+                      setActiveTab(null);
+                      updateUrlWithoutArticle();
+                    }}
+                    className={`cursor-pointer w-full text-left px-4 py-3 rounded-lg mb-3 transition font-medium ${
+                      !selectedMainCategoryId && !selectedWikiId && !selectedArticleId
+                        ? 'bg-[#1f40af] text-white'
+                        : 'hover:bg-blue-50 text-[#4b5562] hover:text-blue-600'
+                    }`}
+                  >
+                    <div className="flex justify-between items-center">
+                      <span>All Articles</span>
+                      <span className={`text-xs px-2 py-1 rounded ${
+                        !selectedMainCategoryId && !selectedWikiId && !selectedArticleId
+                          ? 'bg-blue-100 text-[#1f40af]'
+                          : 'bg-gray-100 text-[#4b5562]'
+                      }`}>
+                        {getTotalArticleCount()}
                       </span>
-                    </button>
+                    </div>
+                  </button>
 
-                    {expandedMainCategories.has('uncategorized') && (
-                      <div className="ml-6 mt-1 space-y-1">
+                  <div className="space-y-1">
+                    {/* Uncategorized Section */}
+                    {groupedCategories['uncategorized'] && groupedCategories['uncategorized'].length > 0 && (
+                      <div className="mb-2">
                         <button
-                          onClick={() => {
-                            setSelectedMainCategoryId('uncategorized');
-                            setSelectedWikiId(null);
-                            setSelectedArticleId(null);
-                            setActiveTab(null);
-                            updateUrlWithoutArticle();
-                          }}
-                          className={`cursor-pointer w-full text-left px-4 py-2 rounded text-sm transition ${
-                            selectedMainCategoryId === 'uncategorized' && !selectedWikiId && !selectedArticleId
-                              ? 'bg-blue-50 text-blue-600 font-medium'
-                              : 'hover:bg-blue-50 text-[#4b5562] hover:text-blue-600'
-                          }`}
+                          onClick={() => toggleMainCategory('uncategorized')}
+                          className="cursor-pointer w-full flex items-center justify-between px-4 py-3 text-left hover:bg-blue-50 rounded-lg transition"
                         >
-                          All Uncategorized ({getMainCategoryArticleCount('uncategorized')})
+                          <div className="flex items-center gap-2">
+                            {expandedMainCategories.has('uncategorized') ? (
+                              <ChevronDown size={16} className="text-[#4b5562]" />
+                            ) : (
+                              <ChevronRight size={16} className="text-[#4b5562]" />
+                            )}
+                            <span className="font-medium text-[#4b5562]">Uncategorized</span>
+                          </div>
+                          <span className="text-xs bg-gray-100 text-[#4b5562] px-2 py-1 rounded">
+                            {getMainCategoryArticleCount('uncategorized')}
+                          </span>
                         </button>
-                        {groupedCategories['uncategorized'].map((category) => (
-                          <button
-                            key={category.id}
-                            onClick={() => {
-                              setSelectedWikiId(parseInt(category.id));
-                              setSelectedMainCategoryId('uncategorized');
-                              setSelectedArticleId(null);
-                              setActiveTab(null);
-                              updateUrlWithoutArticle();
-                            }}
-                            className={`cursor-pointer w-full text-left px-4 py-2 rounded text-sm transition ${
-                              selectedWikiId === parseInt(category.id) && !selectedArticleId
-                                ? 'bg-blue-50 text-blue-600 font-medium'
-                                : 'hover:bg-blue-50 text-[#4b5562] hover:text-blue-600'
-                            }`}
-                          >
-                            <div className="flex justify-between items-center">
-                              <span>{category.name}</span>
-                              <span className="text-xs text-gray-500">
-                                {getArticleCount(category.id)}
-                              </span>
-                            </div>
-                          </button>
-                        ))}
+
+                        {expandedMainCategories.has('uncategorized') && (
+                          <div className="ml-6 mt-1 space-y-1">
+                            <button
+                              onClick={() => {
+                                setSelectedMainCategoryId('uncategorized');
+                                setSelectedWikiId(null);
+                                setSelectedArticleId(null);
+                                setActiveTab(null);
+                                updateUrlWithoutArticle();
+                              }}
+                              className={`cursor-pointer w-full text-left px-4 py-2 rounded text-sm transition ${
+                                selectedMainCategoryId === 'uncategorized' && !selectedWikiId && !selectedArticleId
+                                  ? 'bg-blue-50 text-blue-600 font-medium'
+                                  : 'hover:bg-blue-50 text-[#4b5562] hover:text-blue-600'
+                              }`}
+                            >
+                              All Uncategorized ({getMainCategoryArticleCount('uncategorized')})
+                            </button>
+                            {groupedCategories['uncategorized'].map((category) => (
+                              <button
+                                key={category.id}
+                                onClick={() => {
+                                  setSelectedWikiId(parseInt(category.id));
+                                  setSelectedMainCategoryId('uncategorized');
+                                  setSelectedArticleId(null);
+                                  setActiveTab(null);
+                                  updateUrlWithoutArticle();
+                                }}
+                                className={`cursor-pointer w-full text-left px-4 py-2 rounded text-sm transition ${
+                                  selectedWikiId === parseInt(category.id) && !selectedArticleId
+                                    ? 'bg-blue-50 text-blue-600 font-medium'
+                                    : 'hover:bg-blue-50 text-[#4b5562] hover:text-blue-600'
+                                }`}
+                              >
+                                <div className="flex justify-between items-center">
+                                  <span>{category.name}</span>
+                                  <span className="text-xs text-gray-500">
+                                    {getArticleCount(category.id)}
+                                  </span>
+                                </div>
+                              </button>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     )}
-                  </div>
-                )}
 
-                {/* Main Categories */}
-                {Object.entries(mainCategories).map(([mainCategoryId, mainCategory]) => (
-                  <div key={mainCategoryId} className="mb-2">
-                    <button
-                      onClick={() => toggleMainCategory(mainCategoryId)}
-                      className="cursor-pointer w-full flex items-center justify-between px-4 py-3 text-left hover:bg-blue-50 rounded-lg transition"
-                    >
-                      <div className="flex items-center gap-2">
-                        {expandedMainCategories.has(mainCategoryId) ? (
-                          <ChevronDown size={16} className="text-[#4b5562]" />
-                        ) : (
-                          <ChevronRight size={16} className="text-[#4b5562]" />
-                        )}
-                        <span className="font-medium text-[#4b5562]">{mainCategory.name}</span>
-                      </div>
-                      <span className="text-xs bg-gray-100 text-[#4b5562] px-2 py-1 rounded">
-                        {getMainCategoryArticleCount(mainCategoryId)}
-                      </span>
-                    </button>
-
-                    {expandedMainCategories.has(mainCategoryId) && groupedCategories[mainCategoryId] && (
-                      <div className="ml-6 mt-1 space-y-1">
+                    {/* Main Categories */}
+                    {Object.entries(mainCategories).map(([mainCategoryId, mainCategory]) => (
+                      <div key={mainCategoryId} className="mb-2">
                         <button
-                          onClick={() => {
-                            setSelectedMainCategoryId(mainCategoryId);
-                            setSelectedWikiId(null);
-                            setSelectedArticleId(null);
-                            setActiveTab(null);
-                            updateUrlWithoutArticle();
-                          }}
-                          className={`cursor-pointer w-full text-left px-4 py-2 rounded text-sm transition ${
-                            selectedMainCategoryId === mainCategoryId && !selectedWikiId && !selectedArticleId
-                              ? 'bg-blue-50 text-blue-600 font-medium'
-                              : 'hover:bg-blue-50 text-[#4b5562] hover:text-blue-600'
-                          }`}
+                          onClick={() => toggleMainCategory(mainCategoryId)}
+                          className="cursor-pointer w-full flex items-center justify-between px-4 py-3 text-left hover:bg-blue-50 rounded-lg transition"
                         >
-                          All {mainCategory.name} ({getMainCategoryArticleCount(mainCategoryId)})
+                          <div className="flex items-center gap-2">
+                            {expandedMainCategories.has(mainCategoryId) ? (
+                              <ChevronDown size={16} className="text-[#4b5562]" />
+                            ) : (
+                              <ChevronRight size={16} className="text-[#4b5562]" />
+                            )}
+                            <span className="font-medium text-[#4b5562]">{mainCategory.name}</span>
+                          </div>
+                          <span className="text-xs bg-gray-100 text-[#4b5562] px-2 py-1 rounded">
+                            {getMainCategoryArticleCount(mainCategoryId)}
+                          </span>
                         </button>
-                        {groupedCategories[mainCategoryId].map((category) => (
-                          <button
-                            key={category.id}
-                            onClick={() => {
-                              setSelectedWikiId(parseInt(category.id));
-                              setSelectedMainCategoryId(mainCategoryId);
-                              setSelectedArticleId(null);
-                              setActiveTab(null);
-                              updateUrlWithoutArticle();
-                            }}
-                            className={`cursor-pointer w-full text-left px-4 py-2 rounded text-sm transition ${
-                              selectedWikiId === parseInt(category.id) && !selectedArticleId
-                                ? 'bg-blue-50 text-blue-600 font-medium'
-                                : 'hover:bg-blue-50 text-[#4b5562] hover:text-blue-600'
-                            }`}
-                          >
-                            <div className="flex justify-between items-center">
-                              <span>{category.name}</span>
-                              <span className="text-xs text-gray-500">
-                                {getArticleCount(category.id)}
-                              </span>
-                            </div>
-                          </button>
-                        ))}
+
+                        {expandedMainCategories.has(mainCategoryId) && groupedCategories[mainCategoryId] && (
+                          <div className="ml-6 mt-1 space-y-1">
+                            <button
+                              onClick={() => {
+                                setSelectedMainCategoryId(mainCategoryId);
+                                setSelectedWikiId(null);
+                                setSelectedArticleId(null);
+                                setActiveTab(null);
+                                updateUrlWithoutArticle();
+                              }}
+                              className={`cursor-pointer w-full text-left px-4 py-2 rounded text-sm transition ${
+                                selectedMainCategoryId === mainCategoryId && !selectedWikiId && !selectedArticleId
+                                  ? 'bg-blue-50 text-blue-600 font-medium'
+                                  : 'hover:bg-blue-50 text-[#4b5562] hover:text-blue-600'
+                              }`}
+                            >
+                              All {mainCategory.name} ({getMainCategoryArticleCount(mainCategoryId)})
+                            </button>
+                            {groupedCategories[mainCategoryId].map((category) => (
+                              <button
+                                key={category.id}
+                                onClick={() => {
+                                  setSelectedWikiId(parseInt(category.id));
+                                  setSelectedMainCategoryId(mainCategoryId);
+                                  setSelectedArticleId(null);
+                                  setActiveTab(null);
+                                  updateUrlWithoutArticle();
+                                }}
+                                className={`cursor-pointer w-full text-left px-4 py-2 rounded text-sm transition ${
+                                  selectedWikiId === parseInt(category.id) && !selectedArticleId
+                                    ? 'bg-blue-50 text-blue-600 font-medium'
+                                    : 'hover:bg-blue-50 text-[#4b5562] hover:text-blue-600'
+                                }`}
+                              >
+                                <div className="flex justify-between items-center">
+                                  <span>{category.name}</span>
+                                  <span className="text-xs text-gray-500">
+                                    {getArticleCount(category.id)}
+                                  </span>
+                                </div>
+                              </button>
+                            ))}
+                          </div>
+                        )}
                       </div>
-                    )}
+                    ))}
                   </div>
-                ))}
-              </div>
+                </>
+              )}
             </div>
           </div>
 
@@ -683,14 +694,14 @@ export default function ArticlesPageContent() {
                               <button 
                                 onClick={() => goToPage(1)} 
                                 className="cursor-pointer px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-900 transition-colors duration-200"
-                              >
-                                1
-                              </button>
-                              {currentPage > 4 && (
-                                <span className="px-2 py-2 text-gray-500">
-                                  <MoreHorizontal size={16} />
-                                </span>
-                              )}
+                          >
+                            1
+                          </button>
+                          {currentPage > 4 && (
+                            <span className="px-2 py-2 text-gray-500">
+                              <MoreHorizontal size={16} />
+                            </span>
+                          )}
                             </>
                           )}
                           
@@ -748,9 +759,9 @@ export default function ArticlesPageContent() {
                               <button 
                                 onClick={() => goToPage(totalPages)} 
                                 className="cursor-pointer px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-900 transition-colors duration-200"
-                              >
-                                {totalPages}
-                              </button>
+                          >
+                            {totalPages}
+                          </button>
                             </>
                           )}
                         </div>
@@ -767,254 +778,266 @@ export default function ArticlesPageContent() {
               </nav>
             </div>
 
-            {/* Article View or Articles List */}
-            {selectedArticleId ? (
-              <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
-                {/* Back Button */}
-                <div className="border-b border-gray-200 p-6 pb-4">
-                  <button
-                    onClick={handleBackToArticles}
-                    className="cursor-pointer flex items-center gap-2 text-[#4b5562] hover:text-blue-600 transition mb-4 font-medium"
-                  >
-                    <ArrowLeft size={16} />
-                    Back to Articles
-                  </button>
+            {/* Main content with loading state */}
+            {loading ? (
+              <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-12">
+                <div className="flex justify-center items-center">
+                  <div className="text-center">
+                    <Loader2 size={40} className="animate-spin text-[#1f40af] mx-auto mb-4" />
+                    <p className="text-[#4b5562]">Loading articles...</p>
+                  </div>
                 </div>
-
-                {/* Article Content */}
-                {articleLoading ? (
-                  <div className="flex justify-center items-center py-20">
-                    <div className="text-center">
-                      <Loader2 size={40} className="animate-spin text-[#1f40af] mx-auto mb-4" />
-                      <p className="text-[#4b5562]">Loading article...</p>
-                    </div>
-                  </div>
-                ) : articleError ? (
-                  <div className="p-6 text-center text-red-500">
-                    <p className="text-lg mb-2">Failed to load article content</p>
-                    <p className="text-sm">Please try again or go back to articles.</p>
-                  </div>
-                ) : selectedArticle ? (
-                  <div className="p-6 pl-13">
-                    {/* Article Header */}
-                    <div className="mb-6">
-                      <h1 className="text-3xl font-bold text-[#032646] mb-4">
-                        {selectedArticle.title}
-                      </h1>
-
-                      <div className="flex flex-col items-start gap-4 text-sm text-[#4b5562]">
-                        <div className="flex items-center gap-1">
-                          <Calendar size={16} />
-                          <span>
-                            {new Date(selectedArticle.created_at).toLocaleString([], {
-                              dateStyle: 'medium',
-                              timeStyle: 'short',
-                              hour12: true
-                            })}
-                          </span>
-                        </div>
-                        
-                        <div className="flex items-center gap-2">
-                          <Tag size={16} />
-                          <div className="flex gap-2 flex-wrap">
-                            {/* Display all categories for this article */}
-                            {selectedArticle.category_details?.map((category, index) => (
-                              <div key={category.id} className="flex items-center gap-1">
-                                {category.main_category_id && mainCategories[category.main_category_id] && (
-                                  <span className="bg-blue-100 text-blue-600 px-2 py-1 rounded text-xs font-medium">
-                                    {mainCategories[category.main_category_id].name}
-                                  </span>
-                                )}
-                                <span className="bg-gray-100 text-[#4b5562] px-2 py-1 rounded text-xs">
-                                  {category.name}
-                                </span>
-                              </div>
-                            ))}
-                            {/* Fallback for articles without category details */}
-                            {(!selectedArticle.category_details || selectedArticle.category_details.length === 0) && (
-                              <span className="bg-gray-100 text-[#4b5562] px-2 py-1 rounded text-xs">
-                                Uncategorized
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Tabs or Regular Content */}
-                    {selectedArticleMeta?.has_tabs && selectedArticle?.tabs ? (
-                      <div>
-                        {/* Tab Navigation */}
-                        <div ref={tabsContainerRef} className="relative mb-6">
-                          <div className="flex items-center border-b border-gray-200 w-full">
-                            {/* Previous Button */}
-                            {needsPagination && (
-                              <button
-                                onClick={goToPreviousTabPage}
-                                disabled={!canGoPrevious}
-                                className={`cursor-pointer flex-shrink-0 mr-2 p-2 rounded-lg transition-all ${
-                                  canGoPrevious
-                                    ? 'text-blue-600 hover:text-[#1f40af] hover:bg-blue-50'
-                                    : 'text-gray-300 !cursor-not-allowed'
-                                }`}
-                                title="Previous tabs"
-                              >
-                                <ChevronLeft size={20} />
-                              </button>
-                            )}
-
-                            {/* Tabs */}
-                            <div className="flex gap-1 sm:gap-2 flex-1 min-w-0 overflow-hidden">
-                              {getVisibleTabs().map(([tabId, tabContent]) => (
-                                <button
-                                  key={tabId}
-                                  onClick={() => setActiveTab(tabId)}
-                                  className={`cursor-pointer flex-shrink-0 px-4 py-3 text-sm font-medium rounded-t transition focus:outline-none whitespace-nowrap max-w-[200px] truncate ${
-                                    activeTab === tabId
-                                      ? 'bg-blue-50 text-blue-600 border-b-2 border-blue-600'
-                                      : 'text-[#4b5562] hover:text-blue-600'
-                                  }`}
-                                  title={tabContent.name}
-                                >
-                                  {tabContent.name}
-                                </button>
-                              ))}
-                            </div>
-
-                            {/* Next Button */}
-                            {needsPagination && (
-                              <button
-                                onClick={goToNextTabPage}
-                                disabled={!canGoNext}
-                                className={`cursor-pointer flex-shrink-0 ml-2 p-2 rounded-lg transition-all ${
-                                  canGoNext
-                                    ? 'text-blue-600 hover:text-[#1f40af] hover:bg-blue-50'
-                                    : 'text-gray-300 !cursor-not-allowed'
-                                }`}
-                                title="Next tabs"
-                              >
-                                <ChevronRight size={20} />
-                              </button>
-                            )}
-                          </div>
-
-                          {/* Pagination Dots */}
-                          {needsPagination && getTotalTabPages() > 1 && (
-                            <div className="absolute right-0 top-full mt-2">
-                              <div className="flex gap-1">
-                                {Array.from({ length: getTotalTabPages() }, (_, index) => (
-                                  <button
-                                    key={index}
-                                    onClick={() => setCurrentTabPage(index)}
-                                    className={`w-2 h-2 rounded-full transition-all ${
-                                      index === currentTabPage
-                                        ? 'bg-blue-600'
-                                        : 'bg-gray-300 hover:bg-gray-400'
-                                    }`}
-                                    title={`Page ${index + 1}`}
-                                  />
-                                ))}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Tab Content */}
-                        <div className="article-container max-w-none text-[#4b5562] leading-relaxed">
-                          {activeTab ? (
-                            <div dangerouslySetInnerHTML={{ __html: selectedArticle.tabs[activeTab].content }} />
-                          ) : (
-                            <p className="text-gray-500">Select a tab to view its content.</p>
-                          )}
-                        </div>
-                      </div>
-                    ) : (
-                      <div 
-                        className="article-container max-w-none text-[#4b5562] leading-relaxed"
-                        dangerouslySetInnerHTML={{ __html: selectedArticle?.content }}
-                      />
-                    )}
-                  </div>
-                ) : null}
               </div>
             ) : (
               <>
-                {filteredArticles.length === 0 ? (
-                  <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
-                    <p className="text-[#4b5562] text-lg">
-                      {selectedWikiId 
-                        ? `No articles found in ${wikiOptions[selectedWikiId]?.name}`
-                        : selectedMainCategoryId === 'uncategorized'
-                        ? 'No uncategorized articles found'
-                        : selectedMainCategoryId
-                        ? `No articles found in ${mainCategories[selectedMainCategoryId]?.name}`
-                        : 'No articles found'
-                      }
-                    </p>
-                  </div>
-                ) : (
-                  <div className="space-y-6 mb-4">
-                    {filteredArticles.map((article) => (
-                      <div
-                        key={article.id}
-                        className="group bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition cursor-pointer hover:border-blue-200"
-                        onClick={() => handleArticleClick(article.id)}
+                {/* Article View or Articles List */}
+                {selectedArticleId ? (
+                  <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+                    {/* Back Button */}
+                    <div className="border-b border-gray-200 p-6 pb-4">
+                      <button
+                        onClick={handleBackToArticles}
+                        className="cursor-pointer flex items-center gap-2 text-[#4b5562] hover:text-blue-600 transition mb-4 font-medium"
                       >
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <h3 className="text-xl font-semibold text-[#032646] group-hover:text-blue-600 transition mb-2">
-                              {article.title}
-                            </h3>
-                            <div className="flex items-center gap-4 mb-3">
-                              <p className="text-sm text-[#4b5562]">
-                                {new Date(article.created_at).toLocaleString([], {
+                        <ArrowLeft size={16} />
+                        Back to Articles
+                      </button>
+                    </div>
+
+                    {/* Article Content */}
+                    {articleLoading ? (
+                      <div className="flex justify-center items-center py-20">
+                        <div className="text-center">
+                          <Loader2 size={40} className="animate-spin text-[#1f40af] mx-auto mb-4" />
+                          <p className="text-[#4b5562]">Loading article...</p>
+                        </div>
+                      </div>
+                    ) : articleError ? (
+                      <div className="p-6 text-center text-red-500">
+                        <p className="text-lg mb-2">Failed to load article content</p>
+                        <p className="text-sm">Please try again or go back to articles.</p>
+                      </div>
+                    ) : selectedArticle ? (
+                      <div className="p-6 pl-13">
+                        {/* Article Header */}
+                        <div className="mb-6">
+                          <h1 className="text-3xl font-bold text-[#032646] mb-4">
+                            {selectedArticle.title}
+                          </h1>
+
+                          <div className="flex flex-col items-start gap-4 text-sm text-[#4b5562]">
+                            <div className="flex items-center gap-1">
+                              <Calendar size={16} />
+                              <span>
+                                {new Date(selectedArticle.created_at).toLocaleString([], {
                                   dateStyle: 'medium',
                                   timeStyle: 'short',
                                   hour12: true
                                 })}
-                              </p>
-                              <div className="flex items-center gap-2 flex-wrap">
+                              </span>
+                            </div>
+                            
+                            <div className="flex items-center gap-2">
+                              <Tag size={16} />
+                              <div className="flex gap-2 flex-wrap">
                                 {/* Display all categories for this article */}
-                                {article.category_details?.map((category, index) => (
+                                {selectedArticle.category_details?.map((category, index) => (
                                   <div key={category.id} className="flex items-center gap-1">
                                     {category.main_category_id && mainCategories[category.main_category_id] && (
-                                      <span className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded font-medium">
+                                      <span className="bg-blue-100 text-blue-600 px-2 py-1 rounded text-xs font-medium">
                                         {mainCategories[category.main_category_id].name}
                                       </span>
                                     )}
-                                    <span className="text-xs bg-gray-100 text-[#4b5562] px-2 py-1 rounded">
+                                    <span className="bg-gray-100 text-[#4b5562] px-2 py-1 rounded text-xs">
                                       {category.name}
                                     </span>
-                                    {index < article.category_details.length - 1 && (
-                                      <span className="text-xs text-gray-400">•</span>
-                                    )}
                                   </div>
                                 ))}
                                 {/* Fallback for articles without category details */}
-                                {(!article.category_details || article.category_details.length === 0) && (
-                                  <span className="text-xs bg-gray-100 text-[#4b5562] px-2 py-1 rounded">
+                                {(!selectedArticle.category_details || selectedArticle.category_details.length === 0) && (
+                                  <span className="bg-gray-100 text-[#4b5562] px-2 py-1 rounded text-xs">
                                     Uncategorized
                                   </span>
                                 )}
                               </div>
                             </div>
-                            <p className="text-[#4b5562] line-clamp-3">{article.preview}</p>
                           </div>
                         </div>
+
+                        {/* Tabs or Regular Content */}
+                        {selectedArticleMeta?.has_tabs && selectedArticle?.tabs ? (
+                          <div>
+                            {/* Tab Navigation */}
+                            <div ref={tabsContainerRef} className="relative mb-6">
+                              <div className="flex items-center border-b border-gray-200 w-full">
+                                {/* Previous Button */}
+                                {needsPagination && (
+                                  <button
+                                    onClick={goToPreviousTabPage}
+                                    disabled={!canGoPrevious}
+                                    className={`cursor-pointer flex-shrink-0 mr-2 p-2 rounded-lg transition-all ${
+                                      canGoPrevious
+                                        ? 'text-blue-600 hover:text-[#1f40af] hover:bg-blue-50'
+                                        : 'text-gray-300 !cursor-not-allowed'
+                                    }`}
+                                    title="Previous tabs"
+                                  >
+                                    <ChevronLeft size={20} />
+                                  </button>
+                                )}
+
+                                {/* Tabs */}
+                                <div className="flex gap-1 sm:gap-2 flex-1 min-w-0 overflow-hidden">
+                                  {getVisibleTabs().map(([tabId, tabContent]) => (
+                                    <button
+                                      key={tabId}
+                                      onClick={() => setActiveTab(tabId)}
+                                      className={`cursor-pointer flex-shrink-0 px-4 py-3 text-sm font-medium rounded-t transition focus:outline-none whitespace-nowrap max-w-[200px] truncate ${
+                                        activeTab === tabId
+                                          ? 'bg-blue-50 text-blue-600 border-b-2 border-blue-600'
+                                          : 'text-[#4b5562] hover:text-blue-600'
+                                      }`}
+                                      title={tabContent.name}
+                                    >
+                                      {tabContent.name}
+                                    </button>
+                                  ))}
+                                </div>
+
+                                {/* Next Button */}
+                                {needsPagination && (
+                                  <button
+                                    onClick={goToNextTabPage}
+                                    disabled={!canGoNext}
+                                    className={`cursor-pointer flex-shrink-0 ml-2 p-2 rounded-lg transition-all ${
+                                      canGoNext
+                                        ? 'text-blue-600 hover:text-[#1f40af] hover:bg-blue-50'
+                                        : 'text-gray-300 !cursor-not-allowed'
+                                    }`}
+                                    title="Next tabs"
+                                  >
+                                    <ChevronRight size={20} />
+                                  </button>
+                                )}
+                              </div>
+
+                              {/* Pagination Dots */}
+                              {needsPagination && getTotalTabPages() > 1 && (
+                                <div className="absolute right-0 top-full mt-2">
+                                  <div className="flex gap-1">
+                                    {Array.from({ length: getTotalTabPages() }, (_, index) => (
+                                      <button
+                                        key={index}
+                                        onClick={() => setCurrentTabPage(index)}
+                                        className={`w-2 h-2 rounded-full transition-all ${
+                                          index === currentTabPage
+                                            ? 'bg-blue-600'
+                                            : 'bg-gray-300 hover:bg-gray-400'
+                                        }`}
+                                        title={`Page ${index + 1}`}
+                                      />
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Tab Content */}
+                            <div className="article-container max-w-none text-[#4b5562] leading-relaxed">
+                              {activeTab ? (
+                                <div dangerouslySetInnerHTML={{ __html: selectedArticle.tabs[activeTab].content }} />
+                              ) : (
+                                <p className="text-gray-500">Select a tab to view its content.</p>
+                              )}
+                            </div>
+                          </div>
+                        ) : (
+                          <div 
+                            className="article-container max-w-none text-[#4b5562] leading-relaxed"
+                            dangerouslySetInnerHTML={{ __html: selectedArticle?.content }}
+                          />
+                        )}
                       </div>
-                    ))}
+                    ) : null}
                   </div>
-                )}
-                <div>
-                  {/* Pagination */}
-                  {totalPages > 1 && (
-                    <div className="flex justify-end items-center mt-4 mb-2 space-x-1">
-                      {/* First page button - only show if not near the beginning */}
-                      {currentPage > 3 && (
-                        <>
-                          <button 
-                            onClick={() => goToPage(1)} 
-                            className="cursor-pointer px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-900 transition-colors duration-200"
+                ) : (
+                  <>
+                    {filteredArticles.length === 0 ? (
+                      <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
+                        <p className="text-[#4b5562] text-lg">
+                          {selectedWikiId 
+                            ? `No articles found in ${wikiOptions[selectedWikiId]?.name}`
+                            : selectedMainCategoryId === 'uncategorized'
+                            ? 'No uncategorized articles found'
+                            : selectedMainCategoryId
+                            ? `No articles found in ${mainCategories[selectedMainCategoryId]?.name}`
+                            : 'No articles found'
+                          }
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="space-y-6 mb-4">
+                        {filteredArticles.map((article) => (
+                          <div
+                            key={article.id}
+                            className="group bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition cursor-pointer hover:border-blue-200"
+                            onClick={() => handleArticleClick(article.id)}
+                          >
+                            <div className="flex items-start justify-between">
+                              <div className="flex-1">
+                                <h3 className="text-xl font-semibold text-[#032646] group-hover:text-blue-600 transition mb-2">
+                                  {article.title}
+                                </h3>
+                                <div className="flex items-center gap-4 mb-3">
+                                  <p className="text-sm text-[#4b5562]">
+                                    {new Date(article.created_at).toLocaleString([], {
+                                      dateStyle: 'medium',
+                                      timeStyle: 'short',
+                                      hour12: true
+                                    })}
+                                  </p>
+                                  <div className="flex items-center gap-2 flex-wrap">
+                                    {/* Display all categories for this article */}
+                                    {article.category_details?.map((category, index) => (
+                                      <div key={category.id} className="flex items-center gap-1">
+                                        {category.main_category_id && mainCategories[category.main_category_id] && (
+                                          <span className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded font-medium">
+                                            {mainCategories[category.main_category_id].name}
+                                          </span>
+                                        )}
+                                        <span className="text-xs bg-gray-100 text-[#4b5562] px-2 py-1 rounded">
+                                          {category.name}
+                                        </span>
+                                        {index < article.category_details.length - 1 && (
+                                          <span className="text-xs text-gray-400">•</span>
+                                        )}
+                                      </div>
+                                    ))}
+                                    {/* Fallback for articles without category details */}
+                                    {(!article.category_details || article.category_details.length === 0) && (
+                                      <span className="text-xs bg-gray-100 text-[#4b5562] px-2 py-1 rounded">
+                                        Uncategorized
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                                <p className="text-[#4b5562] line-clamp-3">{article.preview}</p>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <div>
+                      {/* Pagination */}
+                      {totalPages > 1 && (
+                        <div className="flex justify-end items-center mt-4 mb-2 space-x-1">
+                          {/* First page button - only show if not near the beginning */}
+                          {currentPage > 3 && (
+                            <>
+                              <button 
+                                onClick={() => goToPage(1)} 
+                                className="cursor-pointer px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-900 transition-colors duration-200"
                           >
                             1
                           </button>
@@ -1023,76 +1046,78 @@ export default function ArticlesPageContent() {
                               <MoreHorizontal size={16} />
                             </span>
                           )}
-                        </>
-                      )}
-                      
-                      {/* Previous button */}
-                      <button 
-                        onClick={goToPrevPage}
-                        disabled={!hasPrevPage}
-                        className={`cursor-pointer flex items-center px-3 py-2 text-sm font-medium border rounded-md transition-colors duration-200 ${
-                          hasPrevPage
-                            ? 'text-gray-700 bg-white border-gray-300 hover:bg-gray-50 hover:text-gray-900'
-                            : 'text-gray-400 bg-gray-50 border-gray-200 cursor-not-allowed'
-                        }`}
-                      >
-                        <ChevronLeft size={16} className="mr-1" />
-                        Previous
-                      </button>
-                      
-                      {/* Page numbers */}
-                      {getPageNumbers().map(pageNum => (
-                        <button
-                          key={pageNum}
-                          onClick={() => goToPage(pageNum)}
-                          className={`cursor-pointer px-3 py-2 text-sm font-medium border rounded-md transition-colors duration-200 ${
-                            currentPage === pageNum 
-                              ? 'bg-blue-600 text-white border-blue-600 hover:bg-blue-700' 
-                              : 'text-gray-700 bg-white border-gray-300 hover:bg-gray-50 hover:text-gray-900'
-                          }`}
-                        >
-                          {pageNum}
-                        </button>
-                      ))}
-                      
-                      {/* Next button */}
-                      <button 
-                        onClick={goToNextPage}
-                        disabled={!hasNextPage}
-                        className={`cursor-pointer flex items-center px-3 py-2 text-sm font-medium border rounded-md transition-colors duration-200 ${
-                          hasNextPage
-                            ? 'text-gray-700 bg-white border-gray-300 hover:bg-gray-50 hover:text-gray-900'
-                            : 'text-gray-400 bg-gray-50 border-gray-200 cursor-not-allowed'
-                        }`}
-                      >
-                        Next
-                        <ChevronRight size={16} className="ml-1" />
-                      </button>
-                      
-                      {/* Last page button - only show if not near the end */}
-                      {currentPage < totalPages - 2 && (
-                        <>
-                          {currentPage < totalPages - 3 && (
-                            <span className="px-2 py-2 text-gray-500">
-                              <MoreHorizontal size={16} />
-                            </span>
+                            </>
                           )}
+                          
+                          {/* Previous button */}
                           <button 
-                            onClick={() => goToPage(totalPages)} 
-                            className="cursor-pointer px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-900 transition-colors duration-200"
+                            onClick={goToPrevPage}
+                            disabled={!hasPrevPage}
+                            className={`cursor-pointer flex items-center px-3 py-2 text-sm font-medium border rounded-md transition-colors duration-200 ${
+                              hasPrevPage
+                                ? 'text-gray-700 bg-white border-gray-300 hover:bg-gray-50 hover:text-gray-900'
+                                : 'text-gray-400 bg-gray-50 border-gray-200 cursor-not-allowed'
+                            }`}
+                          >
+                            <ChevronLeft size={16} className="mr-1" />
+                            Previous
+                          </button>
+                          
+                          {/* Page numbers */}
+                          {getPageNumbers().map(pageNum => (
+                            <button
+                              key={pageNum}
+                              onClick={() => goToPage(pageNum)}
+                              className={`cursor-pointer px-3 py-2 text-sm font-medium border rounded-md transition-colors duration-200 ${
+                                currentPage === pageNum 
+                                  ? 'bg-blue-600 text-white border-blue-600 hover:bg-blue-700' 
+                                  : 'text-gray-700 bg-white border-gray-300 hover:bg-gray-50 hover:text-gray-900'
+                              }`}
+                            >
+                              {pageNum}
+                            </button>
+                          ))}
+                          
+                          {/* Next button */}
+                          <button 
+                            onClick={goToNextPage}
+                            disabled={!hasNextPage}
+                            className={`cursor-pointer flex items-center px-3 py-2 text-sm font-medium border rounded-md transition-colors duration-200 ${
+                              hasNextPage
+                                ? 'text-gray-700 bg-white border-gray-300 hover:bg-gray-50 hover:text-gray-900'
+                                : 'text-gray-400 bg-gray-50 border-gray-200 cursor-not-allowed'
+                            }`}
+                          >
+                            Next
+                            <ChevronRight size={16} className="ml-1" />
+                          </button>
+                          
+                          {/* Last page button - only show if not near the end */}
+                          {currentPage < totalPages - 2 && (
+                            <>
+                              {currentPage < totalPages - 3 && (
+                                <span className="px-2 py-2 text-gray-500">
+                                  <MoreHorizontal size={16} />
+                                </span>
+                              )}
+                              <button 
+                                onClick={() => goToPage(totalPages)} 
+                                className="cursor-pointer px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-900 transition-colors duration-200"
                           >
                             {totalPages}
                           </button>
-                        </>
+                            </>
+                          )}
+                        </div>
                       )}
+                      
+                      {/* Show items count */}
+                      <div className="text-end text-sm text-gray-600">
+                        {getPaginationText()}
+                      </div>
                     </div>
-                  )}
-                  
-                  {/* Show items count */}
-                  <div className="text-end text-sm text-gray-600">
-                    {getPaginationText()}
-                  </div>
-                </div>
+                  </>
+                )}
               </>
             )}
           </div>
