@@ -520,7 +520,7 @@ export default function Page() {
                   {categoryName}
                   <button
                     onClick={() => removeCategory(selectedCategories[index])}
-                    className="hover:bg-slate-200 rounded-full p-1"
+                    className="cursor-pointer hover:bg-slate-200 rounded-full p-1"
                   >
                     <X size={14} />
                   </button>
@@ -532,7 +532,7 @@ export default function Page() {
           {/* Dropdown Toggle */}
           <button
             onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}
-            className="w-full flex items-center justify-between px-3 py-2 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-slate-500"
+            className="cursor-pointer w-full flex items-center justify-between px-3 py-2 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-slate-500"
           >
             <span className="text-slate-700">
               {selectedCategories.length === 0 
@@ -585,9 +585,9 @@ export default function Page() {
           {selectedCategories.length > 0 && (
             <button
               onClick={() => setSelectedCategories([])}
-              className="mt-2 text-sm text-slate-500 hover:text-slate-700 underline"
+              className="cursor-pointer mt-2 text-sm text-slate-500 hover:text-slate-700 underline"
             >
-              Clear all selections
+              Clear all categories
             </button>
           )}
 
