@@ -17,7 +17,11 @@ import { useToast } from '@/contexts/toast-context';
 export default function Page() {
   const { status, session } = useAuthWithRedirect();
   const [currentPage, setCurrentPage] = useState(1);
-  const { articles, loading, error, totalPages, totalCount, hasNextPage, hasPrevPage, addNewArticle, updateArticleInSidebar, deleteArticleFromSidebar } = useAllArticles(currentPage);
+  const [searchQuery, setSearchQuery] = useState('');
+  const { articles, loading, error, totalPages, totalCount, hasNextPage, hasPrevPage, addNewArticle, updateArticleInSidebar, deleteArticleFromSidebar } = useAllArticles(
+    currentPage, 
+    { searchQuery } // Add searchQuery here
+  );
   const { wikiOptions, tabOptionsMap, mainCategories, loading: optionsLoading, error: optionsError } = useOptions();
   const { showToast } = useToast();
   const [selectedArticle, setSelectedArticle] = useState(null);
@@ -446,6 +450,10 @@ export default function Page() {
     }
   }, [selectedArticle]);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
+
   if (status === 'loading' || optionsLoading) {
     return <Spinner />;
   }
@@ -465,18 +473,21 @@ export default function Page() {
         articles={articles}
         loading={loading}
         totalPages={totalPages}
+        totalCount={totalCount} // Add totalCount
         currentPage={currentPage}
         hasNextPage={hasNextPage}
         hasPrevPage={hasPrevPage}
-        goToPage={goToPage}
-        goToNextPage={goToNextPage}
-        goToPrevPage={goToPrevPage}
+        goToPage={setCurrentPage}
+        goToNextPage={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+        goToPrevPage={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
         startNewArticle={startNewArticle}
         setSelectedArticle={setSelectedArticle}
         selectedArticleId={selectedArticle?.id}
         handleDelete={handleDelete}
         error={error}
         newlyCreatedId={newlyCreatedId}
+        searchQuery={searchQuery}           // Add search props
+        onSearchChange={setSearchQuery}     // Add search props
       />
 
       {/* Content Editor */}
