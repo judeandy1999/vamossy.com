@@ -46,22 +46,45 @@ export default async function handler(req, res) {
     
     // Filter by specific wiki_id through junction table
     if (wiki_id) {
-      query = query.eq('article_wiki.wiki_id', parseInt(wiki_id));
+      // When filtering by specific category, only show articles that have that category
+      query = supabase
+        .from('articles')
+        .select(`
+          *,
+          article_wiki!inner(
+            wiki_id,
+            category_options(id, name, main_category_id)
+          )
+        `, { count: 'exact' })
+        .eq('article_wiki.wiki_id', parseInt(wiki_id));
     }
     
     // Filter by main category through junction table
-    if (main_category_id) {
-      const wikiIds = await getWikiIdsByMainCategory(main_category_id);
-      if (wikiIds.length > 0) {
-        query = query.in('article_wiki.wiki_id', wikiIds);
+    if (main_category_id && !wiki_id) {
+      if (main_category_id === 'uncategorized') {
+        // Show articles with no categories at all
+        query = supabase
+          .from('articles')
+          .select(`
+            *,
+            article_wiki!left(
+              wiki_id,
+              category_options(id, name, main_category_id)
+            )
+          `, { count: 'exact' })
+          .is('article_wiki.wiki_id', null);
       } else {
-        // No articles match this main category
-        return res.status(200).json({
-          articles: [],
-          totalCount: 0,
-          currentPage: pageNumber,
-          totalPages: 0
-        });
+        // Show articles that have categories in this main category
+        query = supabase
+          .from('articles')
+          .select(`
+            *,
+            article_wiki!inner(
+              wiki_id,
+              category_options!inner(id, name, main_category_id)
+            )
+          `, { count: 'exact' })
+          .eq('article_wiki.category_options.main_category_id', parseInt(main_category_id));
       }
     }
 
@@ -70,6 +93,7 @@ export default async function handler(req, res) {
       .range(from, to);
 
     if (error) {
+      console.error('Articles query error:', error);
       throw error;
     }
 
@@ -87,6 +111,7 @@ export default async function handler(req, res) {
       totalPages: Math.ceil(count / limitNumber)
     });
   } catch (error) {
+    console.error('Articles API error:', error);
     return res.status(500).json({ error: error.message });
   }
 }
