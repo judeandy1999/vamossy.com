@@ -3,6 +3,79 @@ import { supabase } from '@/utils/client';
 export default async function handler(req, res) {
   const { id } = req.query;
 
+  if (req.method == 'GET') {
+    try {
+      // Get article with all its categories
+      const { data: article, error: articleError } = await supabase
+        .from('articles')
+        .select(`
+          *,
+          article_wiki!left(
+            wiki_id,
+            category_options(id, name, main_category_id)
+          )
+        `)
+        .eq('id', id)
+        .single();
+
+      if (articleError) {
+        console.error('Article fetch error:', articleError);
+        throw articleError;
+      }
+
+      if (!article) {
+        return res.status(404).json({ error: 'Article not found' });
+      }
+
+      // Transform to include categories array
+      const transformedArticle = {
+        ...article,
+        categories: article.article_wiki?.map(aw => aw.wiki_id) || [],
+        category_details: article.article_wiki?.map(aw => aw.category_options) || []
+      };
+    // If article has tabs, fetch them
+      if (article.has_tabs) {
+        const { data: tabs, error: tabsError } = await supabase
+          .from('article_tabs')
+          .select(`
+            tab_id,
+            content,
+            tab_options!inner(
+              id,
+              name
+            )
+          `)
+          .eq('article_id', id)
+          .order('tab_id', { ascending: true });
+
+        if (tabsError) {
+          console.error('Tabs fetch error:', tabsError);
+          throw tabsError;
+        }
+
+        console.log('Raw tabs with names from database:', tabs); // Debug log
+
+        // Transform tabs into object with tab_id as key
+        const tabsObject = {};
+        tabs?.forEach(tab => {
+          tabsObject[tab.tab_id] = {
+            name: tab.tab_options.name, // Get name from tab_options table
+            content: tab.content,
+            order: tab.tab_id // Use tab_id as order since no order column exists
+          };
+        });
+
+        console.log('Transformed tabs object:', tabsObject); // Debug log
+
+        transformedArticle.tabs = tabsObject;
+      }
+
+      return res.status(200).json(transformedArticle);
+    } catch (error) {
+      console.error('Error fetching article content:', error);
+      return res.status(500).json({ error: error.message });
+    }
+  }
   if (req.method === 'PUT') {
     const { title, content, wiki_id, has_tabs, user_email } = req.body;
 
