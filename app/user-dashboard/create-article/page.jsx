@@ -20,7 +20,7 @@ export default function Page() {
   const [searchQuery, setSearchQuery] = useState('');
   const { articles, loading, error, totalPages, totalCount, hasNextPage, hasPrevPage, addNewArticle, updateArticleInSidebar, deleteArticleFromSidebar } = useAllArticles(
     currentPage, 
-    { searchQuery } // Add searchQuery here
+    { searchQuery }
   );
   const { wikiOptions, tabOptionsMap, mainCategories, loading: optionsLoading, error: optionsError } = useOptions();
   const { showToast } = useToast();
@@ -32,15 +32,10 @@ export default function Page() {
   const [newlyCreatedId, setNewlyCreatedId] = useState(null);
   const [contentChanged, setContentChanged] = useState(false);
   
-  // Changed from single category to array of categories
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
   
   const [hasTabs, setHasTabs] = useState(false);
-
-  console.log('Selected Categories:', selectedCategories);
-  console.log('wikiOptions:', wikiOptions);
-
   const { initialTabContents, tabContents, setTabContents, loading: tabsLoading } = useArticleTabs(selectedArticle?.id);
 
   const isEditing = !!selectedArticle;
@@ -50,11 +45,9 @@ export default function Page() {
       const { title, content, categories, has_tabs } = selectedArticle;
       setTitle(title);
       
-      // Handle existing articles - use categories array if available, fallback to single wiki_id
       if (categories && Array.isArray(categories) && categories.length > 0) {
         setSelectedCategories(categories);
       } else if (selectedArticle.wiki_id) {
-        // Handle legacy single wiki_id or if categories is empty
         setSelectedCategories(Array.isArray(selectedArticle.wiki_id) ? selectedArticle.wiki_id : [selectedArticle.wiki_id]);
       } else {
         setSelectedCategories([]);
@@ -83,7 +76,6 @@ export default function Page() {
     setShowCategoryDropdown(false);
   };
 
-  // Group wikis by main category for checkbox display
   const groupedWikis = Object.entries(wikiOptions).reduce((acc, [wikiId, wiki]) => {
     const mainCategoryId = wiki.main_category_id || 'uncategorized';
     const mainCategoryName = wiki.main_category_id 
@@ -100,7 +92,6 @@ export default function Page() {
     return acc;
   }, {});
 
-  // Handle category selection
   const handleCategoryToggle = (categoryId) => {
     const numCategoryId = Number(categoryId);
     setSelectedCategories(prev => {
@@ -112,12 +103,10 @@ export default function Page() {
     });
   };
 
-  // Remove individual category
   const removeCategory = (categoryId) => {
     setSelectedCategories(prev => prev.filter(id => id !== categoryId));
   };
 
-  // Get selected category names for display
   const getSelectedCategoryNames = () => {
     return selectedCategories.map(id => {
       const wiki = wikiOptions[id];
@@ -131,7 +120,6 @@ export default function Page() {
     });
   };
 
-  // Helper function to check individual tab sizes
   const validateTabSizes = (tabs) => {
     const maxSize = 900 * 1024; // 900KB limit
     const oversizedTabs = [];
@@ -149,7 +137,6 @@ export default function Page() {
           }
         } catch (error) {
           console.error(`Error calculating size for tab ${tabId}:`, error);
-          // If we can't calculate size, assume it's fine to avoid blocking saves
         }
       }
     }
@@ -473,7 +460,7 @@ export default function Page() {
         articles={articles}
         loading={loading}
         totalPages={totalPages}
-        totalCount={totalCount} // Add totalCount
+        totalCount={totalCount}
         currentPage={currentPage}
         hasNextPage={hasNextPage}
         hasPrevPage={hasPrevPage}
@@ -486,8 +473,8 @@ export default function Page() {
         handleDelete={handleDelete}
         error={error}
         newlyCreatedId={newlyCreatedId}
-        searchQuery={searchQuery}           // Add search props
-        onSearchChange={setSearchQuery}     // Add search props
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
       />
 
       {/* Content Editor */}
@@ -627,7 +614,6 @@ export default function Page() {
                 
                 if (!hasCategoryTabs) return null;
                 
-                // Get main category name
                 const mainCategoryName = category?.main_category_id 
                   ? mainCategories[category.main_category_id]?.name 
                   : 'Uncategorized';
