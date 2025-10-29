@@ -25,7 +25,14 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const { page = '1', limit = '10', wiki_id, main_category_id } = req.query;
+  const { 
+    page = '1', 
+    limit = '10', 
+    wiki_id, 
+    main_category_id,
+    search // Add search parameter
+  } = req.query;
+  
   const pageNumber = parseInt(page, 10);
   const limitNumber = parseInt(limit, 10);
 
@@ -88,6 +95,12 @@ export default async function handler(req, res) {
       }
     }
 
+    // Add search functionality
+    if (search && search.trim()) {
+      const searchTerm = search.trim();
+      query = query.or(`title.ilike.%${searchTerm}%,content.ilike.%${searchTerm}%`);
+    }
+
     const { data, error, count } = await query
       .order('created_at', { ascending: false })
       .range(from, to);
@@ -108,7 +121,8 @@ export default async function handler(req, res) {
       articles: transformedArticles,
       totalCount: count,
       currentPage: pageNumber,
-      totalPages: Math.ceil(count / limitNumber)
+      totalPages: Math.ceil(count / limitNumber),
+      searchQuery: search || null
     });
   } catch (error) {
     console.error('Articles API error:', error);
