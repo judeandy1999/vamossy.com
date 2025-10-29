@@ -2,67 +2,55 @@ import { supabase } from '@/utils/client';
 
 export default async function handler(req, res) {
   const { id } = req.query;
-  const full = req.query.full === 'true';
-
-  if (req.method === 'GET') {
-    try {
-      const { data: article, error: articleError } = await supabase
-        .from('articles')
-        .select(full ? '*' : 'id, title, created_at, has_tabs')
-        .eq('id', id)
-        .single();
-
-      if (articleError) {
-        throw new Error(`Failed to fetch article: ${articleError.message}`);
-      }
-
-      if (full && article.has_tabs) {
-        const { data: tabsWithNames, error: tabsWithNamesError } = await supabase
-          .from('article_tabs')
-          .select('tab_id, content, tab_options(name)')
-          .eq('article_id', id);
-
-        if (tabsWithNamesError) {
-          throw new Error(`Failed to fetch tabs with names: ${tabsWithNamesError.message}`);
-        }
-
-        article.tabs = tabsWithNames.reduce((acc, tab) => {
-          acc[tab.tab_id] = {
-            content: tab.content,
-            name: tab.tab_options?.name || `Tab ${tab.tab_id}`,
-          };
-          return acc;
-        }, {});
-      }
-
-      return res.status(200).json(article);
-    } catch (error) {
-      console.error(error.message);
-      return res.status(500).json({ error: error.message });
-    }
-  }
 
   if (req.method === 'PUT') {
     const { title, content, wiki_id, has_tabs, user_email } = req.body;
-    // Note: No tabs in this request anymore
 
     try {
-      const { data: article, error: updateError } = await supabase
+      // Update the article
+      const { data: article, error: articleError } = await supabase
         .from('articles')
         .update({ 
           title, 
           content: has_tabs ? '' : content,
-          wiki_id, 
-          has_tabs,
-          user_email,
-          updated_at: new Date().toISOString()
+          has_tabs, 
+          user_email 
         })
         .eq('id', id)
         .select()
         .single();
 
-      if (updateError) {
-        throw new Error(`Failed to update article: ${updateError.message}`);
+      if (articleError) {
+        throw new Error(`Failed to update article: ${articleError.message}`);
+      }
+
+      // Update wiki relationships - delete existing and insert new ones
+      if (wiki_id && Array.isArray(wiki_id)) {
+        // Delete existing relationships
+        const { error: deleteError } = await supabase
+          .from('article_wiki')
+          .delete()
+          .eq('article_id', id);
+
+        if (deleteError) {
+          throw new Error(`Failed to delete existing wiki relationships: ${deleteError.message}`);
+        }
+
+        // Insert new relationships
+        if (wiki_id.length > 0) {
+          const articleWikiInserts = wiki_id.map(wikiId => ({
+            article_id: parseInt(id),
+            wiki_id: wikiId
+          }));
+
+          const { error: insertError } = await supabase
+            .from('article_wiki')
+            .insert(articleWikiInserts);
+
+          if (insertError) {
+            throw new Error(`Failed to create new wiki relationships: ${insertError.message}`);
+          }
+        }
       }
 
       return res.status(200).json(article);
