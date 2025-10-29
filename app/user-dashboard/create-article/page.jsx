@@ -397,7 +397,16 @@ export default function Page() {
         
         if (contentSize > maxSize) {
           const sizeInKB = (contentSize / 1024).toFixed(1);
-          const tabName = tabOptionsMap[wikiCategory]?.[tabId]?.name || `Tab ${tabId}`;
+          
+          // Find tab name from any selected category that has this tab
+          let tabName = `Tab ${tabId}`;
+          for (const categoryId of selectedCategories) {
+            const tabOption = tabOptionsMap[categoryId]?.[tabId];
+            if (tabOption?.name) {
+              tabName = tabOption.name;
+              break;
+            }
+          }
           
           // Only show warning if content is significantly over limit
           if (contentSize > maxSize * 1.1) { // 10% buffer
@@ -410,69 +419,6 @@ export default function Page() {
       } catch (error) {
         console.error('Error calculating content size:', error);
       }
-    }
-  };
-
-  // Improved useArticleTabs.js
-  const fetchTabContents = async () => {
-    if (!articleId) {
-      setTabContents({});
-      setInitialTabContents({});
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      // Always get fresh session
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      
-      if (sessionError || !session?.access_token) {
-        throw new Error('Authentication required');
-      }
-
-      const response = await fetch(`/api/tab-articles?id=${articleId}`, {
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-          'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
-        },
-      });
-
-      if (response.status === 401) {
-        // Token expired, try to refresh session
-        const { data: { session: refreshedSession } } = await supabase.auth.refreshSession();
-        if (refreshedSession?.access_token) {
-          // Retry with new token
-          const retryResponse = await fetch(`/api/tab-articles?id=${articleId}`, {
-            headers: {
-              Authorization: `Bearer ${refreshedSession.access_token}`,
-              'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
-            },
-          });
-          if (!retryResponse.ok) {
-            throw new Error(`HTTP ${retryResponse.status}: ${retryResponse.statusText}`);
-          }
-          const tabs = await retryResponse.json();
-          setTabContents(tabs);
-          setInitialTabContents(tabs);
-          return;
-        }
-        throw new Error('Session expired. Please log in again.');
-      }
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const tabs = await response.json();
-      setTabContents(tabs);
-      setInitialTabContents(tabs);
-    } catch (error) {
-      console.error('Error fetching tab contents:', error.message);
-      setError(error.message);
-    } finally {
-      setLoading(false);
     }
   };
 
