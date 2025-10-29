@@ -17,7 +17,7 @@ const fetcher = (url) =>
 const PAGE_SIZE = 10;
 
 export function useAllArticles(currentPage = 1, filters = {}) {
-  const { selectedWikiId, selectedMainCategoryId } = filters;
+  const { selectedWikiId, selectedMainCategoryId, searchQuery } = filters; // Add searchQuery
   
   const queryParams = {
     page: currentPage,
@@ -30,6 +30,11 @@ export function useAllArticles(currentPage = 1, filters = {}) {
   
   if (selectedMainCategoryId) {
     queryParams.main_category_id = selectedMainCategoryId;
+  }
+
+  // Add search parameter
+  if (searchQuery && searchQuery.trim()) {
+    queryParams.search = searchQuery.trim();
   }
   
   const queryString = new URLSearchParams(queryParams).toString();
@@ -48,8 +53,8 @@ export function useAllArticles(currentPage = 1, filters = {}) {
   const hasPrevPage = currentPage > 1;
 
   const addNewArticle = (newArticle) => {
-    // Only update if we're on the first page and no filters are applied
-    if (currentPage === 1 && !selectedWikiId && !selectedMainCategoryId) {
+    // Only update if we're on the first page and no filters/search are applied
+    if (currentPage === 1 && !selectedWikiId && !selectedMainCategoryId && !searchQuery) {
       mutate(
         (current) => ({
           ...current,

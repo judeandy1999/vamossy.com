@@ -1,70 +1,84 @@
 import { supabase } from '@/utils/client';
-import { authenticate } from '@/lib/authMiddleware';
 
 export default async function handler(req, res) {
-  if (!authenticate(req, res)) return;
-
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
   try {
     // Get total article count
-    const { count: totalCount } = await supabase
+    const { count: totalCount, error: totalError } = await supabase
       .from('articles')
       .select('*', { count: 'exact', head: true });
 
-    // Get all articles
-    const { data: articles, error: articlesError } = await supabase
-      .from('articles')
-      .select('id, wiki_id');
+    if (totalError) throw totalError;
 
-    if (articlesError) {
-      throw articlesError;
-    }
+    // Get counts by wiki_id (each article-wiki relationship is counted)
+    const { data: wikiCounts, error: wikiError } = await supabase
+      .from('article_wiki')
+      .select(`
+        wiki_id,
+        articles!inner(id)
+      `);
 
-    // Get all category options (the correct table name)
-    const { data: categoryOptions, error: categoryError } = await supabase
-      .from('category_options')
-      .select('id, name, main_category_id');
+    if (wikiError) throw wikiError;
 
-    if (categoryError) {
-      throw categoryError;
-    }
-
-    // Create a map of category_id to category_option for fast lookup
-    const categoryMap = {};
-    categoryOptions.forEach(category => {
-      categoryMap[category.id] = category;
+    // Count articles per wiki_id
+    const byWikiId = {};
+    wikiCounts.forEach(item => {
+      const wikiId = item.wiki_id;
+      if (!byWikiId[wikiId]) {
+        byWikiId[wikiId] = 0;
+      }
+      byWikiId[wikiId]++;
     });
 
-    // Calculate counts by category
-    const counts = {
-      total: totalCount,
-      byWikiId: {},
-      byMainCategoryId: {},
-      uncategorized: 0
-    };
+    // Get counts by main_category_id
+    const { data: mainCategoryCounts, error: mainCategoryError } = await supabase
+      .from('article_wiki')
+      .select(`
+        category_options!inner(
+          id,
+          main_category_id
+        ),
+        articles!inner(id)
+      `);
 
-    articles.forEach(article => {
-      const wikiId = article.wiki_id;
-      const categoryOption = categoryMap[wikiId];
-      const mainCategoryId = categoryOption?.main_category_id;
+    if (mainCategoryError) throw mainCategoryError;
 
-      // Count by wiki_id (category_id)
-      counts.byWikiId[wikiId] = (counts.byWikiId[wikiId] || 0) + 1;
+    // Count articles per main category
+    const byMainCategoryId = {};
+    let uncategorizedCount = 0;
 
-      // Count by main_category_id
+    mainCategoryCounts.forEach(item => {
+      const mainCategoryId = item.category_options.main_category_id;
+      
       if (mainCategoryId) {
-        counts.byMainCategoryId[mainCategoryId] = (counts.byMainCategoryId[mainCategoryId] || 0) + 1;
+        if (!byMainCategoryId[mainCategoryId]) {
+          byMainCategoryId[mainCategoryId] = new Set();
+        }
+        byMainCategoryId[mainCategoryId].add(item.articles.id);
       } else {
-        counts.uncategorized += 1;
+        // This is uncategorized
+        uncategorizedCount++;
       }
     });
 
-    return res.status(200).json(counts);
+    // Convert sets to counts (to avoid double-counting articles with multiple categories in same main category)
+    const finalMainCategoryCounts = {};
+    Object.keys(byMainCategoryId).forEach(mainCategoryId => {
+      finalMainCategoryCounts[mainCategoryId] = byMainCategoryId[mainCategoryId].size;
+    });
+
+    return res.status(200).json({
+      total: totalCount,
+      byWikiId,
+      byMainCategoryId: finalMainCategoryCounts,
+      uncategorized: uncategorizedCount
+    });
+
   } catch (error) {
-    console.error('Counts API Error:', error);
+    console.error('Error fetching article counts:', error);
     return res.status(500).json({ error: error.message });
   }
 }

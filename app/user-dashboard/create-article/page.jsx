@@ -6,7 +6,7 @@ import DOMPurify from 'dompurify';
 import { useAllArticles } from '@/hooks/useAllArticles';
 import { useOptions } from '@/hooks/useOptions';
 import RichTextEditor from '@/components/shared/rich-text-editor';
-import { Save } from 'lucide-react';
+import { Save, ChevronDown, X } from 'lucide-react';
 import Spinner from '@/components/ui/spinner';
 import EditorSidebar from '@/components/shared/editor-sidebar';
 import { createArticle, updateArticle, deleteArticle } from '@/utils/articles';
@@ -17,8 +17,12 @@ import { useToast } from '@/contexts/toast-context';
 export default function Page() {
   const { status, session } = useAuthWithRedirect();
   const [currentPage, setCurrentPage] = useState(1);
-  const { articles, loading, error, totalPages, totalCount, hasNextPage, hasPrevPage, addNewArticle, updateArticleInSidebar, deleteArticleFromSidebar } = useAllArticles(currentPage);
-  const { wikiOptions, tabOptionsMap, loading: optionsLoading, error: optionsError } = useOptions();
+  const [searchQuery, setSearchQuery] = useState('');
+  const { articles, loading, error, totalPages, totalCount, hasNextPage, hasPrevPage, addNewArticle, updateArticleInSidebar, deleteArticleFromSidebar } = useAllArticles(
+    currentPage, 
+    { searchQuery }
+  );
+  const { wikiOptions, tabOptionsMap, mainCategories, loading: optionsLoading, error: optionsError } = useOptions();
   const { showToast } = useToast();
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [title, setTitle] = useState('');
@@ -27,18 +31,27 @@ export default function Page() {
   const [isSaving, setIsSaving] = useState(false);
   const [newlyCreatedId, setNewlyCreatedId] = useState(null);
   const [contentChanged, setContentChanged] = useState(false);
-  const [wikiCategory, setWikiCategory] = useState(0);
+  
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
+  
   const [hasTabs, setHasTabs] = useState(false);
-
   const { initialTabContents, tabContents, setTabContents, loading: tabsLoading } = useArticleTabs(selectedArticle?.id);
 
   const isEditing = !!selectedArticle;
 
   useEffect(() => {
     if (selectedArticle) {
-      const { title, content, wiki_id, has_tabs } = selectedArticle;
+      const { title, content, categories, has_tabs } = selectedArticle;
       setTitle(title);
-      setWikiCategory(wiki_id || 0);
+      
+      if (categories && Array.isArray(categories) && categories.length > 0) {
+        setSelectedCategories(categories);
+      } else if (selectedArticle.wiki_id) {
+        setSelectedCategories(Array.isArray(selectedArticle.wiki_id) ? selectedArticle.wiki_id : [selectedArticle.wiki_id]);
+      } else {
+        setSelectedCategories([]);
+      }
 
       if (has_tabs) {
         setHasTabs(true);
@@ -46,8 +59,8 @@ export default function Page() {
         setInitialContent('');
       } else {
         setHasTabs(false);
-        setContent(content);
-        setInitialContent(content);
+        setContent(content || '');
+        setInitialContent(content || '');
       }
     } else {
       refreshContent();
@@ -57,12 +70,56 @@ export default function Page() {
   const refreshContent = () => {
     setTitle('');
     setContent('');
-    setWikiCategory(0);
+    setSelectedCategories([]);
     setHasTabs(false);
     setInitialContent('');
+    setShowCategoryDropdown(false);
   };
 
-  // Helper function to check individual tab sizes
+  const groupedWikis = Object.entries(wikiOptions).reduce((acc, [wikiId, wiki]) => {
+    const mainCategoryId = wiki.main_category_id || 'uncategorized';
+    const mainCategoryName = wiki.main_category_id 
+      ? mainCategories[wiki.main_category_id]?.name 
+      : 'Uncategorized';
+    
+    if (!acc[mainCategoryId]) {
+      acc[mainCategoryId] = {
+        name: mainCategoryName,
+        wikis: []
+      };
+    }
+    acc[mainCategoryId].wikis.push([wikiId, wiki]);
+    return acc;
+  }, {});
+
+  const handleCategoryToggle = (categoryId) => {
+    const numCategoryId = Number(categoryId);
+    setSelectedCategories(prev => {
+      if (prev.includes(numCategoryId)) {
+        return prev.filter(id => id !== numCategoryId);
+      } else {
+        return [...prev, numCategoryId];
+      }
+    });
+  };
+
+  const removeCategory = (categoryId) => {
+    setSelectedCategories(prev => prev.filter(id => id !== categoryId));
+  };
+
+  const getSelectedCategoryNames = () => {
+    return selectedCategories.map(id => {
+      const wiki = wikiOptions[id];
+      if (!wiki) return `Category ${id}`;
+      
+      const mainCategory = wiki.main_category_id 
+        ? mainCategories[wiki.main_category_id]?.name 
+        : 'Uncategorized';
+      
+      return `${mainCategory}: ${wiki.name}`;
+    });
+  };
+
   const validateTabSizes = (tabs) => {
     const maxSize = 900 * 1024; // 900KB limit
     const oversizedTabs = [];
@@ -80,7 +137,6 @@ export default function Page() {
           }
         } catch (error) {
           console.error(`Error calculating size for tab ${tabId}:`, error);
-          // If we can't calculate size, assume it's fine to avoid blocking saves
         }
       }
     }
@@ -95,8 +151,8 @@ export default function Page() {
       return;
     }
 
-    if (wikiCategory === 0) {
-      showToast('Please select a category!', 'error');
+    if (selectedCategories.length === 0) {
+      showToast('Please select at least one category!', 'error');
       return;
     }
 
@@ -110,13 +166,20 @@ export default function Page() {
       return;
     }
 
-    // Size validation
+    // Size validation for tabs
     if (hasTabs && Object.keys(tabContents).length > 0) {
       const oversizedTabs = validateTabSizes(tabContents);
       if (oversizedTabs.length > 0) {
         const tabNames = oversizedTabs.map(tab => {
-          const tabOption = tabOptionsMap[wikiCategory]?.[tab.tabId];
-          const tabName = tabOption || `Tab ${tab.tabId}`;
+          // Find tab name from any category that has this tab
+          let tabName = `Tab ${tab.tabId}`;
+          for (const categoryId of selectedCategories) {
+            const tabOption = tabOptionsMap[categoryId]?.[tab.tabId];
+            if (tabOption?.name) {
+              tabName = tabOption.name;
+              break;
+            }
+          }
           return `${tabName} (${tab.sizeInKB}KB)`;
         }).join(', ');
         
@@ -128,6 +191,7 @@ export default function Page() {
       }
     }
 
+    // Size validation for regular content
     if (!hasTabs) {
       const contentSize = new Blob([content]).size;
       const maxSize = 900 * 1024;
@@ -154,7 +218,7 @@ export default function Page() {
           id: selectedArticle.id,
           title,
           content: sanitizedContent,
-          wiki_id: wikiCategory,
+          wiki_id: selectedCategories, // Pass all selected categories as array
           has_tabs: hasTabs,
           user_email: session.user.email,
         });
@@ -165,23 +229,27 @@ export default function Page() {
         }
 
         showToast('Article updated successfully!', 'success');
+        
+        // Update with categories array to match expected structure
         updateArticleInSidebar({
           ...updatedArticle,
+          categories: selectedCategories, // Ensure categories are included
           updated_at: new Date().toISOString(),
         });
         setSelectedArticle(null);
       } else {
         showToast('Creating article...', 'info', true);
         
+        // Create single article with multiple categories
         const newArticle = await createArticle({
           title,
           content: sanitizedContent,
-          wiki_id: wikiCategory,
+          wiki_id: selectedCategories, // All selected categories as array
           has_tabs: hasTabs,
           user_email: session.user.email,
         });
 
-        // Wait for article creation before saving tabs
+        // Save tabs if enabled - merge tabs from all selected categories
         if (hasTabs && Object.keys(tabContents).length > 0) {
           showToast('Saving tabs...', 'info', true);
           await saveTabsIndividually(newArticle.id, tabContents);
@@ -189,8 +257,11 @@ export default function Page() {
         
         setNewlyCreatedId(newArticle.id);
         showToast('Article created successfully!', 'success');
+        
+        // Add the categories array to match the structure expected by the UI
         addNewArticle({
           ...newArticle,
+          categories: selectedCategories, // Add the categories array
           created_at: new Date().toISOString(),
         });
         setSelectedArticle(null);
@@ -317,7 +388,16 @@ export default function Page() {
         
         if (contentSize > maxSize) {
           const sizeInKB = (contentSize / 1024).toFixed(1);
-          const tabName = tabOptionsMap[wikiCategory]?.[tabId]?.name || `Tab ${tabId}`;
+          
+          // Find tab name from any selected category that has this tab
+          let tabName = `Tab ${tabId}`;
+          for (const categoryId of selectedCategories) {
+            const tabOption = tabOptionsMap[categoryId]?.[tabId];
+            if (tabOption?.name) {
+              tabName = tabOption.name;
+              break;
+            }
+          }
           
           // Only show warning if content is significantly over limit
           if (contentSize > maxSize * 1.1) { // 10% buffer
@@ -330,69 +410,6 @@ export default function Page() {
       } catch (error) {
         console.error('Error calculating content size:', error);
       }
-    }
-  };
-
-  // Improved useArticleTabs.js
-  const fetchTabContents = async () => {
-    if (!articleId) {
-      setTabContents({});
-      setInitialTabContents({});
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      // Always get fresh session
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      
-      if (sessionError || !session?.access_token) {
-        throw new Error('Authentication required');
-      }
-
-      const response = await fetch(`/api/tab-articles?id=${articleId}`, {
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-          'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
-        },
-      });
-
-      if (response.status === 401) {
-        // Token expired, try to refresh session
-        const { data: { session: refreshedSession } } = await supabase.auth.refreshSession();
-        if (refreshedSession?.access_token) {
-          // Retry with new token
-          const retryResponse = await fetch(`/api/tab-articles?id=${articleId}`, {
-            headers: {
-              Authorization: `Bearer ${refreshedSession.access_token}`,
-              'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
-            },
-          });
-          if (!retryResponse.ok) {
-            throw new Error(`HTTP ${retryResponse.status}: ${retryResponse.statusText}`);
-          }
-          const tabs = await retryResponse.json();
-          setTabContents(tabs);
-          setInitialTabContents(tabs);
-          return;
-        }
-        throw new Error('Session expired. Please log in again.');
-      }
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const tabs = await response.json();
-      setTabContents(tabs);
-      setInitialTabContents(tabs);
-    } catch (error) {
-      console.error('Error fetching tab contents:', error.message);
-      setError(error.message);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -420,6 +437,10 @@ export default function Page() {
     }
   }, [selectedArticle]);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
+
   if (status === 'loading' || optionsLoading) {
     return <Spinner />;
   }
@@ -439,18 +460,21 @@ export default function Page() {
         articles={articles}
         loading={loading}
         totalPages={totalPages}
+        totalCount={totalCount}
         currentPage={currentPage}
         hasNextPage={hasNextPage}
         hasPrevPage={hasPrevPage}
-        goToPage={goToPage}
-        goToNextPage={goToNextPage}
-        goToPrevPage={goToPrevPage}
+        goToPage={setCurrentPage}
+        goToNextPage={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+        goToPrevPage={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
         startNewArticle={startNewArticle}
         setSelectedArticle={setSelectedArticle}
         selectedArticleId={selectedArticle?.id}
         handleDelete={handleDelete}
         error={error}
         newlyCreatedId={newlyCreatedId}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
       />
 
       {/* Content Editor */}
@@ -460,14 +484,15 @@ export default function Page() {
             <h1 className="text-2xl font-semibold text-slate-800">{isEditing ? 'Edit Article' : 'New Article'}</h1>
             <button
               onClick={saveArticle}
-              disabled={isSaving || !title.trim() || wikiCategory === 0}
+              disabled={isSaving || !title.trim() || selectedCategories.length === 0}
               className={`cursor-pointer flex items-center gap-2 px-4 py-2 rounded text-white transition ${
-                isSaving || !title.trim() || wikiCategory === 0
+                isSaving || !title.trim() || selectedCategories.length === 0
                   ? 'bg-gray-300 cursor-not-allowed'
                   : 'bg-slate-500 hover:bg-slate-700'
               }`}
             >
-              <Save size={16} /> {isEditing ? 'Save' : 'Create'}
+              <Save size={16} /> 
+              {isEditing ? 'Save' : 'Create Article'}
             </button>
           </div>
 
@@ -479,21 +504,94 @@ export default function Page() {
             onChange={(e) => setTitle(e.target.value)}
           />
 
-          <label htmlFor="wiki" className="block mb-1 text-sm text-slate-600 font-medium">Category</label>
-          <select
-            id="wiki"
-            className="w-full border border-gray-300 rounded px-3 py-2 mb-4 focus:outline-none focus:ring focus:border-slate-400"
-            value={wikiCategory}
-            onChange={(e) => setWikiCategory(Number(e.target.value))}
-          >
-            <option value={0}>Select a category</option>
-            {Object.entries(wikiOptions).map(([key, wikiData]) => (
-              <option key={key} value={key}>{wikiData.name}</option>
-            ))}
-          </select>
+          {/* Categories Section */}
+          <label className="block mb-3 text-sm text-slate-600 font-medium">Categories</label>
+          
+          {/* Selected Categories Display */}
+          {selectedCategories.length > 0 && (
+            <div className="mb-3 flex flex-wrap gap-2">
+              {getSelectedCategoryNames().map((categoryName, index) => (
+                <span
+                  key={selectedCategories[index]}
+                  className="inline-flex items-center gap-1 px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-sm"
+                >
+                  {categoryName}
+                  <button
+                    onClick={() => removeCategory(selectedCategories[index])}
+                    className="cursor-pointer hover:bg-slate-200 rounded-full p-1"
+                  >
+                    <X size={14} />
+                  </button>
+                </span>
+              ))}
+            </div>
+          )}
 
-          {wikiCategory !== 0 && (
-            <div className="mb-4">
+          {/* Dropdown Toggle */}
+          <button
+            onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}
+            className="cursor-pointer w-full flex items-center justify-between px-3 py-2 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-slate-500"
+          >
+            <span className="text-slate-700">
+              {selectedCategories.length === 0 
+                ? 'Select categories...' 
+                : `${selectedCategories.length} categories selected`
+              }
+            </span>
+            <ChevronDown 
+              size={16} 
+              className={`transform transition-transform ${showCategoryDropdown ? 'rotate-180' : ''}`}
+            />
+          </button>
+
+          {/* Category Dropdown */}
+          {showCategoryDropdown && (
+            <div className="mt-2 border border-gray-200 rounded-lg bg-white shadow-lg max-h-80 overflow-y-auto">
+              <div className="p-3">
+                {Object.entries(groupedWikis).map(([mainCategoryId, categoryGroup]) => (
+                  <div key={mainCategoryId} className="mb-4 last:mb-0">
+                    <h3 className="text-sm font-semibold text-slate-700 mb-2 border-b border-gray-300 pb-1">
+                      {categoryGroup.name}
+                    </h3>
+                    <div className="space-y-2 pl-2">
+                      {categoryGroup.wikis.map(([wikiId, wiki]) => (
+                        <label key={wikiId} className="flex items-center gap-2 cursor-pointer hover:bg-gray-100 p-1 rounded">
+                          <input
+                            type="checkbox"
+                            checked={selectedCategories.includes(Number(wikiId))}
+                            onChange={() => handleCategoryToggle(wikiId)}
+                            className="accent-slate-600"
+                          />
+                          <span className="text-sm text-slate-700">{wiki.name}</span>
+                          {wiki.description && (
+                            <span className="text-xs text-gray-500">- {wiki.description}</span>
+                          )}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+                
+                {Object.keys(groupedWikis).length === 0 && (
+                  <p className="text-gray-500 text-sm">No categories available</p>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Clear all categories button */}
+          {selectedCategories.length > 0 && (
+            <button
+              onClick={() => setSelectedCategories([])}
+              className="cursor-pointer mt-2 text-sm text-slate-500 hover:text-slate-700 underline"
+            >
+              Clear all categories
+            </button>
+          )}
+
+          {/* Tabs Checkbox */}
+          {selectedCategories.length > 0 && (
+            <div className="mt-4 mb-4">
               <label className="flex items-center gap-2 text-slate-700 font-medium">
                 <input
                   type="checkbox"
@@ -506,18 +604,48 @@ export default function Page() {
             </div>
           )}
 
-          {hasTabs && (
-            <CollapsibleTabs
-              currentTabOptions={wikiCategory ? tabOptionsMap[wikiCategory] || {} : {}}
-              tabContents={tabContents}
-              initialTabContents={initialTabContents}
-              handleTabContentChange={handleTabContentChange}
-              contentChanged={contentChanged}
-              selectedArticle={selectedArticle}
-            />
+          {/* Content/Tabs Section */}
+          {hasTabs && selectedCategories.length > 0 && (
+            <div className="space-y-6">
+              {selectedCategories.map(categoryId => {
+                const category = wikiOptions[categoryId];
+                const categoryTabs = tabOptionsMap[categoryId] || {};
+                const hasCategoryTabs = Object.keys(categoryTabs).length > 0;
+                
+                if (!hasCategoryTabs) return null;
+                
+                const mainCategoryName = category?.main_category_id 
+                  ? mainCategories[category.main_category_id]?.name 
+                  : 'Uncategorized';
+                
+                return (
+                  <div key={categoryId} className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                    {/* Category Header */}
+                    <div className="mb-4">
+                      <h3 className="text-lg font-semibold text-slate-700">
+                        <span className="text-slate-500">{mainCategoryName}:</span> {category?.name}
+                      </h3>
+                      <p className="text-sm text-slate-500">
+                        {Object.keys(categoryTabs).length} tabs available
+                      </p>
+                    </div>
+                    
+                    {/* Collapsible Tabs for this category */}
+                    <CollapsibleTabs
+                      currentTabOptions={categoryTabs}
+                      tabContents={tabContents}
+                      initialTabContents={initialTabContents}
+                      handleTabContentChange={handleTabContentChange}
+                      contentChanged={contentChanged}
+                      selectedArticle={selectedArticle}
+                    />
+                  </div>
+                );
+              })}
+            </div>
           )}
 
-          {!hasTabs && (
+          {!hasTabs && selectedCategories.length > 0 && (
             <RichTextEditor
               contentChanged={contentChanged}
               selectedArticle={selectedArticle?.id}

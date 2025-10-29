@@ -2,12 +2,28 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { ChevronDown, ChevronRight, ArrowLeft, Calendar, Tag, Loader2, ChevronLeft, MoreHorizontal } from 'lucide-react';
+import { ChevronDown, ChevronRight, ArrowLeft, Calendar, Tag, Loader2, ChevronLeft, MoreHorizontal, Search, X } from 'lucide-react';
 import { useAllArticles } from '@/hooks/useAllArticles';
 import { useOptions } from '@/hooks/useOptions';
 import { useArticleContent } from '@/hooks/useArticleContent';
 import { useArticleMeta } from '@/hooks/useArticleMeta';
 import { useArticleCounts } from '@/hooks/useArticleCounts';
+
+function useDebounce(value, delay) {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+}
 
 export default function ArticlesPageContent() {
   const router = useRouter();
@@ -22,6 +38,10 @@ export default function ArticlesPageContent() {
   const [activeTab, setActiveTab] = useState(null);
   const [currentTabPage, setCurrentTabPage] = useState(0);
   const [tabsPerPage, setTabsPerPage] = useState(5);
+  const [searchInput, setSearchInput] = useState('');
+  const [searchQuery, setSearchQuery] = useState(''); // New search query state
+  const debouncedSearchQuery = useDebounce(searchQuery, 300); // Debounced search query
+  const searchResultsContainerRef = useRef(null);
   
   // ALL REF HOOKS
   const tabsContainerRef = useRef(null);
@@ -29,7 +49,7 @@ export default function ArticlesPageContent() {
   // ALL CUSTOM HOOKS
   const { articles, loading, error, totalPages, totalCount, hasNextPage, hasPrevPage } = useAllArticles(
     currentPage, 
-    { selectedWikiId, selectedMainCategoryId }
+    { selectedWikiId, selectedMainCategoryId, searchQuery: debouncedSearchQuery } // Use debounced search query
   );
   const { counts, loading: countsLoading } = useArticleCounts();
   const { wikiOptions, mainCategories, loading: optionsLoading } = useOptions();
@@ -138,6 +158,11 @@ export default function ArticlesPageContent() {
   useEffect(() => {
     setCurrentPage(1);
   }, [selectedMainCategoryId, selectedWikiId]);
+
+  // Reset page when search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
 
   // ALL FUNCTIONS (these can be defined after hooks)
   const createSlug = (title) => {
@@ -404,13 +429,52 @@ export default function ArticlesPageContent() {
     return `Showing ${start}-${end} of ${totalCount} articles`;
   };
 
-  // Return your JSX here
   return (
     <div className="bg-white min-h-screen mb-8">
       <div className="max-w-7xl mx-auto px-4 pt-8">
-        <h1 className="text-4xl md:text-5xl font-bold text-[#032646] mb-8">
-          {getPageTitle()}
-        </h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-4xl md:text-5xl font-bold text-[#032646]">
+            {getPageTitle()}
+          </h1>
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Search className="h-5 w-5 text-gray-400" />
+            </div>
+            <input
+              type="text"
+              placeholder="Search articles..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+            />
+            {searchQuery && (
+              <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="cursor-pointer text-gray-400 hover:text-gray-600"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+            )}
+          </div>
+          
+          {/* Search Results Info */}
+          {searchQuery && (
+            <div className="mt-2 text-sm text-gray-600">
+              {loading ? (
+                <span>Searching...</span>
+              ) : (
+                <span>
+                  {totalCount > 0 
+                    ? `Found ${totalCount} article${totalCount === 1 ? '' : 's'} for "${searchQuery}"`
+                    : `No articles found for "${searchQuery}"`
+                  }
+                </span>
+              )}
+            </div>
+          )}
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Sidebar */}
@@ -737,8 +801,8 @@ export default function ArticlesPageContent() {
                       <h1 className="text-3xl font-bold text-[#032646] mb-4">
                         {selectedArticle.title}
                       </h1>
-                      
-                      <div className="flex items-center gap-4 text-sm text-[#4b5562]">
+
+                      <div className="flex flex-col items-start gap-4 text-sm text-[#4b5562]">
                         <div className="flex items-center gap-1">
                           <Calendar size={16} />
                           <span>
@@ -752,15 +816,26 @@ export default function ArticlesPageContent() {
                         
                         <div className="flex items-center gap-2">
                           <Tag size={16} />
-                          <div className="flex gap-2">
-                            {wikiOptions[selectedArticle.wiki_id]?.main_category_id && (
-                              <span className="bg-blue-100 text-blue-600 px-2 py-1 rounded text-xs font-medium">
-                                {mainCategories[wikiOptions[selectedArticle.wiki_id].main_category_id]?.name}
+                          <div className="flex gap-2 flex-wrap">
+                            {/* Display all categories for this article */}
+                            {selectedArticle.category_details?.map((category, index) => (
+                              <div key={category.id} className="flex items-center gap-1">
+                                {category.main_category_id && mainCategories[category.main_category_id] && (
+                                  <span className="bg-blue-100 text-blue-600 px-2 py-1 rounded text-xs font-medium">
+                                    {mainCategories[category.main_category_id].name}
+                                  </span>
+                                )}
+                                <span className="bg-gray-100 text-[#4b5562] px-2 py-1 rounded text-xs">
+                                  {category.name}
+                                </span>
+                              </div>
+                            ))}
+                            {/* Fallback for articles without category details */}
+                            {(!selectedArticle.category_details || selectedArticle.category_details.length === 0) && (
+                              <span className="bg-gray-100 text-[#4b5562] px-2 py-1 rounded text-xs">
+                                Uncategorized
                               </span>
                             )}
-                            <span className="bg-gray-100 text-[#4b5562] px-2 py-1 rounded text-xs">
-                              {wikiOptions[selectedArticle.wiki_id]?.name || 'Unknown Category'}
-                            </span>
                           </div>
                         </div>
                       </div>
@@ -898,15 +973,29 @@ export default function ArticlesPageContent() {
                                   hour12: true
                                 })}
                               </p>
-                              <div className="flex items-center gap-2">
-                                {wikiOptions[article.wiki_id]?.main_category_id && (
-                                  <span className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded font-medium">
-                                    {mainCategories[wikiOptions[article.wiki_id].main_category_id]?.name}
+                              <div className="flex items-center gap-2 flex-wrap">
+                                {/* Display all categories for this article */}
+                                {article.category_details?.map((category, index) => (
+                                  <div key={category.id} className="flex items-center gap-1">
+                                    {category.main_category_id && mainCategories[category.main_category_id] && (
+                                      <span className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded font-medium">
+                                        {mainCategories[category.main_category_id].name}
+                                      </span>
+                                    )}
+                                    <span className="text-xs bg-gray-100 text-[#4b5562] px-2 py-1 rounded">
+                                      {category.name}
+                                    </span>
+                                    {index < article.category_details.length - 1 && (
+                                      <span className="text-xs text-gray-400">•</span>
+                                    )}
+                                  </div>
+                                ))}
+                                {/* Fallback for articles without category details */}
+                                {(!article.category_details || article.category_details.length === 0) && (
+                                  <span className="text-xs bg-gray-100 text-[#4b5562] px-2 py-1 rounded">
+                                    Uncategorized
                                   </span>
                                 )}
-                                <span className="text-xs bg-gray-100 text-[#4b5562] px-2 py-1 rounded">
-                                  {wikiOptions[article.wiki_id]?.name || 'Unknown Category'}
-                                </span>
                               </div>
                             </div>
                             <p className="text-[#4b5562] line-clamp-3">{article.preview}</p>
