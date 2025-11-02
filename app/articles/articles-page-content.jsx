@@ -688,7 +688,6 @@ export default function ArticlesPageContent() {
                       {/* Pagination */}
                       {totalPages > 1 && (
                         <div className="flex justify-end items-center mb-2 space-x-1">
-                          {/* First page button - only show if not near the beginning */}
                           {currentPage > 3 && (
                             <>
                               <button 
