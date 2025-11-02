@@ -868,38 +868,53 @@ export default function ArticlesPageContent() {
                         {selectedArticleMeta?.has_tabs && selectedArticle?.tabs ? (
                           <div>
                             {/* Tab Navigation */}
-                            <div ref={tabsContainerRef} className="relative mb-6">
-                              <div className="flex items-center border-b border-gray-200 w-full">
+                            <div ref={tabsContainerRef} className="relative mb-8">
+                            {/* Prominent container with background and border */}
+                            <div className="bg-gradient-to-br from-[#f3f6f9] to-[#f1f6fe] rounded-lg p-4 border border-[#1f40af] shadow-md">
+                              <div className="flex items-center justify-between mb-4">
+                                <div className="flex items-center gap-3">
+                                  <div className="flex items-center gap-2">
+                                    <h3 className="text-lg font-bold text-blue-800">Article Tabs</h3>
+                                  </div>
+                                  {needsPagination && getTotalTabPages() > 1 && (
+                                    <span className="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-medium">
+                                      {Object.keys(selectedArticle.tabs).length} Tabs
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                              
+                              <div className="flex items-center w-full">
                                 {/* Previous Button */}
                                 {needsPagination && (
                                   <button
                                     onClick={goToPreviousTabPage}
                                     disabled={!canGoPrevious}
-                                    className={`cursor-pointer flex-shrink-0 mr-2 p-2 rounded-lg transition-all ${
+                                    className={`cursor-pointer flex-shrink-0 mr-3 p-2 rounded-lg border-2 transition-all ${
                                       canGoPrevious
-                                        ? 'text-blue-600 hover:text-[#1f40af] hover:bg-blue-50'
-                                        : 'text-gray-300 !cursor-not-allowed'
+                                        ? 'text-blue-600 border-blue-300 bg-white hover:bg-blue-600 hover:text-white hover:border-blue-600 shadow-sm'
+                                        : 'text-gray-400 border-gray-200 bg-gray-50 cursor-not-allowed'
                                     }`}
-                                    title="Previous tabs"
                                   >
                                     <ChevronLeft size={20} />
                                   </button>
                                 )}
 
-                                {/* Tabs */}
-                                <div className="flex gap-1 sm:gap-2 flex-1 min-w-0 overflow-hidden">
+                                {/* Tabs Container */}
+                                <div className="flex gap-2 flex-1 overflow-hidden">
                                   {getVisibleTabs().map(([tabId, tabContent]) => (
                                     <button
                                       key={tabId}
                                       onClick={() => setActiveTab(tabId)}
-                                      className={`cursor-pointer flex-shrink-0 px-4 py-3 text-sm font-medium rounded-t transition focus:outline-none whitespace-nowrap max-w-[200px] truncate ${
+                                      className={`cursor-pointer flex-shrink-0 px-5 py-3 text-sm font-bold rounded-lg border-1 transition-all duration-200 whitespace-nowrap max-w-[200px] truncate shadow-md ${
                                         activeTab === tabId
-                                          ? 'bg-blue-50 text-blue-600 border-b-2 border-blue-600'
-                                          : 'text-[#4b5562] hover:text-blue-600'
+                                          ? 'bg-blue-600 text-white border-blue-600 shadow-lg ring-opacity-50'
+                                          : 'bg-white text-blue-700 border-blue-300 hover:bg-blue-50 hover:border-blue-500 hover:shadow-lg'
                                       }`}
-                                      title={tabContent.name}
                                     >
-                                      {tabContent.name}
+                                      <div className="flex items-center gap-2">
+                                        <span>{tabContent.name}</span>
+                                      </div>
                                     </button>
                                   ))}
                                 </div>
@@ -909,12 +924,11 @@ export default function ArticlesPageContent() {
                                   <button
                                     onClick={goToNextTabPage}
                                     disabled={!canGoNext}
-                                    className={`cursor-pointer flex-shrink-0 ml-2 p-2 rounded-lg transition-all ${
+                                    className={`cursor-pointer flex-shrink-0 ml-3 p-2 rounded-lg border-2 transition-all ${
                                       canGoNext
-                                        ? 'text-blue-600 hover:text-[#1f40af] hover:bg-blue-50'
-                                        : 'text-gray-300 !cursor-not-allowed'
+                                        ? 'text-blue-600 border-blue-300 bg-white hover:bg-blue-600 hover:text-white hover:border-blue-600 shadow-sm'
+                                        : 'text-gray-400 border-gray-200 bg-gray-50 cursor-not-allowed'
                                     }`}
-                                    title="Next tabs"
                                   >
                                     <ChevronRight size={20} />
                                   </button>
@@ -923,24 +937,24 @@ export default function ArticlesPageContent() {
 
                               {/* Pagination Dots */}
                               {needsPagination && getTotalTabPages() > 1 && (
-                                <div className="absolute right-0 top-full mt-2">
-                                  <div className="flex gap-1">
+                                <div className="flex justify-center mt-4">
+                                  <div className="flex gap-2">
                                     {Array.from({ length: getTotalTabPages() }, (_, index) => (
                                       <button
                                         key={index}
                                         onClick={() => setCurrentTabPage(index)}
-                                        className={`w-2 h-2 rounded-full transition-all ${
+                                        className={`w-3 h-3 rounded-full transition-all ${
                                           index === currentTabPage
-                                            ? 'bg-blue-600'
-                                            : 'bg-gray-300 hover:bg-gray-400'
+                                            ? 'bg-blue-600 ring-2 ring-blue-300'
+                                            : 'bg-blue-300 hover:bg-blue-400'
                                         }`}
-                                        title={`Page ${index + 1}`}
                                       />
                                     ))}
                                   </div>
                                 </div>
                               )}
                             </div>
+                          </div>
 
                             {/* Tab Content */}
                             <div className="article-container max-w-none text-[#4b5562] leading-relaxed">
