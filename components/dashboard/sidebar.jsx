@@ -23,7 +23,8 @@ import {
   UserCheck,
   TrendingUp,
   Cog,
-  Wallet
+  Wallet,
+  Bot
 } from 'lucide-react'
 
 const navItems = [
@@ -36,6 +37,7 @@ const navItems = [
   { label: 'Options', href: '/user-dashboard/options', icon: Cog, roles: ['admin'] },
   { label: 'Booking & Payments', href: '/user-dashboard/booking', icon: Calendar, roles: [] },
   { label: 'Transactions', href: '/user-dashboard/transactions', icon: Receipt, roles: [] },
+  { label: 'Vamossy Agents', href: '/user-dashboard/agents', icon: Bot, roles: ['admin', 'user', 'worker'] },
   //{ label: 'Asset Library', href: '/dashboard/assets', icon: FolderOpen, roles: ['admin', 'user'] },
   //{ label: 'FAQ', href: '/dashboard/faq', icon: HelpCircle, roles: ['admin', 'user', 'worker'] },
 ]
