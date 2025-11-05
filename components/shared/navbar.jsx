@@ -62,8 +62,8 @@ export default function Navbar() {
             </div>
             <button
               className="bg-[#195850] cursor-pointer text-white px-6 py-2 rounded-lg font-medium text-xl hover:bg-[#548816] transition-all duration-100"
-              data-cal-link="dev-vamossy/consultation"
-              data-cal-namespace="consultation"
+              data-cal-link="dev-vamossy/discovery-call"
+              data-cal-namespace="discovery-call"
               data-cal-config='{"layout":"month_view"}'
             >
               Get Free Consultation

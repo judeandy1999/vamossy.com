@@ -1,4 +1,3 @@
-// app/api/agent/route.js
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { openai } from '@/lib/openai';
@@ -27,10 +26,10 @@ export async function POST(request) {
     const systemPrompt = unifiedPrompt.replace(/<ACTIVE_AGENT>/g, agent);
 
     // Get conversation memory
-    const conversationHistory = getMemory(userId, agent, 6);
+    const conversationHistory = await getMemory(userId, agent);
 
     // Add user message to memory
-    setMemory(userId, agent, 'user', message);
+    await setMemory(userId, agent, 'user', message);
 
     // Build messages for OpenAI
     const messages = [
@@ -41,16 +40,53 @@ export async function POST(request) {
 
     // Call OpenAI
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
+      model: 'gpt-5',
       messages,
-      temperature: 0.7,
-      max_tokens: 1500,
+      // max_completion_tokens: 2000, // Increased token limit
+      // Note: o1 models don't support temperature parameter
     });
 
-    const assistantMessage = completion.choices[0].message.content;
+    console.log('OpenAI completion response:', JSON.stringify(completion, null, 2));
+
+    const assistantMessage = completion.choices[0]?.message?.content || '';
+
+    // Handle empty responses specifically for o1 models
+    if (!assistantMessage) {
+      console.error('Empty response from OpenAI. Finish reason:', completion.choices[0]?.finish_reason);
+      
+      // For o1 models, try with a more direct prompt
+      if (completion.choices[0]?.finish_reason === 'length') {
+        // Retry with a simpler, more direct message
+        const retryMessages = [
+          { role: 'user', content: `Please provide a helpful response to: ${message}` }
+        ];
+        
+        const retryCompletion = await openai.chat.completions.create({
+          model: 'gpt-5',
+          messages: retryMessages,
+          max_completion_tokens: 1000,
+        });
+        
+        const retryMessage = retryCompletion.choices[0]?.message?.content || 'I apologize, but I\'m having trouble generating a response right now. Please try rephrasing your question.';
+        
+        // Add retry response to memory
+        await setMemory(userId, agent, 'assistant', retryMessage);
+        
+        return Response.json({
+          agent,
+          message: retryMessage,
+          leadScore: scoreLead(retryMessage)
+        });
+      }
+      
+      return Response.json({ 
+        error: 'AI model returned empty response', 
+        debug: { finish_reason: completion.choices[0]?.finish_reason }
+      }, { status: 500 });
+    }
 
     // Add assistant response to memory
-    setMemory(userId, agent, 'assistant', assistantMessage);
+    await setMemory(userId, agent, 'assistant', assistantMessage);
 
     // Score lead potential
     const leadScore = scoreLead(assistantMessage);

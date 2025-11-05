@@ -1,4 +1,3 @@
-// components/agents/VamossyAgentChat.jsx
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -64,7 +63,22 @@ export default function VamossyAgentChat() {
       });
 
       if (!res.ok) {
-        throw new Error('Failed to get response');
+        // Get more detailed error information
+        let errorMessage = 'Failed to get response';
+        try {
+          const errorData = await res.json();
+          errorMessage = errorData.error || errorData.message || `HTTP ${res.status}: ${res.statusText}`;
+        } catch {
+          errorMessage = `HTTP ${res.status}: ${res.statusText}`;
+        }
+        
+        console.error('API Error:', {
+          status: res.status,
+          statusText: res.statusText,
+          url: res.url
+        });
+        
+        throw new Error(errorMessage);
       }
 
       const json = await res.json();
@@ -82,7 +96,7 @@ export default function VamossyAgentChat() {
       console.error('Error sending message:', error);
       setMessages(prev => [...prev, { 
         role: 'assistant', 
-        content: "Sorry, I encountered an error. Please try again.",
+        content: `Sorry, I encountered an error: ${error.message}. Please try again.`,
         timestamp: new Date(),
         error: true
       }]);
