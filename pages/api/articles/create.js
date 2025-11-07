@@ -3,17 +3,18 @@ import { supabase } from '@/utils/client';
 export default async function handler(req, res) {
 
   if (req.method === 'POST') {
-    const { title, content, wiki_id, has_tabs, user_email } = req.body;
+    const { title, content, wiki_id, has_tabs, user_email, article_list_id } = req.body; // Add article_list_id
 
     try {
-      // First, create the article without wiki_id
+      // First, create the article with article_list_id
       const { data: article, error: articleError } = await supabase
         .from('articles')
         .insert([{ 
           title, 
           content: has_tabs ? '' : content,
           has_tabs, 
-          user_email 
+          user_email,
+          article_list_id: article_list_id || null // Add this line
         }])
         .select()
         .single();

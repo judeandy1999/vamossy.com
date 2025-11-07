@@ -5,6 +5,7 @@ export const useOptions = () => {
   const [wikiOptions, setWikiOptions] = useState({});
   const [tabOptionsMap, setTabOptionsMap] = useState({});
   const [mainCategories, setMainCategories] = useState({});
+  const [articleLists, setArticleLists] = useState({}); // Add this line
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -13,6 +14,15 @@ export const useOptions = () => {
       try {
         setLoading(true);
         setError(null);
+
+        // Fetch article lists
+        const articleListsResponse = await fetch('/api/article-lists', {
+          headers: {
+            'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
+          },
+        });
+        const articleListsData = await articleListsResponse.json();
+        if (!articleListsResponse.ok) throw new Error(articleListsData.error || 'Failed to fetch article lists');
 
         // Fetch main categories
         const mainCategoriesResponse = await fetch('/api/main-categories', {
@@ -71,9 +81,19 @@ export const useOptions = () => {
           return acc;
         }, {});
 
+        // Format article lists
+        const formattedArticleLists = articleListsData.reduce((acc, list) => {
+          acc[list.id] = {
+            name: list.name,
+            description: list.description || ''
+          };
+          return acc;
+        }, {});
+
         setMainCategories(formattedMainCategories);
         setWikiOptions(formattedWikiOptions);
         setTabOptionsMap(formattedTabOptionsMap);
+        setArticleLists(formattedArticleLists);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -394,10 +414,104 @@ export const useOptions = () => {
     }
   };
 
+  // Add article list functions
+  const addArticleList = async (newArticleList) => {
+    try {
+      const response = await fetch('/api/article-lists', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
+        },
+        body: JSON.stringify(newArticleList),
+      });
+
+      if (!response.ok) throw new Error('Failed to add article list');
+
+      const addedArticleList = await response.json();
+      setArticleLists((prev) => ({ 
+        ...prev, 
+        [addedArticleList[0].id]: {
+          name: addedArticleList[0].name,
+          description: addedArticleList[0].description || ''
+        }
+      }));
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const updateArticleList = async (id, updatedArticleList) => {
+    try {
+      const response = await fetch(`/api/article-lists/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
+        },
+        body: JSON.stringify(updatedArticleList),
+      });
+
+      if (!response.ok) throw new Error('Failed to update article list');
+
+      const updated = await response.json();
+      setArticleLists((prev) => ({
+        ...prev,
+        [id]: {
+          name: updated.name,
+          description: updated.description || ''
+        }
+      }));
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    }
+  };
+
+  const deleteArticleList = async (id) => {
+    try {
+      // First, update all articles that use this list to remove the reference
+      const updateArticlesResponse = await fetch(`/api/articles/remove-list/${id}`, {
+        method: 'PUT',
+        headers: {
+          'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
+        },
+      });
+
+      if (!updateArticlesResponse.ok) {
+        const errorData = await updateArticlesResponse.json();
+        throw new Error(errorData.error || 'Failed to update articles');
+      }
+
+      // Now delete the article list
+      const response = await fetch(`/api/article-lists/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'x-internal-request': process.env.NEXT_PUBLIC_INTERNAL_API_KEY,
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to delete article list');
+      }
+
+      setArticleLists((prev) => {
+        const updated = { ...prev };
+        delete updated[id];
+        return updated;
+      });
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    }
+  };
+
   return { 
     wikiOptions, 
     tabOptionsMap, 
     mainCategories,
+    articleLists, // Add this line
     loading, 
     error, 
     addWiki, 
@@ -409,6 +523,9 @@ export const useOptions = () => {
     deleteMainCategory,
     updateWikiMainCategory,
     updateWiki,
-    updateTab
+    updateTab,
+    addArticleList, // Add these lines
+    updateArticleList,
+    deleteArticleList
   };
 };

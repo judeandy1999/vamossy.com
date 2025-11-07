@@ -30,7 +30,10 @@ export default async function handler(req, res) {
     limit = '10', 
     wiki_id, 
     main_category_id,
-    search // Add search parameter
+    wiki_ids, // New: comma-separated wiki IDs
+    main_category_ids, // New: comma-separated main category IDs
+    search,
+    article_list_id
   } = req.query;
   
   const pageNumber = parseInt(page, 10);
@@ -51,9 +54,13 @@ export default async function handler(req, res) {
         )
       `, { count: 'exact' });
     
-    // Filter by specific wiki_id through junction table
-    if (wiki_id) {
-      // When filtering by specific category, only show articles that have that category
+    // Filter by article_list_id if provided
+    if (article_list_id) {
+      query = query.eq('article_list_id', parseInt(article_list_id));
+    }
+    
+    // Filter by specific wiki_id through junction table (single filter - existing functionality)
+    if (wiki_id && !wiki_ids) {
       query = supabase
         .from('articles')
         .select(`
@@ -66,10 +73,26 @@ export default async function handler(req, res) {
         .eq('article_wiki.wiki_id', parseInt(wiki_id));
     }
     
-    // Filter by main category through junction table
-    if (main_category_id && !wiki_id) {
+    // Filter by multiple wiki IDs (new functionality)
+    if (wiki_ids) {
+      const wikiIdArray = wiki_ids.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id));
+      if (wikiIdArray.length > 0) {
+        query = supabase
+          .from('articles')
+          .select(`
+            *,
+            article_wiki!inner(
+              wiki_id,
+              category_options(id, name, main_category_id)
+            )
+          `, { count: 'exact' })
+          .in('article_wiki.wiki_id', wikiIdArray);
+      }
+    }
+    
+    // Filter by main category through junction table (single filter - existing functionality)
+    if (main_category_id && !main_category_ids && !wiki_id && !wiki_ids) {
       if (main_category_id === 'uncategorized') {
-        // Show articles with no categories at all
         query = supabase
           .from('articles')
           .select(`
@@ -81,7 +104,6 @@ export default async function handler(req, res) {
           `, { count: 'exact' })
           .is('article_wiki.wiki_id', null);
       } else {
-        // Show articles that have categories in this main category
         query = supabase
           .from('articles')
           .select(`
@@ -92,6 +114,68 @@ export default async function handler(req, res) {
             )
           `, { count: 'exact' })
           .eq('article_wiki.category_options.main_category_id', parseInt(main_category_id));
+      }
+    }
+
+    // Filter by multiple main category IDs (new functionality)
+    if (main_category_ids && !wiki_id && !wiki_ids) {
+      const mainCategoryIdArray = main_category_ids.split(',').map(id => {
+        if (id.trim() === 'uncategorized') return 'uncategorized';
+        const parsed = parseInt(id.trim());
+        return isNaN(parsed) ? null : parsed;
+      }).filter(id => id !== null);
+
+      if (mainCategoryIdArray.length > 0) {
+        const hasUncategorized = mainCategoryIdArray.includes('uncategorized');
+        const numericIds = mainCategoryIdArray.filter(id => id !== 'uncategorized');
+
+        if (hasUncategorized && numericIds.length > 0) {
+          // Handle both uncategorized and categorized articles
+          // This is more complex and might need a custom query
+          const uncategorizedQuery = supabase
+            .from('articles')
+            .select('id')
+            .is('article_wiki.wiki_id', null);
+
+          const categorizedQuery = supabase
+            .from('articles')
+            .select('id')
+            .in('article_wiki.category_options.main_category_id', numericIds);
+
+          // For now, let's just handle numeric IDs and add uncategorized logic later
+          query = supabase
+            .from('articles')
+            .select(`
+              *,
+              article_wiki!inner(
+                wiki_id,
+                category_options!inner(id, name, main_category_id)
+              )
+            `, { count: 'exact' })
+            .in('article_wiki.category_options.main_category_id', numericIds);
+        } else if (hasUncategorized) {
+          query = supabase
+            .from('articles')
+            .select(`
+              *,
+              article_wiki!left(
+                wiki_id,
+                category_options(id, name, main_category_id)
+              )
+            `, { count: 'exact' })
+            .is('article_wiki.wiki_id', null);
+        } else {
+          query = supabase
+            .from('articles')
+            .select(`
+              *,
+              article_wiki!inner(
+                wiki_id,
+                category_options!inner(id, name, main_category_id)
+              )
+            `, { count: 'exact' })
+            .in('article_wiki.category_options.main_category_id', numericIds);
+        }
       }
     }
 

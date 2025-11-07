@@ -77,17 +77,18 @@ export default async function handler(req, res) {
     }
   }
   if (req.method === 'PUT') {
-    const { title, content, wiki_id, has_tabs, user_email } = req.body;
+    const { title, content, wiki_id, has_tabs, user_email, article_list_id } = req.body; // Add article_list_id
 
     try {
-      // Update the article
+      // Update the article with article_list_id
       const { data: article, error: articleError } = await supabase
         .from('articles')
         .update({ 
           title, 
           content: has_tabs ? '' : content,
           has_tabs, 
-          user_email 
+          user_email,
+          article_list_id: article_list_id || null // Add this line
         })
         .eq('id', id)
         .select()

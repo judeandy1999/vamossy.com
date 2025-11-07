@@ -22,7 +22,7 @@ export default function Page() {
     currentPage, 
     { searchQuery }
   );
-  const { wikiOptions, tabOptionsMap, mainCategories, loading: optionsLoading, error: optionsError } = useOptions();
+  const { wikiOptions, tabOptionsMap, mainCategories, articleLists, loading: optionsLoading, error: optionsError } = useOptions(); // Add articleLists
   const { showToast } = useToast();
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [title, setTitle] = useState('');
@@ -34,6 +34,7 @@ export default function Page() {
   
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
+  const [selectedArticleListId, setSelectedArticleListId] = useState(null); // Add this line
   
   const [hasTabs, setHasTabs] = useState(false);
   const { initialTabContents, tabContents, setTabContents, loading: tabsLoading } = useArticleTabs(selectedArticle?.id);
@@ -42,8 +43,9 @@ export default function Page() {
 
   useEffect(() => {
     if (selectedArticle) {
-      const { title, content, categories, has_tabs } = selectedArticle;
+      const { title, content, categories, has_tabs, article_list_id } = selectedArticle;
       setTitle(title);
+      setSelectedArticleListId(article_list_id || null); // Add this line
       
       if (categories && Array.isArray(categories) && categories.length > 0) {
         setSelectedCategories(categories);
@@ -71,6 +73,7 @@ export default function Page() {
     setTitle('');
     setContent('');
     setSelectedCategories([]);
+    setSelectedArticleListId(null); // Add this line
     setHasTabs(false);
     setInitialContent('');
     setShowCategoryDropdown(false);
@@ -221,6 +224,7 @@ export default function Page() {
           wiki_id: selectedCategories, // Pass all selected categories as array
           has_tabs: hasTabs,
           user_email: session.user.email,
+          article_list_id: selectedArticleListId, // Add this line
         });
 
         if (hasTabs && Object.keys(tabContents).length > 0) {
@@ -234,6 +238,7 @@ export default function Page() {
         updateArticleInSidebar({
           ...updatedArticle,
           categories: selectedCategories, // Ensure categories are included
+          article_list_id: selectedArticleListId, // Add this line
           updated_at: new Date().toISOString(),
         });
         setSelectedArticle(null);
@@ -247,6 +252,7 @@ export default function Page() {
           wiki_id: selectedCategories, // All selected categories as array
           has_tabs: hasTabs,
           user_email: session.user.email,
+          article_list_id: selectedArticleListId, // Add this line
         });
 
         // Save tabs if enabled - merge tabs from all selected categories
@@ -262,6 +268,7 @@ export default function Page() {
         addNewArticle({
           ...newArticle,
           categories: selectedCategories, // Add the categories array
+          article_list_id: selectedArticleListId, // Add this line
           created_at: new Date().toISOString(),
         });
         setSelectedArticle(null);
@@ -503,6 +510,24 @@ export default function Page() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
+
+          {/* Article List Selection */}
+          <div className="mb-4">
+            <label className="block mb-2 text-sm text-slate-600 font-medium">Article List (Optional)</label>
+            <select
+              value={selectedArticleListId || ''}
+              onChange={(e) => setSelectedArticleListId(e.target.value ? Number(e.target.value) : null)}
+              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:border-slate-400 bg-white"
+            >
+              <option value="">Select an article list (optional)</option>
+              {Object.entries(articleLists).map(([id, articleList]) => (
+                <option key={id} value={id}>
+                  {articleList.name}
+                  {articleList.description && ` - ${articleList.description}`}
+                </option>
+              ))}
+            </select>
+          </div>
 
           {/* Categories Section */}
           <label className="block mb-3 text-sm text-slate-600 font-medium">Categories</label>

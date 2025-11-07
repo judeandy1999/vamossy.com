@@ -11,6 +11,7 @@ export default function Page() {
     wikiOptions,
     tabOptionsMap,
     mainCategories,
+    articleLists, // Add this line
     loading,
     error,
     addWiki,
@@ -22,28 +23,36 @@ export default function Page() {
     updateWikiMainCategory,
     updateMainCategory,
     updateWiki,
-    updateTab
+    updateTab,
+    addArticleList, // Add these lines
+    updateArticleList,
+    deleteArticleList
   } = useOptions();
 
   const [selectedWiki, setSelectedWiki] = useState(null);
   const [newWiki, setNewWiki] = useState({ name: '', description: '', main_category_id: null });
   const [newTab, setNewTab] = useState({ name: '', description: '' });
   const [newMainCategory, setNewMainCategory] = useState({ name: '', description: '' });
+  const [newArticleList, setNewArticleList] = useState({ name: '', description: '' }); // Add this line
   const [wikiError, setWikiError] = useState('');
   const [tabError, setTabError] = useState('');
   const [mainCategoryError, setMainCategoryError] = useState('');
+  const [articleListError, setArticleListError] = useState(''); // Add this line
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState({ type: '', id: null });
   const [deleting, setDeleting] = useState(false);
   const [showMainCategoryForm, setShowMainCategoryForm] = useState(false);
+  const [showArticleListForm, setShowArticleListForm] = useState(false); // Add this line
   
   // Edit states
   const [editingMainCategory, setEditingMainCategory] = useState(null);
   const [editingWiki, setEditingWiki] = useState(null);
   const [editingTab, setEditingTab] = useState(null);
+  const [editingArticleList, setEditingArticleList] = useState(null); // Add this line
   const [editMainCategoryData, setEditMainCategoryData] = useState({ name: '', description: '' });
   const [editWikiData, setEditWikiData] = useState({ name: '', description: '', main_category_id: null });
   const [editTabData, setEditTabData] = useState({ name: '', description: '' });
+  const [editArticleListData, setEditArticleListData] = useState({ name: '', description: '' }); // Add this line
 
   const handleAddMainCategory = async () => {
     if (!newMainCategory.name.trim()) {
@@ -95,6 +104,22 @@ export default function Page() {
     }
   };
 
+  const handleAddArticleList = async () => {
+    if (!newArticleList.name.trim()) {
+      setArticleListError('Article list name cannot be empty.');
+      return;
+    }
+    setArticleListError('');
+    
+    try {
+      await addArticleList(newArticleList);
+      setNewArticleList({ name: '', description: '' });
+      setShowArticleListForm(false);
+    } catch (error) {
+      setArticleListError('Failed to add article list: ' + error.message);
+    }
+  };
+
   const handleDeleteWiki = (wikiId) => {
     setDeleteTarget({ type: 'wiki', id: wikiId });
     setIsModalOpen(true);
@@ -110,6 +135,11 @@ export default function Page() {
     setIsModalOpen(true);
   };
 
+  const handleDeleteArticleList = (articleListId) => {
+    setDeleteTarget({ type: 'articleList', id: articleListId });
+    setIsModalOpen(true);
+  };
+
   const confirmDelete = async () => {
     setDeleting(true);
     try {
@@ -120,6 +150,8 @@ export default function Page() {
         await deleteTab(deleteTarget.id, selectedWiki);
       } else if (deleteTarget.type === 'mainCategory') {
         await deleteMainCategory(deleteTarget.id);
+      } else if (deleteTarget.type === 'articleList') { // Add this condition
+        await deleteArticleList(deleteTarget.id);
       }
       setIsModalOpen(false);
       setDeleteTarget({ type: '', id: null });
@@ -221,6 +253,32 @@ export default function Page() {
     setTabError('');
   };
 
+  const startEditArticleList = (id, articleList) => {
+    setEditingArticleList(id);
+    setEditArticleListData({ name: articleList.name, description: articleList.description || '' });
+  };
+
+  const saveArticleList = async () => {
+    if (!editArticleListData.name.trim()) {
+      setArticleListError('Article list name cannot be empty.');
+      return;
+    }
+    
+    try {
+      await updateArticleList(editingArticleList, editArticleListData);
+      setEditingArticleList(null);
+      setArticleListError('');
+    } catch (error) {
+      setArticleListError('Failed to update article list: ' + error.message);
+    }
+  };
+
+  const cancelEditArticleList = () => {
+    setEditingArticleList(null);
+    setEditArticleListData({ name: '', description: '' });
+    setArticleListError('');
+  };
+
   // Group wikis by main category
   const groupedWikis = Object.entries(wikiOptions).reduce((acc, [wikiId, wiki]) => {
     const mainCategoryId = wiki.main_category_id || 'uncategorized';
@@ -255,6 +313,115 @@ export default function Page() {
 
       <div className="max-w-6xl mx-auto px-4 text-slate-800">
         <h1 className="text-3xl font-bold mb-8 text-center">Options Management</h1>
+
+        {/* Article Lists Management */}
+        <section className="bg-white shadow rounded p-4 mb-6">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold">Article Lists</h2>
+            <button
+              onClick={() => setShowArticleListForm(!showArticleListForm)}
+              className="cursor-pointer flex items-center gap-1 bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600 transition"
+            >
+              <Plus size={14} /> Add Article List
+            </button>
+          </div>
+
+          {/* Article Lists List */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
+            {Object.entries(articleLists).map(([id, articleList]) => (
+              <div key={id} className="border border-gray-200 rounded p-3 bg-gray-50">
+                {editingArticleList === Number(id) ? (
+                  <div className="space-y-2">
+                    <input
+                      type="text"
+                      value={editArticleListData.name}
+                      onChange={(e) => setEditArticleListData({ ...editArticleListData, name: e.target.value })}
+                      className="w-full text-sm font-medium border border-gray-300 rounded px-2 py-1 focus:outline-none focus:border-green-400"
+                      placeholder="Article list name"
+                    />
+                    <input
+                      type="text"
+                      value={editArticleListData.description}
+                      onChange={(e) => setEditArticleListData({ ...editArticleListData, description: e.target.value })}
+                      className="w-full text-xs border border-gray-300 rounded px-2 py-1 focus:outline-none focus:border-green-400"
+                      placeholder="Description"
+                    />
+                    <div className="flex justify-end gap-1">
+                      <button
+                        onClick={saveArticleList}
+                        className="cursor-pointer text-green-600 hover:text-green-700 transition"
+                      >
+                        <Check size={14} />
+                      </button>
+                      <button
+                        onClick={cancelEditArticleList}
+                        className="cursor-pointer text-gray-500 hover:text-gray-600 transition"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <h3 className="font-medium text-sm">{articleList.name}</h3>
+                      <p className="text-xs text-gray-500 mt-1">{articleList.description || 'No description'}</p>
+                    </div>
+                    <div className="flex items-center gap-1 ml-2">
+                      <button
+                        onClick={() => startEditArticleList(Number(id), articleList)}
+                        className="cursor-pointer text-blue-500 hover:text-blue-600 transition"
+                      >
+                        <Edit2 size={14} />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteArticleList(Number(id))}
+                        className="cursor-pointer text-red-500 hover:text-red-600 transition"
+                      >
+                        <Trash size={14} />
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Add Article List Form */}
+          {showArticleListForm && (
+            <div className="border-t border-gray-200 pt-4">
+              <div className="flex flex-col sm:flex-row gap-2">
+                <input
+                  type="text"
+                  placeholder="Article List Name"
+                  value={newArticleList.name}
+                  onChange={(e) => setNewArticleList({ ...newArticleList, name: e.target.value })}
+                  className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:border-green-400"
+                />
+                <input
+                  type="text"
+                  placeholder="Description"
+                  value={newArticleList.description}
+                  onChange={(e) => setNewArticleList({ ...newArticleList, description: e.target.value })}
+                  className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:border-green-400"
+                />
+                <button
+                  onClick={handleAddArticleList}
+                  className="cursor-pointer flex items-center gap-1 bg-green-500 text-white px-4 py-2 rounded text-sm hover:bg-green-600 transition"
+                >
+                  <Plus size={14} /> Add
+                </button>
+                <button
+                  onClick={() => setShowArticleListForm(false)}
+                  className="cursor-pointer px-4 py-2 border border-gray-300 rounded text-sm hover:bg-gray-50 transition"
+                >
+                  Cancel
+                </button>
+              </div>
+              {articleListError && <p className="text-red-500 mt-2 text-sm">{articleListError}</p>}
+            </div>
+          )}
+        </section>
 
         {/* Main Categories Management */}
         <section className="bg-white shadow rounded p-4 mb-6">

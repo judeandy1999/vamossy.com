@@ -9,7 +9,8 @@ export async function createArticle(newArticle) {
       content: newArticle.has_tabs ? '' : newArticle.content,
       wiki_id: newArticle.wiki_id,
       has_tabs: newArticle.has_tabs,
-      user_email: newArticle.user_email
+      user_email: newArticle.user_email,
+      article_list_id: newArticle.article_list_id || null
     };
 
     const res = await fetch('/api/articles/create', {
@@ -43,7 +44,8 @@ export async function updateArticle(updatedArticle) {
     content: updatedArticle.has_tabs ? '' : updatedArticle.content,
     wiki_id: updatedArticle.wiki_id,
     has_tabs: updatedArticle.has_tabs,
-    user_email: updatedArticle.user_email
+    user_email: updatedArticle.user_email,
+    article_list_id: updatedArticle.article_list_id || null
   };
 
   const res = await fetch(`/api/articles/${updatedArticle.id}`, {
