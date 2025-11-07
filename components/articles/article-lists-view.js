@@ -13,9 +13,8 @@ export default function ArticleListsView() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedListId, setSelectedListId] = useState(null);
   const [articlesPage, setArticlesPage] = useState(1);
-  const [filters, setFilters] = useState({ wikiIds: [], mainCategoryIds: [] });
 
-  // Fetch all articles using the updated hook with filters
+  // Fetch all articles without filters
   const { 
     articles, 
     loading: articlesLoading, 
@@ -24,7 +23,7 @@ export default function ArticleListsView() {
     totalCount, 
     hasNextPage, 
     hasPrevPage 
-  } = useAllArticles(articlesPage, filters);
+  } = useAllArticles(articlesPage, {});
 
   const createSlug = (name) => {
     return name
@@ -38,7 +37,7 @@ export default function ArticleListsView() {
   const handleListClick = (listId, listName) => {
     setSelectedListId(listId);
     const slug = createSlug(listName);
-    router.push(`/articles/${slug || listId}`);
+    router.push(`/articles/lists/${slug || listId}`);
   };
 
   const handleArticlesPageChange = (newPage) => {
@@ -56,12 +55,6 @@ export default function ArticleListsView() {
     (list.description && list.description.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
-  const handleFiltersChange = (newFilters) => {
-    setFilters(newFilters);
-    // Reset pagination when filters change
-    setArticlesPage(1);
-  };
-
   if (error) {
     return (
       <div className="bg-white min-h-screen py-10">
@@ -77,13 +70,11 @@ export default function ArticleListsView() {
 
   if (loading) {
     return (
-      <div className="bg-white min-h-screen mb-8">
-        <div className="max-w-7xl mx-auto px-4 pt-8">
-          <div className="flex justify-center items-center py-20">
-            <div className="text-center">
-              <Loader2 size={40} className="animate-spin text-[#1f40af] mx-auto mb-4" />
-              <p className="text-[#4b5562]">Loading article collections...</p>
-            </div>
+      <div className="bg-white min-h-screen py-10">
+        <div className="max-w-6xl mx-auto px-4 pt-24">
+          <div className="text-center">
+            <Loader2 size={40} className="animate-spin text-blue-600 mx-auto mb-4" />
+            <p className="text-gray-600">Loading article collections...</p>
           </div>
         </div>
       </div>
@@ -91,102 +82,55 @@ export default function ArticleListsView() {
   }
 
   return (
-    <div className="bg-white min-h-screen mb-8">
-      <div className="max-w-7xl mx-auto px-4 pt-8">
+    <div className="bg-white min-h-screen py-10">
+      <div className="max-w-6xl mx-auto px-4 pt-24">
         {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="text-4xl md:text-5xl font-bold text-[#032646]">
-              Article Collections
-            </h1>
-            <p className="text-lg text-[#4b5562] mt-2">
-              Browse our organized collections of articles
-            </p>
-          </div>
-          
-          {/* Search Bar */}
-          <div className="relative">
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                type="text"
-                placeholder="Search collections..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-              />
-              {searchQuery && (
-                <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                  <button
-                    onClick={() => setSearchQuery('')}
-                    className="cursor-pointer text-gray-400 hover:text-gray-600"
-                  >
-                    <X className="h-5 w-5" />
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* Search Results Info */}
-            {searchQuery && (
-              <div className="mt-2 text-sm text-gray-600">
-                <span>
-                  {filteredLists.length > 0 
-                    ? `Found ${filteredLists.length} collection${filteredLists.length === 1 ? '' : 's'} for "${searchQuery}"`
-                    : `No collections found for "${searchQuery}"`
-                  }
-                </span>
-              </div>
-            )}
-          </div>
+        <div className="text-center mb-12">
+          <h1 className="text-4xl md:text-5xl font-bold text-[#032646] mb-4">Article Collections</h1>
+          <p className="text-xl text-[#4b5562] max-w-3xl mx-auto">
+            Explore our curated collections of articles organized by topic and theme
+          </p>
         </div>
 
-        {/* Breadcrumbs */}
+        {/* Search Bar */}
         <div className="mb-8">
-          <nav className="flex items-center text-md text-[#4b5562]">
-            <span className="text-[#032646] text-md font-medium">
-              Article Collections
-            </span>
-          </nav>
-        </div>
-
-        {/* Collections Count */}
-        <div className="mb-6">
-          <div className="flex items-center gap-4 text-sm text-[#4b5562]">
-            <span className="flex items-center gap-2">
-              <BookOpen size={16} className="text-blue-600" />
-              {articleLists.length} total collection{articleLists.length === 1 ? '' : 's'}
-            </span>
+          <div className="relative max-w-md mx-auto">
+            <Search size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search collections..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
             {searchQuery && (
-              <span className="text-gray-500">
-                • {filteredLists.length} shown
-              </span>
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                <X size={20} />
+              </button>
             )}
           </div>
         </div>
 
         {/* Article Lists Grid */}
-        <div className="w-full mb-12">
+        <div className="mb-16">
           {filteredLists.length === 0 ? (
-            <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
+            <div className="text-center py-12">
               <BookOpen size={48} className="mx-auto text-gray-400 mb-4" />
-              <p className="text-[#4b5562] text-lg">
+              <h3 className="text-xl font-semibold text-[#032646] mb-2">
+                {searchQuery ? 'No collections found' : 'No collections available'}
+              </h3>
+              <p className="text-[#4b5562]">
                 {searchQuery 
-                  ? `No collections found for "${searchQuery}"`
-                  : 'No article collections found'
-                }
-              </p>
-              <p className="text-sm text-gray-500 mt-2">
-                {searchQuery
-                  ? 'Try searching with different keywords'
-                  : 'Article collections will appear here when they are created'
+                  ? 'Try adjusting your search terms' 
+                  : 'Collections will appear here when they are created'
                 }
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredLists.map((list) => (
                 <div
                   key={list.id}
@@ -210,29 +154,8 @@ export default function ArticleListsView() {
                         </div>
                         <ArrowRight 
                           size={20} 
-                          className="text-gray-400 group-hover:text-blue-600 transition-colors duration-200 flex-shrink-0 ml-4" 
+                          className="text-gray-400 group-hover:text-blue-600 transition-colors duration-200 ml-4 flex-shrink-0" 
                         />
-                      </div>
-                      
-                      <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                        <div className="flex items-center gap-2">
-                          <BookOpen size={16} className="text-gray-400" />
-                          <span className="text-sm text-gray-500">Collection</span>
-                        </div>
-                        
-                        <div className="flex items-center gap-3">
-                          {list.article_count !== undefined && (
-                            <span className="text-xs bg-blue-100 text-blue-600 px-3 py-1 rounded-full font-medium">
-                              {list.article_count} articles
-                            </span>
-                          )}
-                          
-                          {list.created_at && (
-                            <span className="text-xs text-gray-500">
-                              Created {new Date(list.created_at).toLocaleDateString()}
-                            </span>
-                          )}
-                        </div>
                       </div>
                     </div>
                   </div>
@@ -249,7 +172,7 @@ export default function ArticleListsView() {
           )}
         </div>
 
-        {/* Articles Section - Using ArticlesDisplay Component */}
+        {/* Articles Section - Show all articles without filters */}
         <div id="articles-section" className="border-t border-gray-200 pt-12">
           <ArticlesDisplay
             articles={articles}
@@ -264,8 +187,7 @@ export default function ArticleListsView() {
             listName="All Articles"
             listDescription="Browse all available articles"
             showBackButton={false}
-            filters={filters}
-            onFiltersChange={handleFiltersChange}
+            // Remove filters prop to disable dropdown
           />
         </div>
       </div>
