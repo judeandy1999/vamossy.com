@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { ChevronDown, ChevronRight, ArrowLeft, Calendar, Tag, Loader2, ChevronLeft, MoreHorizontal, Search, X } from 'lucide-react';
 import { useAllArticles } from '@/hooks/useAllArticles';
 import { useOptions } from '@/hooks/useOptions';
+import { useOptionsFrontend } from '@/hooks/useOptionsFrontend';
 import { useArticleContent } from '@/hooks/useArticleContent';
 import { useArticleMeta } from '@/hooks/useArticleMeta';
 import { useArticleCounts } from '@/hooks/useArticleCounts';
@@ -12,7 +13,7 @@ import { useArticleCounts } from '@/hooks/useArticleCounts';
 export default function ArticlesPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  
+  console.log("Rendering ArticlesPageContent");
   // ALL STATE HOOKS FIRST
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedMainCategoryId, setSelectedMainCategoryId] = useState(null);
@@ -34,7 +35,14 @@ export default function ArticlesPageContent() {
     { selectedWikiId, selectedMainCategoryId, searchQuery } // Use searchQuery directly
   );
   const { counts, loading: countsLoading } = useArticleCounts();
-  const { wikiOptions, mainCategories, loading: optionsLoading } = useOptions();
+  // const { wikiOptions, mainCategories, loading: optionsLoading } = useOptions();
+  const { 
+    wikiOptions, 
+    mainCategories, 
+    loading: optionsLoading, 
+    error: optionsError 
+  } = useOptionsFrontend();
+
   const { data: selectedArticle, loading: articleLoading, error: articleError } = useArticleContent(selectedArticleId);
   const { data: selectedArticleMeta } = useArticleMeta(selectedArticleId);
 

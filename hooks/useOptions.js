@@ -5,7 +5,7 @@ export const useOptions = () => {
   const [wikiOptions, setWikiOptions] = useState({});
   const [tabOptionsMap, setTabOptionsMap] = useState({});
   const [mainCategories, setMainCategories] = useState({});
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
