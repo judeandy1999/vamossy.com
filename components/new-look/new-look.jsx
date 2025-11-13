@@ -41,9 +41,17 @@ export default function PDFBookViewer() {
               An Interactive Reading Experience
             </p>
             
-            <p className="text-base text-[#025965] font-medium">
-              co-authored by GPT5.0 and GPT5.1
-            </p>
+            <div className="text-center space-y-1">
+              <p className="text-base text-[#025965] font-medium">
+                By Gergely Vamossy
+              </p>
+              <p className="text-sm text-[#025965] font-medium">
+                co-authored by GPT5.0 and GPT5.1
+              </p>
+              <p className="text-sm text-gray-500">
+                Published: November 14, 2025
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -146,8 +154,8 @@ export default function PDFBookViewer() {
               About This Book
             </h2>
             <p className="text-[#3A3A3A] max-w-3xl mx-auto leading-relaxed">
-              This digital book represents a collaborative effort between advanced AI systems 
-              GPT5.0 and GPT5.1, bringing together cutting-edge knowledge and insights.
+              This digital book, authored by Gergely Vamossy in collaboration with advanced AI systems 
+              GPT5.0 and GPT5.1, brings together cutting-edge knowledge and insights.
             </p>
           </div>
 
