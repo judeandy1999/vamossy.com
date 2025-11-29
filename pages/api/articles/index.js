@@ -54,9 +54,13 @@ export default async function handler(req, res) {
         )
       `, { count: 'exact' });
     
+    // Filter by article_list_id if provided
+    if (article_list_id) {
+      query = query.eq('article_list_id', parseInt(article_list_id));
+    }
+    
     // Filter by specific wiki_id through junction table (single filter - existing functionality)
     if (wiki_id && !wiki_ids) {
-      // Start from articles and use proper inner join syntax
       query = supabase
         .from('articles')
         .select(`
@@ -67,16 +71,10 @@ export default async function handler(req, res) {
           )
         `, { count: 'exact' })
         .eq('article_wiki.wiki_id', parseInt(wiki_id));
-        
-      // Add article_list_id filter if provided
-      if (article_list_id) {
-        query = query.eq('article_list_id', parseInt(article_list_id));
-      }
-      
-      console.log('Query for wiki_id:', wiki_id, 'and article_list_id:', article_list_id);
     }
+    
     // Filter by multiple wiki IDs (new functionality)
-    else if (wiki_ids) {
+    if (wiki_ids) {
       const wikiIdArray = wiki_ids.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id));
       if (wikiIdArray.length > 0) {
         query = supabase
@@ -89,16 +87,7 @@ export default async function handler(req, res) {
             )
           `, { count: 'exact' })
           .in('article_wiki.wiki_id', wikiIdArray);
-          
-        // Add article_list_id filter if provided
-        if (article_list_id) {
-          query = query.eq('article_list_id', parseInt(article_list_id));
-        }
       }
-    }
-    // Filter by article_list_id only if no wiki filters are provided
-    else if (article_list_id) {
-      query = query.eq('article_list_id', parseInt(article_list_id));
     }
     
     // Filter by main category through junction table (single filter - existing functionality)
@@ -125,11 +114,6 @@ export default async function handler(req, res) {
             )
           `, { count: 'exact' })
           .eq('article_wiki.category_options.main_category_id', parseInt(main_category_id));
-      }
-      
-      // Add article_list_id filter if provided
-      if (article_list_id) {
-        query = query.eq('article_list_id', parseInt(article_list_id));
       }
     }
 
@@ -192,11 +176,6 @@ export default async function handler(req, res) {
             `, { count: 'exact' })
             .in('article_wiki.category_options.main_category_id', numericIds);
         }
-        
-        // Add article_list_id filter if provided
-        if (article_list_id) {
-          query = query.eq('article_list_id', parseInt(article_list_id));
-        }
       }
     }
 
@@ -209,8 +188,6 @@ export default async function handler(req, res) {
     const { data, error, count } = await query
       .order('created_at', { ascending: false })
       .range(from, to);
-
-    console.log('Query result - count:', count, 'data length:', data?.length, 'error:', error);
 
     if (error) {
       console.error('Articles query error:', error);

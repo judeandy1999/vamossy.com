@@ -102,17 +102,17 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {/* <ErrorBoundary>
+        <ErrorBoundary>
           <ClientAuthProvider>
             <Navbar />
-            <div className="height-[100vh] z-4"> */}
+            <div className="height-[100vh] z-4">
               {children}
-              {/* <FloatingCTA />
+              <FloatingCTA />
             </div>
             <Footer />
             <CookieConsentBanner />
           </ClientAuthProvider>
-        </ErrorBoundary> */}
+        </ErrorBoundary>
       </body>
     </html>
   );

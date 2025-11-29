@@ -29,8 +29,6 @@ export default function ArticlesDisplay({
   listDescription,
   showBackButton = false,
   backButtonPath = '/articles',
-  backButtonText = 'Back to Collections',
-  onBackClick,
   filters = { wikiIds: [], mainCategoryIds: [] },
   onFiltersChange
 }) {
@@ -38,17 +36,12 @@ export default function ArticlesDisplay({
 
   // Handle back button click
   const handleBackClick = () => {
-    if (onBackClick) {
-      onBackClick();
-    } else {
-      router.push(backButtonPath);
-    }
+    router.push(backButtonPath);
   };
 
-  // Handle article click - now includes back path in query params
+  // Handle article click
   const handleArticleClick = (articleId) => {
-    const backPath = encodeURIComponent(backButtonPath);
-    router.push(`/articles/${articleId}?back=${backPath}`);
+    router.push(`/articles/${articleId}`);
   };
 
   // Pagination functions
@@ -118,7 +111,7 @@ export default function ArticlesDisplay({
       <div className="mb-6">
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1">
-            {/* {showBackButton && (
+            {showBackButton && (
               <div className="flex items-center gap-4 mb-4">
                 <button
                   type="button"
@@ -126,10 +119,10 @@ export default function ArticlesDisplay({
                   className="cursor-pointer flex items-center gap-2 text-[#4b5562] hover:text-blue-600 transition font-medium bg-white border border-gray-300 rounded-md px-3 py-2 hover:bg-gray-50"
                 >
                   <ArrowLeft size={16} />
-                  {backButtonText}
+                  Back to Collections
                 </button>
               </div>
-            )} */}
+            )}
 
             <h2 className="text-3xl md:text-4xl font-bold text-[#032646] mb-2">
               {listName || 'Articles'}
@@ -152,7 +145,7 @@ export default function ArticlesDisplay({
             </span>
           </div>
 
-          {/* Filter Dropdown - only show if onFiltersChange is provided */}
+          {/* Filter Dropdown */}
           {onFiltersChange && (
             <FilterDropdown
               selectedWikiIds={filters.wikiIds || []}
