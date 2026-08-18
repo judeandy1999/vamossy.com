@@ -1,0 +1,26 @@
+# Gergely Vámossy — research site
+
+> AI/LLM governance, epistemic infrastructure, mathematical ontology, and machine-checkable non-self-approval.
+
+Site: https://vamossy.com
+Author: Gergely Vámossy / QIERA
+Contact: gergo@qiera.io
+Source: https://github.com/Gergo89/llm-governance-toolkit
+
+## Primary publications
+
+- [Non-Self-Approving AI-Assisted Derivation](https://vamossy.com/research/non-self-approving-ai-assisted-derivation): a method that lets a model reason without letting it rule. Governs authority, not correctness.
+- [The Mathematics Ontology Bible](https://vamossy.com/research/mathematics-ontology-bible): a complete map of mathematical structure, from foundations to frontiers.
+- [LLM Governance Toolkit](https://vamossy.com/llm-governance-toolkit): public documentation for the toolkit. Source remains on GitHub; this site does not expose repository internals.
+
+## How to read this site
+
+- Research content is HTML, not PDF-only.
+- Canonical artifacts are downloadable from their publication pages.
+- Status language in the sources is preserved: candidate, recommendation, working basis, and unvalidated claims are not upgraded.
+- The human remains the authority slot.
+
+## Full index
+
+- https://vamossy.com/research
+- https://vamossy.com/sitemap.xml

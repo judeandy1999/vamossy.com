@@ -1,22 +1,29 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Source_Serif_4, Source_Sans_3, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/shared-components/Navbar";
-import Footer from "@/components/shared-components/Footer";
-import CookieConsentBanner from "@/components/shared-components/CookieConsentBanner";
+import AppShell from "@/components/site/AppShell";
 import ClientAuthProvider from "@/components/providers/client-auth-provider";
-import Script from 'next/script';
 import ErrorBoundary from "@/components/error-boundary";
-import FloatingCTA from '@/components/shared-components/FloatingCTA';
-import { generateSiteMetadata, generateOrganizationSchema, generateWebsiteSchema } from "@/utils/seo";
+import Script from "next/script";
+import { generateSiteMetadata, generatePersonSchema, generateWebsiteSchema } from "@/utils/seo";
+import { SITE } from "@/lib/site";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const serif = Source_Serif_4({
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-serif",
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const sans = Source_Sans_3({
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-sans",
+  display: "swap",
+});
+
+const mono = IBM_Plex_Mono({
   subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-mono",
+  display: "swap",
 });
 
 export const metadata = generateSiteMetadata();
@@ -25,25 +32,18 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        {/* Structured Data */}
         <Script
-          id="organization-schema"
+          id="person-schema"
           type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(generateOrganizationSchema()),
-          }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(generatePersonSchema()) }}
         />
         <Script
           id="website-schema"
           type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(generateWebsiteSchema()),
-          }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(generateWebsiteSchema()) }}
         />
-        
-        {/* Google Analytics - Initialize with consent mode */}
         <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-8Y6KGXJE9K"
+          src={`https://www.googletagmanager.com/gtag/js?id=${SITE.gaId}`}
           strategy="afterInteractive"
         />
         <Script id="google-analytics" strategy="afterInteractive">
@@ -51,66 +51,18 @@ export default function RootLayout({ children }) {
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            
-            // Initialize with denied consent by default
             gtag('consent', 'default', {
               ad_storage: 'denied',
               analytics_storage: 'denied'
             });
-            
-            // Configure Google Analytics
-            gtag('config', 'G-8Y6KGXJE9K');
+            gtag('config', '${SITE.gaId}', { anonymize_ip: true });
           `}
         </Script>
-
-        {/* Cal.com embed script */}
-        <Script id="cal-embed" strategy="afterInteractive">
-          {`
-            (function (C, A, L) { 
-              let p = function (a, ar) { a.q.push(ar); }; 
-              let d = C.document; 
-              C.Cal = C.Cal || function () { 
-                let cal = C.Cal; 
-                let ar = arguments; 
-                if (!cal.loaded) { 
-                  cal.ns = {}; 
-                  cal.q = cal.q || []; 
-                  d.head.appendChild(d.createElement("script")).src = A; 
-                  cal.loaded = true; 
-                } 
-                if (ar[0] === L) { 
-                  const api = function () { p(api, arguments); }; 
-                  const namespace = ar[1]; 
-                  api.q = api.q || []; 
-                  if(typeof namespace === "string"){
-                    cal.ns[namespace] = cal.ns[namespace] || api;
-                    p(cal.ns[namespace], ar);
-                    p(cal, ["initNamespace", namespace]);
-                  } else p(cal, ar); 
-                  return;
-                } 
-                p(cal, ar); 
-              }; 
-            })(window, "https://app.cal.com/embed/embed.js", "init");
-            
-            Cal("init", "discovery-call", {origin:"https://app.cal.com"});
-            Cal.ns["discovery-call"]("ui", {"hideEventTypeDetails":false,"layout":"month_view"});
-          `}
-        </Script>
-        <Script src="//code.tidio.co/watsvndw7fxjw3m5rfw96b7cwimfzwbm.js" async></Script>
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${serif.variable} ${sans.variable} ${mono.variable} antialiased`}>
         <ErrorBoundary>
           <ClientAuthProvider>
-            <Navbar />
-            <div className="height-[100vh] z-4">
-              {children}
-              <FloatingCTA />
-            </div>
-            <Footer />
-            <CookieConsentBanner />
+            <AppShell>{children}</AppShell>
           </ClientAuthProvider>
         </ErrorBoundary>
       </body>

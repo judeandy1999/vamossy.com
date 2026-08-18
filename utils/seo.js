@@ -1,55 +1,59 @@
-// SEO utility functions
+import { SITE, absUrl } from "@/lib/site";
+
 export function generateSiteMetadata() {
   return {
     title: {
-      default: "Vamossy Digital - AI-Powered eCommerce Growth Solutions",
-      template: "%s | Vamossy Digital"
+      default: SITE.title,
+      template: `%s | ${SITE.shortName}`,
     },
-    description: "Transform your eCommerce business with AI-powered growth systems. We engineer profitable, predictable solutions for Shopify, Adobe Commerce, and WooCommerce brands.",
+    description: SITE.description,
     keywords: [
-      "ecommerce consulting",
-      "AI-powered growth",
-      "Shopify optimization",
-      "Adobe Commerce development",
-      "WooCommerce solutions",
-      "digital marketing",
-      "conversion optimization",
-      "ecommerce automation"
+      "LLM governance",
+      "AI governance",
+      "AI-assisted reasoning",
+      "epistemic infrastructure",
+      "mathematical ontology",
+      "machine-checkable governance",
+      "non-self-approval",
+      "human-in-the-loop governance",
+      "AI safety",
+      "knowledge maturity",
+      "reproducibility",
+      "validation",
     ],
-    authors: [{ name: "Vamossy Digital Team" }],
-    creator: "Vamossy Digital",
-    publisher: "Vamossy Digital",
+    authors: [{ name: SITE.author.name, url: absUrl("/about") }],
+    creator: SITE.author.name,
+    publisher: SITE.author.affiliation,
     formatDetection: {
       email: false,
       address: false,
       telephone: false,
     },
-    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://vamossy.com'),
+    metadataBase: new URL(SITE.url),
     alternates: {
-      canonical: '/',
+      canonical: "/",
     },
     openGraph: {
-      type: 'website',
-      locale: 'en_US',
-      url: '/',
-      title: 'Vamossy Digital - AI-Powered eCommerce Growth Solutions',
-      description: 'Transform your eCommerce business with AI-powered growth systems. We engineer profitable, predictable solutions for Shopify, Adobe Commerce, and WooCommerce brands.',
-      siteName: 'Vamossy Digital',
+      type: "website",
+      locale: "en_US",
+      url: "/",
+      title: SITE.title,
+      description: SITE.description,
+      siteName: SITE.name,
       images: [
         {
-          url: '/og-image.png',
+          url: "/opengraph-image",
           width: 1200,
           height: 630,
-          alt: 'Vamossy Digital - eCommerce Growth Solutions',
+          alt: SITE.title,
         },
       ],
     },
     twitter: {
-      card: 'summary_large_image',
-      title: 'Vamossy Digital - AI-Powered eCommerce Growth Solutions',
-      description: 'Transform your eCommerce business with AI-powered growth systems.',
-      images: ['/og-image.png'],
-      creator: '@vamossydigital',
+      card: "summary_large_image",
+      title: SITE.title,
+      description: SITE.description,
+      images: ["/opengraph-image"],
     },
     robots: {
       index: true,
@@ -57,9 +61,9 @@ export function generateSiteMetadata() {
       googleBot: {
         index: true,
         follow: true,
-        'max-video-preview': -1,
-        'max-image-preview': 'large',
-        'max-snippet': -1,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
       },
     },
   };
@@ -69,27 +73,27 @@ export function generatePageMetadata({
   title,
   description,
   keywords = [],
-  image = '/og-image.png',
-  url = '/',
-  type = 'website',
+  image = "/opengraph-image",
+  url = "/",
+  type = "website",
   publishedTime,
   modifiedTime,
-  authors = ['Vamossy Digital Team'],
-  noIndex = false
+  authors = [SITE.author.name],
+  noIndex = false,
 }) {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://vamossy.com';
-  const fullUrl = `${baseUrl}${url}`;
-  
+  const fullUrl = absUrl(url);
+
   return {
     title,
     description,
-    keywords: keywords.join(', '),
-    authors: authors.map(author => ({ name: author })),
+    keywords: keywords.join(", "),
+    authors: authors.map((author) => ({ name: author })),
     openGraph: {
       title,
       description,
       url: fullUrl,
       type,
+      siteName: SITE.name,
       images: [
         {
           url: image,
@@ -102,7 +106,7 @@ export function generatePageMetadata({
       ...(modifiedTime && { modifiedTime }),
     },
     twitter: {
-      card: 'summary_large_image',
+      card: "summary_large_image",
       title,
       description,
       images: [image],
@@ -116,9 +120,9 @@ export function generatePageMetadata({
       googleBot: {
         index: !noIndex,
         follow: !noIndex,
-        'max-video-preview': -1,
-        'max-image-preview': 'large',
-        'max-snippet': -1,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
       },
     },
   };
@@ -126,14 +130,12 @@ export function generatePageMetadata({
 
 export function generateCaseStudyMetadata(caseStudy) {
   return generatePageMetadata({
-    title: caseStudy.seo.metaTitle,
-    description: caseStudy.seo.metaDescription,
-    keywords: caseStudy.tags,
-    url: caseStudy.seo.url,
-    type: 'article',
-    publishedTime: caseStudy.publishedDate,
-    modifiedTime: caseStudy.publishedDate,
-    noIndex: true // Prevent all case studies from being indexed
+    title: caseStudy.seo?.metaTitle || caseStudy.title,
+    description: caseStudy.seo?.metaDescription || "",
+    keywords: caseStudy.tags || [],
+    url: caseStudy.seo?.url || "/",
+    type: "article",
+    noIndex: true,
   });
 }
 
@@ -143,30 +145,48 @@ export function generateArticleMetadata(article) {
     description: article.excerpt || article.summary,
     keywords: article.tags || [],
     url: `/articles/${article.id}`,
-    type: 'article',
+    type: "article",
     publishedTime: article.created_at,
     modifiedTime: article.updated_at || article.created_at,
+    noIndex: true,
   });
 }
 
-// Schema.org structured data generators
+export function generatePersonSchema() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: SITE.author.name,
+    url: absUrl("/about"),
+    email: SITE.author.email,
+    affiliation: {
+      "@type": "Organization",
+      name: SITE.author.affiliation,
+    },
+    jobTitle: "Independent researcher",
+    knowsAbout: [
+      "LLM governance",
+      "AI governance",
+      "epistemic infrastructure",
+      "mathematical ontology",
+      "machine-checkable governance",
+    ],
+    sameAs: [SITE.github],
+  };
+}
+
 export function generateOrganizationSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "name": "Vamossy Digital",
-    "url": process.env.NEXT_PUBLIC_SITE_URL || 'https://vamossy.com',
-    "logo": `${process.env.NEXT_PUBLIC_SITE_URL || 'https://vamossy.com'}/logo.png`,
-    "description": "AI-powered eCommerce growth solutions for modern brands",
-    "sameAs": [
-      "https://www.linkedin.com/company/vamossy-digital",
-      "https://twitter.com/vamossydigital"
-    ],
-    "contactPoint": {
-      "@type": "ContactPoint",
-      "contactType": "customer service",
-      "availableLanguage": "English"
-    }
+    name: SITE.author.affiliation,
+    url: SITE.url,
+    founder: {
+      "@type": "Person",
+      name: SITE.author.name,
+    },
+    email: SITE.author.email,
+    sameAs: [SITE.github],
   };
 }
 
@@ -174,17 +194,21 @@ export function generateWebsiteSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "name": "Vamossy Digital",
-    "url": process.env.NEXT_PUBLIC_SITE_URL || 'https://vamossy.com',
-    "description": "AI-powered eCommerce growth solutions for modern brands",
-    "potentialAction": {
+    name: SITE.title,
+    url: SITE.url,
+    description: SITE.description,
+    author: {
+      "@type": "Person",
+      name: SITE.author.name,
+    },
+    potentialAction: {
       "@type": "SearchAction",
-      "target": {
+      target: {
         "@type": "EntryPoint",
-        "urlTemplate": `${process.env.NEXT_PUBLIC_SITE_URL || 'https://vamossy.com'}/search?q={search_term_string}`
+        urlTemplate: `${SITE.url}/search?q={search_term_string}`,
       },
-      "query-input": "required name=search_term_string"
-    }
+      "query-input": "required name=search_term_string",
+    },
   };
 }
 
@@ -192,39 +216,70 @@ export function generateBreadcrumbSchema(breadcrumbs) {
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    "itemListElement": breadcrumbs.map((crumb, index) => ({
+    itemListElement: breadcrumbs.map((crumb, index) => ({
       "@type": "ListItem",
-      "position": index + 1,
-      "name": crumb.name,
-      "item": `${process.env.NEXT_PUBLIC_SITE_URL || 'https://vamossy.com'}${crumb.url}`
-    }))
+      position: index + 1,
+      name: crumb.name,
+      item: absUrl(crumb.url),
+    })),
+  };
+}
+
+export function generateScholarlyArticleSchema({
+  title,
+  description,
+  url,
+  datePublished,
+  dateModified,
+  version,
+  keywords = [],
+  downloadUrl,
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ScholarlyArticle",
+    headline: title,
+    name: title,
+    description,
+    url: absUrl(url),
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": absUrl(url),
+    },
+    author: {
+      "@type": "Person",
+      name: SITE.author.name,
+      email: SITE.author.email,
+      affiliation: SITE.author.affiliation,
+      url: absUrl("/about"),
+    },
+    publisher: {
+      "@type": "Organization",
+      name: SITE.author.affiliation,
+      url: SITE.url,
+    },
+    datePublished,
+    dateModified: dateModified || datePublished,
+    version,
+    keywords: keywords.join(", "),
+    inLanguage: "en",
+    license: "https://opensource.org/licenses/MIT",
+    ...(downloadUrl && {
+      encoding: {
+        "@type": "MediaObject",
+        contentUrl: absUrl(downloadUrl),
+      },
+    }),
   };
 }
 
 export function generateArticleSchema(article) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    "headline": article.title,
-    "description": article.excerpt || article.summary,
-    "image": article.image || '/og-image.png',
-    "author": {
-      "@type": "Organization",
-      "name": "Vamossy Digital"
-    },
-    "publisher": {
-      "@type": "Organization",
-      "name": "Vamossy Digital",
-      "logo": {
-        "@type": "ImageObject",
-        "url": `${process.env.NEXT_PUBLIC_SITE_URL || 'https://vamossy.com'}/logo.png`
-      }
-    },
-    "datePublished": article.created_at,
-    "dateModified": article.updated_at || article.created_at,
-    "mainEntityOfPage": {
-      "@type": "WebPage",
-      "@id": `${process.env.NEXT_PUBLIC_SITE_URL || 'https://vamossy.com'}/articles/${article.id}`
-    }
-  };
+  return generateScholarlyArticleSchema({
+    title: article.title,
+    description: article.excerpt || article.summary || article.description,
+    url: article.url || `/research/${article.slug}`,
+    datePublished: article.datePublished || article.created_at,
+    dateModified: article.dateModified || article.updated_at,
+    keywords: article.keywords || article.tags || [],
+  });
 }
