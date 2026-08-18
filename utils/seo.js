@@ -30,6 +30,10 @@ export function generateSiteMetadata() {
       telephone: false,
     },
     metadataBase: new URL(SITE.url),
+    icons: {
+      icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+      apple: [{ url: "/apple-icon", sizes: "180x180", type: "image/png" }],
+    },
     alternates: {
       canonical: "/",
     },
