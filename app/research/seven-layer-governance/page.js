@@ -13,7 +13,7 @@ const PATH = SEVEN_LAYER_GOVERNANCE.path;
 export const metadata = generatePageMetadata({
   title: "Seven-Layer Governance Architecture",
   description:
-    "Gergely Vámossy's seven-layer governance architecture (the author's term: god infra) is a research framework in preparation: Mathematics, Physics, Chemistry, Biology, Evolution, Human Qualia, and God / Electromagnetic Governance.",
+    "Gergely Vámossy's seven-layer governance architecture in preparation: Mathematics, Physics, Chemistry, Biology, Evolution, Human Qualia, and God / Electromagnetic Governance.",
   keywords: [
     "seven-layer governance",
     "governance architecture",
@@ -52,7 +52,7 @@ function researchProjectSchema() {
     },
     creativeWorkStatus: SEVEN_LAYER_GOVERNANCE.status.creativeWorkStatus,
     version: SEVEN_LAYER_GOVERNANCE.version,
-    keywords: "seven-layer governance, god infra, governance architecture",
+    keywords: "seven-layer governance, governance architecture",
     hasPart: {
       "@type": "ItemList",
       name: "Seven governance layers",
@@ -125,22 +125,14 @@ export default function SevenLayerGovernancePage() {
         <section>
           <h2 id="overview">Overview</h2>
           <p>
-            This page is the landing place for a research framework described by{" "}
-            {SEVEN_LAYER_GOVERNANCE.author}. The author names seven governance
-            layers and uses the term{" "}
-            <q>{SEVEN_LAYER_GOVERNANCE.authorTerm}</q> for the overall concept.
+            This page introduces a seven-layer governance architecture under
+            development by {SEVEN_LAYER_GOVERNANCE.author}. The layers, in the
+            stated order, are Mathematics, Physics, Chemistry, Biology,
+            Evolution, Human Qualia, and God / Electromagnetic Governance.
           </p>
           <p>
-            The seven layers, in the author&apos;s stated order, are Mathematics,
-            Physics, Chemistry, Biology, Evolution, Human Qualia, and God /
-            Electromagnetic Governance.
-          </p>
-          <p>
-            Layer definitions, formal relationships, evidence, and a full
-            publication have not yet been supplied. This site records the
-            framework as the author&apos;s research program and keeps space for
-            material as it arrives. It does not treat author claims as
-            independently established results.
+            Formal definitions, evidence, and a full publication will be added
+            as the research preparation period proceeds.
           </p>
         </section>
 
@@ -152,9 +144,8 @@ export default function SevenLayerGovernancePage() {
         <section>
           <h2 id="the-seven-layers">The Seven Layers</h2>
           <p className="muted">
-            Each layer has an on-page section and a permanent URL. Fields such
-            as description, formal definition, evidence, and validation status
-            remain empty until source material is provided.
+            Each layer has an on-page section and a permanent URL for later
+            definitions and artifacts.
           </p>
           {SEVEN_LAYER_GOVERNANCE.layers.map((layer) => (
             <section
@@ -167,26 +158,17 @@ export default function SevenLayerGovernancePage() {
               {layerHasMaterial(layer) ? (
                 <p>{layer.description}</p>
               ) : (
-                <p className="placeholder">
-                  Material forthcoming. No description, definition, evidence, or
-                  validation status has been supplied for this layer yet.
-                </p>
+                <p className="placeholder">Material forthcoming.</p>
               )}
               <p>
-                <Link href={layer.path}>Permanent URL for this layer</Link>
-                {" · "}
-                validation status: {layer.validationStatus.replace("_", " ")}
+                <Link href={layer.path}>Open layer page</Link>
               </p>
             </section>
           ))}
         </section>
 
         <section>
-          <h2 id="development-structure">Expected development structure</h2>
-          <p className="muted">
-            These phases describe the intended progression of the program. They
-            are not marked complete except where work is actually underway.
-          </p>
+          <h2 id="development-structure">Development structure</h2>
           <ol className="phase-list">
             {SEVEN_LAYER_GOVERNANCE.developmentPhases.map((phase) => (
               <li key={phase.id}>
@@ -200,44 +182,7 @@ export default function SevenLayerGovernancePage() {
         </section>
 
         <section>
-          <h2 id="author-statements">Author statements</h2>
-          <p>
-            The following phrases come from the author. They are recorded here
-            as statements, not as findings independently established by this
-            site.
-          </p>
-          <ul>
-            {SEVEN_LAYER_GOVERNANCE.authorStatements.map((item) => (
-              <li key={item.id}>
-                <p>
-                  <q>{item.quote}</q>
-                </p>
-                <p className="muted">{item.note}</p>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <section>
-          <h2 id="content-slots">Slots for forthcoming material</h2>
-          <p>
-            The content model for this program can receive the following as they
-            are supplied. None of these slots are filled yet.
-          </p>
-          <ul className="slot-list">
-            {SEVEN_LAYER_GOVERNANCE.contentSlots.map((slot) => (
-              <li key={slot}>{slot}</li>
-            ))}
-          </ul>
-        </section>
-
-        <section>
           <h2 id="related-research">Related research</h2>
-          <p>
-            The items below are existing Vámossy research. Listing them here
-            records a relationship, not a claim that those documents prove this
-            seven-layer architecture.
-          </p>
           <ul>
             {SEVEN_LAYER_GOVERNANCE.relatedResearch.map((item) => (
               <li key={item.href}>

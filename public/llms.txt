@@ -9,7 +9,7 @@ Source: https://github.com/Gergo89/llm-governance-toolkit
 
 ## Primary publications
 
-- [Seven-Layer Governance Architecture](https://vamossy.com/research/seven-layer-governance): a research program in preparation. The author describes seven governance layers (Mathematics, Physics, Chemistry, Biology, Evolution, Human Qualia, God / Electromagnetic Governance) and uses the term "god infra". Layer definitions and evidence are not yet supplied. Author claims on this page are recorded as statements, not as independently established facts.
+- [Seven-Layer Governance Architecture](https://vamossy.com/research/seven-layer-governance): a research program in preparation. Seven governance layers: Mathematics, Physics, Chemistry, Biology, Evolution, Human Qualia, God / Electromagnetic Governance. Layer definitions and evidence are forthcoming.
 - [Non-Self-Approving AI-Assisted Derivation](https://vamossy.com/research/non-self-approving-ai-assisted-derivation): a method that lets a model reason without letting it rule. Governs authority, not correctness.
 - [The Mathematics Ontology Bible](https://vamossy.com/research/mathematics-ontology-bible): a complete map of mathematical structure, from foundations to frontiers.
 - [LLM Governance Toolkit](https://vamossy.com/llm-governance-toolkit): public documentation for the toolkit. Source remains on GitHub; this site does not expose repository internals.

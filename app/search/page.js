@@ -65,7 +65,7 @@ const INDEX = [
     title: SEVEN_LAYER_GOVERNANCE.title,
     href: SEVEN_LAYER_GOVERNANCE.path,
     type: "Research program",
-    text: `seven-layer governance god infra ${SEVEN_LAYER_GOVERNANCE.layers.map((layer) => layer.name).join(" ")}`,
+    text: `seven-layer governance ${SEVEN_LAYER_GOVERNANCE.layers.map((layer) => layer.name).join(" ")}`,
   },
   ...SEVEN_LAYER_GOVERNANCE.layers.map((layer) => ({
     title: layer.heading,
