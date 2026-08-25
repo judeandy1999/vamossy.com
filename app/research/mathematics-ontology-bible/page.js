@@ -161,6 +161,17 @@ export default function OntologyHubPage() {
           )}
 
           <section>
+            <h2>Related research</h2>
+            <p>
+              Related research program (not a claim that this document proves it):{" "}
+              <Link href="/research/seven-layer-governance">
+                Seven-Layer Governance Architecture
+              </Link>
+              .
+            </p>
+          </section>
+
+          <section>
             <h2>Citation</h2>
             <pre className="cite">
 {`${ONTOLOGY.author} (${ONTOLOGY.datePublished.slice(0, 4)}). ${ONTOLOGY.title}: ${ONTOLOGY.subtitle}. Version ${ONTOLOGY.version}. ${ONTOLOGY.affiliation}. https://vamossy.com${path}`}

@@ -67,6 +67,10 @@ export default function ToolkitOverviewPage() {
                 href: "/research/non-self-approving-ai-assisted-derivation",
                 label: "Main paper",
               },
+              {
+                href: "/research/seven-layer-governance",
+                label: "Seven-layer governance",
+              },
             ]}
           />
 

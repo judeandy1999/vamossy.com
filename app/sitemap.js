@@ -1,6 +1,7 @@
 import { PUBLICATIONS, publicationPath } from "@/lib/publications";
 import { COMPONENTS, PATTERNS, TOOLKIT_SECTIONS } from "@/lib/toolkit";
 import { ONTOLOGY_PARTS, ontologyPartPath } from "@/lib/ontology";
+import { SEVEN_LAYER_GOVERNANCE } from "@/lib/sevenLayerGovernance";
 import { SITE, absUrl } from "@/lib/site";
 
 export default function sitemap() {
@@ -57,6 +58,15 @@ export default function sitemap() {
       lastModified: new Date("2026-08-01"),
       changeFrequency: "monthly",
       priority: 0.6,
+    });
+  }
+
+  for (const layer of SEVEN_LAYER_GOVERNANCE.layers) {
+    routes.push({
+      url: absUrl(layer.path),
+      lastModified: new Date("2026-08-18"),
+      changeFrequency: "weekly",
+      priority: 0.7,
     });
   }
 

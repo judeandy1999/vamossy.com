@@ -102,6 +102,11 @@ export default async function ResearchArticlePage({ params }) {
               </Link>
             </li>
             <li>
+              <Link href="/research/seven-layer-governance">
+                Seven-Layer Governance Architecture
+              </Link>
+            </li>
+            <li>
               <Link href="/research">All publications</Link>
             </li>
           </ul>

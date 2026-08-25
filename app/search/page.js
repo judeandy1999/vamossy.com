@@ -3,6 +3,7 @@ import { generatePageMetadata } from "@/utils/seo";
 import { PUBLICATIONS, publicationPath } from "@/lib/publications";
 import { COMPONENTS, PATTERNS, TOOLKIT_SECTIONS } from "@/lib/toolkit";
 import { ONTOLOGY, ONTOLOGY_PARTS, ontologyPartPath } from "@/lib/ontology";
+import { SEVEN_LAYER_GOVERNANCE } from "@/lib/sevenLayerGovernance";
 import SearchClient from "@/components/site/SearchClient";
 
 export const metadata = generatePageMetadata({
@@ -59,6 +60,18 @@ const INDEX = [
     href: ontologyPartPath(part.slug),
     type: "Ontology",
     text: part.nav,
+  })),
+  {
+    title: SEVEN_LAYER_GOVERNANCE.title,
+    href: SEVEN_LAYER_GOVERNANCE.path,
+    type: "Research program",
+    text: `seven-layer governance god infra ${SEVEN_LAYER_GOVERNANCE.layers.map((layer) => layer.name).join(" ")}`,
+  },
+  ...SEVEN_LAYER_GOVERNANCE.layers.map((layer) => ({
+    title: layer.heading,
+    href: layer.path,
+    type: "Governance layer",
+    text: layer.name,
   })),
 ];
 

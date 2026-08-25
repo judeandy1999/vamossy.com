@@ -7,7 +7,7 @@ import JsonLd from "@/components/site/JsonLd";
 export const metadata = generatePageMetadata({
   title: "Research / Publications",
   description:
-    "Publication index for Gergely Vámossy's AI/LLM governance research, including Non-Self-Approving AI-Assisted Derivation, the Mathematics Ontology Bible, QIERA, and related papers and notes.",
+    "Publication index for Gergely Vámossy's AI/LLM governance research, including the seven-layer governance program in preparation, Non-Self-Approving AI-Assisted Derivation, the Mathematics Ontology Bible, QIERA, and related papers and notes.",
   keywords: [
     "research",
     "publications",

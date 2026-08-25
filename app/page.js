@@ -55,6 +55,11 @@ export default function HomePage() {
           </p>
           <ul className="hero-links">
             <li>
+              <Link href="/research/seven-layer-governance">
+                Seven-Layer Governance
+              </Link>
+            </li>
+            <li>
               <Link href="/llm-governance-toolkit">LLM Governance Toolkit</Link>
             </li>
             <li>
